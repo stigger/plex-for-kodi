@@ -66,8 +66,7 @@ class Video(media.MediaItem):
         if self.subtitleStreams:
             for stream in self.subtitleStreams:
                 if stream.isSelected():
-                    selected = stream
-                    break
+                    return stream
 
                 if stream.key:
                     found_external.append(stream)
