@@ -60,11 +60,26 @@ class Video(media.MediaItem):
         return None
 
     def selectedSubtitleStream(self):
+        selected = None
+        found_embedded = []
+        found_external = []
         if self.subtitleStreams:
             for stream in self.subtitleStreams:
                 if stream.isSelected():
-                    return stream
-        return None
+                    selected = stream
+                    break
+
+                if stream.key:
+                    found_external.append(stream)
+                else:
+                    found_embedded.append(stream)
+
+            if not selected:
+                for stream_list in (found_external, found_embedded):
+                    for stream in stream_list:
+                        if stream.languageCode == "eng":
+                            return stream
+        return selected
 
     def selectStream(self, stream, async=True):
         self.mediaChoice.part.setSelectedStream(stream.streamType.asInt(), stream.id, async)
