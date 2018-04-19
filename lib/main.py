@@ -130,7 +130,7 @@ def _main():
         util.ERROR()
     finally:
         util.DEBUG_LOG('Main: SHUTTING DOWN...')
-        if BACKGROUND:
+        if silent_shutdown and BACKGROUND:
             BACKGROUND.doClose()
 
         if not silent_shutdown:
