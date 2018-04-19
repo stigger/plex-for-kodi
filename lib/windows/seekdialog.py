@@ -83,7 +83,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.fromSeek = 0
         self.initialized = False
         self.playlistDialog = None
-        self.timeout = None
+        self.hide_timeout = None
         self.hasDialog = False
         self.lastFocusID = None
         self.playlistDialogVisible = False
@@ -104,7 +104,7 @@ class SeekDialog(kodigui.BaseDialog):
         return self.handler.player
 
     def resetTimeout(self):
-        self.timeout = time.time() + self._hide_delay
+        self.hide_timeout = time.time() + self._hide_delay
 
     def trueOffset(self):
         if self.handler.mode == self.handler.MODE_ABSOLUTE:
@@ -585,7 +585,7 @@ class SeekDialog(kodigui.BaseDialog):
             xbmc.executebuiltin('Dialog.Close(busydialog,1)')
 
         if not self.hasDialog and not self.playlistDialogVisible and self.osdVisible():
-            if time.time() > self.timeout:
+            if time.time() > self.hide_timeout:
                 if not xbmc.getCondVisibility('Window.IsActive(videoosd) | Player.Rewinding | Player.Forwarding'):
                     self.hideOSD()
 
