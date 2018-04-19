@@ -46,6 +46,7 @@ def signout():
 def main():
     global BACKGROUND
     util.setGlobalProperty('running', '1')
+    util.setGlobalProperty('silent_shutdown', '')
     try:
         with util.Cron(1):
             BACKGROUND = background.BackgroundWindow.create(function=_main)
@@ -53,6 +54,7 @@ def main():
             del BACKGROUND
     finally:
         util.setGlobalProperty('running', '')
+        util.setGlobalProperty('silent_shutdown', '')
 
 
 def _main():
