@@ -252,7 +252,7 @@ class SeekDialog(kodigui.BaseDialog):
     def onClick(self, controlID):
         if controlID == self.MAIN_BUTTON_ID:
             self.resetAutoSeekTimer(None)
-            self.handler.seek(self.selectedOffset)
+            self.doSeek()
         elif controlID == self.NO_OSD_BUTTON_ID:
             self.showOSD()
         elif controlID == self.SETTINGS_BUTTON_ID:
@@ -315,7 +315,7 @@ class SeekDialog(kodigui.BaseDialog):
                     break
 
             if not xbmc.abortRequested:
-                self.handler.seek(self.selectedOffset)
+                self.doSeek()
         finally:
             self.setProperty('button.seek', '')
 
@@ -425,7 +425,7 @@ class SeekDialog(kodigui.BaseDialog):
         if changed == 'SUBTITLE':
             self.handler.setSubtitles()
         elif changed:
-            self.handler.seek(self.trueOffset(), settings_changed=True)
+            self.doSeek(self.trueOffset(), settings_changed=True)
 
     def setBigSeekShift(self):
         closest = None
@@ -493,6 +493,13 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('time.current', util.timeDisplay(to))
         self.setProperty('time.left', util.timeDisplay(self.duration - to))
         self.setProperty('time.end', time.strftime('%I:%M %p', time.localtime(time.time() + ((self.duration - to) / 1000))).lstrip('0'))
+
+    def doSeek(self, offset=None, settings_changed=False):
+        state_before_seek = self.player.playState
+        self.handler.seek(self.selectedOffset if offset is None else offset, settings_changed=settings_changed)
+
+        if state_before_seek == self.player.STATE_PAUSED:
+            self.player.control("pause")
 
     def seekForward(self, offset, autoSeek=False):
         self.selectedOffset += offset
@@ -620,7 +627,7 @@ class SeekDialog(kodigui.BaseDialog):
 
         if self.autoSeekTimeout and time.time() > self.autoSeekTimeout and self.offset != self.selectedOffset:
             self.resetAutoSeekTimer(None)
-            self.handler.seek(self.selectedOffset)
+            self.doSeek()
 
         self.updateCurrent()
 
