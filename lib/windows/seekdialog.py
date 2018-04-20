@@ -488,7 +488,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('time.left', util.timeDisplay(self.duration - to))
 
         _fmt = '%I:%M %p'
-        if util.get24hFormat():
+        if util.time_format_twentyfour:
             _fmt = '%H:%M'
         self.setProperty('time.end', time.strftime(_fmt, time.localtime(time.time() + ((self.duration - to) / 1000))).lstrip('0'))
 

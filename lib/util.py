@@ -327,34 +327,24 @@ def timeInDayLocalSeconds():
     return int(time.time() - sod)
 
 
-time_format_twentyfour = None
-
-
 def get24hFormat():
     """
     This takes the 24h setting from Kodi and tries to determine whether the user wants the 24h or 12h time format.
-    fixme: regional depends on the local time, which might be different from the setting in Kodi. Somehow retrieve the
-           actual 24h value from Kodi
     :return:
     """
-    global time_format_twentyfour
-    if time_format_twentyfour is not None:
-        return time_format_twentyfour
-
     try:
         use_24h = rpc.Settings.GetSettingValue(setting="locale.use24hourclock")["value"]
     except:
         return
 
     if use_24h == "regional":
-        time_format_twentyfour = "M" not in time.strftime("%X")
+        return "M" not in xbmc.getInfoLabel('System.Time')
     elif use_24h == "24hours":
-        time_format_twentyfour = True
-    else:
-        time_format_twentyfour = False
+        return True
+    return False
 
 
-get24hFormat()
+time_format_twentyfour = get24hFormat()
 
 
 CRON = None
