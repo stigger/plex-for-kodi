@@ -85,20 +85,20 @@ class SeekDialog(kodigui.BaseDialog):
         self.initialized = False
         self.playlistDialog = None
         self.timeout = None
-        self.auto_seek_timeout = None
+        self.autoSeekTimeout = None
         self.hasDialog = False
         self.lastFocusID = None
         self.playlistDialogVisible = False
         self._delayedSeekThread = None
         self._delayedSeekTimeout = 0
-        self._osd_hide_fast = False
-        self._hide_delay = self.HIDE_DELAY
-        self._auto_seek_delay = self.AUTO_SEEK_DELAY
+        self._osdHideFast = False
+        self._hideDelay = self.HIDE_DELAY
+        self._autoSeekDelay = self.AUTO_SEEK_DELAY
 
         try:
             seconds = int(xbmc.getInfoLabel("Skin.String(SkinHelper.AutoCloseVideoOSD)"))
             if seconds > 0:
-                self._hide_delay = seconds
+                self._hideDelay = seconds
         except ValueError:
             pass
 
@@ -107,10 +107,10 @@ class SeekDialog(kodigui.BaseDialog):
         return self.handler.player
 
     def resetTimeout(self):
-        self.timeout = time.time() + self._hide_delay
+        self.timeout = time.time() + self._hideDelay
 
     def resetAutoSeekTimer(self, value="not_set"):
-        self.auto_seek_timeout = value if value != "not_set" else time.time() + self._auto_seek_delay
+        self.autoSeekTimeout = value if value != "not_set" else time.time() + self._autoSeekDelay
 
     def trueOffset(self):
         if self.handler.mode == self.handler.MODE_ABSOLUTE:
@@ -171,9 +171,9 @@ class SeekDialog(kodigui.BaseDialog):
                 if action == xbmcgui.ACTION_MOUSE_MOVE:
                     return self.seekMouse(action)
                 elif action in (xbmcgui.ACTION_MOVE_RIGHT, xbmcgui.ACTION_STEP_FORWARD):
-                    return self.seekForward(30000)
+                    return self.seekForward(10000, autoSeek=True)
                 elif action in (xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_STEP_BACK):
-                    return self.seekBack(15000)
+                    return self.seekBack(10000, autoSeek=True)
                 elif action == xbmcgui.ACTION_MOVE_DOWN:
                     self.updateBigSeek()
                 # elif action == xbmcgui.ACTION_MOVE_UP:
@@ -182,9 +182,15 @@ class SeekDialog(kodigui.BaseDialog):
                 #     self.seekBack(60000)
             elif controlID == self.NO_OSD_BUTTON_ID:
                 if action in (xbmcgui.ACTION_MOVE_RIGHT, xbmcgui.ACTION_MOVE_LEFT):
-                    self.showOSD()
-                    self.setFocusId(self.MAIN_BUTTON_ID)
-                elif action in (
+                    if not self.selectedOffset:
+                        self.selectedOffset = self.trueOffset()
+
+                    if action == xbmcgui.ACTION_MOVE_RIGHT:
+                        self.skipForward()
+
+                    else:
+                        self.skipBack()
+                if action in (
                     xbmcgui.ACTION_MOVE_UP,
                     xbmcgui.ACTION_MOVE_DOWN,
                     xbmcgui.ACTION_BIG_STEP_FORWARD,
@@ -246,7 +252,7 @@ class SeekDialog(kodigui.BaseDialog):
     def onClick(self, controlID):
         if controlID == self.MAIN_BUTTON_ID:
             self.resetAutoSeekTimer(None)
-            self.handler.seek(self.selectedOffset)
+            self.doSeek()
         elif controlID == self.NO_OSD_BUTTON_ID:
             self.showOSD()
         elif controlID == self.SETTINGS_BUTTON_ID:
@@ -296,7 +302,7 @@ class SeekDialog(kodigui.BaseDialog):
 
     def delayedSeek(self):
         self.setProperty('button.seek', '1')
-        self._delayedSeekTimeout = time.time() + 0.5
+        self._delayedSeekTimeout = time.time() + 1.0
 
         if not self._delayedSeekThread or not self._delayedSeekThread.isAlive():
             self._delayedSeekThread = threading.Thread(target=self._delayedSeek)
@@ -309,7 +315,7 @@ class SeekDialog(kodigui.BaseDialog):
                     break
 
             if not xbmc.abortRequested:
-                self.handler.seek(self.selectedOffset)
+                self.doSeek()
         finally:
             self.setProperty('button.seek', '')
 
@@ -419,7 +425,7 @@ class SeekDialog(kodigui.BaseDialog):
         if changed == 'SUBTITLE':
             self.handler.setSubtitles()
         elif changed:
-            self.handler.seek(self.trueOffset(), settings_changed=True)
+            self.doSeek(self.trueOffset(), settings_changed=True)
 
     def setBigSeekShift(self):
         closest = None
@@ -488,24 +494,33 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('time.left', util.timeDisplay(self.duration - to))
         self.setProperty('time.end', time.strftime('%I:%M %p', time.localtime(time.time() + ((self.duration - to) / 1000))).lstrip('0'))
 
-    def seekForward(self, offset):
+    def doSeek(self, offset=None, settings_changed=False):
+        state_before_seek = self.player.playState
+        self.handler.seek(self.selectedOffset if offset is None else offset, settings_changed=settings_changed)
+
+        if state_before_seek == self.player.STATE_PAUSED:
+            self.player.control("pause")
+
+    def seekForward(self, offset, autoSeek=False):
         self.selectedOffset += offset
         if self.selectedOffset > self.duration:
             self.selectedOffset = self.duration
 
         self.updateProgress()
         self.setBigSeekShift()
-        self.resetAutoSeekTimer()
+        if autoSeek:
+            self.resetAutoSeekTimer()
         self.bigSeekHideTimer.reset()
 
-    def seekBack(self, offset):
+    def seekBack(self, offset, autoSeek=False):
         self.selectedOffset -= offset
         if self.selectedOffset < 0:
             self.selectedOffset = 0
 
         self.updateProgress()
         self.setBigSeekShift()
-        self.resetAutoSeekTimer()
+        if autoSeek:
+            self.resetAutoSeekTimer()
         self.bigSeekHideTimer.reset()
 
     def seekMouse(self, action):
@@ -579,11 +594,11 @@ class SeekDialog(kodigui.BaseDialog):
         self.seekbarControl.setWidth(w)
 
     def onPlaybackResumed(self):
-        self._osd_hide_fast = True
+        self._osdHideFast = True
         self.tick()
 
     def onPlaybackPaused(self):
-        self._osd_hide_fast = False
+        self._osdHideFast = False
 
     def tick(self, offset=None):
         if not self.initialized:
@@ -599,20 +614,20 @@ class SeekDialog(kodigui.BaseDialog):
                     self.hideOSD()
 
             # try insta-hiding the OSDs when playback was requested
-            elif self._osd_hide_fast:
+            elif self._osdHideFast:
                 xbmc.executebuiltin('Dialog.Close(videoosd,true)')
                 xbmc.executebuiltin('Dialog.Close(seekbar,true)')
                 if not xbmc.getCondVisibility('Window.IsActive(videoosd) | Player.Rewinding | Player.Forwarding'):
                     self.hideOSD()
 
-        if self.auto_seek_timeout and time.time() > self.auto_seek_timeout:
-            self.resetAutoSeekTimer(None)
-            self.handler.seek(self.selectedOffset)
-
         try:
             self.offset = offset or int(self.handler.player.getTime() * 1000)
         except RuntimeError:  # Playback has stopped
             return
+
+        if self.autoSeekTimeout and time.time() > self.autoSeekTimeout and self.offset != self.selectedOffset:
+            self.resetAutoSeekTimer(None)
+            self.doSeek()
 
         self.updateCurrent()
 
@@ -638,7 +653,7 @@ class SeekDialog(kodigui.BaseDialog):
     def hideOSD(self):
         self.setProperty('show.OSD', '')
         self.setFocusId(self.NO_OSD_BUTTON_ID)
-        self._osd_hide_fast = False
+        self._osdHideFast = False
         if self.playlistDialog:
             self.playlistDialog.doClose()
             self.playlistDialogVisible = False
