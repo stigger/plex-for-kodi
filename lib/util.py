@@ -330,6 +330,16 @@ def timeInDayLocalSeconds():
 time_format_twentyfour = "M" not in xbmc.getInfoLabel('System.Time')
 
 
+def getKodiSkipSteps():
+    try:
+        return rpc.Settings.GetSettingValue(setting="videoplayer.seeksteps")["value"]
+    except:
+        return
+
+
+kodiSkipSteps = getKodiSkipSteps()
+
+
 CRON = None
 
 
