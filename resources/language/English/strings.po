@@ -951,3 +951,18 @@ msgctxt "#32463"
 msgid "By Artist"
 msgstr ""
 
+msgctxt "#32467"
+msgid "Appearance"
+msgstr ""
+
+msgctxt "#32468"
+msgid "Show background art per item"
+msgstr ""
+
+msgctxt "#32469"
+msgid "Background art blur amount"
+msgstr ""
+
+msgctxt "#32470"
+msgid "Background art opacity"
+msgstr ""

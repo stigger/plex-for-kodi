@@ -949,3 +949,19 @@ msgstr "Künstler(in)"
 msgctxt "#32463"
 msgid "By Artist"
 msgstr "Nach Künstler(in)"
+
+msgctxt "#32467"
+msgid "Darstellung"
+msgstr ""
+
+msgctxt "#32468"
+msgid "Hintergrundbild pro Element anzeigen"
+msgstr ""
+
+msgctxt "#32469"
+msgid "Unschärfe der Hintergrundbilder"
+msgstr ""
+
+msgctxt "#32470"
+msgid "Deckkraft der Hintergrundbilder"
+msgstr ""
