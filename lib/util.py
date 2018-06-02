@@ -475,6 +475,9 @@ class AdvancedSettings(object):
 
     _proxiedSettings = (
         ("debug", False),
+        ("background_art_per_item", False),
+        ("background_art_blur_amount", 128),
+        ("background_art_opacity_amount", 60),
     )
 
     def __init__(self):
