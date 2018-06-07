@@ -22,6 +22,7 @@ import windowutils
 import search
 
 from lib.util import T
+from lib.windows.home import MOVE_SET
 
 
 class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
@@ -104,9 +105,7 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.setProperty('thumb', self.mediaItem.defaultThumb.asTranscodedImageURL(*self.THUMB_DIMS[self.mediaItem.type]['main.thumb']))
         self.setProperty(
             'background',
-            self.mediaItem.art.asTranscodedImageURL(self.width, self.height, blur=util.aSet.backgroundArtBlurAmount,
-                                                    opacity=util.aSet.backgroundArtOpacityAmount,
-                                                    background=colors.noAlpha.Background)
+            util.backgroundFromArt(self.mediaItem.art, width=self.width, height=self.height)
         )
         self.setProperty('duration', util.durationToText(self.mediaItem.fixedDuration()))
         self.setProperty('info', '')
@@ -176,6 +175,15 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                     if self.getProperty('on.extras'):
                         self.setFocusId(self.OPTIONS_GROUP_ID)
                         return
+
+            elif action.getId() in MOVE_SET:
+                if util.addonSettings.backgroundArtPerItem and self.lastFocusID == self.RELATED_LIST_ID:
+                    mli = self.relatedListControl.getSelectedItem()
+                    if mli:
+                        self.setProperty(
+                            'background', util.backgroundFromArt(mli.dataSource.art, width=self.width,
+                                                                 height=self.height)
+                        )
 
             if action == xbmcgui.ACTION_LAST_PAGE and xbmc.getCondVisibility('ControlGroup(300).HasFocus(0)'):
                 self.next()
@@ -594,9 +602,7 @@ class ArtistWindow(ShowWindow):
         self.setProperty('thumb', self.mediaItem.defaultThumb.asTranscodedImageURL(*self.THUMB_DIMS[self.mediaItem.type]['main.thumb']))
         self.setProperty(
             'background',
-            self.mediaItem.art.asTranscodedImageURL(self.width, self.height, blur=util.aSet.backgroundArtBlurAmount,
-                                                    opacity=util.aSet.backgroundArtOpacityAmount,
-                                                    background=colors.noAlpha.Background)
+            util.backgroundFromArt(self.mediaItem.art, width=self.width, height=self.height)
         )
 
     @busy.dialog()
