@@ -625,14 +625,14 @@ class BGMPlayerHandler(BasePlayerHandler):
         self.timelineType = 'music'
         util.setGlobalProperty('track.ID', '')
 
-        self.old_volume = util.rpc.Application.GetProperties(properties=["volume"])["volume"]
+        self.oldVolume = util.rpc.Application.GetProperties(properties=["volume"])["volume"]
 
     def onPlayBackStarted(self):
         util.setGlobalProperty('theme_playing', '1')
         self.player.bgmPlaying = True
 
     def setVolume(self, volume=None, reset=False):
-        vlm = self.old_volume if reset else volume
+        vlm = self.oldVolume if reset else volume
         util.DEBUG_LOG("BGM: %ssetting volume to: %s" % ("re-" if reset else "", vlm))
         xbmc.executebuiltin("SetVolume(%s)" % vlm)
 
@@ -668,7 +668,6 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.started = False
         self.bgmPlaying = False
         self.lastPlayWasBGM = False
-        self.old_volume = None
         self.video = None
         self.hasOSD = False
         self.hasSeekOSD = False
