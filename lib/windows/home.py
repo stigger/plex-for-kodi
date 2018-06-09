@@ -640,9 +640,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
     def _sectionReallyChanged(self):
         section = self.lastSection
         self.setProperty('hub.focus', '')
-        if util.advancedSettings.dynamicBackgrounds:
-            self.backgroundSet = False
-
         util.DEBUG_LOG('Section changed ({0}): {1}'.format(section.key, repr(section.title)))
         self.showHubs(section)
         self.lastSection = section
@@ -962,7 +959,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         items = []
 
         for obj in hubitems or hub.items:
-            if not self.backgroundSet and util.advancedSettings.dynamicBackgrounds:
+            if not self.backgroundSet or util.advancedSettings.dynamicBackgrounds:
                 self.backgroundSet = True
                 self.setProperty(
                     'background', util.backgroundFromArt(obj.art, width=self.width, height=self.height)
