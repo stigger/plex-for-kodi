@@ -387,13 +387,17 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.mode == self.MODE_ABSOLUTE:
             track = self.player.video.selectedAudioStream()
             if track:
-                try:
-                    currIdx = kodijsonrpc.rpc.Player.GetProperties(playerid=1, properties=['currentaudiostream'])['currentaudiostream']['index']
-                    if currIdx == track.typeIndex:
-                        util.DEBUG_LOG('Audio track is correct index: {0}'.format(track.typeIndex))
-                        return
-                except:
-                    util.ERROR()
+                # only try finding the current audio stream when the BG music player isn't playing and wasn't the last
+                # player, because currentaudiostream doesn't populate for audio-only items; in that case, always select
+                # the proper audio stream
+                if not BGMUSICPLAYER.hasPlayed and not BGMUSICPLAYER.isPlaying():
+                    try:
+                        currIdx = kodijsonrpc.rpc.Player.GetProperties(playerid=1, properties=['currentaudiostream'])['currentaudiostream']['index']
+                        if currIdx == track.typeIndex:
+                            util.DEBUG_LOG('Audio track is correct index: {0}'.format(track.typeIndex))
+                            return
+                    except:
+                        util.ERROR()
 
                 xbmc.sleep(100)
                 util.DEBUG_LOG('Switching audio track - index: {0}'.format(track.typeIndex))
@@ -471,7 +475,7 @@ class AudioPlayerHandler(BasePlayerHandler):
         self.extractTrackInfo()
 
     def extractTrackInfo(self):
-        if not self.player.isPlayingAudio():
+        if not self.player.isPlayingAudio() or BGMUSICPLAYER.playing:
             return
 
         plexID = None
@@ -577,26 +581,44 @@ class AudioPlayerHandler(BasePlayerHandler):
             pass
 
     def onMonitorInit(self):
+        if BGMUSICPLAYER.isPlaying():
+            return
+
         self.extractTrackInfo()
         self.updateNowPlaying(state='playing')
 
     def onPlayBackStarted(self):
+        if BGMUSICPLAYER.isPlaying():
+            return
+
         self.updatePlayQueue(delay=True)
         self.extractTrackInfo()
         self.updateNowPlaying(state='playing')
 
     def onPlayBackResumed(self):
+        if BGMUSICPLAYER.isPlaying():
+            return
+
         self.updateNowPlaying(state='playing')
 
     def onPlayBackPaused(self):
+        if BGMUSICPLAYER.isPlaying():
+            return
+
         self.updateNowPlaying(state='paused')
 
     def onPlayBackStopped(self):
+        if BGMUSICPLAYER.isPlaying():
+            return
+
         self.updatePlayQueue()
         self.updateNowPlaying(state='stopped')
         self.finish()
 
     def onPlayBackEnded(self):
+        if BGMUSICPLAYER.isPlaying():
+            return
+
         self.updatePlayQueue()
         self.updateNowPlaying(state='stopped')
         self.finish()
@@ -609,6 +631,9 @@ class AudioPlayerHandler(BasePlayerHandler):
         util.setGlobalProperty('track.ID', '')
 
     def tick(self):
+        if BGMUSICPLAYER.playing:
+            return
+
         self.stampCurrentTime()
         self.updateNowPlaying(force=True)
 
