@@ -956,7 +956,7 @@ msgid "Appearance"
 msgstr ""
 
 msgctxt "#32468"
-msgid "Show background art per item"
+msgid "Show dynamic background art"
 msgstr ""
 
 msgctxt "#32469"

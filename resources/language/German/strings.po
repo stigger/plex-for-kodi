@@ -955,7 +955,7 @@ msgid "Darstellung"
 msgstr ""
 
 msgctxt "#32468"
-msgid "Hintergrundbild pro Element anzeigen"
+msgid "Dynamische Hintergrundbilder aktivieren"
 msgstr ""
 
 msgctxt "#32469"
