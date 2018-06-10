@@ -128,10 +128,13 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.playButtonClicked(force_episode=self.initialEpisode)
         else:
             # we've come from a home hub view, play the current item's show's theme song
-            if self.initialEpisode and util.advancedSettings.themeMusicShows:
-                theme = self.initialEpisode.show().theme
-                if theme:
-                    player.PLAYER.playBackgroundMusic(theme.asURL(True))
+            if self.initialEpisode:
+                volume = self.initialEpisode.settings.getThemeMusicValue()
+                if volume > 0:
+                    theme = self.initialEpisode.show().theme
+                    if theme:
+                        player.PLAYER.playBackgroundMusic(theme.asURL(True), volume,
+                                                          self.initialEpisode.show().ratingKey)
 
     def onReInit(self):
         self.selectEpisode()

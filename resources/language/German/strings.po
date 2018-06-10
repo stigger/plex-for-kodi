@@ -967,45 +967,13 @@ msgid "Use Plex/Kodi steps for timeline"
 msgstr "Plex/Kodi-Skip-Schritte für die Zeitachse verwenden"
 
 msgctxt "#32480"
-msgid "Titelmusik"
-msgstr ""
+msgid "Theme music"
+msgstr "Titelmusik"
 
 msgctxt "#32481"
-msgid "10%"
-msgstr ""
+msgid "Off"
+msgstr "Aus"
 
 msgctxt "#32482"
-msgid "20%"
-msgstr ""
-
-msgctxt "#32483"
-msgid "30%"
-msgstr ""
-
-msgctxt "#32484"
-msgid "40%"
-msgstr ""
-
-msgctxt "#32485"
-msgid "50%"
-msgstr ""
-
-msgctxt "#32486"
-msgid "60%"
-msgstr ""
-
-msgctxt "#32487"
-msgid "70%"
-msgstr ""
-
-msgctxt "#32488"
-msgid "80%"
-msgstr ""
-
-msgctxt "#32489"
-msgid "90%"
-msgstr ""
-
-msgctxt "#32490"
-msgid "100%"
-msgstr ""
+msgid "%(percentage)s %"
+msgstr "%(percentage)s %"
