@@ -975,5 +975,5 @@ msgid "Off"
 msgstr "Aus"
 
 msgctxt "#32482"
-msgid "%(percentage)s %"
-msgstr "%(percentage)s %"
+msgid "%(percentage)s %%"
+msgstr "%(percentage)s %%"
