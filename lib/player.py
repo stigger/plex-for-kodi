@@ -630,6 +630,7 @@ class BGMPlayerHandler(BasePlayerHandler):
         self.oldVolume = util.rpc.Application.GetProperties(properties=["volume"])["volume"]
 
     def onPlayBackStarted(self):
+        util.DEBUG_LOG("BGM: playing theme for %s" % self.currentlyPlaying)
         self.player.bgmPlaying = True
 
     def setVolume(self, volume=None, reset=False):
@@ -641,6 +642,7 @@ class BGMPlayerHandler(BasePlayerHandler):
         self.setVolume(reset=True)
 
     def onPlayBackStopped(self):
+        util.DEBUG_LOG("BGM: stopped theme for %s" % self.currentlyPlaying)
         util.setGlobalProperty('theme_playing', '')
         self.player.bgmPlaying = False
         self.resetVolume()
@@ -650,7 +652,6 @@ class BGMPlayerHandler(BasePlayerHandler):
 
     def onPlayBackFailed(self):
         self.onPlayBackStopped()
-        return True
 
     def close(self):
         self.player.stopAndWait()
