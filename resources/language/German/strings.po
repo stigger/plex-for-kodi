@@ -967,5 +967,9 @@ msgid "Use Plex/Kodi steps for timeline"
 msgstr "Plex/Kodi-Skip-Schritte für die Zeitachse verwenden"
 
 msgctxt "#32483"
-msgid "Stream Info"
-msgstr "Stream Info"
+msgid "Hide Stream Info"
+msgstr "Stream Info nicht anzeigen"
+
+msgctxt "#32484"
+msgid "Show Stream Info"
+msgstr "Stream Info anzeigen"
