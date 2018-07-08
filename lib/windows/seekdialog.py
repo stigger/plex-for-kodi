@@ -89,7 +89,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.autoSeekTimeout = None
         self.hasDialog = False
         self.lastFocusID = None
-        self.playlistDialogVisible = False
+        self._playlistDialogVisible = False
         self._seeking = False
         self._applyingSeek = False
         self._seekingWithoutOSD = False
@@ -363,6 +363,12 @@ class SeekDialog(kodigui.BaseDialog):
         finally:
             kodigui.BaseDialog.doClose(self)
 
+    def showPPIDialog(self):
+        self.setProperty('show.PPI', '1')
+
+    def hidePPIDialog(self):
+        self.setProperty('show.PPI', '')
+
     def resetSkipSteps(self):
         self._forcedLastSkipAmount = None
         self._atSkipStep = -1
@@ -555,7 +561,7 @@ class SeekDialog(kodigui.BaseDialog):
 
     def showSettings(self):
         with self.propertyContext('settings.visible'):
-            playersettings.showDialog(self.player.video, via_osd=True)
+            playersettings.showDialog(self.player.video, via_osd=True, parent=self)
 
         changed = self.videoSettingsHaveChanged()
         if changed == 'SUBTITLE':
@@ -843,6 +849,15 @@ class SeekDialog(kodigui.BaseDialog):
             return
 
         self.updateCurrent(update_position_control=not self._seeking and not self._applyingSeek)
+
+    @property
+    def playlistDialogVisible(self):
+        return self._playlistDialogVisible
+
+    @playlistDialogVisible.setter
+    def playlistDialogVisible(self, value):
+        self._playlistDialogVisible = value
+        self.setProperty('playlist.visible', '1' if value else '')
 
     def showPlaylistDialog(self):
         if not self.playlistDialog:
