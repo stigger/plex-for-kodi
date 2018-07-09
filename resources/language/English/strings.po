@@ -970,3 +970,18 @@ msgstr ""
 msgctxt "#32483"
 msgid "Stream Info"
 msgstr ""
+msgctxt "#32467"
+msgid "Appearance"
+msgstr ""
+
+msgctxt "#32468"
+msgid "Show dynamic background art"
+msgstr ""
+
+msgctxt "#32469"
+msgid "Background art blur amount"
+msgstr ""
+
+msgctxt "#32470"
+msgid "Background art opacity"
+msgstr ""

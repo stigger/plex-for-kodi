@@ -969,3 +969,19 @@ msgstr "Plex/Kodi-Skip-Schritte für die Zeitachse verwenden"
 msgctxt "#32483"
 msgid "Stream Info"
 msgstr "Stream Info"
+
+msgctxt "#32467"
+msgid "Darstellung"
+msgstr ""
+
+msgctxt "#32468"
+msgid "Show dynamic background art"
+msgstr "Dynamische Hintergrundbilder aktivieren"
+
+msgctxt "#32469"
+msgid "Background art blur amount"
+msgstr "Unschärfe der Hintergrundbilder"
+
+msgctxt "#32470"
+msgid "Background art opacity"
+msgstr "Deckkraft der Hintergrundbilder"
