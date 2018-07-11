@@ -12,6 +12,7 @@ import kodigui
 from lib import colors
 from lib import util
 from lib import backgroundthread
+from lib import player
 
 import busy
 import subitems
@@ -561,6 +562,9 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
     def onFocus(self, controlID):
         if controlID == self.KEY_LIST_ID:
             self.selectKey()
+
+        if player.PLAYER.bgmPlaying:
+            player.PLAYER.stopAndWait()
 
     def onItemChanged(self, mli):
         if not mli:

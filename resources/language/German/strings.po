@@ -989,3 +989,15 @@ msgstr "Deckkraft der Hintergrundbilder"
 msgctxt "#32484"
 msgid "Show Stream Info"
 msgstr "Stream Info anzeigen"
+
+msgctxt "#32480"
+msgid "Theme music"
+msgstr "Titelmusik"
+
+msgctxt "#32481"
+msgid "Off"
+msgstr "Aus"
+
+msgctxt "#32482"
+msgid "%(percentage)s %%"
+msgstr "%(percentage)s %%"

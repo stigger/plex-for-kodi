@@ -990,3 +990,15 @@ msgstr ""
 msgctxt "#32470"
 msgid "Background art opacity"
 msgstr ""
+
+msgctxt "#32480"
+msgid "Theme music"
+msgstr ""
+
+msgctxt "#32481"
+msgid "Off"
+msgstr ""
+
+msgctxt "#32482"
+msgid "%(percentage)s %%"
+msgstr ""

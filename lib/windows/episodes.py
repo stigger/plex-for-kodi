@@ -127,6 +127,15 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if self.autoPlay:
             self.autoPlay = False
             self.playButtonClicked(force_episode=self.initialEpisode)
+        else:
+            # we've come from a home hub view, play the current item's show's theme song
+            if self.initialEpisode:
+                volume = self.initialEpisode.settings.getThemeMusicValue()
+                if volume > 0:
+                    theme = self.initialEpisode.show().theme
+                    if theme:
+                        player.PLAYER.playBackgroundMusic(theme.asURL(True), volume,
+                                                          self.initialEpisode.show().ratingKey)
 
     def onReInit(self):
         self.selectEpisode()
@@ -278,6 +287,9 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.setProperty('on.extras', '')
         elif xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + !ControlGroup(300).HasFocus(0)'):
             self.setProperty('on.extras', '1')
+
+        if player.PLAYER.bgmPlaying and player.PLAYER.handler.currentlyPlaying != self.season.show().ratingKey:
+            player.PLAYER.stopAndWait()
 
     def openItem(self, control=None, item=None):
         if not item:
@@ -579,7 +591,10 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.updateItems()
             util.MONITOR.watchStatusChanged()
         elif choice['key'] == 'to_show':
-            self.processCommand(opener.open(self.season.parentRatingKey))
+            self.processCommand(opener.open(
+                self.season.parentRatingKey,
+                came_from=self.season.parentRatingKey)
+            )
         elif choice['key'] == 'to_section':
             self.goHome(self.season.getLibrarySectionId())
         elif choice['key'] == 'delete':
