@@ -298,8 +298,7 @@ class PlexObject(object, Checks):
     def _findPlayer(self, data):
         elem = data.find('Player')
         if elem is not None:
-            from myplex import MyPlexClient
-            return MyPlexClient(elem, server=self.server)
+            return PlexObject(elem, server=self.server)
         return None
 
     def _findTranscodeSession(self, data):
@@ -309,18 +308,23 @@ class PlexObject(object, Checks):
             return media.TranscodeSession(elem, server=self.server)
         return None
 
+    def _findBandwidths(self, data):
+        elem = data.find("Bandwidths")
+        if elem is not None:
+            import media
+            return PlexItemList(elem, media.Bandwidth, media.Bandwidth.TYPE, server=self.server)
+        return []
+
     def _findUser(self, data):
         elem = data.find('User')
         if elem is not None:
-            from myplex import MyPlexUser
-            return MyPlexUser(elem, self.initpath)
+            return PlexObject(elem, self.initpath)
         return None
 
     def _findSession(self, data):
         elem = data.find('Session')
         if elem is not None:
-            from myplex import MyPlexSession
-            return MyPlexSession(elem, self.initpath, server=self.server)
+            return PlexObject(elem, self.initpath, server=self.server)
         return None
 
     def getAbsolutePath(self, attr):

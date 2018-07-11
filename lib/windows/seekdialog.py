@@ -10,7 +10,10 @@ import playersettings
 import dropdown
 
 from lib import util
-from plexnet.videosession import VideoSessionInfo
+from plexnet.videosession import VideoSessionInfo, ATTRIBUTE_TYPES as SESSION_ATTRIBUTE_TYPES
+from plexnet.exceptions import ServerNotOwned, NotFound
+from plexnet.signalsmixin import SignalsMixin
+
 from lib.kodijsonrpc import builtin
 
 from lib.util import T
@@ -102,9 +105,12 @@ class SeekDialog(kodigui.BaseDialog):
         self._atSkipStep = -1
         self._lastSkipDirection = None
         self._forcedLastSkipAmount = None
+        self.lastTimelineResponse = None
         self.skipSteps = self.SKIP_STEPS
         self.useAutoSeek = util.advancedSettings.autoSeek
         self.useDynamicStepsForTimeline = util.advancedSettings.dynamicTimelineSeek
+
+        self.player.video.server.on("np:timelineResponse", self.timelineResponseCallback)
 
         if util.kodiSkipSteps and util.advancedSettings.kodiSkipStepping:
             self.skipSteps = {"negative": [], "positive": []}
@@ -124,6 +130,10 @@ class SeekDialog(kodigui.BaseDialog):
     @property
     def player(self):
         return self.handler.player
+
+    def timelineResponseCallback(self, **kwargs):
+        response = kwargs.get("response")
+        self.lastTimelineResponse = response.getBodyXml()
 
     def resetTimeout(self):
         self.timeout = time.time() + self._hideDelay
@@ -175,6 +185,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.update()
 
     def onReInit(self):
+        self.lastTimelineResponse = None
         self.resetTimeout()
         self.resetSeeking()
         self.updateProperties()
@@ -248,8 +259,11 @@ class SeekDialog(kodigui.BaseDialog):
                     self.showOSD()
                     self.setFocusId(self.BIG_SEEK_LIST_ID)
                 elif action.getButtonCode() == 61519:
-                    # xbmc.executebuiltin('Action(PlayerProcessInfo)')
-                    xbmc.executebuiltin('Action(CodecInfo)')
+                    if self.getProperty('show.PPI'):
+                        self.hidePPIDialog()
+                    else:
+                        self.showPPIDialog()
+
             elif controlID == self.BIG_SEEK_LIST_ID:
                 if action in (xbmcgui.ACTION_MOVE_RIGHT, xbmcgui.ACTION_BIG_STEP_FORWARD):
                     return self.updateBigSeek()
@@ -365,20 +379,63 @@ class SeekDialog(kodigui.BaseDialog):
             kodigui.BaseDialog.doClose(self)
 
     def showPPIDialog(self):
-        try:
-            currentVideo = self.player.video
-            videoSession = currentVideo.server.findVideoSession(currentVideo.settings.getGlobal("clientIdentifier"),
-                                                                currentVideo.ratingKey)
+        for attrib in SESSION_ATTRIBUTE_TYPES.values():
+            self.setProperty('ppi.%s' % attrib.label, "")
 
-            if videoSession:
-                # fill attributes
-                info = VideoSessionInfo(videoSession, currentVideo)
-                for attrib in info.attributes.values():
-                    self.setProperty('ppi.%s' % attrib.label, attrib.value)
+        self.setProperty('show.PPI', '1')
+        self.setProperty('ppi.Status', 'Loading ...')
+
+        def getVideoSession(currentVideo):
+            return currentVideo.server.findVideoSession(currentVideo.settings.getGlobal("clientIdentifier"),
+                                                        currentVideo.ratingKey)
+
+        info = None
+        currentVideo = self.player.video
+        try:
+            videoSession = None
+            elapsed = 0
+            while not videoSession:
+                if elapsed > 5:
+                    raise NotFound
+
+                videoSession = getVideoSession(currentVideo)
+                if videoSession:
+                    break
+
+                util.MONITOR.waitForAbort(1)
+                elapsed += 1
+
+            # fill attributes
+            info = VideoSessionInfo(videoSession, currentVideo)
+
+        except ServerNotOwned:
+            # timeline response data fallback
+            elapsed = 0
+            try:
+                while not self.lastTimelineResponse:
+                    if elapsed > 5:
+                        raise NotFound
+
+                    util.MONITOR.waitForAbort(0.1)
+                    elapsed += 0.1
+
+                info = VideoSessionInfo(None, currentVideo, incompleteSessionData=self.lastTimelineResponse)
+            except NotFound:
+                self.setProperty('ppi.Status', 'Info not available (data not found)')
+
+            except:
+                util.ERROR()
+
+        except NotFound:
+            self.setProperty('ppi.Status', 'Info not available (session not found)')
+
         except:
             util.ERROR()
 
-        self.setProperty('show.PPI', '1')
+        if info:
+            self.setProperty('ppi.Status', '')
+            for attrib in info.attributes.values():
+                self.setProperty('ppi.%s' % attrib.label, attrib.value)
 
     def hidePPIDialog(self):
         self.setProperty('show.PPI', '')
