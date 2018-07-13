@@ -52,24 +52,17 @@ class ListSetting(BasicSetting):
     type = 'LIST'
     options = ()
 
-    @property
-    def optionsAmount(self):
-        return self.getOptionsAmount()
-
-    def getOptionsAmount(self):
-        return len(self.options)
-
     def translate(self, val):
-        return self.options[self.optionsAmount - val]
+        return self.options[len(self.options) - 1 - val]
 
     def optionLabels(self):
         return self.options
 
     def optionIndex(self):
-        return self.optionsAmount - self.get()
+        return len(self.options) - 1 - self.get()
 
     def set(self, val):
-        BasicSetting.set(self, self.optionsAmount - val)
+        BasicSetting.set(self, len(self.options) - 1 - val)
 
 
 class QualitySetting(ListSetting):
@@ -89,9 +82,6 @@ class QualitySetting(ListSetting):
         T(32013),
         T(32014),
     )
-
-    def getOptionsAmount(self):
-        return 13
 
 
 class ThemeMusicSetting(ListSetting):
