@@ -37,6 +37,7 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
         if sender == 'script.plex' and method.endswith('RESTORE'):
             from windows import kodigui
             getAdvancedSettings()
+            setGlobalClockFormat()
             xbmc.executebuiltin('ActivateWindow({0})'.format(kodigui.BaseFunctions.lastWinID))
 
 
@@ -353,6 +354,13 @@ def get24hFormat():
 
 
 time_format_twentyfour = get24hFormat()
+
+
+def setGlobalClockFormat():
+    xbmc.executebuiltin("skin.setstring(clock_24h, %s)" % (time_format_twentyfour and "1" or ""))
+
+
+setGlobalClockFormat()
 
 
 def getKodiSkipSteps():
