@@ -755,7 +755,20 @@
                 <align>right</align>
                 <aligny>center</aligny>
                 <textcolor>FFFFFFFF</textcolor>
-                <label>$INFO[System.Time]</label>
+                <label>$INFO[System.Time("hh:mm")]</label>
+                <visible>!String.IsEmpty(skin.String(clock_24h))</visible>
+            </control>
+            <control type="label">
+                <right>213</right>
+                <posy>35</posy>
+                <width>200</width>
+                <height>65</height>
+                <font>font10</font>
+                <align>right</align>
+                <aligny>center</aligny>
+                <textcolor>FFFFFFFF</textcolor>
+                <label>$INFO[System.Time("h:mm xx")]</label>
+                <visible>String.IsEmpty(skin.String(clock_24h))</visible>
             </control>
             <control type="image">
                 <posx>153r</posx>
