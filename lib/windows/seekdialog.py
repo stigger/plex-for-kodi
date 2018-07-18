@@ -99,6 +99,9 @@ class SeekDialog(kodigui.BaseDialog):
         self._seekingWithoutOSD = False
         self._delayedSeekThread = None
         self._delayedSeekTimeout = 0
+        self._osdHideAnimationThread = None
+        self._osdHideAnimationTimeout = 0
+        self._hidingOSD = False
         self._osdHideFast = False
         self._hideDelay = self.HIDE_DELAY
         self._autoSeekDelay = self.AUTO_SEEK_DELAY
@@ -288,6 +291,9 @@ class SeekDialog(kodigui.BaseDialog):
                     return
 
                 if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
+                    if self._hidingOSD:
+                        return
+
                     if self.osdVisible():
                         self.hideOSD()
                     else:
@@ -954,13 +960,32 @@ class SeekDialog(kodigui.BaseDialog):
         self.setFocusId(self.PLAY_PAUSE_BUTTON_ID)
 
     def hideOSD(self):
+        self._hidingOSD = True
         self.setProperty('show.OSD', '')
         self.setFocusId(self.NO_OSD_BUTTON_ID)
         self.resetSeeking()
+        self._osdHideAnimationTimeout = time.time() + 0.2
+
+        if not self._osdHideAnimationThread or not self._osdHideAnimationThread.isAlive():
+            self._osdHideAnimationThread = threading.Thread(target=self._waitForOSDHideAnimation)
+            self._osdHideAnimationThread.start()
+        else:
+            # fixme: most likely not needed
+            self._hidingOSD = False
+
         self._osdHideFast = False
         if self.playlistDialog:
             self.playlistDialog.doClose()
             self.playlistDialogVisible = False
+
+    def _waitForOSDHideAnimation(self):
+        try:
+            while not util.MONITOR.waitForAbort(0.1):
+                if time.time() > self._osdHideAnimationTimeout or not self._osdHideAnimationTimeout:
+                    break
+
+        finally:
+            self._hidingOSD = False
 
 
 class PlaylistDialog(kodigui.BaseDialog):
