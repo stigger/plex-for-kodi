@@ -527,9 +527,10 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             if len(mli.dataSource.media) > 1:
                 options.append({'key': 'play_version', 'display': T(32451, 'Play Version...')})
 
-            if not mli.dataSource.isWatched or mli.dataSource.viewOffset.asInt():
+            inProgress = mli.dataSource.viewOffset.asInt()
+            if not mli.dataSource.isWatched or inProgress:
                 options.append({'key': 'mark_watched', 'display': T(32319, 'Mark Played')})
-            if mli.dataSource.isWatched or mli.dataSource.viewOffset.asInt():
+            if mli.dataSource.isWatched or inProgress:
                 options.append({'key': 'mark_unwatched', 'display': T(32318, 'Mark Unplayed')})
 
             # if True:

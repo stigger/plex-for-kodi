@@ -182,9 +182,10 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if len(self.video.media) > 1:
             options.append({'key': 'play_version', 'display': T(32451, 'Play Version...')})
 
-        if not self.video.isWatched or self.video.viewOffset.asInt():
+        inProgress = self.video.viewOffset.asInt()
+        if not self.video.isWatched or inProgress:
             options.append({'key': 'mark_watched', 'display': T(32319, 'Mark Played')})
-        if self.video.isWatched or self.video.viewOffset.asInt():
+        if self.video.isWatched or inProgress:
             options.append({'key': 'mark_unwatched', 'display': T(32318, 'Mark Unplayed')})
 
         options.append(dropdown.SEPARATOR)
