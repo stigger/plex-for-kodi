@@ -500,6 +500,7 @@ class AdvancedSettings(object):
         ("dynamic_backgrounds", False),
         ("background_art_blur_amount", 128),
         ("background_art_opacity_amount", 60),
+        ("fast_back", False),
     )
 
     def __init__(self):
