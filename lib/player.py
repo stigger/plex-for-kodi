@@ -693,6 +693,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.bgmPlaying = False
         self.lastPlayWasBGM = False
         self.BGMTask = None
+        self.pauseAfterPlaybackStarted = False
         self.video = None
         self.hasOSD = False
         self.hasSeekOSD = False
@@ -718,6 +719,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.started = False
         self.bgmPlaying = False
         self.playerObject = None
+        self.pauseAfterPlaybackStarted = False
         self.handler = AudioPlayerHandler(self)
         self.currentTime = 0
 
@@ -979,6 +981,10 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
     def onPlayBackStarted(self):
         self.started = True
+        if self.pauseAfterPlaybackStarted:
+            self.control('pause')
+            self.pauseAfterPlaybackStarted = False
+
         util.DEBUG_LOG('Player - STARTED')
         self.trigger('playback.started')
         if not self.handler:
