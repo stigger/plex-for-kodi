@@ -188,6 +188,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
             if controlID == self.EPISODE_LIST_ID:
                 self.checkForHeaderFocus(action)
+
             if controlID == self.LIST_OPTIONS_BUTTON_ID and self.checkOptionsAction(action):
                 return
             elif action == xbmcgui.ACTION_CONTEXT_MENU:
@@ -222,7 +223,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     def checkOptionsAction(self, action):
         if action == xbmcgui.ACTION_MOVE_UP:
             mli = self.episodeListControl.getSelectedItem()
-            if not mli:
+            if not mli or mli.getProperty("is.boundary"):
                 return False
             pos = mli.pos() - 1
             if self.episodeListControl.positionIsValid(pos):
@@ -231,7 +232,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             return True
         elif action == xbmcgui.ACTION_MOVE_DOWN:
             mli = self.episodeListControl.getSelectedItem()
-            if not mli:
+            if not mli or mli.getProperty("is.boundary"):
                 return False
             pos = mli.pos() + 1
             if self.episodeListControl.positionIsValid(pos):
@@ -272,7 +273,6 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         if 399 < controlID < 500:
             self.setProperty('hub.focus', str(controlID - 400))
-
         if xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + ControlGroup(300).HasFocus(0)'):
             self.setProperty('on.extras', '')
         elif xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + !ControlGroup(300).HasFocus(0)'):
@@ -428,7 +428,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
     def settingsButtonClicked(self):
         mli = self.episodeListControl.getSelectedItem()
-        if not mli:
+        if not mli or mli.getProperty("is.boundary"):
             return
 
         episode = mli.dataSource
@@ -441,7 +441,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
     def infoButtonClicked(self):
         mli = self.episodeListControl.getSelectedItem()
-        if not mli:
+        if not mli or mli.getProperty("is.boundary"):
             return
 
         episode = mli.dataSource
@@ -465,7 +465,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     def episodeListClicked(self, play_version=False, force_episode=None):
         if not force_episode:
             mli = self.episodeListControl.getSelectedItem()
-            if not mli:
+            if not mli or mli.getProperty("is.boundary"):
                 return
 
             episode = mli.dataSource
@@ -509,7 +509,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         mli = self.episodeListControl.getSelectedItem()
 
-        if mli:
+        if mli and not mli.getProperty("is.boundary"):
             if len(mli.dataSource.media) > 1:
                 options.append({'key': 'play_version', 'display': T(32451, 'Play Version...')})
 
@@ -601,7 +601,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     @busy.dialog()
     def _delete(self):
         mli = self.episodeListControl.getSelectedItem()
-        if not mli:
+        if not mli or mli.getProperty("is.boundary"):
             return
 
         video = mli.dataSource
@@ -619,6 +619,13 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     def checkForHeaderFocus(self, action):
         mli = self.episodeListControl.getSelectedItem()
         if not mli:
+            return
+
+        if mli.getProperty("is.boundary"):
+            if not mli.getProperty("is.updating"):
+                direction = "left" if mli.getProperty("left.boundary") else "right"
+                mli.setBoolProperty("is.updating", True)
+                self.fillEpisodes(update=True, index=int(mli.getProperty("orig.index")), direction=direction)
             return
 
         if mli != self.lastItem:
@@ -758,19 +765,41 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         # mli.setProperty('progress', util.getProgressImage(obj))
         return mli
 
-    def fillEpisodes(self, update=False):
+    def fillEpisodes(self, update=False, index=None, direction=None):
         items = []
         idx = 0
 
         episodes = self.season.episodes()
-        self.episodeListControl.addItems(
-            [kodigui.ManagedListItem(properties={'thumb.fallback': 'script.plex/thumb_fallbacks/show.png'}) for x in range(len(episodes))]
-        )
 
-        if self.episode and self.episode in episodes:
-            self.episodeListControl.selectItem(episodes.index(self.episode))
+        # amount of episodes to show per slice
+        amount = 25
 
-        for episode in episodes:
+        # limit the left side to a maximum of maxLeftAmount
+        maxLeftAmount = amount / 2 + 1
+        epInEps = self.episode and self.episode in episodes
+        epIdx = 0
+        if not index:
+            if epInEps:
+                epIdx = episodes.index(self.episode)
+
+                # clamp the left side dynamically based on the item index and how many items are left in the season
+                maxLeftAmount = min(epIdx, max(maxLeftAmount, amount - len(episodes[epIdx:])))
+        else:
+            maxLeftAmount = min(index, amount) if direction == "left" else 0
+            epIdx = index
+
+        # slice the episode list around the currently selected episode, if any
+        leftBoundaryIdx = max(0, epIdx-maxLeftAmount)
+        rightBoundaryIdx = min(len(episodes), leftBoundaryIdx+amount)
+        epSlice = episodes[leftBoundaryIdx:rightBoundaryIdx]
+        moreLeft = leftBoundaryIdx > 0
+        moreRight = rightBoundaryIdx + 1 < len(episodes)
+
+        mlis = [kodigui.ManagedListItem(properties={'thumb.fallback': 'script.plex/thumb_fallbacks/show.png'}) for x in range(len(epSlice))]
+
+        self.episodeListControl.addItems(mlis)
+
+        for episode in epSlice:
             mli = self.createListItem(episode)
             self.setItemInfo(episode, mli)
             if mli:
@@ -778,13 +807,39 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 items.append(mli)
                 idx += 1
 
+        if items:
+            if moreRight:
+                end = kodigui.ManagedListItem('')
+                end.setBoolProperty('is.boundary', True)
+                end.setBoolProperty('right.boundary', True)
+                end.setProperty("orig.index", str(rightBoundaryIdx))
+                items.append(end)
+
+            if moreLeft:
+                start = kodigui.ManagedListItem('')
+                start.setBoolProperty('is.boundary', True)
+                start.setBoolProperty('left.boundary', True)
+                start.setProperty("orig.index", str(leftBoundaryIdx))
+                items.insert(0, start)
+
         self.episodeListControl.replaceItems(items)
+
+        if epInEps and not direction:
+            self.episodeListControl.selectItem(epSlice.index(self.episode)+1)
+
+        elif direction == "left":
+            self.episodeListControl.selectItem(len(epSlice) if moreLeft else index - 1)
+        elif direction == "right":
+            self.episodeListControl.selectItem(1 if moreLeft else 0)
 
         self.reloadItems(items)
 
     def reloadItems(self, items):
         tasks = []
         for mli in items:
+            if not mli.dataSource:
+                continue
+
             task = EpisodeReloadTask().setup(mli.dataSource, self.reloadItemCallback)
             self.tasks.add(task)
             tasks.append(task)
