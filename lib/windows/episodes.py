@@ -92,6 +92,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.lastItem = None
         self.lastFocusID = None
         self.tasks = backgroundthread.Tasks()
+        self.initialized = False
 
     def reset(self, episode, season=None, show=None):
         self.episode = episode
@@ -99,6 +100,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.show_ = show or self.season.show().reload(includeRelated=1, includeRelatedCount=10, includeExtras=1, includeExtrasCount=10)
         self.parentList = None
         self.seasons = None
+        self.initialized = False
 
     def doClose(self):
         kodigui.ControlledWindow.doClose(self)
@@ -140,6 +142,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.selectEpisode(from_select_episode=from_select_episode)
         self.checkForHeaderFocus(xbmcgui.ACTION_MOVE_DOWN)
         self.setFocusId(self.PLAY_BUTTON_ID)
+        self.initialized = True
 
     @busy.dialog()
     def setup(self):
@@ -622,10 +625,13 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             return
 
         if mli.getProperty("is.boundary"):
+            if not self.initialized:
+                return
+
             if not mli.getProperty("is.updating"):
                 direction = "left" if mli.getProperty("left.boundary") else "right"
                 mli.setBoolProperty("is.updating", True)
-                self.fillEpisodes(update=True, index=int(mli.getProperty("orig.index")), direction=direction)
+                self.fillEpisodes(update=True, start_offset=int(mli.getProperty("orig.index")), direction=direction)
             return
 
         if mli != self.lastItem:
@@ -765,41 +771,110 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         # mli.setProperty('progress', util.getProgressImage(obj))
         return mli
 
-    def fillEpisodes(self, update=False, index=None, direction=None):
+    def fillEpisodes(self, update=False, start_offset=None, direction=None):
         items = []
         idx = 0
 
-        episodes = self.season.episodes()
+        #episodes = self.season.episodes()
+        leafCount = int(self.season.leafCount)
 
         # amount of episodes to show per slice
-        amount = 25
+        amount = 8
+        offset = 0
 
-        # limit the left side to a maximum of maxLeftAmount
-        maxLeftAmount = amount / 2 + 1
-        epInEps = self.episode and self.episode in episodes
-        epIdx = 0
-        if not index:
+        # limit the sides to a maximum of half of the amount
+        boundaryAmount = amount / 2
+        if not start_offset:
+            if self.episode:
+                # try cutting the query short while not querying all episodes, to find the slice with the currently
+                # selected episode in it
+                episodes = []
+                _amount = amount * 1.5
+                epSeasonIndex = int(self.episode.index) - 1  # .index is 1-based
+                if _amount < leafCount:
+                    while self.episode not in episodes:
+                        if _amount >= leafCount:
+                            # ep not found?
+                            break
+
+                        offset = int(max(0, epSeasonIndex - _amount / 2))
+                        episodes = self.season.episodes(offset=offset, limit=int(_amount))
+
+                        # in case the episode wasn't found inside the slice, increase the slice's size
+                        _amount *= 2
+                else:
+                    # shortcut for short seasons
+                    episodes = self.season.episodes(offset=offset, limit=int(_amount))
+
+            else:
+                episodes = self.season.episodes(offset=offset, limit=amount)
+
+            epInEps = self.episode and self.episode in episodes
             if epInEps:
-                epIdx = episodes.index(self.episode)
+                # slice around the episode
+                # Clamp the left side dynamically based on the item index and how many items are left in the season.
+                # The episodes list might be longer than our limit, because the season doesn't necessarily have all the
+                # episodes in it and we're basing the initial load on the current episode's index, which is the actual
+                # index of the episode in the season, not what's physically there. To find the episode, we're
+                # dynaamically increasing the window size above. Re-clamp to :amount:, adding slack to both sides if
+                # the remaining episodes would fit inside half of :amount:.
+                tmpEpIdx = episodes.index(self.episode)
+                leftBoundary = amount - len(episodes[tmpEpIdx:tmpEpIdx+boundaryAmount])
 
-                # clamp the left side dynamically based on the item index and how many items are left in the season
-                maxLeftAmount = min(epIdx, max(maxLeftAmount, amount - len(episodes[epIdx:])))
+                left = max(tmpEpIdx - leftBoundary, 0)
+                util.DEBUG_LOG("%s, %s, %s, %s" % (tmpEpIdx, leftBoundary, left, offset))
+                offset += left
+
+                # avoid short pages on the left end
+                if offset < boundaryAmount:
+                    amount += offset
+                    left = 0
+                    offset = 0
+
+                epsLeft = leafCount - offset
+                # avoid short pages on the right end
+                if epsLeft < amount + boundaryAmount:
+                    left = 0
+                    amount = epsLeft
+
+                episodes = episodes[left:left + amount]
+
         else:
-            maxLeftAmount = min(index, amount) if direction == "left" else 0
-            epIdx = index
+            util.DEBUG_LOG("CALLED WITH INDEX; %s, %s" % (self.initialized, start_offset))
+            epInEps = False
+            offset = start_offset
+            if direction == "left":
+                amount = min(offset, amount)
+                if offset - amount < 0:
+                    amount = offset
+                    offset = 0
 
-        # slice the episode list around the currently selected episode, if any
-        leftBoundaryIdx = max(0, epIdx-maxLeftAmount)
-        rightBoundaryIdx = min(len(episodes), leftBoundaryIdx+amount)
-        epSlice = episodes[leftBoundaryIdx:rightBoundaryIdx]
-        moreLeft = leftBoundaryIdx > 0
-        moreRight = rightBoundaryIdx + 1 < len(episodes)
+                else:
+                    offset -= amount
 
-        mlis = [kodigui.ManagedListItem(properties={'thumb.fallback': 'script.plex/thumb_fallbacks/show.png'}) for x in range(len(epSlice))]
+                # avoid short pages on the left end
+                if 0 < offset < boundaryAmount:
+                    amount += offset
+                    offset = 0
+
+            else:
+                epsLeft = leafCount - offset
+                # avoid short pages on the right end
+                if epsLeft < amount + boundaryAmount:
+                    amount = epsLeft
+
+                util.DEBUG_LOG("LEFT: %s, %s, %s" % (epsLeft, leafCount, offset))
+            episodes = self.season.episodes(offset=offset, limit=amount)
+
+        moreLeft = offset > 0
+        moreRight = offset + amount < leafCount
+
+        mlis = [kodigui.ManagedListItem(properties={'thumb.fallback': 'script.plex/thumb_fallbacks/show.png'})
+                for x in range(len(episodes))]
 
         self.episodeListControl.addItems(mlis)
 
-        for episode in epSlice:
+        for episode in episodes:
             mli = self.createListItem(episode)
             self.setItemInfo(episode, mli)
             if mli:
@@ -812,25 +887,26 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 end = kodigui.ManagedListItem('')
                 end.setBoolProperty('is.boundary', True)
                 end.setBoolProperty('right.boundary', True)
-                end.setProperty("orig.index", str(rightBoundaryIdx))
+                end.setProperty("orig.index", str(int(offset+amount)))
                 items.append(end)
 
             if moreLeft:
                 start = kodigui.ManagedListItem('')
                 start.setBoolProperty('is.boundary', True)
                 start.setBoolProperty('left.boundary', True)
-                start.setProperty("orig.index", str(leftBoundaryIdx))
+                start.setProperty("orig.index", str(int(offset)))
                 items.insert(0, start)
 
         self.episodeListControl.replaceItems(items)
 
         if epInEps and not direction:
-            self.episodeListControl.selectItem(epSlice.index(self.episode)+1)
+            util.DEBUG_LOG("AAAAAAAAAAAAAAA: %s" % episodes.index(self.episode))
+            self.episodeListControl.selectItem(episodes.index(self.episode) + (1 if moreLeft else 0))
 
         elif direction == "left":
-            self.episodeListControl.selectItem(len(epSlice) if moreLeft else index - 1)
+            self.episodeListControl.selectItem(len(episodes) - (1 if not moreLeft else 0))
         elif direction == "right":
-            self.episodeListControl.selectItem(1 if moreLeft else 0)
+            self.episodeListControl.selectItem(1)
 
         self.reloadItems(items)
 
