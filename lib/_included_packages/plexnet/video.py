@@ -348,9 +348,9 @@ class Season(Video):
     def isWatched(self):
         return self.viewedLeafCount == self.leafCount
 
-    def episodes(self, watched=None):
+    def episodes(self, watched=None, offset=None, limit=None):
         path = self.key
-        return plexobjects.listItems(self.server, path, watched=watched)
+        return plexobjects.listItems(self.server, path, watched=watched, offset=offset, limit=limit)
 
     def episode(self, title):
         path = self.key
