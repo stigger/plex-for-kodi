@@ -785,6 +785,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         # limit the sides to a maximum of half of the amount
         boundaryAmount = amount / 2
         if not start_offset:
+            # normal season load, no paging requested
             if self.episode:
                 # try cutting the query short while not querying all episodes, to find the slice with the currently
                 # selected episode in it
@@ -840,6 +841,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 episodes = episodes[left:left + amount]
 
         else:
+            # paging requested by activating one of the boundary elements
             util.DEBUG_LOG("CALLED WITH INDEX; %s, %s" % (self.initialized, start_offset))
             epInEps = False
             offset = start_offset
