@@ -278,12 +278,14 @@ class Movie(PlayableVideo):
 class Show(Video):
     TYPE = 'show'
 
+    _relatedCount = None
+
     def _setData(self, data):
         Video._setData(self, data)
         if self.isFullObject():
             self.genres = plexobjects.PlexItemList(data, media.Genre, media.Genre.TYPE, server=self.server)
             self.roles = plexobjects.PlexItemList(data, media.Role, media.Role.TYPE, server=self.server, container=self.container)
-            self.related = plexobjects.PlexItemList(data.find('Related'), plexlibrary.Hub, plexlibrary.Hub.TYPE, server=self.server, container=self)
+            #self.related = plexobjects.PlexItemList(data.find('Related'), plexlibrary.Hub, plexlibrary.Hub.TYPE, server=self.server, container=self)
             self.extras = PlexVideoItemList(data.find('Extras'), initpath=self.initpath, server=self.server, container=self)
 
     @property
@@ -305,6 +307,17 @@ class Show(Video):
     def episodes(self, watched=None):
         leavesKey = '/library/metadata/%s/allLeaves' % self.ratingKey
         return plexobjects.listItems(self.server, leavesKey, watched=watched)
+
+    @property
+    def relatedCount(self):
+        if self._relatedCount is None:
+            self._relatedCount = self.related(0, 0).totalSize
+
+        return self._relatedCount
+
+    def related(self, offset=None, limit=None):
+        path = '/library/metadata/%s/similar' % self.ratingKey
+        return plexobjects.listItems(self.server, path, offset=offset, limit=limit, params={"count": 9999})
 
     def episode(self, title):
         path = '/library/metadata/%s/allLeaves' % self.ratingKey
