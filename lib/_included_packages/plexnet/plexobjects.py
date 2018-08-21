@@ -513,8 +513,8 @@ class ItemContainer(list):
 
 
 def listItems(server, path, libtype=None, watched=None, bytag=False, data=None, container=None, offset=None,
-              limit=None):
-    data = data if data is not None else server.query(path, offset=offset, limit=limit)
+              limit=None, **kwargs):
+    data = data if data is not None else server.query(path, offset=offset, limit=limit, **kwargs)
     container = container or PlexContainer(data, path, server, path)
     items = ItemContainer().init(container)
 
