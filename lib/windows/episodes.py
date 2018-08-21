@@ -193,7 +193,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     def reset(self, episode, season=None, show=None):
         self.episode = episode
         self.season = season or self.episode.season()
-        self.show_ = show or self.season.show().reload(includeRelated=1, includeRelatedCount=10, includeExtras=1, includeExtrasCount=10)
+        self.show_ = show or self.season.show().reload(includeExtras=1, includeExtrasCount=10)
         self.parentList = None
         self.seasons = None
         self.initialized = False
