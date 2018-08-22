@@ -108,6 +108,9 @@ class MLCPaginator(object):
     def createListItem(self, data):
         return self.parentWindow.createListItem(data)
 
+    def prepareListItem(self, data, mli):
+        pass
+
     def readyForPaging(self):
         return self.parentWindow.initialized
 
@@ -201,6 +204,7 @@ class MLCPaginator(object):
 
             if mli:
                 mli.setProperty('index', str(idx))
+                self.prepareListItem(item, mli)
                 finalItems.append(mli)
                 idx += 1
 

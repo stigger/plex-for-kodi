@@ -22,6 +22,21 @@ from lib import metadata
 from lib.util import T
 
 
+class RelatedPaginator(windowutils.MLCPaginator):
+    thumbFallback = lambda self, rel: 'script.plex/thumb_fallbacks/{0}.png'.format(
+        rel.type in ('show', 'season', 'episode') and 'show' or 'movie')
+
+    def getData(self, offset, amount):
+        return self.parentWindow.video.related(offset=offset, limit=amount)
+
+    def createListItem(self, rel):
+        return kodigui.ManagedListItem(
+            rel.title or '',
+            thumbnailImage=rel.defaultThumb.asTranscodedImageURL(*self.parentWindow.RELATED_DIM),
+            data_source=rel
+        )
+
+
 class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     xmlFile = 'script-plex-pre_play.xml'
     path = util.ADDON.getAddonInfo('path')
@@ -63,6 +78,8 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.exitCommand = None
         self.trailer = None
         self.lastFocusID = None
+        self.initialized = False
+        self.relatedPaginator = None
 
     def onFirstInit(self):
         self.extraListControl = kodigui.ManagedControlList(self, self.EXTRA_LIST_ID, 5)
@@ -71,14 +88,17 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         self.progressImageControl = self.getControl(self.PROGRESS_IMAGE_ID)
         self.setup()
+        self.initialized = True
 
         if self.autoPlay:
             self.autoPlay = False
             self.playVideo()
 
     def onReInit(self):
+        self.initialized = False
         self.video.reload()
         self.refreshInfo()
+        self.initialized = True
 
     def refreshInfo(self):
         oldFocusId = self.getFocusId()
@@ -96,6 +116,11 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
             if not controlID and self.lastFocusID and not action == xbmcgui.ACTION_MOUSE_MOVE:
                 self.setFocusId(self.lastFocusID)
+
+            if controlID == self.RELATED_LIST_ID:
+                if self.relatedPaginator.boundaryHit:
+                    util.DEBUG_LOG("BOUNDARY HIT!!")
+                    self.relatedPaginator.paginate()
 
             if action in(xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_CONTEXT_MENU):
                 if not xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(self.OPTIONS_GROUP_ID)):
@@ -429,7 +454,11 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         elif self.video.type == 'movie':
             self.setProperty('preview.no', '1')
 
-        self.video.reload(checkFiles=1, includeRelated=1, includeRelatedCount=10, includeExtras=1, includeExtrasCount=10)
+        self.video.reload(checkFiles=1, includeExtras=1, includeExtrasCount=10)
+        self.relatedPaginator = RelatedPaginator(self.relatedListControl, leaf_count=int(self.video.relatedCount),
+                                                 parent_window=self)
+
+        util.DEBUG_LOG("SIMILARA: %s" % int(self.video.relatedCount))
         self.setInfo()
         self.fillExtras()
         hasPrev = self.fillRelated()
@@ -560,28 +589,17 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         return True
 
     def fillRelated(self, has_prev=False):
-        items = []
-        idx = 0
-
-        if not self.video.related:
+        if not self.video.relatedCount:
             self.relatedListControl.reset()
             return False
 
-        for rel in self.video.related()[0].items:
-            mli = kodigui.ManagedListItem(rel.title or '', thumbnailImage=rel.thumb.asTranscodedImageURL(*self.RELATED_DIM), data_source=rel)
-            if mli:
-                mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/{0}.png'.format(rel.type in ('show', 'season', 'episode') and 'show' or 'movie'))
-                mli.setProperty('index', str(idx))
-                items.append(mli)
-                idx += 1
+        items = self.relatedPaginator.paginate()
 
         if not items:
             return False
 
         self.setProperty('divider.{0}'.format(self.RELATED_LIST_ID), has_prev and '1' or '')
 
-        self.relatedListControl.reset()
-        self.relatedListControl.addItems(items)
         return True
 
     def fillRoles(self, has_prev=False):

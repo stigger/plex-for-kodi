@@ -177,7 +177,22 @@ class Video(media.MediaItem):
         return self.media()[0].isAccessible()
 
 
-class PlayableVideo(Video):
+class RelatedMixin(object):
+    _relatedCount = None
+
+    @property
+    def relatedCount(self):
+        if self._relatedCount is None:
+            self._relatedCount = self.related(0, 0).totalSize
+
+        return self._relatedCount
+
+    def related(self, offset=None, limit=None, _max=36):
+        path = '/library/metadata/%s/similar' % self.ratingKey
+        return plexobjects.listItems(self.server, path, offset=offset, limit=limit, params={"count": _max})
+
+
+class PlayableVideo(Video, RelatedMixin):
     TYPE = None
 
     def _setData(self, data):
@@ -221,7 +236,7 @@ class Movie(PlayableVideo):
             self.producers = plexobjects.PlexItemList(data, media.Producer, media.Producer.TYPE, server=self.server)
             self.roles = plexobjects.PlexItemList(data, media.Role, media.Role.TYPE, server=self.server, container=self.container)
             self.writers = plexobjects.PlexItemList(data, media.Writer, media.Writer.TYPE, server=self.server)
-            self.related = plexobjects.PlexItemList(data.find('Related'), plexlibrary.Hub, plexlibrary.Hub.TYPE, server=self.server, container=self)
+            #self.related = plexobjects.PlexItemList(data.find('Related'), plexlibrary.Hub, plexlibrary.Hub.TYPE, server=self.server, container=self)
         else:
             if data.find(media.Media.TYPE) is not None:
                 self.media = plexobjects.PlexMediaItemList(data, plexmedia.PlexMedia, media.Media.TYPE, initpath=self.initpath, server=self.server, media=self)
@@ -275,10 +290,8 @@ class Movie(PlayableVideo):
 
 
 @plexobjects.registerLibType
-class Show(Video):
+class Show(Video, RelatedMixin):
     TYPE = 'show'
-
-    _relatedCount = None
 
     def _setData(self, data):
         Video._setData(self, data)
@@ -307,17 +320,6 @@ class Show(Video):
     def episodes(self, watched=None):
         leavesKey = '/library/metadata/%s/allLeaves' % self.ratingKey
         return plexobjects.listItems(self.server, leavesKey, watched=watched)
-
-    @property
-    def relatedCount(self):
-        if self._relatedCount is None:
-            self._relatedCount = self.related(0, 0).totalSize
-
-        return self._relatedCount
-
-    def related(self, offset=None, limit=None):
-        path = '/library/metadata/%s/similar' % self.ratingKey
-        return plexobjects.listItems(self.server, path, offset=offset, limit=limit, params={"count": 9999})
 
     def episode(self, title):
         path = '/library/metadata/%s/allLeaves' % self.ratingKey
