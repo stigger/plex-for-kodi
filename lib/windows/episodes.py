@@ -107,7 +107,7 @@ class EpisodesPaginator(windowutils.MLCPaginator):
                 leftBoundary = self.pageSize - len(episodes[tmpEpIdx:tmpEpIdx + self.orphans])
 
                 left = max(tmpEpIdx - leftBoundary, 0)
-                util.DEBUG_LOG("%s, %s, %s, %s" % (tmpEpIdx, leftBoundary, left, offset))
+                #util.DEBUG_LOG("%s, %s, %s, %s" % (tmpEpIdx, leftBoundary, left, offset))
                 offset += left
 
                 epsLeft = self.leafCount - offset
@@ -137,7 +137,7 @@ class EpisodesPaginator(windowutils.MLCPaginator):
 
 class RelatedPaginator(windowutils.BaseRelatedPaginator):
     def getData(self, offset, amount):
-        return self.parentWindow.show_.related(offset=offset, limit=amount)
+        return self.parentWindow.show_.getRelated(offset=offset, limit=amount)
 
 
 class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
@@ -290,11 +290,6 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
             if controlID == self.EPISODE_LIST_ID:
                 self.checkForHeaderFocus(action)
-
-            if controlID == self.RELATED_LIST_ID:
-                if self.relatedPaginator.boundaryHit:
-                    util.DEBUG_LOG("BOUNDARY HIT!!")
-                    self.relatedPaginator.paginate()
 
             if controlID == self.LIST_OPTIONS_BUTTON_ID and self.checkOptionsAction(action):
                 return
@@ -725,7 +720,6 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
     def checkForHeaderFocus(self, action):
         if self.episodesPaginator.boundaryHit:
-            util.DEBUG_LOG("BOUNDARY HIT!!")
             items = self.episodesPaginator.paginate()
             self.reloadItems(items)
             return
@@ -929,30 +923,16 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         return True
 
     def fillRelated(self, has_prev=False):
-        items = []
-        idx = 0
-
         if not self.relatedPaginator.leafCount:
             self.relatedListControl.reset()
             return has_prev
 
-        self.setProperty('divider.{0}'.format(self.RELATED_LIST_ID), has_prev and '1' or '')
-        self.relatedPaginator.paginate()
+        items = self.relatedPaginator.paginate()
+        if not items:
+            return False
 
-        # for rel in self.show_.related()[0].items:
-        #     mli = kodigui.ManagedListItem(
-        #         rel.title or '',
-        #         thumbnailImage=rel.defaultThumb.asTranscodedImageURL(*self.RELATED_DIM),
-        #         data_source=rel
-        #     )
-        #     if mli:
-        #         mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/{0}.png'.format(rel.type in ('show', 'season', 'episode') and 'show' or 'movie'))
-        #         mli.setProperty('index', str(idx))
-        #         items.append(mli)
-        #         idx += 1
-        #
-        # self.relatedListControl.reset()
-        # self.relatedListControl.addItems(items)
+        self.setProperty('divider.{0}'.format(self.RELATED_LIST_ID), has_prev and '1' or '')
+
         return True
 
     def fillRoles(self, has_prev=False):

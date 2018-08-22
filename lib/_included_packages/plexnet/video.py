@@ -183,11 +183,15 @@ class RelatedMixin(object):
     @property
     def relatedCount(self):
         if self._relatedCount is None:
-            self._relatedCount = self.related(0, 0).totalSize
+            self._relatedCount = self.getRelated(0, 0).totalSize
 
         return self._relatedCount
 
-    def related(self, offset=None, limit=None, _max=36):
+    @property
+    def related(self):
+        return self.getRelated(0, 8)
+
+    def getRelated(self, offset=None, limit=None, _max=36):
         path = '/library/metadata/%s/similar' % self.ratingKey
         return plexobjects.listItems(self.server, path, offset=offset, limit=limit, params={"count": _max})
 
@@ -463,10 +467,8 @@ class Episode(PlayableVideo):
     def roles(self):
         return self.show().roles
 
-    @property
-    def related(self):
-        self.show().reload(_soft=True, includeRelated=1, includeRelatedCount=10)
-        return self.show().related
+    def getRelated(self, offset=None, limit=None, _max=36):
+        return self.show().getRelated(offset=offset, limit=limit, _max=_max)
 
 
 @plexobjects.registerLibType

@@ -22,6 +22,14 @@ PASSOUT_PROTECTION_DURATION_SECONDS = 7200
 PASSOUT_LAST_VIDEO_DURATION_MILLIS = 1200000
 
 
+class RelatedPaginator(windowutils.BaseRelatedPaginator):
+    def readyForPaging(self):
+        return self.parentWindow.postPlayInitialized
+
+    def getData(self, offset, amount):
+        return (self.parentWindow.prev or self.parentWindow.next).getRelated(offset=offset, limit=amount)
+
+
 class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     xmlFile = 'script-plex-video_player.xml'
     path = util.ADDON.getAddonInfo('path')
@@ -67,6 +75,8 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.aborted = True
         self.timeout = None
         self.passoutProtection = 0
+        self.postPlayInitialized = False
+        self.relatedPaginator = None
 
     def doClose(self):
         util.DEBUG_LOG('VideoPlayerWindow: Closing')
@@ -93,6 +103,8 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     def onAction(self, action):
         try:
             if self.postPlayMode:
+                controlID = self.getFocusId()
+
                 self.cancelTimer()
                 self.resetPassoutProtection()
                 if action in(xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_CONTEXT_MENU):
@@ -110,6 +122,10 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                     self.playVideo(prev=True)
                 elif action == xbmcgui.ACTION_STOP:
                     self.doClose()
+
+                if controlID == self.RELATED_LIST_ID:
+                    if self.relatedPaginator.boundaryHit:
+                        self.relatedPaginator.paginate()
         except:
             util.ERROR()
 
@@ -275,7 +291,12 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         util.DEBUG_LOG('PostPlay: Showing video info')
         if self.next:
-            self.next.reload(includeRelated=1, includeRelatedCount=10, includeExtras=1, includeExtrasCount=10)
+            self.next.reload(includeExtras=1, includeExtrasCount=10)
+
+        self.relatedPaginator = RelatedPaginator(self.relatedListControl,
+                                                 leaf_count=int((self.prev or self.next).relatedCount),
+                                                 parent_window=self)
+
         self.setInfo()
         self.fillOnDeck()
         hasPrev = self.fillRelated()
@@ -285,6 +306,7 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.setFocusId(self.NEXT_BUTTON_ID)
         else:
             self.setFocusId(self.PREV_BUTTON_ID)
+        self.postPlayInitialized = True
 
     def resetPassoutProtection(self):
         self.passoutProtection = time.time() + PASSOUT_PROTECTION_DURATION_SECONDS
@@ -369,9 +391,9 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.setProperty('prev.info.summary', self.prev.summary)
 
         if self.prev.type == 'episode':
+            self.setProperty('related.header', T(32306, 'Related Shows'))
             if self.next:
                 self.setProperty('next.thumb', self.next.thumb.asTranscodedImageURL(*self.NEXT_DIM))
-                self.setProperty('related.header', T(32306, 'Related Shows'))
                 self.setProperty('info.date', util.cleanLeadingZeros(self.next.originallyAvailableAt.asDatetime('%B %d, %Y')))
 
                 self.setProperty('next.title', self.next.grandparentTitle)
@@ -386,9 +408,9 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 )
                 self.setProperty('prev.info.date', util.cleanLeadingZeros(self.prev.originallyAvailableAt.asDatetime('%B %d, %Y')))
         elif self.prev.type == 'movie':
+            self.setProperty('related.header', T(32404, 'Related Movies'))
             if self.next:
                 self.setProperty('next.thumb', self.next.defaultArt.asTranscodedImageURL(*self.NEXT_DIM))
-                self.setProperty('related.header', T(32404, 'Related Movies'))
                 self.setProperty('info.date', self.next.year)
 
                 self.setProperty('next.title', self.next.title)
@@ -437,30 +459,16 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         return True
 
     def fillRelated(self, has_prev=False):
-        items = []
-        idx = 0
-
-        video = self.next if self.next else self.prev
-
-        if not video.related:
+        if not self.relatedPaginator.leafCount:
             self.relatedListControl.reset()
             return False
 
-        for rel in video.related()[0].items:
-            mli = kodigui.ManagedListItem(rel.title or '', thumbnailImage=rel.thumb.asTranscodedImageURL(*self.RELATED_DIM), data_source=rel)
-            if mli:
-                mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/{0}.png'.format(rel.type in ('show', 'season', 'episode') and 'show' or 'movie'))
-                mli.setProperty('index', str(idx))
-                items.append(mli)
-                idx += 1
+        items = self.relatedPaginator.paginate()
 
         if not items:
             return False
 
         self.setProperty('divider.{0}'.format(self.RELATED_LIST_ID), has_prev and '1' or '')
-
-        self.relatedListControl.reset()
-        self.relatedListControl.addItems(items)
         return True
 
     def fillRoles(self, has_prev=False):

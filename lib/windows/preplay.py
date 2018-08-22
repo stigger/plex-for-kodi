@@ -24,7 +24,7 @@ from lib.util import T
 
 class RelatedPaginator(windowutils.BaseRelatedPaginator):
     def getData(self, offset, amount):
-        return self.parentWindow.video.related(offset=offset, limit=amount)
+        return self.parentWindow.video.getRelated(offset=offset, limit=amount)
 
 
 class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
@@ -107,10 +107,6 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             if not controlID and self.lastFocusID and not action == xbmcgui.ACTION_MOUSE_MOVE:
                 self.setFocusId(self.lastFocusID)
 
-            if controlID == self.RELATED_LIST_ID:
-                if self.relatedPaginator.boundaryHit:
-                    self.relatedPaginator.paginate()
-
             if action in(xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_CONTEXT_MENU):
                 if not xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(self.OPTIONS_GROUP_ID)):
                     if self.getProperty('on.extras'):
@@ -127,6 +123,10 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             elif action == xbmcgui.ACTION_PREV_ITEM:
                 self.setFocusId(300)
                 self.prev()
+
+            if controlID == self.RELATED_LIST_ID:
+                if self.relatedPaginator.boundaryHit:
+                    self.relatedPaginator.paginate()
         except:
             util.ERROR()
 

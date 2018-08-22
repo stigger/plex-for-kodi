@@ -137,7 +137,6 @@ class MLCPaginator(object):
 
     @property
     def nextPage(self):
-        util.DEBUG_LOG("CALLED WITH INDEX; %s, %s" % (self.parentWindow.initialized, self.offset))
         leafCount = self.leafCount
         offset = self.offset
         amount = self.pageSize
@@ -162,8 +161,6 @@ class MLCPaginator(object):
             if itemsLeft < self.pageSize + self.orphans:
                 amount = self.pageSize + self.orphans
 
-            util.DEBUG_LOG("LEFT: %s, %s, %s" % (itemsLeft, leafCount, offset))
-
         self.offset = offset
         data = self.getData(offset, amount)
         self._currentAmount = len(data)
@@ -183,8 +180,6 @@ class MLCPaginator(object):
         idx = 0
         moreLeft = self.offset > 0
         moreRight = self.offset + self._currentAmount < self.leafCount
-
-        util.DEBUG_LOG("GERK: %s, %s, %s" % (self.offset, self._currentAmount, self.leafCount))
 
         thumbFallback = self.thumbFallback
         if callable(thumbFallback):
