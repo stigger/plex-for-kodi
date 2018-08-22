@@ -289,7 +289,13 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 self.prev()
 
             if controlID == self.EPISODE_LIST_ID:
-                self.checkForHeaderFocus(action)
+                if self.checkForHeaderFocus(action):
+                    return
+
+            elif controlID == self.RELATED_LIST_ID:
+                if self.relatedPaginator.boundaryHit:
+                    self.relatedPaginator.paginate()
+                    return
 
             if controlID == self.LIST_OPTIONS_BUTTON_ID and self.checkOptionsAction(action):
                 return
@@ -722,7 +728,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if self.episodesPaginator.boundaryHit:
             items = self.episodesPaginator.paginate()
             self.reloadItems(items)
-            return
+            return True
 
         mli = self.episodeListControl.getSelectedItem()
         if not mli or mli.getProperty("is.boundary"):

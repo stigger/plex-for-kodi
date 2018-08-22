@@ -200,6 +200,7 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             if controlID == self.RELATED_LIST_ID:
                 if self.relatedPaginator.boundaryHit:
                     self.relatedPaginator.paginate()
+                    return
 
         except:
             util.ERROR()

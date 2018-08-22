@@ -156,10 +156,12 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 if controlID == self.RELATED_LIST_ID:
                     if self.relatedPaginator.boundaryHit:
                         self.relatedPaginator.paginate()
+                        return
 
                 elif controlID == self.ONDECK_LIST_ID:
                     if self.onDeckPaginator.boundaryHit:
                         self.onDeckPaginator.paginate()
+                        return
         except:
             util.ERROR()
 
