@@ -190,6 +190,7 @@ class MLCPaginator(object):
                 kodigui.ManagedListItem(properties={'thumb.fallback': self.thumbFallback} if self.thumbFallback else {})
                 for x in range(len(items))]
 
+        self.control.reset()
         self.control.addItems(mlis)
 
         finalItems = []
