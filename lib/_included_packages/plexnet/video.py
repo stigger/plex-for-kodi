@@ -196,6 +196,21 @@ class RelatedMixin(object):
         return plexobjects.listItems(self.server, path, offset=offset, limit=limit, params={"count": _max})
 
 
+class SectionOnDeckMixin(object):
+    _sectionOnDeckCount = None
+
+    def sectionOnDeck(self, offset=None, limit=None):
+        query = '/library/sections/{0}/onDeck'.format(self.getLibrarySectionId())
+        return plexobjects.listItems(self.server, query, offset=offset, limit=limit)
+
+    @property
+    def sectionOnDeckCount(self):
+        if self._sectionOnDeckCount is None:
+            self._sectionOnDeckCount = self.sectionOnDeck(0, 0).totalSize
+
+        return self._sectionOnDeckCount
+
+
 class PlayableVideo(Video, RelatedMixin):
     TYPE = None
 
@@ -294,7 +309,7 @@ class Movie(PlayableVideo):
 
 
 @plexobjects.registerLibType
-class Show(Video, RelatedMixin):
+class Show(Video, RelatedMixin, SectionOnDeckMixin):
     TYPE = 'show'
 
     def _setData(self, data):
@@ -341,10 +356,6 @@ class Show(Video, RelatedMixin):
     def refresh(self):
         self.server.query('/library/metadata/%s/refresh' % self.ratingKey)
 
-    def sectionOnDeck(self):
-        query = '/library/sections/{0}/onDeck'.format(self.getLibrarySectionId())
-        return plexobjects.listItems(self.server, query)
-
 
 @plexobjects.registerLibType
 class Season(Video):
@@ -389,7 +400,7 @@ class Season(Video):
 
 
 @plexobjects.registerLibType
-class Episode(PlayableVideo):
+class Episode(PlayableVideo, SectionOnDeckMixin):
     TYPE = 'episode'
 
     def init(self, data):
