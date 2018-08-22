@@ -24,6 +24,11 @@ import search
 from lib.util import T
 
 
+class RelatedPaginator(windowutils.BaseRelatedPaginator):
+    def getData(self, offset, amount):
+        return self.parentWindow.mediaItem.related(offset=offset, limit=amount)
+
+
 class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     xmlFile = 'script-plex-seasons.xml'
     path = util.ADDON.getAddonInfo('path')
@@ -77,6 +82,8 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.mediaItems = None
         self.exitCommand = None
         self.lastFocusID = None
+        self.initialized = False
+        self.relatedPaginator = None
 
     def onFirstInit(self):
         self.subItemListControl = kodigui.ManagedControlList(self, self.SUB_ITEM_LIST_ID, 5)
@@ -86,11 +93,15 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.progressImageControl = self.getControl(self.PROGRESS_IMAGE_ID)
 
         self.setup()
+        self.initialized = True
 
         self.setFocusId(self.PLAY_BUTTON_ID)
 
     def setup(self):
-        self.mediaItem.reload(includeRelated=1, includeRelatedCount=10, includeExtras=1, includeExtrasCount=10)
+        self.mediaItem.reload(includeExtras=1, includeExtrasCount=10)
+
+        self.relatedPaginator = RelatedPaginator(self.relatedListControl, leaf_count=int(self.mediaItem.relatedCount),
+                                                 parent_window=self)
 
         self.updateProperties()
         self.fill()
@@ -164,6 +175,10 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
             if not controlID and self.lastFocusID and not action == xbmcgui.ACTION_MOUSE_MOVE:
                 self.setFocusId(self.lastFocusID)
+
+            if controlID == self.RELATED_LIST_ID:
+                if self.relatedPaginator.boundaryHit:
+                    self.relatedPaginator.paginate()
 
             if action == xbmcgui.ACTION_CONTEXT_MENU:
                 if not xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(self.OPTIONS_GROUP_ID)):
@@ -521,28 +536,17 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         return True
 
     def fillRelated(self, has_prev=False):
-        items = []
-        idx = 0
-        if not self.mediaItem.related:
+        if not self.relatedPaginator.leafCount:
             self.relatedListControl.reset()
             return has_prev
 
         self.setProperty('divider.{0}'.format(self.RELATED_LIST_ID), has_prev and '1' or '')
 
-        for rel in self.mediaItem.related()[0].items:
-            mli = kodigui.ManagedListItem(
-                rel.title or '',
-                thumbnailImage=rel.defaultThumb.asTranscodedImageURL(*self.RELATED_DIM),
-                data_source=rel
-            )
-            if mli:
-                mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/{0}.png'.format(rel.type in ('show', 'season', 'episode') and 'show' or 'movie'))
-                mli.setProperty('index', str(idx))
-                items.append(mli)
-                idx += 1
+        items = self.relatedPaginator.paginate()
 
-        self.relatedListControl.reset()
-        self.relatedListControl.addItems(items)
+        if not items:
+            return False
+
         return True
 
     def fillRoles(self, has_prev=False):

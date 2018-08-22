@@ -248,6 +248,18 @@ class MLCPaginator(object):
         return self.populate(items)
 
 
+class BaseRelatedPaginator(MLCPaginator):
+    thumbFallback = lambda self, rel: 'script.plex/thumb_fallbacks/{0}.png'.format(
+        rel.type in ('show', 'season', 'episode') and 'show' or 'movie')
+
+    def createListItem(self, rel):
+        return kodigui.ManagedListItem(
+            rel.title or '',
+            thumbnailImage=rel.defaultThumb.asTranscodedImageURL(*self.parentWindow.RELATED_DIM),
+            data_source=rel
+        )
+
+
 def shutdownHome():
     global HOME
     if HOME:

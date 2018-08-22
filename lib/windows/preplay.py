@@ -22,19 +22,9 @@ from lib import metadata
 from lib.util import T
 
 
-class RelatedPaginator(windowutils.MLCPaginator):
-    thumbFallback = lambda self, rel: 'script.plex/thumb_fallbacks/{0}.png'.format(
-        rel.type in ('show', 'season', 'episode') and 'show' or 'movie')
-
+class RelatedPaginator(windowutils.BaseRelatedPaginator):
     def getData(self, offset, amount):
         return self.parentWindow.video.related(offset=offset, limit=amount)
-
-    def createListItem(self, rel):
-        return kodigui.ManagedListItem(
-            rel.title or '',
-            thumbnailImage=rel.defaultThumb.asTranscodedImageURL(*self.parentWindow.RELATED_DIM),
-            data_source=rel
-        )
 
 
 class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
@@ -119,7 +109,6 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
             if controlID == self.RELATED_LIST_ID:
                 if self.relatedPaginator.boundaryHit:
-                    util.DEBUG_LOG("BOUNDARY HIT!!")
                     self.relatedPaginator.paginate()
 
             if action in(xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_CONTEXT_MENU):
@@ -589,7 +578,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         return True
 
     def fillRelated(self, has_prev=False):
-        if not self.video.relatedCount:
+        if not self.relatedPaginator.leafCount:
             self.relatedListControl.reset()
             return False
 

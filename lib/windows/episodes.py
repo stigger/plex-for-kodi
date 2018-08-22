@@ -135,10 +135,7 @@ class EpisodesPaginator(windowutils.MLCPaginator):
                 self.control.selectItem(items.index(self._currentEpisode) + (1 if more_left else 0))
 
 
-class RelatedPaginator(windowutils.MLCPaginator):
-    thumbFallback = lambda self, rel: 'script.plex/thumb_fallbacks/{0}.png'.format(
-        rel.type in ('show', 'season', 'episode') and 'show' or 'movie')
-
+class RelatedPaginator(windowutils.BaseRelatedPaginator):
     def getData(self, offset, amount):
         return self.parentWindow.show_.related(offset=offset, limit=amount)
 
@@ -935,7 +932,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         items = []
         idx = 0
 
-        if not self.show_.relatedCount:
+        if not self.relatedPaginator.leafCount:
             self.relatedListControl.reset()
             return has_prev
 
