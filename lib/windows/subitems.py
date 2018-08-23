@@ -28,6 +28,13 @@ from lib.windows.home import MOVE_SET
 
 
 class RelatedPaginator(pagination.BaseRelatedPaginator):
+    def prepareListItem(self, data, mli):
+        if data.type in ('show', 'season'):
+            if not mli.dataSource.isWatched:
+                mli.setProperty('unwatched.count', str(mli.dataSource.unViewedLeafCount))
+        else:
+            mli.setProperty('unwatched', not mli.dataSource.isWatched and '1' or '')
+
     def getData(self, offset, amount):
         return self.parentWindow.mediaItem.getRelated(offset=offset, limit=amount)
 
