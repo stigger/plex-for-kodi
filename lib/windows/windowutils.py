@@ -142,13 +142,9 @@ class MLCPaginator(object):
         amount = self.pageSize
 
         if self._direction == "left":
+            # move the slice to the left by :amount: based on :offset:
             amount = min(offset, self.pageSize)
-            if offset - amount < 0:
-                amount = offset
-                offset = 0
-
-            else:
-                offset -= amount
+            offset -= amount
 
             # avoid short pages on the left end
             if 0 < offset < self.orphans:
@@ -156,9 +152,10 @@ class MLCPaginator(object):
                 offset = 0
 
         else:
+            # move the slice to the right
             itemsLeft = leafCount - offset
             # avoid short pages on the right end
-            if itemsLeft < self.pageSize + self.orphans:
+            if itemsLeft <= self.pageSize + self.orphans:
                 amount = self.pageSize + self.orphans
 
         self.offset = offset
@@ -183,15 +180,14 @@ class MLCPaginator(object):
 
         thumbFallback = self.thumbFallback
         if callable(thumbFallback):
-            mlis = [kodigui.ManagedListItem(properties={'thumb.fallback': self.thumbFallback(item)})
+            mlis = [kodigui.ManagedListItem(properties={'thumb.fallback': thumbFallback(item)})
                     for item in items]
         else:
             mlis = [
-                kodigui.ManagedListItem(properties={'thumb.fallback': self.thumbFallback} if self.thumbFallback else {})
+                kodigui.ManagedListItem(properties={'thumb.fallback': thumbFallback} if thumbFallback else {})
                 for x in range(len(items))]
 
-        self.control.reset()
-        self.control.addItems(mlis)
+        self.control.replaceItems(mlis)
 
         finalItems = []
 

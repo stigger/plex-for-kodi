@@ -112,7 +112,7 @@ class EpisodesPaginator(windowutils.MLCPaginator):
 
                 epsLeft = self.leafCount - offset
                 # avoid short pages on the right end
-                if epsLeft < self.pageSize + self.orphans:
+                if epsLeft <= self.pageSize + self.orphans:
                     left = 0
                     amount = self.pageSize + self.orphans
 
