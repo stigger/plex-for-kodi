@@ -20,6 +20,7 @@ import playersettings
 import info
 import optionsdialog
 import preplayutils
+import pagination
 
 from lib.util import T
 
@@ -47,7 +48,7 @@ class EpisodeReloadTask(backgroundthread.Task):
             util.ERROR()
 
 
-class EpisodesPaginator(windowutils.MLCPaginator):
+class EpisodesPaginator(pagination.MLCPaginator):
     thumbFallback = 'script.plex/thumb_fallbacks/show.png'
     _currentEpisode = None
 
@@ -135,7 +136,7 @@ class EpisodesPaginator(windowutils.MLCPaginator):
                 self.control.selectItem(items.index(self._currentEpisode) + (1 if more_left else 0))
 
 
-class RelatedPaginator(windowutils.BaseRelatedPaginator):
+class RelatedPaginator(pagination.BaseRelatedPaginator):
     def getData(self, offset, amount):
         return self.parentWindow.show_.getRelated(offset=offset, limit=amount)
 

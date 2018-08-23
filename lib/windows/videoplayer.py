@@ -10,6 +10,7 @@ import opener
 import busy
 import search
 import dropdown
+import pagination
 
 from lib import util
 from lib import player
@@ -22,7 +23,7 @@ PASSOUT_PROTECTION_DURATION_SECONDS = 7200
 PASSOUT_LAST_VIDEO_DURATION_MILLIS = 1200000
 
 
-class RelatedPaginator(windowutils.BaseRelatedPaginator):
+class RelatedPaginator(pagination.BaseRelatedPaginator):
     def readyForPaging(self):
         return self.parentWindow.postPlayInitialized
 
@@ -30,7 +31,7 @@ class RelatedPaginator(windowutils.BaseRelatedPaginator):
         return (self.parentWindow.prev or self.parentWindow.next).getRelated(offset=offset, limit=amount)
 
 
-class OnDeckPaginator(windowutils.MLCPaginator):
+class OnDeckPaginator(pagination.MLCPaginator):
     def readyForPaging(self):
         return self.parentWindow.postPlayInitialized
 

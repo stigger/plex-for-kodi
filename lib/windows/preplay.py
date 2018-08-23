@@ -12,6 +12,7 @@ import dropdown
 import windowutils
 import optionsdialog
 import preplayutils
+import pagination
 
 from plexnet import plexplayer, media
 
@@ -22,7 +23,7 @@ from lib import metadata
 from lib.util import T
 
 
-class RelatedPaginator(windowutils.BaseRelatedPaginator):
+class RelatedPaginator(pagination.BaseRelatedPaginator):
     def getData(self, offset, amount):
         return self.parentWindow.video.getRelated(offset=offset, limit=amount)
 

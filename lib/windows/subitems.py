@@ -20,11 +20,12 @@ import videoplayer
 import dropdown
 import windowutils
 import search
+import pagination
 
 from lib.util import T
 
 
-class RelatedPaginator(windowutils.BaseRelatedPaginator):
+class RelatedPaginator(pagination.BaseRelatedPaginator):
     def getData(self, offset, amount):
         return self.parentWindow.mediaItem.getRelated(offset=offset, limit=amount)
 
