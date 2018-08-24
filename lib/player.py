@@ -271,6 +271,9 @@ class SeekPlayerHandler(BasePlayerHandler):
 
         self.seeking = self.SEEK_IN_PROGRESS
 
+        if self.player.playState == self.player.STATE_PAUSED:
+            self.player.pauseAfterPlaybackResumed = True
+
         util.DEBUG_LOG('New player offset: {0}'.format(self.offset))
         self.player._playVideo(offset, seeking=self.seeking, force_update=settings_changed)
 
@@ -624,6 +627,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self._nextItem = None
         self.started = False
         self.pauseAfterPlaybackStarted = False
+        self.pauseAfterPlaybackResumed = False
         self.video = None
         self.hasOSD = False
         self.hasSeekOSD = False
@@ -895,6 +899,11 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         util.DEBUG_LOG('Player - RESUMED')
         if not self.handler:
             return
+
+        if self.pauseAfterPlaybackResumed:
+            self.control('pause')
+            self.pauseAfterPlaybackResumed = False
+
         self.handler.onPlayBackResumed()
 
     def onPlayBackStopped(self):
