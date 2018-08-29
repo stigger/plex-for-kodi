@@ -664,10 +664,8 @@ class BGMPlayerHandler(BasePlayerHandler):
 
 
 class BGMPlayerTask(backgroundthread.Task):
-    def setup(self, player, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
-        self.player = player
+    def setup(self, source, *args, **kwargs):
+        self.source = source
         return self
 
     def cancel(self):
@@ -679,8 +677,7 @@ class BGMPlayerTask(backgroundthread.Task):
         if self.isCanceled():
             return
 
-        xbmc.Player.play(self.player, *self.args, **self.kwargs)
-        self.player = None
+        xbmc.executebuiltin("XBMC.PlayMedia(%s)" % self.source)
 
 
 class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
@@ -796,7 +793,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
         self.handler.setVolume(volume)
 
-        self.BGMTask = BGMPlayerTask().setup(self, source, *args, **kwargs)
+        self.BGMTask = BGMPlayerTask().setup(source, *args, **kwargs)
         backgroundthread.BGThreader.addTask(self.BGMTask)
 
     def playVideo(self, video, resume=False, force_update=False, session_id=None, handler=None):
