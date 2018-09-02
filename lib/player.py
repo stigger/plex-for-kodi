@@ -502,17 +502,24 @@ class AudioPlayerHandler(BasePlayerHandler):
         if not plexID.startswith('PLEX-'):
             return
 
-        util.DEBUG_LOG('Extracting track info from comment')
+        util.DEBUG_LOG('Extracting track info from comment: %r' % plexID)
         try:
             data = plexID.split(':', 1)[-1]
+            util.DEBUG_LOG("IN 1: %r" % data)
             from plexnet import plexobjects
+            util.DEBUG_LOG("IN 2")
             track = plexobjects.PlexObject.deSerialize(base64.urlsafe_b64decode(data.encode('utf-8')))
+            util.DEBUG_LOG("IN 3")
             track.softReload()
+            util.DEBUG_LOG("IN 4")
             self.media = track
             pobj = plexplayer.PlexAudioPlayer(track)
+            util.DEBUG_LOG("IN 5")
             self.player.playerObject = pobj
             self.updatePlayQueueTrack(track)
+            util.DEBUG_LOG("IN 6")
             util.setGlobalProperty('track.ID', track.ratingKey)  # This is used in the skins to match a listitem
+            util.DEBUG_LOG("IN 7")
         except:
             util.ERROR()
 
