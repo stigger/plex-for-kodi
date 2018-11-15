@@ -205,11 +205,12 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.initialized = False
 
     def doClose(self):
-        kodigui.ControlledWindow.doClose(self)
         if not self.tasks:
             return
         self.tasks.cancel()
         self.tasks = None
+
+        kodigui.ControlledWindow.doClose(self)
         player.PLAYER.off('new.video', self.onNewVideo)
 
     @busy.dialog()
