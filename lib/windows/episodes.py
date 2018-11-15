@@ -247,6 +247,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         mli = self.episodeListControl.getSelectedItem()
         if not mli:
+            util.ERROR("!!!!!!!!!!!! NO MLI RETURNED !!!!!!!!!!!!!")
             return
 
         self.fillEpisodes()
@@ -337,6 +338,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                         not util.advancedSettings.fastBack:
                     if self.getProperty('on.extras'):
                         self.setFocusId(self.OPTIONS_GROUP_ID)
+                        util.ERROR("!!!!!!!!!!!! RETURNING ON NAV BACK !!!!!!!!!!!!!")
                         return
 
             if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
