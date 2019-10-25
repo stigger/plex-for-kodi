@@ -1,5 +1,7 @@
-import kodigui
-import xbmcgui
+from __future__ import absolute_import
+from kodi_six import xbmcgui
+from . import kodigui
+
 from lib import util
 
 SEPARATOR = None

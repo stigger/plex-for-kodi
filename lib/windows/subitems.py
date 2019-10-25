@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 import gc
 
-import xbmc
-import xbmcgui
-import kodigui
+from kodi_six import xbmc
+from kodi_six import xbmcgui
+from . import kodigui
 
 from lib import colors
 from lib import util
@@ -11,17 +12,17 @@ from lib import player
 
 from plexnet import playlist
 
-import busy
-import episodes
-import tracks
-import opener
-import info
-import musicplayer
-import videoplayer
-import dropdown
-import windowutils
-import search
-import pagination
+from . import busy
+from . import episodes
+from . import tracks
+from . import opener
+from . import info
+from . import musicplayer
+from . import videoplayer
+from . import dropdown
+from . import windowutils
+from . import search
+from . import pagination
 
 from lib.util import T
 from lib.windows.home import MOVE_SET
@@ -215,10 +216,10 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                         return
 
             if action == xbmcgui.ACTION_LAST_PAGE and xbmc.getCondVisibility('ControlGroup(300).HasFocus(0)'):
-                self.next()
+                next(self)
             elif action == xbmcgui.ACTION_NEXT_ITEM:
                 self.setFocusId(300)
-                self.next()
+                next(self)
             elif action == xbmcgui.ACTION_FIRST_PAGE and xbmc.getCondVisibility('ControlGroup(300).HasFocus(0)'):
                 self.prev()
             elif action == xbmcgui.ACTION_PREV_ITEM:

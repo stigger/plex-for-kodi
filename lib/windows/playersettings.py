@@ -1,6 +1,7 @@
-import xbmc
-import xbmcgui
-import kodigui
+from __future__ import absolute_import
+from kodi_six import xbmc
+from kodi_six import xbmcgui
+from . import kodigui
 
 from lib import util
 from lib import metadata

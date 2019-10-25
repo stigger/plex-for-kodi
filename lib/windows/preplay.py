@@ -1,18 +1,19 @@
-import xbmc
-import xbmcgui
-import kodigui
+from __future__ import absolute_import
+from kodi_six import xbmc
+from kodi_six import xbmcgui
+from . import kodigui
 
-import busy
-import opener
-import info
-import videoplayer
-import playersettings
-import search
-import dropdown
-import windowutils
-import optionsdialog
-import preplayutils
-import pagination
+from . import busy
+from . import opener
+from . import info
+from . import videoplayer
+from . import playersettings
+from . import search
+from . import dropdown
+from . import windowutils
+from . import optionsdialog
+from . import preplayutils
+from . import pagination
 
 from plexnet import plexplayer, media
 
@@ -132,10 +133,10 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                     return
 
             if action == xbmcgui.ACTION_LAST_PAGE and xbmc.getCondVisibility('ControlGroup(300).HasFocus(0)'):
-                self.next()
+                next(self)
             elif action == xbmcgui.ACTION_NEXT_ITEM:
                 self.setFocusId(300)
-                self.next()
+                next(self)
             elif action == xbmcgui.ACTION_FIRST_PAGE and xbmc.getCondVisibility('ControlGroup(300).HasFocus(0)'):
                 self.prev()
             elif action == xbmcgui.ACTION_PREV_ITEM:

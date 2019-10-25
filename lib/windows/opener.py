@@ -1,23 +1,25 @@
-import busy
+from __future__ import absolute_import
+from . import busy
 
 from plexnet import playqueue, plexapp, plexlibrary
 from lib import util
+import six
 
 
 def open(obj, **kwargs):
     if isinstance(obj, playqueue.PlayQueue):
         if busy.widthDialog(obj.waitForInitialization, None):
             if obj.type == 'audio':
-                import musicplayer
+                from . import musicplayer
                 return handleOpen(musicplayer.MusicPlayerWindow, track=obj.current(), playlist=obj)
             elif obj.type == 'photo':
-                import photos
+                from . import photos
                 return handleOpen(photos.PhotoWindow, play_queue=obj)
             else:
-                import videoplayer
+                from . import videoplayer
                 videoplayer.play(play_queue=obj)
                 return ''
-    elif isinstance(obj, basestring):
+    elif isinstance(obj, six.string_types):
         key = obj
         if not obj.startswith('/'):
             key = '/library/metadata/{0}'.format(obj)
@@ -43,7 +45,7 @@ def open(obj, **kwargs):
     elif obj.TYPE in ('playlist'):
         return playlistClicked(obj, **kwargs)
     elif obj.TYPE in ('clip'):
-        import videoplayer
+        from . import videoplayer
         return videoplayer.play(video=obj)
     elif obj.TYPE in ('Genre'):
         return genreClicked(obj, **kwargs)
@@ -74,42 +76,42 @@ def handleOpen(winclass, **kwargs):
 
 
 def playableClicked(playable, **kwargs):
-    import preplay
+    from . import preplay
     return handleOpen(preplay.PrePlayWindow, video=playable, **kwargs)
 
 
 def episodeClicked(episode, **kwargs):
-    import episodes
+    from . import episodes
     return handleOpen(episodes.EpisodesWindow, episode=episode, **kwargs)
 
 
 def showClicked(show, **kwargs):
-    import subitems
+    from . import subitems
     return handleOpen(subitems.ShowWindow, media_item=show, **kwargs)
 
 
 def artistClicked(artist, **kwargs):
-    import subitems
+    from . import subitems
     return handleOpen(subitems.ArtistWindow, media_item=artist, **kwargs)
 
 
 def seasonClicked(season, **kwargs):
-    import episodes
+    from . import episodes
     return handleOpen(episodes.EpisodesWindow, season=season, **kwargs)
 
 
 def albumClicked(album, **kwargs):
-    import tracks
+    from . import tracks
     return handleOpen(tracks.AlbumWindow, album=album, **kwargs)
 
 
 def photoClicked(photo, **kwargs):
-    import photos
+    from . import photos
     return handleOpen(photos.PhotoWindow, photo=photo, **kwargs)
 
 
 def trackClicked(track, **kwargs):
-    import musicplayer
+    from . import musicplayer
     return handleOpen(musicplayer.MusicPlayerWindow, track=track, **kwargs)
 
 
@@ -118,12 +120,12 @@ def photoDirectoryClicked(photodirectory, **kwargs):
 
 
 def playlistClicked(pl, **kwargs):
-    import playlist
+    from . import playlist
     return handleOpen(playlist.PlaylistWindow, playlist=pl, **kwargs)
 
 
 def sectionClicked(section, filter_=None, **kwargs):
-    import library
+    from . import library
     library.ITEM_TYPE = section.TYPE
     key = section.key
     if not key.isdigit():
