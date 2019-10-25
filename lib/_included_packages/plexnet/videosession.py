@@ -1,7 +1,5 @@
 # coding=utf-8
 from collections import OrderedDict
-
-import util
 from plexnet import plexapp
 
 

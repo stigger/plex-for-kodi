@@ -1,7 +1,7 @@
 import time
 import random
 
-import kodigui
+from . import kodigui
 
 from lib import util
 from plexnet import plexapp

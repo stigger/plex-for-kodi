@@ -1,6 +1,6 @@
 # coding=utf-8
-import kodigui
-import xbmcgui
+from . import kodigui
+from kodi_six import xbmcgui
 from lib import util
 
 
