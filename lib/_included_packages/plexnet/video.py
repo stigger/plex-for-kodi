@@ -203,7 +203,11 @@ class RelatedMixin(object):
     @property
     def relatedCount(self):
         if self._relatedCount is None:
-            self._relatedCount = self.getRelated(0, 0).totalSize
+            related = self.getRelated(0, 0)
+            if related is not None:
+                self._relatedCount = related.totalSize
+            else:
+                self._relatedCount = 0
 
         return self._relatedCount
 
@@ -213,7 +217,11 @@ class RelatedMixin(object):
 
     def getRelated(self, offset=None, limit=None, _max=36):
         path = '/library/metadata/%s/similar' % self.ratingKey
-        return plexobjects.listItems(self.server, path, offset=offset, limit=limit, params={"count": _max})
+        try:
+            return plexobjects.listItems(self.server, path, offset=offset, limit=limit, params={"count": _max})
+        except exceptions.BadRequest:
+            util.DEBUG_LOG("Invalid related items response returned for %s" % self)
+            return None
 
 
 class SectionOnDeckMixin(object):

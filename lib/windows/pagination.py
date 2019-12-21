@@ -114,9 +114,10 @@ class MCLPaginator(object):
             amount = self.initialPageSize + self.orphans
 
         data = self.getData(self.offset, amount)
-        self._lastAmount = self._currentAmount
-        self._currentAmount = len(data)
-        return data
+        if data:
+            self._lastAmount = self._currentAmount
+            self._currentAmount = len(data)
+            return data
 
     def populate(self, items):
         """
@@ -132,22 +133,22 @@ class MCLPaginator(object):
         finalItems = []
         thumbFallback = self.thumbFallback
 
-        for item in items:
-            mli = self.createListItem(item)
-
-            if mli:
-                mli.setProperty('index', str(idx))
-                self.prepareListItem(item, mli)
-                if thumbFallback:
-                    if callable(thumbFallback):
-                        mli.setProperty('thumb.fallback', thumbFallback(item))
-                    else:
-                        mli.setProperty('thumb.fallback', thumbFallback)
-
-                finalItems.append(mli)
-                idx += 1
-
         if items:
+            for item in items:
+                mli = self.createListItem(item)
+
+                if mli:
+                    mli.setProperty('index', str(idx))
+                    self.prepareListItem(item, mli)
+                    if thumbFallback:
+                        if callable(thumbFallback):
+                            mli.setProperty('thumb.fallback', thumbFallback(item))
+                        else:
+                            mli.setProperty('thumb.fallback', thumbFallback)
+
+                    finalItems.append(mli)
+                    idx += 1
+
             if moreRight:
                 end = kodigui.ManagedListItem('')
                 end.setBoolProperty('is.boundary', True)
@@ -162,8 +163,8 @@ class MCLPaginator(object):
                 start.setProperty("orig.index", str(int(self.offset)))
                 finalItems.insert(0, start)
 
-        self.control.replaceItems(finalItems)
-        self.selectItem(self._currentAmount, more_left=moreLeft, more_right=moreRight, items=items)
+            self.control.replaceItems(finalItems)
+            self.selectItem(self._currentAmount, more_left=moreLeft, more_right=moreRight, items=items)
 
         return finalItems
 
