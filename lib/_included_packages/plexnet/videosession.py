@@ -1,4 +1,5 @@
 # coding=utf-8
+import six
 from collections import OrderedDict
 from plexnet import plexapp
 
@@ -33,7 +34,7 @@ class MediaDetails:
     def attributesFromInstance(self, map, reference_data):
         # gather attribute values
         final_data = {}
-        for attribute, dataPath in map.iteritems():
+        for attribute, dataPath in six.iteritems(map):
             objName, attribName = dataPath.split(".")
             if objName in reference_data:
                 obj = reference_data[objName]
@@ -383,7 +384,7 @@ class SessionAttributes(OrderedDict):
         self.ref = ref
         OrderedDict.__init__(self, *args, **kwargs)
 
-        for name, cls in ATTRIBUTE_TYPES.iteritems():
+        for name, cls in six.iteritems(ATTRIBUTE_TYPES):
             self[name] = instance = cls()
             instance.data = []
             if not instance.displayCondition or instance.displayCondition(self.ref):

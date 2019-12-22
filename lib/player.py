@@ -269,7 +269,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.offset = offset
 
         if self.mode == self.MODE_ABSOLUTE and not settings_changed:
-            util.DEBUG_LOG('New player offset: {0}'.format(self.offset))
+            util.DEBUG_LOG('New absolute player offset: {0}'.format(self.offset))
 
             if self.player.playerObject.offsetIsValid(offset / 1000):
                 if self.seekAbsolute(offset):

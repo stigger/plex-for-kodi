@@ -309,29 +309,34 @@ class SeekDialog(kodigui.BaseDialog):
                 elif action == xbmcgui.ACTION_PREV_ITEM:
                     self.handler.prev()
 
-            if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_STOP):
-                if self._seeking and not self._ignoreInput:
-                    self.resetSeeking()
-                    self.updateCurrent()
-                    self.updateProgress()
-                    if self.osdVisible():
-                        self.hideOSD()
+            if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
+                if self.getProperty('show.PPI'):
+                    self.hidePPIDialog()
                     return
 
-                if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
-                    if self._osdHideAnimationTimeout:
-                        if self._osdHideAnimationTimeout >= time.time():
-                            return
+                if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_STOP):
+                    if self._seeking and not self._ignoreInput:
+                        self.resetSeeking()
+                        self.updateCurrent()
+                        self.updateProgress()
+                        if self.osdVisible():
+                            self.hideOSD()
+                        return
+
+                    if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
+                        if self._osdHideAnimationTimeout:
+                            if self._osdHideAnimationTimeout >= time.time():
+                                return
+                            else:
+                                self._osdHideAnimationTimeout = None
+
+                        if self.osdVisible():
+                            self.hideOSD()
                         else:
-                            self._osdHideAnimationTimeout = None
-
-                    if self.osdVisible():
-                        self.hideOSD()
-                    else:
-                        self.doClose()
-                        # self.handler.onSeekAborted()
-                        self.handler.player.stop()
-                    return
+                            self.doClose()
+                            # self.handler.onSeekAborted()
+                            self.handler.player.stop()
+                        return
         except:
             util.ERROR()
 
@@ -733,9 +738,6 @@ class SeekDialog(kodigui.BaseDialog):
         if changed == 'SUBTITLE':
             self.handler.setSubtitles()
         elif changed:
-            if self.getProperty("show.PPI"):
-                self.hidePPIDialog()
-
             self.doSeek(self.trueOffset(), settings_changed=True)
 
     def setBigSeekShift(self):

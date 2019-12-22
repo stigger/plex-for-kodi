@@ -136,6 +136,7 @@ class PlexStream(plexobjects.PlexObject):
         for attr in ("streamType", "language", "codec", "channels", "index", "key"):
             if getattr(self, attr) != getattr(other, attr):
                 return False
+        return True
 
 
 # Synthetic subtitle stream for 'none'
