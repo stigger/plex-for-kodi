@@ -143,7 +143,7 @@ class Video(media.MediaItem):
             'mediaIndex': params.get('mediaIndex', 0),
             'directStream': '1',
             'directPlay': '0',
-            'X-Plex-Platform': params.get('platform', 'Chrome'),
+            'X-Plex-Platform': params.get('platform', ''),
             # 'X-Plex-Platform': params.get('platform', util.INTERFACE.getGlobal('platform')),
             'maxVideoBitrate': max(mvb, 64) if mvb else None,
             'videoResolution': '{0}x{1}'.format(*vr) if vr else None
