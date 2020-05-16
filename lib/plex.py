@@ -17,7 +17,7 @@ from six.moves import range
 
 class PlexTimer(plexapp.util.Timer):
     def shouldAbort(self):
-        return xbmc.abortRequested
+        return util.MONITOR.abortRequested()
 
 
 def abortFlag():
@@ -166,7 +166,7 @@ class PlexInterface(plexapp.AppInterface):
 
     def ERROR(self, msg=None, err=None):
         if err:
-            self.LOG('ERROR: {0} - {1}'.format(msg, err.message))
+            self.LOG('ERROR: {0} - {1}'.format(msg, getattr(err, "message", "Unknown Error")))
         else:
             util.ERROR()
 

@@ -209,6 +209,8 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         except http.requests.ConnectionError:
             util.ERROR()
             return None
+        except asyncadapter.CanceledException:
+            return None
 
         return ElementTree.fromstring(data) if data else None
 

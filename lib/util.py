@@ -432,7 +432,7 @@ class Cron(threading.Thread):
             if self.force.isSet():
                 self.force.clear()
                 return True
-            if xbmc.abortRequested or self.stopped.isSet():
+            if MONITOR.abortRequested() or self.stopped.isSet():
                 return False
         return True
 
