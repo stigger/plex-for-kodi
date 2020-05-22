@@ -68,7 +68,15 @@ class Video(media.MediaItem):
         return None
 
     def selectStream(self, stream, _async=True):
-        self.mediaChoice.part.setSelectedStream(stream.streamType.asInt(), stream.id, _async)
+        streamTypeInt = stream.streamType.asInt()
+        self.mediaChoice.part.setSelectedStream(streamTypeInt, stream.id, _async)
+        if streamTypeInt == plexstream.PlexStream.TYPE_SUBTITLE:
+            # updated cached variant as well
+            for _stream in self.subtitleStreams:
+                if _stream.id == stream.id:
+                    _stream.setSelected(True)
+                elif _stream.isSelected():
+                    _stream.setSelected(False)
 
     def isVideoItem(self):
         return True

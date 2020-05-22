@@ -293,6 +293,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             self.seek(max(self.trueTime - 30, 0) * 1000, seeking=self.SEEK_REWIND)
 
     def seekAbsolute(self, seek=None):
+        #self.updateNowPlaying(state=self.player.STATE_PAUSED)
         self.seekOnStart = seek or (self.seekOnStart if self.seekOnStart else None)
         if self.seekOnStart is not None:
             seekSeconds = self.seekOnStart / 1000.0
@@ -375,10 +376,12 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.updateOffset()
         # self.showOSD(from_seek=True)
 
-    def setSubtitles(self):
+    def setSubtitles(self, do_sleep=True):
         subs = self.player.video.selectedSubtitleStream()
         if subs:
-            xbmc.sleep(100)
+            if do_sleep:
+                xbmc.sleep(100)
+
             self.player.showSubtitles(False)
             path = subs.getSubtitleServerPath()
             if path:
@@ -422,8 +425,11 @@ class SeekPlayerHandler(BasePlayerHandler):
     def initPlayback(self):
         self.seeking = self.NO_SEEK
 
-        self.setSubtitles()
+        #self.setSubtitles()
         self.setAudioTrack()
+
+        #self.player.seekTime(0)
+        #xbmc.executebuiltin('Dialog.Close(seekbar,true)')
 
         if self.mode == self.MODE_ABSOLUTE:
             self.seekAbsolute()
@@ -445,7 +451,6 @@ class SeekPlayerHandler(BasePlayerHandler):
 
     def onVideoWindowOpened(self):
         self.getDialog().show()
-
         self.initPlayback()
 
     def onVideoWindowClosed(self):
@@ -598,6 +603,7 @@ class AudioPlayerHandler(BasePlayerHandler):
         self.updateNowPlaying(state='playing')
 
     def onPlayBackStarted(self):
+        self.handler.setSubtitles(do_sleep=False)
         self.updatePlayQueue(delay=True)
         self.extractTrackInfo()
         self.updateNowPlaying(state='playing')
@@ -891,11 +897,12 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         return (url, li)
 
     def onPrePlayStarted(self):
-        util.DEBUG_LOG('Player - PRE-PLAY')
+        util.DEBUG_LOG('Player - PRE-PLAY; handler: %r' % self.handler)
         self.trigger('preplay.started')
         if not self.handler:
             return
         self.handler.onPrePlayStarted()
+        self.handler.setSubtitles(do_sleep=False)
 
     def onPlayBackStarted(self):
         self.started = True

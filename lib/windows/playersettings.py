@@ -253,7 +253,7 @@ def showSubtitlesDialog(video, non_playback=False):
     if choice is None:
         return
 
-    video.selectStream(choice)
+    video.selectStream(choice, _async=False)
 
 
 def showQualityDialog(video, non_playback=False, selected_idx=None):
