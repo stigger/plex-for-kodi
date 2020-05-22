@@ -102,6 +102,7 @@ class AdvancedSettings(object):
         ("background_art_blur_amount", 128),
         ("background_art_opacity_amount", 60),
         ("screensaver_quiz", False),
+        ("intro_skip_early", False)
     )
 
     def __init__(self):
