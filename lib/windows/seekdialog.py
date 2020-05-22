@@ -112,6 +112,7 @@ class SeekDialog(kodigui.BaseDialog):
         self._forcedLastSkipAmount = None
         self.lastTimelineResponse = None
         self._ignoreInput = False
+        self._enableIntroSkip = plexapp.ACCOUNT.adminHasPlexPass
         self.skipSteps = self.SKIP_STEPS
         self.useAutoSeek = util.advancedSettings.autoSeek
         self.useDynamicStepsForTimeline = util.advancedSettings.dynamicTimelineSeek

@@ -238,3 +238,8 @@ class Chapter(MediaTag):
 
 class Bandwidth(plexobjects.PlexObject):
     TYPE = 'Bandwidth'
+
+
+class Marker(MediaTag):
+    TYPE = 'Marker'
+    FILTER = 'Marker'
