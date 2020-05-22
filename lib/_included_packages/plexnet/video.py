@@ -303,9 +303,9 @@ class Show(Video):
         path = self.key
         return plexobjects.findItem(self.server, path, title)
 
-    def episodes(self, watched=None):
+    def episodes(self, watched=None, offset=None, limit=None):
         leavesKey = '/library/metadata/%s/allLeaves' % self.ratingKey
-        return plexobjects.listItems(self.server, leavesKey, watched=watched)
+        return plexobjects.listItems(self.server, leavesKey, watched=watched, offset=offset, limit=limit)
 
     def episode(self, title):
         path = '/library/metadata/%s/allLeaves' % self.ratingKey
