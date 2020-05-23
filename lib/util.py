@@ -103,6 +103,8 @@ class AdvancedSettings(object):
         ("background_art_opacity_amount", 60),
         ("screensaver_quiz", False),
         ("intro_skip_early", False)
+        ("postplay_always", False),
+        ("postplay_timeout", 16),
     )
 
     def __init__(self):
