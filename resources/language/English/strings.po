@@ -1039,6 +1039,10 @@ msgctxt "#32494"
 msgid "Show intro skip button from the beginning of the video (PlexPass)"
 msgstr ""
 
+msgctxt "#32495"
+msgid "Skip intro"
+msgstr ""
+
 
 msgctxt "#32500"
 msgid "Always show post-play screen (even for short videos)"
