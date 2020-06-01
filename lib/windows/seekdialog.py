@@ -73,6 +73,7 @@ class SeekDialog(kodigui.BaseDialog):
     HIDE_DELAY = 4  # This uses the Cron tick so is +/- 1 second accurate
     OSD_HIDE_ANIMATION_DURATION = 0.2
     SKIP_STEPS = {"negative": [-10000], "positive": [30000]}
+    SHOW_INTRO_SKIP_BUTTON_TIMEOUT = 10
 
     def __init__(self, *args, **kwargs):
         kodigui.BaseDialog.__init__(self, *args, **kwargs)
@@ -114,9 +115,9 @@ class SeekDialog(kodigui.BaseDialog):
         self._forcedLastSkipAmount = None
         self.lastTimelineResponse = None
         self._ignoreInput = False
-        self._enableIntroSkip = plexapp.ACCOUNT.adminHasPlexPass
+        self._enableIntroSkip = plexapp.ACCOUNT.hasPlexPass()
         self.intro = self.handler.player.video.intro
-        self.showIntroSkipEarly = util.advancedSettings.introSkipEarly
+        self._introSkipShownFor = 0
         self.skipSteps = self.SKIP_STEPS
         self.useAutoSeek = util.advancedSettings.autoSeek
         self.useDynamicStepsForTimeline = util.advancedSettings.dynamicTimelineSeek
@@ -243,7 +244,7 @@ class SeekDialog(kodigui.BaseDialog):
                         self.shouldShowIntroSkip()
                         return
                     elif action == xbmcgui.ACTION_MOVE_DOWN:
-                        self.setProperty('show.introSkipCond', '1')
+                        self.setProperty('show.introSkip_OSDOnly', '1')
                         self.showOSD()
                     elif action in (xbmcgui.ACTION_MOVE_RIGHT, xbmcgui.ACTION_STEP_FORWARD, xbmcgui.ACTION_MOVE_LEFT,
                                     xbmcgui.ACTION_STEP_BACK):
@@ -913,11 +914,15 @@ class SeekDialog(kodigui.BaseDialog):
 
     def shouldShowIntroSkip(self):
         if self.intro:
-            refMinOffset = 0 if self.showIntroSkipEarly else int(self.intro.startTimeOffset)
-            if self._enableIntroSkip and refMinOffset <= self.offset <= int(self.intro.endTimeOffset):
+            if self._enableIntroSkip and \
+                    int(self.intro.startTimeOffset) <= self.offset <= int(self.intro.endTimeOffset):
                 self.setProperty('show.introSkip', '1')
+                if self._introSkipShownFor > self.SHOW_INTRO_SKIP_BUTTON_TIMEOUT:
+                    self.setProperty('show.introSkip_OSDOnly', '1')
+                self._introSkipShownFor += 1
                 return True
             self.setProperty('show.introSkip', '')
+        return False
 
     def setup(self, duration, offset=0, bif_url=None, title='', title2='', chapters=None):
         self.title = title
@@ -1057,7 +1062,7 @@ class SeekDialog(kodigui.BaseDialog):
 
         intro = self.shouldShowIntroSkip()
         if intro and not self.osdVisible() and self.lastFocusID != self.SKIP_INTRO_BUTTON_ID and \
-                not self.getProperty('show.introSkipCond'):
+                not self.getProperty('show.introSkip_OSDOnly'):
             self.setFocusId(self.SKIP_INTRO_BUTTON_ID)
 
         if offset or (self.autoSeekTimeout and time.time() >= self.autoSeekTimeout and
@@ -1099,7 +1104,7 @@ class SeekDialog(kodigui.BaseDialog):
     def hideOSD(self):
         self.setProperty('show.OSD', '')
         self.setFocusId(self.NO_OSD_BUTTON_ID)
-        if self.shouldShowIntroSkip() and not self.getProperty('show.introSkipCond'):
+        if self.shouldShowIntroSkip() and not self.getProperty('show.introSkip_OSDOnly'):
             self.setFocusId(self.SKIP_INTRO_BUTTON_ID)
 
         self.resetSeeking()

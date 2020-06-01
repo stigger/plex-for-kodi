@@ -13,7 +13,6 @@
     <setting id="auto_seek_delay" subsetting="true" enable="eq(-1,true)" type="slider" label="32487" default="1" range="0,.1,5" option="float" />
     <setting id="kodi_skip_stepping" type="bool" label="32465" default="false" />
     <setting id="dynamic_timeline_seek" type="bool" label="32471" default="false" />
-    <setting id="intro_skip_early" type="bool" label="32494" default="false" />
     <setting id="forced_subtitles_override" type="bool" label="32493" default="false" />
     <setting id="postplay_always" type="bool" label="32500" default="false" />
     <setting id="postplay_timeout" type="number" label="32501" default="16" />

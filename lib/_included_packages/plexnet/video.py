@@ -254,7 +254,6 @@ class PlayableVideo(Video, RelatedMixin):
                 del self.viewCount
             if self.get('viewOffset'):
                 del self.viewOffset
-        kwargs["includeMarkers"] = 1
         Video.reload(self, *args, **kwargs)
         return self
 
