@@ -517,8 +517,8 @@ class Episode(PlayableVideo, SectionOnDeckMixin):
 
     @property
     def intro(self):
-        if not self._intro:
-            self._intro = (filter(lambda x: x.type == "intro", self.markers) or [None])[0]
+        if self._intro is None:
+            self._intro = (filter(lambda x: x.type == "intro", self.markers) or [False])[0]
         return self._intro
 
     def getRelated(self, offset=None, limit=None, _max=36):
