@@ -31,6 +31,15 @@ KEY_MOVE_SET = frozenset(
     )
 )
 
+KEY_STEP_SEEK_SET = frozenset(
+    (
+        xbmcgui.ACTION_MOVE_LEFT,
+        xbmcgui.ACTION_MOVE_RIGHT,
+        xbmcgui.ACTION_STEP_FORWARD,
+        xbmcgui.ACTION_STEP_BACK
+    )
+)
+
 
 class SeekDialog(kodigui.BaseDialog):
     xmlFile = 'script-plex-seek_dialog.xml'

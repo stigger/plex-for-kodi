@@ -183,8 +183,11 @@ class ServerListItem(kodigui.ManagedListItem):
         self.safeSetLabel(self.dataSource.name)
 
     def onDestroy(self):
-        self.dataSource.off('completed:reachability', self.onUpdate)
-        self.dataSource.off('started:reachability', self.onUpdate)
+        try:
+            self.dataSource.off('completed:reachability', self.onUpdate)
+            self.dataSource.off('started:reachability', self.onUpdate)
+        except AttributeError:
+            util.DEBUG_LOG('Destroying invalidated ServerListItem')
 
 
 class HomeWindow(kodigui.BaseWindow, util.CronReceiver):

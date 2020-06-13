@@ -97,6 +97,7 @@ class sockaddr(Union):
 
 class ifaddrs(Structure):
     pass
+
 ifaddrs._fields_ = [
     ('ifa_next',        POINTER(ifaddrs)),
     ('ifa_name',        c_char_p),

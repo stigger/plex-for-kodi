@@ -1,5 +1,12 @@
+[- 0.1.8 -]
+Fix seek resetting when clicking select on seek bar with OSD visible
+Add Spanish translations (thanks to rdcalle)
+Add Portuguese (Portugal) translations (thanks to Generator)
+Make python 3 compatible (thanks to pannal)
+
 [- 0.1.7 -]
 
+Fix transcode failures on Windows (possibly other platforms)
 Add Italian translations (thanks to iz8mbw)
 Use Kodi time format setting (Issue #90) (thanks to pannal)
 Restore last window when starting the add-on while it is running (Issue #126)
