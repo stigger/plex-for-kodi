@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.plex"
        name="Plex"
-       version="0.2.0"
+       version="0.3.0"
        provider-name="Plex">
     <requires>
-        <import addon="xbmc.python" version="2.26.0"/>
-        <import addon="script.module.requests" version="2.22.0" />
-        <import addon="script.module.six" version="1.13.0" />
-        <import addon="script.module.kodi-six" version="0.1.3" />
+        <import addon="xbmc.python" version="3.0.0"/>
+        <import addon="script.module.requests" version="2.22.0+matrix.1"/>
+        <import addon="script.module.six" version="1.14.0+matrix.1"/>
+        <import addon="script.module.kodi-six" version="0.1.3.1" />
     </requires>
     <extension point="xbmc.python.script" library="default.py">
         <provides>video</provides>
@@ -15,8 +15,7 @@
     <extension point="xbmc.python.pluginsource" library="plugin.py">
         <provides>executable</provides>
     </extension>
-	<extension point="xbmc.ui.screensaver" library="screensaver.py"/>
-    <extension point="xbmc.service" library="service.py" start="startup"></extension>
+    <extension point="xbmc.service" library="service.py" />
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Plex for Kodi</summary>
         <summary lang="de_DE">Plex für Kodi</summary>

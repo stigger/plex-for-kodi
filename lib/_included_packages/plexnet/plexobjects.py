@@ -308,14 +308,14 @@ class PlexObject(Checks):
     def _findTranscodeSession(self, data):
         elem = data.find('TranscodeSession')
         if elem is not None:
-            import media
+            from . import media
             return media.TranscodeSession(elem, server=self.server)
         return None
 
     def _findBandwidths(self, data):
         elem = data.find("Bandwidths")
         if elem is not None:
-            import media
+            from . import media
             return PlexItemList(elem, media.Bandwidth, media.Bandwidth.TYPE, server=self.server)
         return []
 
