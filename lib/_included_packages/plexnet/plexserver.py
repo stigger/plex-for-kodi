@@ -204,15 +204,18 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
             data = response.text.encode('utf8')
         except asyncadapter.TimeoutException:
             util.ERROR()
+            xbmc.sleep(500)
             util.MANAGER.refreshResources(True)
-            return None
+            return []
         except http.requests.ConnectionError:
             util.ERROR()
-            return None
+            xbmc.sleep(500)
+            util.MANAGER.refreshResources(True)
+            return []
         except asyncadapter.CanceledException:
-            return None
+            return []
 
-        return ElementTree.fromstring(data) if data else None
+        return ElementTree.fromstring(data) if data else []
 
     def getImageTranscodeURL(self, path, width, height, **extraOpts):
         if not path:
