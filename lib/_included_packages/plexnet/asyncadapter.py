@@ -1,8 +1,9 @@
 from __future__ import absolute_import
 import time
 import socket
-
 import requests
+import six
+
 from requests.packages.urllib3 import HTTPConnectionPool, HTTPSConnectionPool
 from requests.packages.urllib3.poolmanager import PoolManager, proxy_from_url
 from requests.packages.urllib3.connectionpool import VerifiedHTTPSConnection
