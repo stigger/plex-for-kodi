@@ -110,6 +110,9 @@ class HttpRequest(object):
             plexapp.util.APP.onRequestTimeout(context)
             self.removeAsPending()
             return
+        except (urllib3.exceptions.ProtocolError, requests.exceptions.ConnectionError):
+            self.removeAsPending()
+            return
         except Exception as e:
             util.ERROR('Request failed {0}'.format(util.cleanToken(self.url)), e)
             if not hasattr(e, 'response'):
