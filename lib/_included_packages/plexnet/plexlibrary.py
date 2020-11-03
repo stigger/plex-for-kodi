@@ -555,6 +555,9 @@ class PlaylistHub(BaseHub):
             util.DEBUG_LOG('AudioPlaylistHub: Bad request: {0}'.format(self))
             self.items = []
 
+    def getCleanHubIdentifier(self):
+        return re.sub(r'\.\d+$', '', re.sub(r'\.\d+$', '', self.hubIdentifier))
+
     def extend(self, start=None, size=None):
         path = '/playlists/all?playlistType={0}'.format(self.type)
 

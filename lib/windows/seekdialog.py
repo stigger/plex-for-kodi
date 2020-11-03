@@ -871,6 +871,8 @@ class SeekDialog(kodigui.BaseDialog):
         :param without_osd: indicates whether this seek was done with or without OSD
         :return:
         """
+        if self.selectedOffset is None:
+            self.selectedOffset = self.offset
         lastSelectedOffset = self.selectedOffset
         # If we are seeking forward and already past 5 seconds from end, don't seek at all
         if lastSelectedOffset > self.duration - 5000 and offset > 0:
