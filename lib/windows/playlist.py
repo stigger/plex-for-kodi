@@ -250,6 +250,9 @@ class PlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         elif pi.type in ('movie', 'clip'):
             self.createMovieListItem(mli, pi)
 
+        if pi.type in ('episode', 'movie', 'clip'):
+            mli.setProperty('progress', util.getProgressImage(mli.dataSource))
+
         return mli
 
     def createTrackListItem(self, mli, track):
