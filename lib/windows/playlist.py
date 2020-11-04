@@ -167,17 +167,19 @@ class PlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                     pq = plexnet.playqueue.createPlayQueueForItem(self.playlist, options=args)
                     opener.open(pq)
             elif self.playlist.playlistType == 'video':
-                # if self.playlist.leafCount.asInt() <= PLAYLIST_INITIAL_SIZE:
-                #     self.playlist.setShuffle(shuffle)
-                #     self.playlist.setCurrent(mli and mli.pos() or 0)
-                #     videoplayer.play(play_queue=self.playlist)
-                # else:
-                #     args = {'shuffle': shuffle}
-                #     if mli:
-                #         args['key'] = mli.dataSource.key
-                #     pq = plexnet.playqueue.createPlayQueueForItem(self.playlist, options=args)
-                #     opener.open(pq)
-                self.openItem(mli.dataSource)
+                if not util.advancedSettings.playlistVisitMedia:
+                    if self.playlist.leafCount.asInt() <= PLAYLIST_INITIAL_SIZE:
+                        self.playlist.setShuffle(shuffle)
+                        self.playlist.setCurrent(mli and mli.pos() or 0)
+                        videoplayer.play(play_queue=self.playlist)
+                    else:
+                        args = {'shuffle': shuffle}
+                        if mli:
+                            args['key'] = mli.dataSource.key
+                        pq = plexnet.playqueue.createPlayQueueForItem(self.playlist, options=args)
+                        opener.open(pq)
+                else:
+                    self.openItem(mli.dataSource)
 
         finally:
             self.isPlaying = False
