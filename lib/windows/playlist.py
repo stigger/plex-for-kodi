@@ -167,16 +167,19 @@ class PlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                     pq = plexnet.playqueue.createPlayQueueForItem(self.playlist, options=args)
                     opener.open(pq)
             elif self.playlist.playlistType == 'video':
-                if self.playlist.leafCount.asInt() <= PLAYLIST_INITIAL_SIZE:
-                    self.playlist.setShuffle(shuffle)
-                    self.playlist.setCurrent(mli and mli.pos() or 0)
-                    videoplayer.play(play_queue=self.playlist)
+                if not util.advancedSettings.playlistVisitMedia:
+                    if self.playlist.leafCount.asInt() <= PLAYLIST_INITIAL_SIZE:
+                        self.playlist.setShuffle(shuffle)
+                        self.playlist.setCurrent(mli and mli.pos() or 0)
+                        videoplayer.play(play_queue=self.playlist)
+                    else:
+                        args = {'shuffle': shuffle}
+                        if mli:
+                            args['key'] = mli.dataSource.key
+                        pq = plexnet.playqueue.createPlayQueueForItem(self.playlist, options=args)
+                        opener.open(pq)
                 else:
-                    args = {'shuffle': shuffle}
-                    if mli:
-                        args['key'] = mli.dataSource.key
-                    pq = plexnet.playqueue.createPlayQueueForItem(self.playlist, options=args)
-                    opener.open(pq)
+                    self.openItem(mli.dataSource)
 
         finally:
             self.isPlaying = False
@@ -274,6 +277,12 @@ class PlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     @busy.dialog()
     def fillPlaylist(self):
         total = self.playlist.leafCount.asInt()
+
+        # leafCount is clamped to 6 when coming from Home/PlaylistsHub
+        actualPlaylistLength = len(self.playlist.items())
+
+        if total < len(self.playlist):
+            total = actualPlaylistLength
 
         endoffirst = min(PLAYLIST_INITIAL_SIZE, PLAYLIST_PAGE_SIZE, total)
         items = [self.updateListItem(i, pi, kodigui.ManagedListItem()) for i, pi in enumerate(self.playlist.extend(0, endoffirst))]

@@ -1047,3 +1047,7 @@ msgstr ""
 msgctxt "#32501"
 msgid "Time-to-wait between videos on post-play"
 msgstr ""
+
+msgctxt "#32505"
+msgid "Visit media in video playlist instead of playing it"
+msgstr ""
