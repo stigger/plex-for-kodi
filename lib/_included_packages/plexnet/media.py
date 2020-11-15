@@ -61,7 +61,7 @@ class MediaItem(plexobjects.PlexObject):
             return False
 
         data = self.server.query('/library/metadata/{0}'.format(self.ratingKey))
-        return data and data.attrib.get('size') != '0'
+        return data is not None and data.attrib.get('size') != '0'
         # req = plexrequest.PlexRequest(self.server, '/library/metadata/{0}'.format(self.ratingKey), method='HEAD')
         # req.getToStringWithTimeout(10)
         # return not req.wasNotFound()
