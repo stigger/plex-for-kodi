@@ -211,6 +211,11 @@ class SeekDialog(kodigui.BaseDialog):
             if self.doKodiSelectDialogHack(action):
                 return
 
+        actionID = action.getId()
+
+        if actionID in (xbmcgui.ACTION_FORWARD, xbmcgui.ACTION_REWIND):
+            return
+
         try:
             self.resetTimeout()
 
