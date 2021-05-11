@@ -1051,3 +1051,8 @@ msgstr ""
 msgctxt "#32505"
 msgid "Visit media in video playlist instead of playing it"
 msgstr ""
+
+
+msgctxt "#32495"
+msgid "Skip intro"
+msgstr ""

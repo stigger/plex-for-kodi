@@ -3,6 +3,7 @@
 PlexLibrary
 """
 from __future__ import absolute_import
+import re
 from . import plexobjects
 from . import playlist
 from . import media
@@ -153,7 +154,7 @@ class LibrarySection(plexobjects.PlexObject):
 
     def items(self, path, start, size, filter_, sort, unwatched, type_, tag_fallback):
 
-        args = {}
+        args = {"includeCollections" : "1"}
 
         if size is not None:
             args['X-Plex-Container-Start'] = start
@@ -382,6 +383,24 @@ class PhotoSection(LibrarySection):
 
 
 @plexobjects.registerLibType
+class Collection(media.MediaItem):
+    TYPE = 'collection'
+
+    def __repr__(self):
+        title = self.title.replace(' ', '.')[0:20]
+        return '<{0}:{1}:{2}>'.format(self.__class__.__name__, self.key, title)
+
+    def all(self, *args, **kwargs):
+        return plexobjects.listItems(self.server, self.key)
+
+    def isMusicOrDirectoryItem(self):
+        return self.container.viewGroup in ('artist', 'album', 'track')
+
+    def isVideoOrDirectoryItem(self):
+        return self.container.viewGroup in ('movie', 'show', 'episode')
+
+
+@plexobjects.registerLibType
 class Generic(plexobjects.PlexObject):
     TYPE = 'Directory'
 
@@ -502,6 +521,9 @@ class Hub(BaseHub):
 
     def __repr__(self):
         return '<{0}:{1}>'.format(self.__class__.__name__, self.hubIdentifier)
+
+    def getCleanHubIdentifier(self):
+        return re.sub(r'\.\d+$', '', re.sub(r'\.\d+$', '', self.hubIdentifier))
 
     def reload(self, **kwargs):
         """ Reload the data for this object from PlexServer XML. """

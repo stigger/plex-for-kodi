@@ -252,6 +252,8 @@ class PhotoWindow(kodigui.BaseWindow):
             photo = self.playQueue.current()
             self.updatePqueueListSelection(photo)
 
+        self.showPhotoTimeout = time.time() + 0.2
+        if not self.showPhotoThread or not self.showPhotoThread.is_alive():
             self.showPhotoThread = threading.Thread(target=self._showPhoto, name="showphoto")
             self.showPhotoThread.start()
 
@@ -260,7 +262,7 @@ class PhotoWindow(kodigui.BaseWindow):
             waitedFor = 0
             self.setBoolProperty('is.updating', True)
             while waitedFor < 10:
-                if not self.showPhotoThread.isAlive() and not xbmc.abortRequested:
+                if not self.showPhotoThread.is_alive() and not xbmc.abortRequested:
                     return self.showPhoto(**kwargs)
                 elif xbmc.abortRequested:
                     self.setBoolProperty('is.updating', False)
@@ -436,7 +438,7 @@ class PhotoWindow(kodigui.BaseWindow):
 
     def play(self):
         self.setProperty('playing', '1')
-        if self.slideshowThread and self.slideshowThread.isAlive():
+        if self.slideshowThread and self.slideshowThread.is_alive():
             return
 
         self.slideshowThread = threading.Thread(target=self.slideshow, name='slideshow')

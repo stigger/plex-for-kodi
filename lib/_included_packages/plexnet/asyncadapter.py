@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 import time
 import socket
+import six
+
 import requests
 import six
 

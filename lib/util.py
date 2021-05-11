@@ -106,6 +106,7 @@ class AdvancedSettings(object):
         ("postplay_always", False),
         ("postplay_timeout", 16),
         ("playlist_visit_media", True),
+        ("intro_skip_early", False)
     )
 
     def __init__(self):

@@ -47,6 +47,8 @@ def open(obj, **kwargs):
     elif obj.TYPE in ('clip'):
         from . import videoplayer
         return videoplayer.play(video=obj)
+    elif obj.TYPE in ('collection'):
+        return collectionClicked(obj, **kwargs)
     elif obj.TYPE in ('Genre'):
         return genreClicked(obj, **kwargs)
     elif obj.TYPE in ('Director'):
@@ -122,6 +124,10 @@ def photoDirectoryClicked(photodirectory, **kwargs):
 def playlistClicked(pl, **kwargs):
     from . import playlist
     return handleOpen(playlist.PlaylistWindow, playlist=pl, **kwargs)
+
+
+def collectionClicked(collection, **kwargs):
+    return sectionClicked(collection, **kwargs)
 
 
 def sectionClicked(section, filter_=None, **kwargs):

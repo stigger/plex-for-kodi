@@ -75,6 +75,11 @@ TYPE_KEYS = {
         'thumb_dim': THUMB_POSTER_DIM,
         'art_dim': ART_AR16X9_DIM
     },
+    'collection': {
+        'fallback': 'movie',
+        'thumb_dim': THUMB_POSTER_DIM,
+        'art_dim': ART_AR16X9_DIM
+    },
     'album': {
         'fallback': 'music',
         'thumb_dim': THUMB_SQUARE_DIM
@@ -132,7 +137,8 @@ SORT_KEYS = {
     'photo': {
         'originallyAvailableAt': {'title': T(32373, 'By Date Taken'), 'display': T(32374, 'Date Taken')}
     },
-    'photodirectory': {}
+    'photodirectory': {},
+    'collection': {}
 }
 
 ITEM_TYPE = None
@@ -484,6 +490,9 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                 self.showPanelControl = ChunkedWrapList(self, self.POSTERS_PANEL_ID, 5)
             else:
                 self.showPanelControl = kodigui.ManagedControlList(self, self.POSTERS_PANEL_ID, 5)
+
+            hideFilterOptions = self.section.TYPE == 'photodirectory' or self.section.TYPE == 'collection'
+
             self.keyListControl = kodigui.ManagedControlList(self, self.KEY_LIST_ID, 27)
             self.setProperty('subDir', self.subDir and '1' or '')
             self.setProperty('no.options', self.section.TYPE != 'photodirectory' and '1' or '')
@@ -494,7 +503,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             self.setProperty('media.itemType', ITEM_TYPE or self.section.TYPE)
             self.setProperty('media.type', TYPE_PLURAL.get(ITEM_TYPE or self.section.TYPE, self.section.TYPE))
             self.setProperty('media', self.section.TYPE)
-            self.setProperty('hide.filteroptions', self.section.TYPE == 'photodirectory' and '1' or '')
+            self.setProperty('hide.filteroptions', hideFilterOptions and '1' or '')
 
             self.setTitle()
             self.fill()
@@ -784,7 +793,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             self.chunkCallback(None, None, clear=True)
         self.dcpjTimeout = time.time() + 0.5
         self.dcpjPos = pos
-        if not self.dcpjThread or not self.dcpjThread.isAlive():
+        if not self.dcpjThread or not self.dcpjThread.is_alive():
             self.dcpjThread = threading.Thread(target=self._chunkedPosJump)
             self.dcpjThread.start()
 
@@ -918,7 +927,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                 options.append({'type': t, 'display': TYPE_PLURAL.get(t, t)})
         elif self.section.TYPE == 'movie':
             for t in ('movie', 'collection', 'folder'):
-                options.append({'type': t, 'display': TYPE_PLURAL.get(t, t)})                
+                options.append({'type': t, 'display': TYPE_PLURAL.get(t, t)})
         elif self.section.TYPE == 'artist':
             for t in ('artist', 'album'):
                 options.append({'type': t, 'display': TYPE_PLURAL.get(t, t)})
@@ -1198,8 +1207,16 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         if not mli or not mli.dataSource:
             return
 
+        sectionType = self.section.TYPE
+
+        if sectionType == 'collection':
+            sectionType = mli.dataSource.TYPE
+
         updateWatched = False
-        if self.section.TYPE == 'show':
+        if mli.dataSource.TYPE == 'collection':
+            self.processCommand(opener.open(mli.dataSource))
+            updateWatched = True
+        elif sectionType == 'show':
             if ITEM_TYPE == 'episode':
                 self.openItem(mli.dataSource)
             else:
@@ -1228,7 +1245,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                 self.openItem(mli.dataSource)
             else:
                 self.processCommand(opener.handleOpen(subitems.ArtistWindow, media_item=mli.dataSource, parent_list=self.showPanelControl))
-        elif self.section.TYPE in ('photo', 'photodirectory'):
+        elif sectionType in ('photo', 'photodirectory'):
             self.showPhoto(mli.dataSource)
 
         if not mli:

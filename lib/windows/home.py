@@ -703,7 +703,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
     def sectionChanged(self, force=False):
         self.sectionChangeTimeout = time.time() + 0.3
-        if not self.sectionChangeThread or not self.sectionChangeThread.isAlive() or force:
+        if not self.sectionChangeThread or not self.sectionChangeThread.is_alive() or force:
             self.sectionChangeThread = threading.Thread(target=self._sectionChanged, name="sectionchanged")
             self.sectionChangeThread.start()
 
@@ -849,9 +849,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             hasContent = False
             skip = {}
             for hub in hubs:
-                identifier = re.sub('\.\d+$', '', hub.hubIdentifier)
+                identifier = hub.getCleanHubIdentifier()
+
                 if identifier not in self.HUBMAP:
-                    util.DEBUG_LOG('UNHANDLED - Hub: {0} ({1})'.format(hub.hubIdentifier, len(hub.items)))
+                    util.DEBUG_LOG('UNHANDLED - Hub: {0} [{1}]({2})'.format(hub.hubIdentifier, identifier, len(hub.items)))
                     continue
 
                 skip[self.HUBMAP[identifier]['index']] = 1
@@ -885,13 +886,14 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.showBusy(False)
 
     def showHub(self, hub, items=None):
-        identifier = re.sub('\.\d+$', '', hub.hubIdentifier)
+        identifier = hub.getCleanHubIdentifier()
+
         if identifier in self.HUBMAP:
-            util.DEBUG_LOG('Hub: {0} ({1})'.format(identifier, len(hub.items)))
+            util.DEBUG_LOG('HUB: {0} [{1}]({2})'.format(hub.hubIdentifier, identifier, len(hub.items)))
             self._showHub(hub, hubitems=items, **self.HUBMAP[identifier])
             return True
         else:
-            util.DEBUG_LOG('UNHANDLED - Hub: {0} ({1})'.format(hub.hubIdentifier, len(hub.items)))
+            util.DEBUG_LOG('UNHANDLED - Hub: {0} [{1}]({1})'.format(hub.hubIdentifier, identifier, len(hub.items)))
             return
 
     def createGrandparentedListItem(self, obj, thumb_w, thumb_h, with_grandparent_title=False):

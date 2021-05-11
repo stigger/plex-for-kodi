@@ -240,11 +240,25 @@ class SeekDialog(kodigui.BaseDialog):
                         if self.getProperty('mouse.mode') != '1':
                             self.setProperty('mouse.mode', '1')
 
-                        self.seekMouse(action, without_osd=controlID == self.NO_OSD_BUTTON_ID)
-                        return
-                    elif action == xbmcgui.ACTION_MOUSE_MOVE:
-                        self.seekMouse(action, without_osd=controlID == self.NO_OSD_BUTTON_ID, preview=True)
-                        return
+                    self.seekMouse(action, without_osd=controlID == self.NO_OSD_BUTTON_ID)
+                    return
+                elif action == xbmcgui.ACTION_MOUSE_MOVE:
+                    self.seekMouse(action, without_osd=controlID == self.NO_OSD_BUTTON_ID, preview=True)
+                    return
+
+            passThroughMain = False
+            if controlID == self.SKIP_INTRO_BUTTON_ID:
+                if action == xbmcgui.ACTION_SELECT_ITEM:
+                    self.setProperty('show.introSkip_OSDOnly', '1')
+                    self.doSeek(int(self.intro.endTimeOffset))
+                    return
+                elif action == xbmcgui.ACTION_MOVE_DOWN:
+                    self.setProperty('show.introSkip_OSDOnly', '1')
+                    self.showOSD()
+                elif action in (xbmcgui.ACTION_MOVE_RIGHT, xbmcgui.ACTION_STEP_FORWARD, xbmcgui.ACTION_MOVE_LEFT,
+                                xbmcgui.ACTION_STEP_BACK):
+                    # allow no-OSD-seeking with intro skip button shown
+                    passThroughMain = True
 
                 passThroughMain = False
                 if controlID == self.SKIP_INTRO_BUTTON_ID:
@@ -336,6 +350,12 @@ class SeekDialog(kodigui.BaseDialog):
                     builtin.Action('CycleSubtitle')
                 elif action.getButtonCode() == 61524:
                     builtin.Action('ShowSubtitles')
+                elif action.getButtonCode() == 323714:
+                    # Alt-left
+                    builtin.PlayerControl('tempodown')
+                elif action.getButtonCode() == 323715:
+                    # Alt-right
+                    builtin.PlayerControl('tempoup')
                 elif action == xbmcgui.ACTION_NEXT_ITEM:
                     self.handler.next()
                 elif action == xbmcgui.ACTION_PREV_ITEM:
@@ -636,7 +656,7 @@ class SeekDialog(kodigui.BaseDialog):
         if delay > 0:
             self._delayedSeekTimeout = time.time() + delay
 
-            if not self._delayedSeekThread or not self._delayedSeekThread.isAlive():
+            if not self._delayedSeekThread or not self._delayedSeekThread.is_alive():
                 self._delayedSeekThread = threading.Thread(target=self._delayedSeek)
                 self._delayedSeekThread.start()
         else:
