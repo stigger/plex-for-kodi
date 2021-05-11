@@ -344,7 +344,7 @@ class PhotoWindow(kodigui.BaseWindow):
                 try:
                     r = requests.get(url, allow_redirects=True, timeout=10.0)
                     r.raise_for_status()
-                except Exception, e:
+                except Exception as e:
                     util.ERROR("Couldn't load image: %s" % e, notify=True)
                     return None, None
                 else:
