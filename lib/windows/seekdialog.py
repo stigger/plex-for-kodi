@@ -240,25 +240,11 @@ class SeekDialog(kodigui.BaseDialog):
                         if self.getProperty('mouse.mode') != '1':
                             self.setProperty('mouse.mode', '1')
 
-                    self.seekMouse(action, without_osd=controlID == self.NO_OSD_BUTTON_ID)
-                    return
-                elif action == xbmcgui.ACTION_MOUSE_MOVE:
-                    self.seekMouse(action, without_osd=controlID == self.NO_OSD_BUTTON_ID, preview=True)
-                    return
-
-            passThroughMain = False
-            if controlID == self.SKIP_INTRO_BUTTON_ID:
-                if action == xbmcgui.ACTION_SELECT_ITEM:
-                    self.setProperty('show.introSkip_OSDOnly', '1')
-                    self.doSeek(int(self.intro.endTimeOffset))
-                    return
-                elif action == xbmcgui.ACTION_MOVE_DOWN:
-                    self.setProperty('show.introSkip_OSDOnly', '1')
-                    self.showOSD()
-                elif action in (xbmcgui.ACTION_MOVE_RIGHT, xbmcgui.ACTION_STEP_FORWARD, xbmcgui.ACTION_MOVE_LEFT,
-                                xbmcgui.ACTION_STEP_BACK):
-                    # allow no-OSD-seeking with intro skip button shown
-                    passThroughMain = True
+                        self.seekMouse(action, without_osd=controlID == self.NO_OSD_BUTTON_ID)
+                        return
+                    elif action == xbmcgui.ACTION_MOUSE_MOVE:
+                        self.seekMouse(action, without_osd=controlID == self.NO_OSD_BUTTON_ID, preview=True)
+                        return
 
                 passThroughMain = False
                 if controlID == self.SKIP_INTRO_BUTTON_ID:
