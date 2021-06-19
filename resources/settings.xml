@@ -83,7 +83,7 @@
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="background_art_blur_amount" type="slider" label="32469">
+                <setting id="background_art_blur_amount" type="integer" label="32469">
                     <level>0</level>
                     <default>128</default>
                     <constraints>
@@ -91,11 +91,11 @@
                         <step>1</step>
                         <maximum>256</maximum>
                     </constraints>
-                    <control type="slider" format="number">
+                    <control type="slider" format="integer">
                         <popup>false</popup>
                     </control>
                 </setting>
-                <setting id="background_art_opacity_amount" type="slider" label="32470">
+                <setting id="background_art_opacity_amount" type="integer" label="32470">
                     <level>0</level>
                     <default>60</default>
                     <constraints>
@@ -103,7 +103,7 @@
                         <step>1</step>
                         <maximum>100</maximum>
                     </constraints>
-                    <control type="slider" format="number">
+                    <control type="slider" format="integer">
                         <popup>false</popup>
                     </control>
                 </setting>
