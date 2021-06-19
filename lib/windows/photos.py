@@ -241,7 +241,7 @@ class PhotoWindow(kodigui.BaseWindow):
     def showPhoto(self, trigger=None, **kwargs):
         self.slideshowNext = 0
 
-        if not self.showPhotoThread or not self.showPhotoThread.isAlive():
+        if not self.showPhotoThread or not self.showPhotoThread.is_alive():
             # if trigger is given, trigger it. trigger loads the next or prev item, depending on what was requested
             # doing this here, this late prevents erratic behaviour when multiple next/prev calls were made but we were
             # still loading images
@@ -258,7 +258,7 @@ class PhotoWindow(kodigui.BaseWindow):
             self.showPhotoThread.start()
 
         # wait for the current thread to end, which might still be loading the surrounding images, for 10 seconds
-        elif self.showPhotoThread.isAlive():
+        elif self.showPhotoThread.is_alive():
             waitedFor = 0
             self.setBoolProperty('is.updating', True)
             while waitedFor < 10:
