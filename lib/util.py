@@ -16,6 +16,7 @@ from .kodijsonrpc import rpc
 from kodi_six import xbmc
 from kodi_six import xbmcgui
 from kodi_six import xbmcaddon
+from kodi_six import xbmcvfs
 
 from plexnet import signalsmixin
 import six
@@ -25,7 +26,7 @@ _SHUTDOWN = False
 
 ADDON = xbmcaddon.Addon()
 
-PROFILE = xbmc.translatePath(ADDON.getAddonInfo('profile'))
+PROFILE = xbmcvfs.translatePath(ADDON.getAddonInfo('profile'))
 
 SETTINGS_LOCK = threading.Lock()
 
@@ -56,7 +57,7 @@ def T(ID, eng=''):
     return ADDON.getLocalizedString(ID)
 
 
-def LOG(msg, level=xbmc.LOGNOTICE):
+def LOG(msg, level=xbmc.LOGINFO):
     xbmc.log('script.plex: {0}'.format(msg), level)
 
 
@@ -95,6 +96,7 @@ class AdvancedSettings(object):
         ("auto_seek", True),
         ("dynamic_timeline_seek", False),
         ("fast_back", False),
+        ("intro_skip_early", False)
     )
 
     def __init__(self):
@@ -144,7 +146,7 @@ def ERROR(txt='', hide_tb=False, notify=False):
 
 
 def TEST(msg):
-    xbmc.log('---TEST: {0}'.format(msg), xbmc.LOGNOTICE)
+    xbmc.log('---TEST: {0}'.format(msg), xbmc.LOGINFO)
 
 
 def setSetting(key, value):
@@ -175,7 +177,7 @@ def getGlobalProperty(key):
 
 def showNotification(message, time_ms=3000, icon_path=None, header=ADDON.getAddonInfo('name')):
     try:
-        icon_path = icon_path or xbmc.translatePath(ADDON.getAddonInfo('icon')).decode('utf-8')
+        icon_path = icon_path or xbmcvfs.translatePath(ADDON.getAddonInfo('icon'))
         xbmc.executebuiltin('Notification({0},{1},{2},{3})'.format(header, message, time_ms, icon_path))
     except RuntimeError:  # Happens when disabling the addon
         LOG(message)
