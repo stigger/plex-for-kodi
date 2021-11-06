@@ -35,7 +35,7 @@ class MCLPaginator(object):
 
     def reset(self):
         self.offset = 0
-        self._currentAmount = None
+        self._currentAmount = 0
         self._lastAmount = None
         self._boundaryHit = False
         self._direction = None
