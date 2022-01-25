@@ -88,7 +88,7 @@ class EpisodesPaginator(pagination.MCLPaginator):
             # selected episode in it
             episodes = []
             _amount = self.initialPageSize + self.orphans
-            epSeasonIndex = int(episode.index) - 1  # .index is 1-based
+            epSeasonIndex = int(episode.index or 1) - 1  # .index is 1-based
             if _amount < self.leafCount:
                 _amount = self.initialPageSize * 2
                 notFound = False
