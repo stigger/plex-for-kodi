@@ -14,7 +14,7 @@ It is still based off of the original P4K source and critical bugfixes will be P
 ## Installation
 
 * Add this Kodi repository to your Kodi installation: https://pannal.github.io/dontpanickodi/, or
-* Checkout any branch of this GitHub repository and use as-is
+* Checkout any branch of this GitHub repository, rename to `script.plexmod` and use as an addon
 
 
 ## Help/Bug Reports
