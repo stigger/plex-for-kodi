@@ -1,7 +1,5 @@
 # PlexMod (for Kodi)
 
----
-
 This is a modification of the official open-source Plex client for Kodi "plex-for-kodi" (Plex4Kodi)  semi-maintained by me (pannal).
 
 Contrary to how this repository was handled before, this client does _not_ claim to adhere to the Plex Inc. design guidelines, all the time.
