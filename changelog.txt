@@ -1,3 +1,9 @@
+[- 0.4.1 -]
+Initial PlexMod for Kodi release, based on my plex-for-kodi fork's develop branch
+Add support for Kodi Nexus (20) on LibreELEC and Android
+Add AV1 toggle and AV1 direct play support
+Rename addon to "script.plexmod"
+
 [- 0.2.3 -]
 
 Fix error causing playback to fail
