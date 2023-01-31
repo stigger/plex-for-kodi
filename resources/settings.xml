@@ -52,11 +52,6 @@
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="postplay_always" type="boolean" label="32500">
-                    <level>0</level>
-                    <default>false</default>
-                    <control type="toggle"/>
-                </setting>
                 <setting id="postplay_timeout" type="integer" label="32501">
                     <level>0</level>
                     <default>16</default>
