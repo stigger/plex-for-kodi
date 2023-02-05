@@ -495,6 +495,8 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.player.trigger('session.ended', session_id=self.sessionID)
         self.hideOSD(delete=True)
 
+    __next__ = next
+
 
 class AudioPlayerHandler(BasePlayerHandler):
     def __init__(self, player):

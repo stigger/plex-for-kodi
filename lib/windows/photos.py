@@ -437,6 +437,8 @@ class PhotoWindow(kodigui.BaseWindow):
             return
         self.showPhoto(trigger=lambda: self.playQueue.next())
 
+    __next__ = next
+
     def play(self):
         self.setProperty('playing', '1')
         if self.slideshowThread and self.slideshowThread.is_alive():
