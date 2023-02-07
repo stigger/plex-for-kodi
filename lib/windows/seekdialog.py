@@ -1087,6 +1087,7 @@ class SeekDialog(kodigui.BaseDialog):
 
         intro = self.shouldShowIntroSkip()
         if intro and self.autoSkipIntro:
+            self.resetAutoSeekTimer(None)
             self.doSeek(int(self.intro.endTimeOffset) + 1)
             return True
         else:
