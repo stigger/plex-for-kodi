@@ -273,9 +273,6 @@ class PlayableVideo(Video, RelatedMixin):
 class Movie(PlayableVideo):
     TYPE = 'movie'
 
-    def init(self, data):
-        self._credits = None
-
     def _setData(self, data):
         PlayableVideo._setData(self, data)
         if self.isFullObject():
@@ -291,6 +288,8 @@ class Movie(PlayableVideo):
         else:
             if data.find(media.Media.TYPE) is not None:
                 self.media = plexobjects.PlexMediaItemList(data, plexmedia.PlexMedia, media.Media.TYPE, initpath=self.initpath, server=self.server, media=self)
+
+        self.markers = plexobjects.PlexItemList(data, media.Marker, media.Marker.TYPE, server=self.server)
 
         self._videoStreams = None
         self._audioStreams = None
@@ -339,12 +338,6 @@ class Movie(PlayableVideo):
 
     def getStreamURL(self, **params):
         return self._getStreamURL(**params)
-
-    @property
-    def credits(self):
-        if self._credits is None:
-            self._credits = (list(filter(lambda x: x.type == "credits", self.markers)) or [False])[0]
-        return self._credits
 
 
 @plexobjects.registerLibType
@@ -445,8 +438,6 @@ class Episode(PlayableVideo, SectionOnDeckMixin):
     def init(self, data):
         self._show = None
         self._season = None
-        self._intro = None
-        self._credits = None
 
     def _setData(self, data):
         PlayableVideo._setData(self, data)
@@ -524,18 +515,6 @@ class Episode(PlayableVideo, SectionOnDeckMixin):
     @property
     def roles(self):
         return self.show().roles
-
-    @property
-    def intro(self):
-        if self._intro is None:
-            self._intro = (list(filter(lambda x: x.type == "intro", self.markers)) or [False])[0]
-        return self._intro
-
-    @property
-    def credits(self):
-        if self._credits is None:
-            self._credits = (list(filter(lambda x: x.type == "credits", self.markers)) or [False])[0]
-        return self._credits
 
     def getRelated(self, offset=None, limit=None, _max=36):
         return self.show().getRelated(offset=offset, limit=limit, _max=_max)
