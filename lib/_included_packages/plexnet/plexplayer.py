@@ -56,7 +56,8 @@ class PlexPlayer(object):
         if isForced:
             util.LOG(directPlay and "Forced Direct Play" or "Forced Transcode; allowDirectStream={0}".format(directStream))
 
-        directPlay = directPlay or self.choice.isDirectPlayable
+        directPlay = False if directPlay is False else self.choice.isDirectPlayable
+
         server = self.item.getServer()
 
         # A lot of our content metadata is independent of the direct play decision.
@@ -342,7 +343,7 @@ class PlexPlayer(object):
 
             for codec in ("ac3", "eac3", "dca"):
                 if self.item.settings.supportsAudioStream(codec, numChannels):
-                    builder.extras.append("append-transcode-target-audio-codec(type=videoProfile&context=streaming&audioCodec=" + codec + ")")
+                    builder.extras.append("append-transcode-target-audio-codec(type=videoProfile&context=streaming&protocol=http&audioCodec=" + codec + ")")
                     builder.extras.append("add-direct-play-profile(type=videoProfile&container=matroska&videoCodec=*&audioCodec=" + codec + ")")
                     if codec == "dca":
                         builder.extras.append(
@@ -355,10 +356,10 @@ class PlexPlayer(object):
 
         # HEVC and VP9 support!
         if self.item.settings.getGlobal("hevcSupport"):
-            builder.extras.append("append-transcode-target-codec(type=videoProfile&context=streaming&videoCodec=hevc)")
+            builder.extras.append("append-transcode-target-codec(type=videoProfile&context=streaming&protocol=http&videoCodec=hevc)")
 
         if self.item.settings.getGlobal("vp9Support"):
-            builder.extras.append("append-transcode-target-codec(type=videoProfile&context=streaming&videoCodec=vp9)")
+            builder.extras.append("append-transcode-target-codec(type=videoProfile&context=streaming&protocol=http&videoCodec=vp9)")
 
         return builder
 
