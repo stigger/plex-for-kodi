@@ -1,3 +1,8 @@
+[- 0.4.7-beta1.1 -]
+actually respect DirectPlay=Off
+add missing protocol parameter to transcode target (audio) codecs, hopefully fixing transcoding to MP3
+note: DirectStream for anything other than h264 seems broken
+
 [- 0.4.7-beta1.0 -]
 implement multiple markers per video file
 add skip credits Plex-style (skip to post-credit scene if applicable or skip to end)
