@@ -370,6 +370,24 @@ class PlexPlayer(object):
         #     builder.extras.append("append-transcode-target-audio-codec(type=videoProfile&context=streaming&protocol=http&audioCodec=" + codec + ")")
         #     builder.extras.append("add-direct-play-profile(type=videoProfile&videoCodec=*&container=mkv&audioCodec=" + codec + ")")
 
+        # limit OPUS to 334kbit
+        numChannels = self.choice.audioStream.channels.asInt(8) if self.choice.audioStream else 8
+
+        if numChannels == 8:
+            # 7.1
+            opusBitrate = 334
+        elif numChannels >= 6:
+            # 5.1
+            opusBitrate = 256
+        else:
+            # 2
+            opusBitrate = 128
+
+        builder.extras.append(
+            "add-limitation(scope=videoAudioCodec&scopeName=opus&type=upperBound&name=audio.bitrate&"
+            "value={}&isRequired=false)".format(opusBitrate)
+        )
+
         # AAC sample rate cannot be less than 22050hz (HLS is capable).
         if self.choice.audioStream is not None and self.choice.audioStream.samplingRate.asInt(22050) < 22050:
             builder.extras.append(
