@@ -334,30 +334,33 @@ class PlexPlayer(object):
 
             builder.addParam("subtitles", "auto")
 
+        audioCodecs = "eac3,ac3,dca,aac,mp3,mp2,pcm,flac,alac,wmav2,wmapro,wmavoice,opus,vorbis"
+
         builder.extras.append(
             "add-direct-play-profile(type=videoProfile&videoCodec="
-            "h264,mpeg1video,mpeg2video,mpeg4,msmpeg4v2,msmpeg4v3,vc1,wmv3&container=*&audioCodec=*&protocol=*)")
+            "h264,mpeg1video,mpeg2video,mpeg4,msmpeg4v2,msmpeg4v3,vc1,wmv3&container=*&"
+            "audioCodec="+audioCodecs+"&protocol=*)")
 
         builder.extras.append(
             "add-transcode-target(type=videoProfile&videoCodec="
             "h264,mpeg1video,mpeg2video,mpeg4,msmpeg4v2,msmpeg4v3,vc1,wmv3&container=mkv&"
-            "audioCodec=*&protocol=http&context=streaming)")
+            "audioCodec="+audioCodecs+"&protocol=http&context=streaming)")
 
         # Allow virtually anything in Kodi playback.
         # if self.item.settings.supportsSurroundSound():
-        #    if self.choice.audioStream is not None:
-        #        numChannels = self.choice.audioStream.channels.asInt(8)
-        #    else:
-        #        numChannels = 8
-        ##
-        #    for codec in ("ac3", "eac3", "dca"):
-        #        if self.item.settings.supportsAudioStream(codec, numChannels):
-        #            builder.extras.append("append-transcode-target-audio-codec(type=videoProfile&context=streaming&protocol=http&audioCodec=" + codec + ")")
-        #            builder.extras.append("add-direct-play-profile(type=videoProfile&videoCodec=*&container=mkv&audioCodec=" + codec + ")")
-        #            if codec == "dca":
-        #                builder.extras.append(
-        #                    "add-limitation(scope=videoAudioCodec&scopeName=dca&type=upperBound&name=audio.channels&value=8&isRequired=false)"
-        #                )
+        #     if self.choice.audioStream is not None:
+        #         numChannels = self.choice.audioStream.channels.asInt(8)
+        #     else:
+        #         numChannels = 8
+        #
+        #     for codec in ("ac3", "eac3", "dca"):
+        #         if self.item.settings.supportsAudioStream(codec, numChannels):
+        #             builder.extras.append("append-transcode-target-audio-codec(type=videoProfile&context=streaming&protocol=http&audioCodec=" + codec + ")")
+        #             builder.extras.append("add-direct-play-profile(type=videoProfile&videoCodec=*&container=mkv&audioCodec=" + codec + ")")
+        #             if codec == "dca":
+        #                 builder.extras.append(
+        #                     "add-limitation(scope=videoAudioCodec&scopeName=dca&type=upperBound&name=audio.channels&value=8&isRequired=false)"
+        #                 )
 
         # AAC sample rate cannot be less than 22050hz (HLS is capable).
         if self.choice.audioStream is not None and self.choice.audioStream.samplingRate.asInt(22050) < 22050:
