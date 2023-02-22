@@ -299,7 +299,7 @@ class PlexPlayer(object):
 
         return builder
 
-    def buildTranscodeMkv(self, obj):
+    def buildTranscodeMkv(self, obj, directStream=True):
         util.DEBUG_LOG('buildTranscodeMkv()')
         obj.streamFormat = "mkv"
         obj.streamBitrates = [0]
@@ -334,13 +334,18 @@ class PlexPlayer(object):
 
             builder.addParam("subtitles", "auto")
 
-        audioCodecs = "eac3,ac3,dca,aac,mp3,mp2,pcm,flac,alac,wmav2,wmapro,wmavoice,opus,vorbis,truehd"
+        if directStream:
+            audioCodecs = "eac3,ac3,dca,aac,mp3,mp2,pcm,flac,alac,wmav2,wmapro,wmavoice,opus,vorbis,truehd"
+        else:
+            audioCodecs = "mp3,aac,opus"
 
         # Allow virtually anything in Kodi playback.
-        builder.extras.append(
-            "add-direct-play-profile(type=videoProfile&videoCodec="
-            "h264,mpeg1video,mpeg2video,mpeg4,msmpeg4v2,msmpeg4v3,vc1,wmv3&container=*&"
-            "audioCodec="+audioCodecs+"&protocol=http)")
+
+        # DP might not do anything here
+        # builder.extras.append(
+        #     "add-direct-play-profile(type=videoProfile&videoCodec="
+        #     "h264,mpeg1video,mpeg2video,mpeg4,msmpeg4v2,msmpeg4v3,vc1,wmv3&container=*&"
+        #     "audioCodec="+audioCodecs+"&protocol=http)")
 
         builder.extras.append(
             "add-transcode-target(type=videoProfile&videoCodec="
@@ -399,24 +404,24 @@ class PlexPlayer(object):
             builder.extras.append(
                 "append-transcode-target-codec(type=videoProfile&context=streaming&container=mkv&"
                 "protocol=http&videoCodec=hevc)")
-            builder.extras.append(
-                "add-direct-play-profile(type=videoProfile&videoCodec=hevc&container=*&audioCodec=*)")
+            # builder.extras.append(
+            #     "add-direct-play-profile(type=videoProfile&videoCodec=hevc&container=*&audioCodec=*)")
 
         # VP9
         if self.item.settings.getGlobal("vp9Support"):
             builder.extras.append(
                 "append-transcode-target-codec(type=videoProfile&context=streaming&container=mkv&"
                 "protocol=http&videoCodec=vp9)")
-            builder.extras.append(
-                "add-direct-play-profile(type=videoProfile&videoCodec=vp9&container=*&audioCodec=*)")
+            # builder.extras.append(
+            #     "add-direct-play-profile(type=videoProfile&videoCodec=vp9&container=*&audioCodec=*)")
 
         # AV1
         if self.item.settings.getPreference("allow_av1", False):
             builder.extras.append(
                 "append-transcode-target-codec(type=videoProfile&context=streaming&container=mkv&"
                 "protocol=http&videoCodec=av1)")
-            builder.extras.append(
-                "add-direct-play-profile(type=videoProfile&videoCodec=av1&container=*&audioCodec=*)")
+            # builder.extras.append(
+            #     "add-direct-play-profile(type=videoProfile&videoCodec=av1&container=*&audioCodec=*)")
 
         return builder
 
@@ -490,7 +495,7 @@ class PlexPlayer(object):
 
         # if server.supportsFeature("mkvTranscode") and self.item.settings.getPreference("transcode_format", 'mkv') != "hls":
         if server.supportsFeature("mkvTranscode"):
-            builder = self.buildTranscodeMkv(obj)
+            builder = self.buildTranscodeMkv(obj, directStream=directStream)
         else:
             builder = self.buildTranscodeHls(obj)
 
