@@ -393,6 +393,14 @@ class PlexPlayer(object):
             "value={}&isRequired=false)".format(opusBitrate)
         )
 
+        # limit AC3
+        builder.extras.append(
+            "add-limitation(scope=videoAudioCodec&scopeName=ac3&type=upperBound&name=audio.bitrate&value=640)"
+        )
+        builder.extras.append(
+            "add-limitation(scope=videoAudioCodec&scopeName=ac3&type=upperBound&name=audio.channels&value=6)"
+        )
+
         # AAC sample rate cannot be less than 22050hz (HLS is capable).
         if self.choice.audioStream is not None and self.choice.audioStream.samplingRate.asInt(22050) < 22050:
             builder.extras.append(
