@@ -39,7 +39,7 @@ class PlexPlayer(object):
         self.decision = decision
 
     def build(self, forceTranscode=False):
-        if self.item.settings.getPreference("playback_directplay", False):
+        if self.item.settings.getPreference("playback_directplay", True):
             directPlayPref = self.item.settings.getPreference("playback_directplay_force", False) and 'forced' or 'allow'
         else:
             directPlayPref = 'disabled'
@@ -354,12 +354,18 @@ class PlexPlayer(object):
         if self.choice.audioStream is not None and self.choice.audioStream.samplingRate.asInt(22050) < 22050:
             builder.extras.append("add-limitation(scope=videoAudioCodec&scopeName=aac&type=lowerBound&name=audio.samplingRate&value=22050&isRequired=false)")
 
-        # HEVC and VP9 support!
-        if self.item.settings.getGlobal("hevcSupport"):
+        # HEVC
+        if self.item.settings.getPreference("allow_hevc", True):
             builder.extras.append("append-transcode-target-codec(type=videoProfile&context=streaming&protocol=http&videoCodec=hevc)")
 
+        # VP9
         if self.item.settings.getGlobal("vp9Support"):
             builder.extras.append("append-transcode-target-codec(type=videoProfile&context=streaming&protocol=http&videoCodec=vp9)")
+
+        # AV1
+        if self.item.settings.getPreference("allow_av1", False):
+            builder.extras.append(
+                "append-transcode-target-codec(type=videoProfile&context=streaming&protocol=http&videoCodec=av1)")
 
         return builder
 
