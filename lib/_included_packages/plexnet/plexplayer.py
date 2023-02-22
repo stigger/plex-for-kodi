@@ -309,11 +309,11 @@ class PlexPlayer(object):
         builder.extras = []
         builder.addParam("protocol", "http")
         builder.addParam("copyts", "1")
-
-        # TODO: This should be Generic, but will need to re-evaluate the augmentations with that change
         builder.addParam("X-Plex-Client-Profile-Name", "Generic")
 
         obj.subtitleUrl = None
+
+        # fixme: still necessary?
         if True:  # if self.choice.subtitleDecision == self.choice.SUBTITLES_BURN:  # Must burn transcoded because we can't set offset
             builder.addParam("subtitles", "burn")
             captionSize = captions.CAPTIONS.getBurnedSize()
