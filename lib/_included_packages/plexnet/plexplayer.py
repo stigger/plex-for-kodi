@@ -49,7 +49,7 @@ class PlexPlayer(object):
         else:
             directPlay = directPlayPref == "forced" and True or None
 
-        return self._build(directPlay, self.item.settings.getPreference("playback_remux", False))
+        return self._build(directPlay, self.item.settings.getPreference("playback_remux", True))
 
     def _build(self, directPlay=None, directStream=True, currentPartIndex=None):
         isForced = directPlay is not None
