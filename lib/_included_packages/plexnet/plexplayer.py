@@ -337,7 +337,7 @@ class PlexPlayer(object):
         if directStream:
             audioCodecs = "eac3,ac3,dca,aac,mp3,mp2,pcm,flac,alac,wmav2,wmapro,wmavoice,opus,vorbis,truehd"
         else:
-            audioCodecs = "mp3,aac,opus"
+            audioCodecs = "mp3,ac3,aac,opus"
 
         # Allow virtually anything in Kodi playback.
 
