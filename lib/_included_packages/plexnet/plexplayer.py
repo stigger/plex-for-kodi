@@ -30,6 +30,15 @@ class PlexPlayer(object):
         util.LOG('TERMINATE PLAYER: ({0}, {1})'.format(code, reason))
         # TODO: Handle this? ---------------------------------------------------------------------------------------------------------- TODO
 
+    @property
+    def audioChannels(self):
+        """
+        Parse Kodi channel setting into channel count
+        """
+        channelDef = self.item.settings.getGlobal("audioChannels", "2.0")
+        major, minor = channelDef.split(".") if "." in channelDef else (channelDef, 0)
+        return int(major) + int(minor)
+
     def rebuild(self, item, decision=None):
         # item.settings = self.item.settings
         oldChoice = self.choice
@@ -397,8 +406,11 @@ class PlexPlayer(object):
         builder.extras.append(
             "add-limitation(scope=videoAudioCodec&scopeName=ac3&type=upperBound&name=audio.bitrate&value=640)"
         )
+
+        # limit audio to Kodi audio channels
         builder.extras.append(
-            "add-limitation(scope=videoAudioCodec&scopeName=ac3&type=upperBound&name=audio.channels&value=6)"
+            "add-limitation(scope=videoAudioCodec&scopeName=*&type=upperBound&"
+            "name=audio.channels&value={})".format(self.audioChannels)
         )
 
         # AAC sample rate cannot be less than 22050hz (HLS is capable).
