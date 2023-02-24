@@ -219,6 +219,10 @@ class MediaDecisionEngine(object):
         else:
             choice.sorts.audioChannels = 0
 
+        if item.settings.getPreference("audio_force_ac3", False) and choice.audioStream.codec != "ac3":
+            util.LOG("MDE: Server has decided this cannot direct play (AC3 is forced)")
+            choice.isDirectPlayable = False
+
         choice.sorts.videoDS = not (choice.sorts.videoDS is None or choice.forceTranscode is True) and choice.sorts.videoDS or 0
         choice.sorts.resolution = choice.resolution
 
