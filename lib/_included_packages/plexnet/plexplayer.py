@@ -426,7 +426,11 @@ class PlexPlayer(object):
 
         if forceAC3:
             # limit max audio channels to the above or 6 for AC3 (whichever is lower)
-            maxAudioChannels = min(6, maxAudioChannels)
+            if self.choice.audioStream.codec != "dca":
+                maxAudioChannels = min(6, maxAudioChannels)
+            else:
+                # allow DTS 6.1 ES
+                maxAudioChannels = min(7, maxAudioChannels)
 
         streamWasAC3 = hasAudioChoice and self.choice.audioStream.codec == "ac3"
 
