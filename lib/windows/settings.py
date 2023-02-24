@@ -222,7 +222,8 @@ class Settings(object):
         'audio': (
             T(32048, 'Audio'), (
                 BoolSetting('audio_clamp_to_orig', T(32058, 'Never exceed original audio codec'), True).description(
-                    T(32059, 'When transcoding audio, never exceed the original audio bitrate or channel count on the same codec.')
+                    T(32059, 'When transcoding audio, never exceed the original audio bitrate or channel '
+                             'count on the same codec.')
                 ),
                 BoolSetting('audio_channels_kodi', T(32060, 'Use Kodi audio channels'),
                             False).description(
@@ -231,8 +232,13 @@ class Settings(object):
                 ),
                 BoolSetting('audio_force_ac3', T(32062, 'Force transcoded audio to AC3'),
                             False).description(
-                    T(32063, 'When transcoding audio, always instruct PMS '
+                    T(32063, 'When transcoding multi-channel audio, always instruct PMS '
                              'encode to AC3 (useful for Optical passthrough)')
+                ),
+                BoolSetting('audio_ac3dts', T(32064, 'Treat DTS like AC3'),
+                            True).description(
+                    T(32065, 'When the above is enabled, treat DTS the same as AC3 '
+                             '(useful for Optical passthrough)')
                 ),
             )
         ),

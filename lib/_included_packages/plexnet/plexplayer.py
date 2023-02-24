@@ -325,7 +325,14 @@ class PlexPlayer(object):
         clampToOrig = self.item.settings.getPreference("audio_clamp_to_orig", True)
         useKodiAudio = self.item.settings.getPreference("audio_channels_kodi", False)
         forceAC3 = self.item.settings.getPreference("audio_force_ac3", False)
+        dtsIsAC3 = self.item.settings.getPreference("audio_ac3dts", True)
         hasAudioChoice = self.choice.audioStream is not None
+
+        streamAudioMC = hasAudioChoice and self.choice.audioStream.channels.asInt(8) > 2
+
+        # only force AC3 for multi channel audio
+        if hasAudioChoice and not streamAudioMC:
+            forceAC3 = False
 
         # fixme: still necessary?
         if True:  # if self.choice.subtitleDecision == self.choice.SUBTITLES_BURN:  # Must burn transcoded because we can't set offset
@@ -352,9 +359,12 @@ class PlexPlayer(object):
             if directStream:
                 audioCodecs = "eac3,ac3,dca,aac,mp3,mp2,pcm,flac,alac,wmav2,wmapro,wmavoice,opus,vorbis,truehd"
             else:
-                audioCodecs = "mp3,ac3,aac,opus"
+                audioCodecs = "mp3,ac3,dca,aac,opus"
         else:
-            audioCodecs = "ac3"
+            if dtsIsAC3:
+                audioCodecs = "ac3,dca"
+            else:
+                audioCodecs = "ac3"
 
         util.LOG('MDE-prep: enabling codecs: {}'.format(audioCodecs))
 
@@ -394,8 +404,8 @@ class PlexPlayer(object):
         #     builder.extras.append("append-transcode-target-audio-codec(type=videoProfile&context=streaming&protocol=http&audioCodec=" + codec + ")")
         #     builder.extras.append("add-direct-play-profile(type=videoProfile&videoCodec=*&container=mkv&audioCodec=" + codec + ")")
 
-        util.LOG('MDE-prep: settings: clampOrig: {}, kodiAudio: {}, forceAC3: {}'
-                 .format(clampToOrig, useKodiAudio, forceAC3))
+        util.LOG('MDE-prep: settings: clampOrig: {}, kodiAudio: {}, forceAC3: {}, dtsIsAC3: {}'
+                 .format(clampToOrig, useKodiAudio, forceAC3, dtsIsAC3))
 
         # limit audio channels to original stream's audio channel amount
         numChannels = self.choice.audioStream.channels.asInt(8) if self.choice.audioStream.channels else 8
@@ -411,26 +421,35 @@ class PlexPlayer(object):
             # 2
             opusBitrate = 128
 
-        streamWasAC3 = hasAudioChoice and self.choice.audioStream.codec == "ac3"
-        # limit audio bitrate to the same bitrate as the current stream's codec
-        if not forceAC3 and clampToOrig and hasAudioChoice and self.choice.audioStream.bitrate \
-                and self.choice.audioStream.codec:
-            util.LOG('MDE-prep: limiting {} to {} kbit'.format(self.choice.audioStream.codec.upper(),
-                                                                     self.choice.audioStream.bitrate))
-            builder.extras.append(
-                "add-limitation(scope=videoAudioCodec&scopeName={}&"
-                "type=upperBound&name=audio.bitrate&value={})".format(
-                    self.choice.audioStream.codec,
-                    self.choice.audioStream.bitrate
-                )
-            )
+        # limit max audio channels to audio stream or kodi (whichever is lower)
+        maxAudioChannels = numChannels if not useKodiAudio else min(numChannels, self.audioChannels)
 
-        if not forceAC3 and hasAudioChoice and self.choice.audioStream.codec != "opus":
-            util.LOG('MDE-prep: limiting OPUS bitrate to {} kbit'.format(opusBitrate))
-            builder.extras.append(
-                "add-limitation(scope=videoAudioCodec&scopeName=opus&type=upperBound&name=audio.bitrate&"
-                "value={}&isRequired=false)".format(opusBitrate)
-            )
+        if forceAC3:
+            # limit max audio channels to the above or 6 for AC3 (whichever is lower)
+            maxAudioChannels = min(6, maxAudioChannels)
+
+        streamWasAC3 = hasAudioChoice and self.choice.audioStream.codec == "ac3"
+
+        if not forceAC3 and hasAudioChoice:
+            # limit audio bitrate to the same bitrate as the current stream's codec
+            if clampToOrig and self.choice.audioStream.bitrate:
+                util.LOG('MDE-prep: limiting {} to {} kbit'.format(self.choice.audioStream.codec.upper(),
+                                                                   self.choice.audioStream.bitrate))
+                builder.extras.append(
+                    "add-limitation(scope=videoAudioCodec&scopeName={}&"
+                    "type=upperBound&name=audio.bitrate&value={})".format(
+                        self.choice.audioStream.codec,
+                        self.choice.audioStream.bitrate
+                    )
+                )
+
+            # limit OPUS bitrate
+            if hasAudioChoice and self.choice.audioStream.codec != "opus":
+                util.LOG('MDE-prep: limiting OPUS bitrate to {} kbit'.format(opusBitrate))
+                builder.extras.append(
+                    "add-limitation(scope=videoAudioCodec&scopeName=opus&type=upperBound&name=audio.bitrate&"
+                    "value={}&isRequired=false)".format(opusBitrate)
+                )
 
         # limit AC3
         if not streamWasAC3 or forceAC3:
@@ -439,16 +458,11 @@ class PlexPlayer(object):
                 "add-limitation(scope=videoAudioCodec&scopeName=ac3&type=upperBound&name=audio.bitrate&value=640)"
             )
 
-        # todo: make kodi audio channel limit optional
-        # todo: clamp audio channels to original stream
-        # todo: optionally enforce ac3
-        # limit audio to Kodi audio channels
-        if useKodiAudio:
-            util.LOG('MDE-prep: limiting audio channels to {}'.format(self.audioChannels))
-            builder.extras.append(
-                "add-limitation(scope=videoAudioCodec&scopeName=*&type=upperBound&"
-                "name=audio.channels&value={})".format(self.audioChannels)
-            )
+        util.LOG('MDE-prep: limiting audio channels to {}'.format(maxAudioChannels))
+        builder.extras.append(
+            "add-limitation(scope=videoAudioCodec&scopeName=*&type=upperBound&"
+            "name=audio.channels&value={})".format(maxAudioChannels)
+        )
 
         # AAC sample rate cannot be less than 22050hz (HLS is capable).
         if self.choice.audioStream is not None and self.choice.audioStream.samplingRate.asInt(22050) < 22050:

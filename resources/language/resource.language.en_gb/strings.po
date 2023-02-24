@@ -246,7 +246,15 @@ msgid "Force transcoded audio to AC3"
 msgstr ""
 
 msgctxt "#32063"
-msgid "When transcoding audio, always instruct PMS encode to AC3 (useful for Optical passthrough)"
+msgid "When transcoding multi-channel audio, always instruct PMS encode to AC3 (useful for Optical passthrough)"
+msgstr ""
+
+msgctxt "#32064"
+msgid "Treat DTS like AC3"
+msgstr ""
+
+msgctxt "#32065"
+msgid "When the above is enabled, treat DTS the same as AC3 (useful for Optical passthrough)"
 msgstr ""
 
 msgctxt "#32100"
