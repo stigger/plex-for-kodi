@@ -1,3 +1,8 @@
+[- 0.5.1 -]
+add media/part/stream info to info screen
+read and honor advancedsettings/memorysize
+
+
 [- 0.5.0 -]
 implement multiple markers per video file
 add skip credits Plex-style (skip to post-credit scene if applicable or skip to end)
