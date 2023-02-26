@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+import os
+
 from kodi_six import xbmc
 from kodi_six import xbmcgui
 from . import kodigui
@@ -206,7 +208,8 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             thumb_fallback='script.plex/thumb_fallbacks/{0}.png'.format(self.video.type == 'episode' and 'show' or 'movie'),
             info=self.video.summary,
             background=self.getProperty('background'),
-            is_16x9=self.video.type == 'episode'
+            is_16x9=self.video.type == 'episode',
+            video=self.video
         )
 
     def optionsButtonClicked(self):
