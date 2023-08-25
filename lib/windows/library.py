@@ -892,7 +892,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             args['sourceType'] = '1'
         elif self.section.TYPE == 'show':
             args['sourceType'] = '2'
-        else:
+        elif self.section.TYPE != 'collection':
             args['sourceType'] = '8'
 
         # When the list is filtered by unwatched, play and shuffle button should only play unwatched videos
@@ -944,7 +944,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             for t in ('movie', 'collection', 'folder'):
                 options.append({'type': t, 'display': TYPE_PLURAL.get(t, t)})
         elif self.section.TYPE == 'artist':
-            for t in ('artist', 'album'):
+            for t in ('artist', 'album', 'collection'):
                 options.append({'type': t, 'display': TYPE_PLURAL.get(t, t)})
         else:
             return
@@ -1243,20 +1243,19 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
 
         sectionType = self.section.TYPE
 
-        if sectionType == 'collection':
-            sectionType = mli.dataSource.TYPE
-
         updateUnwatchedAndProgress = False
 
         if mli.dataSource.TYPE == 'collection':
+            prevItemType = self.librarySettings.getItemType()
             self.processCommand(opener.open(mli.dataSource))
-            updateUnwatchedAndProgress = True
-        elif sectionType == 'show':
-            if ITEM_TYPE == 'episode':
+            self.librarySettings.setItemType(prevItemType)
+        elif self.section.TYPE == 'show' or mli.dataSource.TYPE == 'show' or mli.dataSource.TYPE == 'season' or mli.dataSource.TYPE == 'episode':
+            if ITEM_TYPE == 'episode' or mli.dataSource.TYPE == 'episode' or mli.dataSource.TYPE == 'season':
                 self.openItem(mli.dataSource)
             else:
                 self.processCommand(opener.handleOpen(subitems.ShowWindow, media_item=mli.dataSource, parent_list=self.showPanelControl))
-            updateUnwatchedAndProgress = True
+            if mli.dataSource.TYPE != 'season': # NOTE: A collection with Seasons doesn't have the leafCount/viewedLeafCount until you actually go into the season so we can't update the unwatched count here
+                updateUnwatchedAndProgress = True
         elif self.section.TYPE == 'movie' or mli.dataSource.TYPE == 'movie':
             datasource = mli.dataSource
             if datasource.isDirectory():
@@ -1275,12 +1274,12 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             else:
                 self.processCommand(opener.handleOpen(preplay.PrePlayWindow, video=datasource, parent_list=self.showPanelControl))
                 updateUnwatchedAndProgress = True
-        elif self.section.TYPE == 'artist':
-            if ITEM_TYPE == 'album':
+        elif self.section.TYPE == 'artist' or mli.dataSource.TYPE == 'artist' or mli.dataSource.TYPE == 'album' or mli.dataSource.TYPE == 'track':
+            if ITEM_TYPE == 'album' or mli.dataSource.TYPE == 'album' or mli.dataSource.TYPE == 'track':
                 self.openItem(mli.dataSource)
             else:
                 self.processCommand(opener.handleOpen(subitems.ArtistWindow, media_item=mli.dataSource, parent_list=self.showPanelControl))
-        elif sectionType in ('photo', 'photodirectory'):
+        elif self.section.TYPE in ('photo', 'photodirectory'):
             self.showPhoto(mli.dataSource)
 
         if not mli:
@@ -1305,7 +1304,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             mli.setProperty('unwatched', '')
             mli.setProperty('unwatched.count', '')
         else:
-            if self.section.TYPE == 'show':
+            if self.section.TYPE == 'show' or mli.dataSource.TYPE == 'show' or mli.dataSource.TYPE == 'season':
                 mli.setProperty('unwatched.count', str(mli.dataSource.unViewedLeafCount))
             else:
                 mli.setProperty('unwatched', '1')
@@ -1316,6 +1315,8 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             self.setProperty('screen.title', T(32394, 'MUSIC').upper())
         elif self.section.TYPE in ('photo', 'photodirectory'):
             self.setProperty('screen.title', T(32349, 'photos').upper())
+        elif self.section.TYPE == 'collection':
+            self.setProperty('screen.title', T(32382, 'COLLECTION').upper())
         else:
             self.setProperty('screen.title', self.section.TYPE == 'show' and T(32393, 'TV SHOWS').upper() or T(32348, 'movies').upper())
 
@@ -1639,7 +1640,9 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             thumbDim = TYPE_KEYS.get(self.section.type, TYPE_KEYS['movie'])['thumb_dim']
             artDim = TYPE_KEYS.get(self.section.type, TYPE_KEYS['movie']).get('art_dim', (256, 256))
 
-            showUnwatched = True if self.section.TYPE in ('movie', 'show') else False
+            showUnwatched = False
+            if (self.section.TYPE in ('movie', 'show') and items[0].TYPE != 'collection') or (self.section.TYPE == 'collection' and items[0].TYPE in ('movie', 'show', 'episode')): # NOTE: A collection with Seasons doesn't have the leafCount/viewedLeafCount until you actually go into the season so we can't update the unwatched count here
+                showUnwatched = True
 
             if self.chunkMode and len(items) < CHUNK_SIZE:
                 items += [None] * (CHUNK_SIZE - len(items))
@@ -1717,12 +1720,12 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                         else:
                             mli.setProperty('key', obj.key)
 
-                        if showUnwatched:
+                        if showUnwatched and obj.TYPE != 'collection':
                             if not obj.isDirectory():
                                 mli.setLabel2(util.durationToText(obj.fixedDuration()))
                             mli.setProperty('art', obj.defaultArt.asTranscodedImageURL(*artDim))
                             if not obj.isWatched and obj.TYPE != "Directory":
-                                if self.section.TYPE == 'show':
+                                if self.section.TYPE == 'show' or obj.TYPE == 'show' or obj.TYPE == 'season':
                                     mli.setProperty('unwatched.count', str(obj.unViewedLeafCount))
                                 else:
                                     mli.setProperty('unwatched', '1')
