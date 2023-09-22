@@ -563,7 +563,11 @@ def getTimeFormat():
     :return: tuple of strftime-compatible format, boolean padHour
     """
     origFmt = xbmc.getRegion('time')
-    fmt = origFmt.replace("%H%H", "%H").replace("%I%I", "%I")
+
+    # Kodi Omega on Android seems to have borked this separately (not happening on Windows at least)
+    # Format returned can be "%H:mm:ss", which is incompatible with strftime; fix.
+    fmt = origFmt.replace("hh", "%M").replace("mm", "%M").replace("ss", "%S").replace("%H%H", "%H")\
+        .replace("%I%I", "%I")
 
     # Checking for %H%H or %I%I only would be the obvious way here to determine whether the hour should be padded,
     # but the formats returned for regional settings with padding only have %H in them. This seems like a Kodi bug.
