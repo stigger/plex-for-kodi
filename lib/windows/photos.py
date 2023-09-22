@@ -41,7 +41,7 @@ class PhotoWindow(kodigui.BaseWindow):
     PQUEUE_LIST_ID = 500
     PQUEUE_LIST_OVERLAY_BUTTON_ID = 501
 
-    SLIDESHOW_INTERVAL = 3
+    SLIDESHOW_INTERVAL = util.slideshowInterval
 
     PHOTO_STACK_SIZE = 10
     tempSubFolder = ("p4k", "photos")
