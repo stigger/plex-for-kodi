@@ -1722,10 +1722,10 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                         mli.dataSource = obj
                         mli.setProperty('summary', obj.get('summary'))
 
-                        if self.chunkMode:
-                            mli.setProperty('key', self.chunkMode.getKey(pos))
-                        else:
-                            mli.setProperty('key', obj.key)
+                        #if self.chunkMode:
+                        #    mli.setProperty('key', self.chunkMode.getKey(pos))
+                        #else:
+                        #    mli.setProperty('key', obj.key)
 
                         if showUnwatched and obj.TYPE != 'collection':
                             if not obj.isDirectory():
