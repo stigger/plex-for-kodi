@@ -498,12 +498,13 @@ class Episode(PlayableVideo, SectionOnDeckMixin):
         return self._getStreamURL(**params)
 
     def season(self):
-        if not self._season and not self.get('skipParent').asBool():
-            items = plexobjects.listItems(self.server, self.parentKey)
+        skipParent = self.get('skipParent').asBool()
+        key = self.parentKey if not skipParent else self.grandparentKey
+        if not self._season:
+            items = plexobjects.listItems(self.server, key)
 
             if items:
                 self._season = items[0]
-
         return self._season
 
     def show(self):
