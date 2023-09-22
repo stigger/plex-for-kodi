@@ -257,6 +257,7 @@ class PhotoWindow(kodigui.BaseWindow):
             # bad temporary fix for videos in photo playqueues
             if photo.type != "photo":
                 self.next()
+                util.DEBUG_LOG("SKIPPING PHOTO: %s" % photo)
                 return
 
             self.updatePqueueListSelection(photo)
@@ -300,6 +301,9 @@ class PhotoWindow(kodigui.BaseWindow):
         try:
             for item in loadItems:
                 if not item:
+                    continue
+
+                if item.type != "photo":
                     continue
 
                 meta = self.playerObject.build(item=item)
@@ -416,11 +420,18 @@ class PhotoWindow(kodigui.BaseWindow):
         util.DEBUG_LOG('Slideshow: STARTED')
         self.slideshowRunning = True
 
+        # inhibit screensaver in matrix and above
+        if util.KODI_VERSION_MAJOR > 18:
+            xbmc.executebuiltin('InhibitScreensaver(true)')
+
         self.resetSlideshowTimeout()
         while not util.MONITOR.waitForAbort(0.1) and self.slideshowRunning:
             if not self.slideshowNext or time.time() < self.slideshowNext:
                 continue
             self.next()
+
+        if util.KODI_VERSION_MAJOR > 18:
+            xbmc.executebuiltin('InhibitScreensaver(false)')
 
         util.DEBUG_LOG('Slideshow: STOPPED')
 
