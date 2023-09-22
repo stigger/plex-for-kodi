@@ -161,7 +161,7 @@
                                 <control type="label">
                                     <scroll>false</scroll>
                                     <posx>0</posx>
-                                    <posy>244</posy>
+                                    <posy>260</posy>
                                     <width>244</width>
                                     <height>40</height>
                                     <font>font10</font>
@@ -233,7 +233,7 @@
                                     <control type="label">
                                         <scroll>Control.HasFocus(101)</scroll>
                                         <posx>0</posx>
-                                        <posy>244</posy>
+                                        <posy>260</posy>
                                         <width>244</width>
                                         <height>40</height>
                                         <font>font10</font>

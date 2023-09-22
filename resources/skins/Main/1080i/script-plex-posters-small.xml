@@ -207,15 +207,28 @@
                                     </control>
                                 </control>
                                 <control type="label">
+                                    <visible>String.IsEmpty(ListItem.Property(subtitle))</visible>
                                     <scroll>false</scroll>
                                     <posx>0</posx>
                                     <posy>218</posy>
                                     <width>144</width>
-                                    <height>32</height>
+                                    <height>72</height>
                                     <font>font10</font>
                                     <align>center</align>
                                     <textcolor>FFFFFFFF</textcolor>
                                     <label>$INFO[ListItem.Label]</label>
+                                </control>
+                                <control type="label">
+                                    <visible>!String.IsEmpty(ListItem.Property(subtitle))</visible>
+                                    <scroll>false</scroll>
+                                    <posx>0</posx>
+                                    <posy>218</posy>
+                                    <width>144</width>
+                                    <height>72</height>
+                                    <font>font10</font>
+                                    <align>center</align>
+                                    <textcolor>FFFFFFFF</textcolor>
+                                    <label>$INFO[ListItem.Property(subtitle)]</label>
                                 </control>
                             </control>
                         </control>
@@ -319,15 +332,28 @@
                                         </control>
                                     </control>
                                     <control type="label">
+                                        <visible>String.IsEmpty(ListItem.Property(subtitle))</visible>
                                         <scroll>true</scroll>
                                         <posx>0</posx>
                                         <posy>218</posy>
                                         <width>144</width>
-                                        <height>32</height>
+                                        <height>72</height>
                                         <font>font10</font>
                                         <align>center</align>
                                         <textcolor>FFFFFFFF</textcolor>
                                         <label>$INFO[ListItem.Label]</label>
+                                    </control>
+                                    <control type="label">
+                                        <visible>!String.IsEmpty(ListItem.Property(subtitle))</visible>
+                                        <scroll>true</scroll>
+                                        <posx>0</posx>
+                                        <posy>218</posy>
+                                        <width>144</width>
+                                        <height>30</height>
+                                        <font>font10</font>
+                                        <align>center</align>
+                                        <textcolor>FFFFFFFF</textcolor>
+                                        <label>$INFO[ListItem.Property(subtitle)] - $INFO[ListItem.Label]</label>
                                     </control>
                                 </control>
                                 <control type="image">
@@ -396,7 +422,7 @@
                                     <posx>0</posx>
                                     <posy>0</posy>
                                     <width>34</width>
-                                    <height>32</height>
+                                    <height>30</height>
                                     <font>font10</font>
                                     <align>center</align>
                                     <aligny>center</aligny>
@@ -442,7 +468,7 @@
                                     <posx>0</posx>
                                     <posy>0</posy>
                                     <width>34</width>
-                                    <height>32</height>
+                                    <height>30</height>
                                     <font>font10</font>
                                     <align>center</align>
                                     <aligny>center</aligny>

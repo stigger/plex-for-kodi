@@ -213,7 +213,7 @@
                                     <posx>0</posx>
                                     <posy>371</posy>
                                     <width>244</width>
-                                    <height>30</height>
+                                    <height>72</height>
                                     <font>font10</font>
                                     <align>center</align>
                                     <textcolor>FFFFFFFF</textcolor>
@@ -325,7 +325,7 @@
                                         <posx>0</posx>
                                         <posy>371</posy>
                                         <width>244</width>
-                                        <height>30</height>
+                                        <height>72</height>
                                         <font>font10</font>
                                         <align>center</align>
                                         <textcolor>FFFFFFFF</textcolor>

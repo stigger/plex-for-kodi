@@ -463,8 +463,8 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         self.sortDesc = self.librarySettings.getSetting('sort.desc', False)
 
         self.chunkMode = None
-        if ITEM_TYPE in ('episode', 'album'):
-            self.chunkMode = ChunkModeWrapped()
+        #if ITEM_TYPE in ('episode', 'album'):
+        #    self.chunkMode = ChunkModeWrapped()
 
         key = self.section.key
         if not key.isdigit():
@@ -492,8 +492,8 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
 
     def onFirstInit(self):
         self.scrollBar = None
-        if ITEM_TYPE in ('episode', 'album'):
-            self.scrollBar = CustomScrollBar(self, 950, 952, 953, 951)
+        #if ITEM_TYPE in ('episode', 'album'):
+        #    self.scrollBar = CustomScrollBar(self, 950, 952, 953, 951)
 
         if self.showPanelControl:
             self.showPanelControl.newControl(self)
@@ -573,7 +573,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                 if not xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(self.OPTIONS_GROUP_ID)) and \
                         (not util.advancedSettings.fastBack or action == xbmcgui.ACTION_CONTEXT_MENU):
                     if xbmc.getCondVisibility('Integer.IsGreater(Container(101).ListItem.Property(index),5)'):
-                        self.setFocusId(self.OPTIONS_GROUP_ID)
+                        self.showPanelControl.selectItem(0)
                         return
 
             self.updateItem()
@@ -1654,12 +1654,14 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                         mli.dataSource = obj
                         mli.setProperty('index', str(pos))
                         if obj.index:
-                            subtitle = u' - {0}{1} \u2022 {2}{3}'.format(T(32310, 'S'), obj.parentIndex, T(32311, 'E'), obj.index)
+                            subtitle = u'{0}{1} \u2022 {2}{3}'.format(T(32310, 'S'), obj.parentIndex, T(32311, 'E'), obj.index)
+                            mli.setProperty('subtitle', subtitle)
+                            subtitle = "\n" + subtitle
                         else:
                             subtitle = ' - ' + obj.originallyAvailableAt.asDatetime('%m/%d/%y')
                         mli.setLabel((obj.defaultTitle or '') + subtitle)
 
-                        # mli.setThumbnailImage(obj.defaultThumb.asTranscodedImageURL(*thumbDim))
+                        mli.setThumbnailImage(obj.defaultThumb.asTranscodedImageURL(*thumbDim))
 
                         mli.setProperty('summary', obj.summary)
 
@@ -1684,7 +1686,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                     if obj:
                         mli.dataSource = obj
                         mli.setProperty('index', str(pos))
-                        mli.setLabel(u'{0} \u2022 {1}'.format(obj.parentTitle, obj.title))
+                        mli.setLabel(u'{0}\n{1}'.format(obj.parentTitle, obj.title))
 
                         mli.setThumbnailImage(obj.defaultThumb.asTranscodedImageURL(*thumbDim))
 
