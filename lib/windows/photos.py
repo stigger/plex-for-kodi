@@ -252,6 +252,13 @@ class PhotoWindow(kodigui.BaseWindow):
                 self.updateProperties()
 
             photo = self.playQueue.current()
+
+            # fixme: video should work.
+            # bad temporary fix for videos in photo playqueues
+            if photo.type != "photo":
+                self.next()
+                return
+
             self.updatePqueueListSelection(photo)
 
         self.showPhotoTimeout = time.time() + 0.2
