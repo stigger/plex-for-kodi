@@ -430,7 +430,7 @@ def getKodiSlideshowInterval():
     try:
         return rpc.Settings.GetSettingValue(setting="slideshow.staytime")["value"]
     except:
-        return
+        return 3
 
 
 kodiSkipSteps = getKodiSkipSteps()
