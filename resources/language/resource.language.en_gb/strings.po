@@ -1161,3 +1161,11 @@ msgstr ""
 msgctxt "#33108"
 msgid "Critic Rating"
 msgstr ""
+
+msgctxt "#33200"
+msgid "Background Color"
+msgstr ""
+
+msgctxt "#33201"
+msgid "Specify solid Background Color instead of using media images"
+msgstr ""

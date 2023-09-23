@@ -140,7 +140,8 @@ class AdvancedSettings(object):
         ("skip_credits_button_timeout", 10),
         ("playlist_visit_media", True),
         ("intro_skip_early", False),
-        ("show_media_ends_info", False)
+        ("show_media_ends_info", False),
+        ("background_colour", None)
     )
 
     def __init__(self):
@@ -152,6 +153,8 @@ class AdvancedSettings(object):
 
 
 advancedSettings = AdvancedSettings()
+
+hasCustomBGColour = not advancedSettings.dynamicBackgrounds and advancedSettings.backgroundColour != "-"
 
 
 def getAdvancedSettings():

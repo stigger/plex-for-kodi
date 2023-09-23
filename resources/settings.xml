@@ -109,6 +109,14 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
+                <setting id="background_colour" type="string" label="33200" help="33201">
+                  <level>0</level>
+                  <default>-</default> <!-- Black -->
+	              <control type="colorbutton" />
+                  <dependencies>
+                      <dependency type="enable" setting="dynamic_backgrounds">false</dependency>
+                  </dependencies>
+                </setting>
                 <setting id="background_art_blur_amount" type="integer" label="32469">
                     <level>0</level>
                     <default>0</default>
@@ -120,6 +128,9 @@
                     <control type="slider" format="integer">
                         <popup>false</popup>
                     </control>
+                    <dependencies>
+                      <dependency type="enable" setting="dynamic_backgrounds">true</dependency>
+                    </dependencies>
                 </setting>
                 <setting id="background_art_opacity_amount" type="integer" label="32470">
                     <level>0</level>
@@ -132,6 +143,9 @@
                     <control type="slider" format="integer">
                         <popup>false</popup>
                     </control>
+                    <dependencies>
+                      <dependency type="enable" setting="dynamic_backgrounds">true</dependency>
+                    </dependencies>
                 </setting>
                 <setting id="playlist_visit_media" type="boolean" label="32505">
                     <level>0</level>
