@@ -139,7 +139,8 @@ class AdvancedSettings(object):
         ("skip_intro_button_timeout", 10),
         ("skip_credits_button_timeout", 10),
         ("playlist_visit_media", True),
-        ("intro_skip_early", False)
+        ("intro_skip_early", False),
+        ("show_media_ends_info", False)
     )
 
     def __init__(self):

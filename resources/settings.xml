@@ -85,6 +85,11 @@
                         <popup>false</popup>
                     </control>
                 </setting>
+                <setting id="show_media_ends_info" type="boolean" label="32540" help="">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
             </group>
         </category>
         <category id="user_interface" label="32467">
