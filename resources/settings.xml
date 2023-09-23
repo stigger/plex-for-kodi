@@ -119,7 +119,7 @@
                 </setting>
                 <setting id="background_art_blur_amount" type="integer" label="32469">
                     <level>0</level>
-                    <default>0</default>
+                    <default>4</default>
                     <constraints>
                         <minimum>0</minimum>
                         <step>1</step>
@@ -134,7 +134,7 @@
                 </setting>
                 <setting id="background_art_opacity_amount" type="integer" label="32470">
                     <level>0</level>
-                    <default>40</default>
+                    <default>30</default>
                     <constraints>
                         <minimum>0</minimum>
                         <step>1</step>
