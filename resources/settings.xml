@@ -13,6 +13,11 @@
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
+                <setting id="oldprofile" type="boolean" label="33400" help="33401">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
             </group>
         </category>
         <category id="player" label="32464">

@@ -141,7 +141,8 @@ class AdvancedSettings(object):
         ("playlist_visit_media", True),
         ("intro_skip_early", False),
         ("show_media_ends_info", False),
-        ("background_colour", None)
+        ("background_colour", None),
+        ("oldprofile", False)
     )
 
     def __init__(self):
