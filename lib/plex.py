@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import sys
 import platform
+import traceback
 import uuid
 import json
 import threading
@@ -153,8 +154,12 @@ class PlexInterface(plexapp.AppInterface):
             maxres = self.getPreference('allow_4k', True) and plexapp.Res((3840, 2160)) or plexapp.Res((1920, 1080))
             self._globals['transcodeVideoResolutions'][-5:] = [maxres] * 5
         elif glbl == 'audioChannels':
-            self._globals['audioChannels'] = \
-                util.CHANNELMAPPING[util.rpc.Settings.GetSettingValue(setting='audiooutput.channels').get('value')]
+            try:
+                self._globals['audioChannels'] = \
+                    util.CHANNELMAPPING[util.rpc.Settings.GetSettingValue(setting='audiooutput.channels').get('value')]
+            except:
+                util.DEBUG_LOG("Limiting audio channel definition to 2.0 due to error: %s" % traceback.format_exc())
+                self._globals['audioChannels'] = "2.0"
 
         return self._globals.get(glbl, default)
 

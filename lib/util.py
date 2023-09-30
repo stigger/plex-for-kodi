@@ -42,8 +42,12 @@ def getChannelMapping():
     data = rpc.Settings.GetSettings(filter={"section": "system", "category": "audio"})["settings"]
     return list(filter(lambda i: i["id"] == "audiooutput.channels", data))[0]["options"]
 
+
 # retrieve labels for mapping audio channel settings values
-CHANNELMAPPING = dict((t["value"], t["label"]) for t in getChannelMapping())
+try:
+    CHANNELMAPPING = dict((t["value"], t["label"]) for t in getChannelMapping())
+except:
+    CHANNELMAPPING = None
 
 
 class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
