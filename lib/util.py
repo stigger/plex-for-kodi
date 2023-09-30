@@ -144,7 +144,8 @@ class AdvancedSettings(object):
         ("skip_credits_button_timeout", 10),
         ("playlist_visit_media", True),
         ("intro_skip_early", False),
-        ("show_media_ends_info", False),
+        ("show_media_ends_info", True),
+        ("show_media_ends_label", True),
         ("background_colour", None),
         ("oldprofile", False)
     )
