@@ -66,7 +66,7 @@ def defaultUserAgent():
         p_system = 'Unknown'
         p_release = 'Unknown'
 
-    return " ".join(['%s/%s' % ('Plex-for-Kodi', util.ADDON.getAddonInfo('version')),
+    return " ".join(['%s/%s' % ('PM4K', util.ADDON.getAddonInfo('version')),
                      '%s/%s' % ('Kodi', xbmc.getInfoLabel('System.BuildVersion').replace(' ', '-')),
                      '%s/%s' % (_implementation, _implementation_version),
                      '%s/%s' % (p_system, p_release)])
@@ -80,7 +80,7 @@ class PlexInterface(plexapp.AppInterface):
         'appVersionStr': util.ADDON.getAddonInfo('version'),
         'clientIdentifier': CLIENT_ID,
         'platformVersion': xbmc.getInfoLabel('System.BuildVersion'),
-        'product': 'Plex for Kodi',
+        'product': 'PM4K',
         'provides': 'player',
         'device': util.getPlatform() or plexapp.PLATFORM,
         'model': 'Unknown',
