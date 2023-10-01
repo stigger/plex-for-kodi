@@ -9,8 +9,7 @@ It implements features that are not implemented in other official Plex clients a
 It is still based off of the original P4K source and critical bugfixes will be PR'd back.
 
 ## Active branches
-* [develop-kodi20](https://github.com/pannal/plex-for-kodi/tree/develop_kodi20)
-* [develop-kodi19](https://github.com/pannal/plex-for-kodi/tree/develop_kodi19)
+* [develop-kodi21](https://github.com/pannal/plex-for-kodi/tree/develop_kodi19) (Kodi 19, 20, 21 cross-compatible)
 * [develop-kodi18](https://github.com/pannal/plex-for-kodi/tree/develop_kodi18) (legacy)
 
 Master branch is based off of the official plex-for-kodi master branch.
