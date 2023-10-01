@@ -16,7 +16,7 @@ Master branch is based off of the official plex-for-kodi master branch.
 
 ## Installation
 
-* Add this Kodi repository to your Kodi installation: https://pannal.github.io/dontpanickodi/ ([repository](https://github.com/pannal/dontpanickodi)), or
+* Add this Kodi repository to your Kodi installation: https://pannal.github.io/dontpanickodi/ ([GitHub repository](https://github.com/pannal/dontpanickodi)), or
 * Checkout any branch of this GitHub repository, rename to `script.plexmod` and use as an addon
 
 
