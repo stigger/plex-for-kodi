@@ -114,11 +114,11 @@ TYPE_PLURAL = {
 
 SORT_KEYS = {
     'movie': {
+        'titleSort': {'title': T(32357, 'By Name'), 'display': T(32358, 'Name'), 'defSortDesc': False},
         'addedAt': {'title': T(32351, 'By Date Added'), 'display': T(32352, 'Date Added'), 'defSortDesc': True},
         'originallyAvailableAt': {'title': T(32353, 'By Release Date'), 'display': T(32354, 'Release Date'),
                                   'defSortDesc': True},
         'lastViewedAt': {'title': T(32355, 'By Date Viewed'), 'display': T(32356, 'Date Viewed'), 'defSortDesc': True},
-        'titleSort': {'title': T(32357, 'By Name'), 'display': T(32358, 'Name'), 'defSortDesc': False},
         'rating': {'title': T(33107, 'By Critic Rating'), 'display': T(33108, ' Critic Rating'), 'defSortDesc': True},
         'audienceRating': {'title': T(33101, 'By Audience Rating'), 'display': T(33102, 'Audience Rating'),
                            'defSortDesc': True},
@@ -132,10 +132,11 @@ SORT_KEYS = {
         'viewCount': {'title': T(32371, 'By Play Count'), 'display': T(32372, 'Play Count'), 'defSortDesc': True}
     },
     'show': {
+        'titleSort': {'title': T(32357, 'By Name'), 'display': T(32358, 'Name'), 'defSortDesc': False},
+        'show.titleSort': {'title': T(32457, 'By Show'), 'display': T(32456, 'Show'), 'defSortDesc': False},
         'originallyAvailableAt': {'title': T(32365, 'By First Aired'), 'display': T(32366, 'First Aired'),
                                   'defSortDesc': False},
         'unviewedLeafCount': {'title': T(32367, 'By Unplayed'), 'display': T(32368, 'Unplayed'), 'defSortDesc': True},
-        'show.titleSort': {'title': T(32457, 'By Show'), 'display': T(32456, 'Show'), 'defSortDesc': False},
         'rating': {'title': T(33107, 'By Critic Rating'), 'display': T(33108, ' Critic Rating'), 'defSortDesc': True},
         'audienceRating': {'title': T(33101, 'By Audience Rating'), 'display': T(33102, 'Audience Rating'),
                            'defSortDesc': True},
@@ -145,10 +146,12 @@ SORT_KEYS = {
                           'defSortDesc': True},
     },
     'artist': {
-        'lastViewedAt': {'title': T(32369, 'By Date Played'), 'display': T(32370, 'Date Played'), 'defSortDesc': False},
+        'titleSort': {'title': T(32357, 'By Name'), 'display': T(32358, 'Name'), 'defSortDesc': False},
         'artist.titleSort': {'title': T(32463, 'By Artist'), 'display': T(32462, 'Artist'), 'defSortDesc': False},
+        'lastViewedAt': {'title': T(32369, 'By Date Played'), 'display': T(32370, 'Date Played'), 'defSortDesc': False},
     },
     'photo': {
+        'titleSort': {'title': T(32357, 'By Name'), 'display': T(32358, 'Name'), 'defSortDesc': False},
         'originallyAvailableAt': {'title': T(32373, 'By Date Taken'), 'display': T(32374, 'Date Taken'),
                                   'defSortDesc': True}
     },
@@ -454,12 +457,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
     def reset(self):
         util.setGlobalProperty('sort', '')
         self.filterUnwatched = self.librarySettings.getSetting('filter.unwatched', False)
-        if ITEM_TYPE == 'episode':
-            self.sort = self.librarySettings.getSetting('sort', 'show.titleSort')
-        elif ITEM_TYPE == 'album':
-            self.sort = self.librarySettings.getSetting('sort', 'artist.titleSort')
-        else:
-            self.sort = self.librarySettings.getSetting('sort', 'titleSort')
+        self.sort = self.librarySettings.getSetting('sort', 'titleSort')
         self.sortDesc = self.librarySettings.getSetting('sort.desc', False)
 
         self.chunkMode = None
@@ -983,47 +981,48 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         defSortByOption = {}
 
         if self.section.TYPE == 'movie':
-            for stype in ('addedAt', 'originallyAvailableAt', 'lastViewedAt', 'titleSort', 'rating', 'audienceRating',
-                          'userRating', 'contentRating', 'resolution', 'duration'):
+            searchTypes = ['titleSort', 'addedAt', 'originallyAvailableAt', 'lastViewedAt', 'rating', 'audienceRating',
+                           'userRating', 'contentRating', 'resolution', 'duration']
+            if ITEM_TYPE == 'collection':
+                searchTypes = ['titleSort', 'addedAt', 'contentRating']
+
+            for stype in searchTypes:
                 option = SORT_KEYS['movie'].get(stype).copy()
                 option['type'] = stype
                 option['indicator'] = self.sort == stype and ind or ''
                 defSortByOption[stype] = option.get('defSortDesc')
                 options.append(option)
         elif self.section.TYPE == 'show':
+            searchTypes = ['titleSort', 'addedAt', 'lastViewedAt', 'originallyAvailableAt', 'rating',
+                           'audienceRating', 'userRating', 'contentRating', 'unviewedLeafCount']
             if ITEM_TYPE == 'episode':
-                for stype in ('addedAt', 'originallyAvailableAt', 'lastViewedAt', 'show.titleSort', 'rating',
-                              'audienceRating', 'userRating'):
-                    option = SORT_KEYS['show'].get(stype, SORT_KEYS['movie'].get(stype)).copy()
-                    option['type'] = stype
-                    option['indicator'] = self.sort == stype and ind or ''
-                    defSortByOption[stype] = option.get('defSortDesc')
-                    options.append(option)
-            else:
-                for stype in ('addedAt', 'lastViewedAt', 'originallyAvailableAt', 'titleSort', 'rating',
-                              'audienceRating', 'userRating', 'contentRating', 'unviewedLeafCount'):
-                    option = SORT_KEYS['show'].get(stype, SORT_KEYS['movie'].get(stype)).copy()
-                    option['type'] = stype
-                    option['indicator'] = self.sort == stype and ind or ''
-                    defSortByOption[stype] = option.get('defSortDesc')
-                    options.append(option)
+                searchTypes = ['titleSort', 'show.titleSort', 'addedAt', 'originallyAvailableAt', 'lastViewedAt', 'rating',
+                               'audienceRating', 'userRating']
+            elif ITEM_TYPE == 'collection':
+                searchTypes = ['titleSort', 'addedAt']
+
+            for stype in searchTypes:
+                option = SORT_KEYS['show'].get(stype, SORT_KEYS['movie'].get(stype)).copy()
+                option['type'] = stype
+                option['indicator'] = self.sort == stype and ind or ''
+                defSortByOption[stype] = option.get('defSortDesc')
+                options.append(option)
         elif self.section.TYPE == 'artist':
+            searchTypes = ['titleSort', 'addedAt', 'lastViewedAt', 'viewCount']
             if ITEM_TYPE == 'album':
-                for stype in ('addedAt', 'lastViewedAt', 'viewCount', 'originallyAvailableAt', 'artist.titleSort', 'titleSort', 'rating'):
-                    option = SORT_KEYS['artist'].get(stype, SORT_KEYS['movie'].get(stype)).copy()
-                    option['type'] = stype
-                    option['indicator'] = self.sort == stype and ind or ''
-                    defSortByOption[stype] = option.get('defSortDesc')
-                    options.append(option)
-            else:
-                for stype in ('addedAt', 'lastViewedAt', 'viewCount', 'titleSort'):
-                    option = SORT_KEYS['artist'].get(stype, SORT_KEYS['movie'].get(stype)).copy()
-                    option['type'] = stype
-                    option['indicator'] = self.sort == stype and ind or ''
-                    defSortByOption[stype] = option.get('defSortDesc')
-                    options.append(option)
+                searchTypes = ['titleSort', 'artist.titleSort', 'addedAt', 'lastViewedAt', 'viewCount', 'originallyAvailableAt', 'rating']
+            elif ITEM_TYPE == 'collection':
+                searchTypes = ['titleSort', 'addedAt']
+
+            for stype in searchTypes:
+                option = SORT_KEYS['artist'].get(stype, SORT_KEYS['movie'].get(stype)).copy()
+                option['type'] = stype
+                option['indicator'] = self.sort == stype and ind or ''
+                defSortByOption[stype] = option.get('defSortDesc')
+                options.append(option)
         elif self.section.TYPE == 'photo':
-            for stype in ('addedAt', 'originallyAvailableAt', 'titleSort', 'rating'):
+            searchTypes = ['titleSort', 'addedAt', 'originallyAvailableAt', 'rating']
+            for stype in searchTypes:
                 option = SORT_KEYS['photo'].get(stype, SORT_KEYS['movie'].get(stype)).copy()
                 option['type'] = stype
                 option['indicator'] = self.sort == stype and ind or ''
@@ -1083,6 +1082,12 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         elif choice == 'titleSort':
             self.showPanelControl.sort(lambda i: i.dataSource.get('titleSort') or i.dataSource.title, reverse=self.sortDesc)
             self.keyListControl.sort(lambda i: i.getProperty('original'), reverse=self.sortDesc)
+        elif choice == 'show.titleSort':
+            self.showPanelControl.sort(lambda i: i.label, reverse=self.sortDesc)
+            self.keyListControl.sort(lambda i: i.getProperty('original'), reverse=self.sortDesc)
+        elif choice == 'artist.titleSort':
+            self.showPanelControl.sort(lambda i: i.label, reverse=self.sortDesc)
+            self.keyListControl.sort(lambda i: i.getProperty('original'), reverse=self.sortDesc)
         elif choice == 'rating':
             self.showPanelControl.sort(lambda i: i.dataSource.get('titleSort') or i.dataSource.title)
             self.showPanelControl.sort(lambda i: i.dataSource.get('rating').asFloat(), reverse=self.sortDesc)
@@ -1093,8 +1098,8 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             self.showPanelControl.sort(lambda i: i.dataSource.get('titleSort') or i.dataSource.title)
             self.showPanelControl.sort(lambda i: i.dataSource.get('userRating').asFloat(), reverse=self.sortDesc)
         elif choice == 'contentRating':
-             self.showPanelControl.sort(lambda i: i.dataSource.get('titleSort') or i.dataSource.title)
-             self.showPanelControl.sort(lambda i: i.dataSource.get('contentRating'), reverse=self.sortDesc)
+            self.showPanelControl.sort(lambda i: i.dataSource.get('titleSort') or i.dataSource.title)
+            self.showPanelControl.sort(lambda i: i.dataSource.get('contentRating'), reverse=self.sortDesc)
         elif choice == 'resolution':
             self.showPanelControl.sort(lambda i: i.dataSource.maxHeight, reverse=self.sortDesc)
         elif choice == 'duration':
@@ -1102,8 +1107,10 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         elif choice == 'unviewedLeafCount':
             self.showPanelControl.sort(lambda i: i.dataSource.unViewedLeafCount, reverse=self.sortDesc)
 
-        for i, mli in enumerate(self.showPanelControl):
-            mli.setProperty('index', str(i))
+        self.showPanelControl.selectItem(0)
+        self.setFocusId(self.POSTERS_PANEL_ID)
+        self.backgroundSet = False
+        self.setBackground([item.dataSource for item in self.showPanelControl], 0, randomize=not util.advancedSettings.dynamicBackgrounds)
 
     def subOptionCallback(self, option):
         check = 'script.plex/home/device/check.png'
@@ -1211,12 +1218,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         self.updateFilterDisplay()
 
     def resetSort(self):
-        if ITEM_TYPE == 'episode':
-            self.sort = 'show.titleSort'
-        elif ITEM_TYPE == 'album':
-            self.sort = 'artist.titleSort'
-        else:
-            self.sort = 'titleSort'
+        self.sort = 'titleSort'
         self.sortDesc = False
 
         self.librarySettings.setSetting('sort', self.sort)
@@ -1353,6 +1355,8 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         if self.chunkMode:
             self.chunkMode.reset()
 
+        self.backgroundSet = False
+
         if self.section.TYPE in ('photo', 'photodirectory'):
             self.fillPhotos()
         else:
@@ -1477,6 +1481,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         self.keyListControl.addItems(jitems)
 
         self.showPanelControl.selectItem(0)
+        self.setFocusId(self.POSTERS_PANEL_ID)
 
         tasks = []
         ct = 0
