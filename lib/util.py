@@ -584,15 +584,14 @@ def getTimeFormat():
 
     # Kodi Omega on Android seems to have borked this separately (not happening on Windows at least)
     # Format returned can be "%H:mm:ss", which is incompatible with strftime; fix.
-    fmt = origFmt.replace("hh", "%M").replace("mm", "%M").replace("ss", "%S").replace("%H%H", "%H")\
+    fmt = origFmt.replace("hh", "%H").replace("mm", "%M").replace("ss", "%S").replace("%H%H", "%H")\
         .replace("%I%I", "%I")
 
     # Checking for %H%H or %I%I only would be the obvious way here to determine whether the hour should be padded,
     # but the formats returned for regional settings with padding only have %H in them. This seems like a Kodi bug.
     # Use a fallback.
     currentTime = xbmc.getInfoLabel('System.Time')
-    padHour = "%H%H" in origFmt or "%I%I" in origFmt or (currentTime[0] == "0" and currentTime[1] != ":")
-    return fmt, padHour
+    return fmt, currentTime[0] == "0" and currentTime[1] != ":"
 
 
 timeFormat, padHour = getTimeFormat()
