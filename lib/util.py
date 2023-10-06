@@ -137,7 +137,6 @@ class AdvancedSettings(object):
         ("background_art_blur_amount", 0),
         ("background_art_opacity_amount", 40),
         ("screensaver_quiz", False),
-        ("intro_skip_early", False),
         ("postplay_always", False),
         ("postplay_timeout", 16),
         ("skip_intro_button_timeout", 10),
