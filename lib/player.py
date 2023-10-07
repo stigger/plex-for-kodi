@@ -168,6 +168,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.title = title
         self.title2 = title2
         self.chapters = chapters or []
+        self.playedThreshold = plexapp.util.INTERFACE.getPlayedThresholdValue()
         self.getDialog(setup=True)
         self.dialog.setup(self.duration, int(self.baseOffset * 1000), self.bifURL, self.title, self.title2, chapters=self.chapters)
 
@@ -334,8 +335,9 @@ class SeekPlayerHandler(BasePlayerHandler):
             self.updateNowPlaying()
 
             # show post play if possible, if an item has been watched (90% by Plex standards)
-            # fixme: add watched percentage setting
-            if self.trueTime * 1000 / float(self.duration) >= 0.90 and self.next(on_end=True):
+            playedFac = self.trueTime * 1000 / float(self.duration)
+            util.DEBUG_LOG("Player - played-threshold: {}/{}".format(playedFac, self.playedThreshold))
+            if playedFac >= self.playedThreshold and self.next(on_end=True):
                 return
 
         if self.seeking not in (self.SEEK_IN_PROGRESS, self.SEEK_PLAYLIST):

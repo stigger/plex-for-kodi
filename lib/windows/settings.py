@@ -92,6 +92,10 @@ class ThemeMusicSetting(ListSetting):
     ] + [T(32482) % {"percentage": 10+i} for i in range(0, 100, 10)]
 
 
+class PlayedThresholdSetting(ListSetting):
+    options = ['{} %'.format(perc) for perc in range(70, 100, 5)]
+
+
 class BoolSetting(BasicSetting):
     type = 'BOOL'
 
@@ -205,10 +209,18 @@ class Settings(object):
                 ).description(
                     T(
                         32101,
-                        "If enabled, when playback ends and there is a 'Next Up' item available, it will be automatically be played after a 15 second delay."
+                        "If enabled, when playback ends and there is a 'Next Up' item available, it will be automatical"
+                        "ly be played after a 15 second delay."
                     )
                 ),
                 ThemeMusicSetting('theme_music', T(32480, 'Theme music'), 5),
+                PlayedThresholdSetting('played_threshold', T(33501, 'Video played threshold'), 1).description(
+                    T(
+                        33502,
+                        "Set this to the same value as your Plex server (Settings>Library>Video played threshold) to av"
+                        "oid certain pitfalls, Default: 90 %"
+                    )
+                )
             )
         ),
         'video': (

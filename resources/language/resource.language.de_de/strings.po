@@ -1487,3 +1487,10 @@ msgctxt "#32466"
 msgid "Automatically seek to the selected timeline position after a second"
 msgstr "Nach Verzögerung automatisch zur aktuell gewählten Position springen"
 
+msgctxt "#33501"
+msgid "Video played threshold"
+msgstr "Video-abgespielt-Grenzwert"
+
+msgctxt "#33502"
+msgid "Set this to the same value as your Plex server (Settings>Library>Video played threshold) to avoid certain pitfalls, Default: 90 %"
+msgstr "Auf dem selben wert wie im Plex server setzen (Einstellungen>Mediathek>Video played threshold) um bestimmte Fehler zu umgehen, Standardwert: 90 %"
