@@ -267,12 +267,17 @@ class SeekDialog(kodigui.BaseDialog):
 
     def onReInit(self):
         self.lastTimelineResponse = None
+        self._introSkipShownStarted = None
+        self._introAutoSkipped = False
+        self._creditsSkipShownStarted = None
+        self._creditsAutoSkipped = False
+        self._markers = None
+
         self.resetTimeout()
         self.resetSeeking()
         self.updateProperties()
         self.videoSettingsHaveChanged()
         self.updateProgress()
-        self._markers = None
 
     def onAction(self, action):
         if xbmc.getCondVisibility('Window.IsActive(selectdialog)'):
@@ -1016,6 +1021,8 @@ class SeekDialog(kodigui.BaseDialog):
         """
         Show intro/credits skip button at current time
         """
+
+        util.DEBUG_LOG("MARKERS: %s, %s" % (self.markers, self.showIntroSkipEarly))
 
         if not self.markers:
             return
