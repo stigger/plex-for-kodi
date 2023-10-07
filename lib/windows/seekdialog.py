@@ -161,7 +161,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.useAutoSeek = util.advancedSettings.autoSeek
         self.useDynamicStepsForTimeline = util.advancedSettings.dynamicTimelineSeek
 
-        self.autoSkipIntro = util.getSetting('auto_skip_intro', False)
+        self.autoSkipIntro = self.player.video.type == 'episode' and self.player.video.autoSkipIntro
         self.autoSkipCredits = util.getSetting('auto_skip_credits', False)
         self.skipIntroButtonTimeout = util.advancedSettings.skipIntroButtonTimeout
         self.skipCreditsButtonTimeout = util.advancedSettings.skipCreditsButtonTimeout
@@ -272,6 +272,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.updateProperties()
         self.videoSettingsHaveChanged()
         self.updateProgress()
+        self._markers = None
 
     def onAction(self, action):
         if xbmc.getCondVisibility('Window.IsActive(selectdialog)'):
