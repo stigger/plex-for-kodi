@@ -1518,3 +1518,11 @@ msgstr "Aktiv. auto-skip Intro"
 msgctxt "#33508"
 msgid "Disable Auto skip intro"
 msgstr "Deaktiv. auto-skip Intro"
+
+msgctxt "#33509"
+msgid "Early intro skip threshold (default: < 120s/2m)"
+msgstr "Frühes Intro-Überspringen Grenzwert (default: < 120s/2m)"
+
+msgctxt "#33510"
+msgid "When showing the intro skip button early, only do so if the intro starts within the first X seconds."
+msgstr "Wenn der Into-Überspringen-Knopf früher angezeigt werden soll, nur anzeigen, wenn das Intro innerhalb der ersten X Sekunden startet."
