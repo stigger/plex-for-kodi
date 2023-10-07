@@ -213,6 +213,15 @@ class Settings(object):
                         "ly be played after a 15 second delay."
                     )
                 ),
+                BoolSetting(
+                    'speedy_home_hubs', T(33503, 'Use alternative home hub refresh method'), True
+                ).description(
+                    T(
+                        33504,
+                        "Use an alternative method to speed up watched state updates in the home hub after playing an i"
+                        "tem."
+                    )
+                ),
                 ThemeMusicSetting('theme_music', T(32480, 'Theme music'), 5),
                 PlayedThresholdSetting('played_threshold', T(33501, 'Video played threshold'), 1).description(
                     T(

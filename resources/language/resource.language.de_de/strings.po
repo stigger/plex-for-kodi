@@ -1494,3 +1494,11 @@ msgstr "Video-abgespielt-Grenzwert"
 msgctxt "#33502"
 msgid "Set this to the same value as your Plex server (Settings>Library>Video played threshold) to avoid certain pitfalls, Default: 90 %"
 msgstr "Auf dem selben wert wie im Plex server setzen (Einstellungen>Mediathek>Video played threshold) um bestimmte Fehler zu umgehen, Standardwert: 90 %"
+
+msgctxt "#33503"
+msgid "Use alternative home hub refresh method"
+msgstr "Alternative Aktualisierung der Home-Hubs"
+
+msgctxt "#33504"
+msgid "Use an alternative method to speed up watched state updates in the home hub after playing an item."
+msgstr "Eine alternative Methode zum Aktualisieren der Home-Hubs verwenden, nachdem ein Item abgespielt wurde."
