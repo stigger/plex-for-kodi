@@ -1024,8 +1024,9 @@ class SeekDialog(kodigui.BaseDialog):
             marker = markerDef["marker"]
             if marker:
                 startTimeOffset = int(marker.startTimeOffset)
-                # show intro skip early?
-                if self.showIntroSkipEarly and markerDef["marker_type"] == "intro":
+
+                # show intro skip early? (only if intro is during the first 2 minutes)
+                if self.showIntroSkipEarly and markerDef["marker_type"] == "intro" and startTimeOffset <= 120000:
                     startTimeOffset = 0
 
                 if startTimeOffset <= self.offset < math.ceil(float(marker.endTimeOffset)) \
