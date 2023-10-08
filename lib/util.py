@@ -50,52 +50,6 @@ except:
     CHANNELMAPPING = None
 
 
-class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
-    def __init__(self, *args, **kwargs):
-        xbmc.Monitor.__init__(self, *args, **kwargs)
-        signalsmixin.SignalsMixin.__init__(self)
-
-    def watchStatusChanged(self):
-        self.trigger('changed.watchstatus')
-
-    def onNotification(self, sender, method, data):
-        if sender == 'script.plexmod' and method.endswith('RESTORE'):
-            from .windows import kodigui
-            getAdvancedSettings()
-            populateTimeFormat()
-            xbmc.executebuiltin('ActivateWindow({0})'.format(kodigui.BaseFunctions.lastWinID))
-
-
-MONITOR = UtilityMonitor()
-
-ADV_CACHE_RE = re.compile(r'<memorysize>(\d+)</memorysize>')
-
-
-def getAdvancedCacheMemorySize():
-    try:
-        f = xbmcvfs.File("special://profile/advancedsettings.xml")
-        data = f.read()
-        f.close()
-        memorysize = int(ADV_CACHE_RE.findall(data)[0])
-        xbmc.log('script.plex: Setting MemorySize to {} (based on advancedsettings.xml)'.format(memorysize),
-                 level=xbmc.LOGINFO)
-        return memorysize
-    except:
-        xbmc.log('script.plex: Setting MemorySize to default 20971520', level=xbmc.LOGINFO)
-        return 20971520
-
-
-CACHE_SIZE = getAdvancedCacheMemorySize()
-
-
-def T(ID, eng=''):
-    return ADDON.getLocalizedString(ID)
-
-
-def LOG(msg, level=xbmc.LOGINFO):
-    xbmc.log('script.plex: {0}'.format(msg), level)
-
-
 def getSetting(key, default=None):
     with SETTINGS_LOCK:
         setting = ADDON.getSetting(key)
@@ -160,13 +114,9 @@ class AdvancedSettings(object):
 
 advancedSettings = AdvancedSettings()
 
-hasCustomBGColour = not advancedSettings.dynamicBackgrounds and advancedSettings.backgroundColour != "-"
 
-
-def getAdvancedSettings():
-    # yes, global, hang me!
-    global advancedSettings
-    advancedSettings = AdvancedSettings()
+def LOG(msg, level=xbmc.LOGINFO):
+    xbmc.log('script.plex: {0}'.format(msg), level)
 
 
 def DEBUG_LOG(msg):
@@ -200,6 +150,107 @@ def ERROR(txt='', hide_tb=False, notify=False):
 
 def TEST(msg):
     xbmc.log('---TEST: {0}'.format(msg), xbmc.LOGINFO)
+
+
+class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
+    def __init__(self, *args, **kwargs):
+        xbmc.Monitor.__init__(self, *args, **kwargs)
+        signalsmixin.SignalsMixin.__init__(self)
+
+    def watchStatusChanged(self):
+        self.trigger('changed.watchstatus')
+
+    def onNotification(self, sender, method, data):
+        if sender == 'script.plexmod' and method.endswith('RESTORE'):
+            from .windows import kodigui
+            getAdvancedSettings()
+            populateTimeFormat()
+            xbmc.executebuiltin('ActivateWindow({0})'.format(kodigui.BaseFunctions.lastWinID))
+
+
+MONITOR = UtilityMonitor()
+
+ADV_MSIZE_RE = re.compile(r'<memorysize>(\d+)</memorysize>')
+ADV_CACHE_RE = re.compile(r'\s*<cache>.*</cache>', re.S | re.I)
+
+DEFXML = """\
+  <cache><!-- managed by PM4K -->
+    <buffermode>1</buffermode>
+    <memorysize>{}</memorysize>
+    <readfactor>20</readfactor>
+  </cache>
+"""
+
+
+class KodiCacheManager(object):
+    """
+    A pretty cheap approach at managing the <cache> section of advancedsettings.xml
+    """
+    _cleanData = None
+    memorySize = 20971520
+
+    def __init__(self):
+        self.load()
+
+    def load(self):
+        try:
+            f = xbmcvfs.File("special://profile/advancedsettings.xml")
+            data = f.read()
+            f.close()
+        except:
+            LOG('script.plex: No advancedsettings.xml found')
+        else:
+            cachexml_match = ADV_CACHE_RE.search(data)
+            if cachexml_match:
+                cachexml = cachexml_match.group(0)
+
+                try:
+                    self.memorySize = int(ADV_MSIZE_RE.search(cachexml).group(1))
+                except (ValueError, IndexError):
+                    DEBUG_LOG("script.plex: invalid or not found memorysize in advancedsettings.xml")
+
+                self._cleanData = data.replace(cachexml, "")
+            else:
+                self._cleanData = data
+
+    def write(self, memorySize=None):
+        memorySize = memorySize or self.memorySize
+        cd = self._cleanData
+        if not cd:
+            cd = "<advancedsettings>\n</advancedsettings>"
+        finalxml = "{}</advancedsettings>".format(cd.replace("</advancedsettings>", DEFXML.format(memorySize)))
+
+        try:
+            f = xbmcvfs.File("special://profile/advancedsettings.xml", "w")
+            f.write(finalxml)
+            f.close()
+        except:
+            ERROR("Couldn't write advancedsettings.xml")
+
+    @property
+    def currentMaxSize(self):
+        freeMem = xbmc.getInfoLabel('System.Memory(free)')
+        recMem = min(int(float(freeMem[:-2]) * .23), 2000)
+        LOG("Free memory: {}, recommended max: {}MB".format(freeMem, recMem))
+        return recMem * 1024 * 1024
+
+
+kcm = KodiCacheManager()
+
+CACHE_SIZE = kcm.memorySize
+
+
+def T(ID, eng=''):
+    return ADDON.getLocalizedString(ID)
+
+
+hasCustomBGColour = not advancedSettings.dynamicBackgrounds and advancedSettings.backgroundColour != "-"
+
+
+def getAdvancedSettings():
+    # yes, global, hang me!
+    global advancedSettings
+    advancedSettings = AdvancedSettings()
 
 
 def setSetting(key, value):
