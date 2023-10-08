@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from kodi_six import xbmc
 from kodi_six import xbmcgui
+from kodi_six import xbmcvfs
 from . import kodigui
 from . import windowutils
 
@@ -122,6 +123,19 @@ class OptionsSetting(BasicSetting):
                 return i
 
         return 0
+
+
+class BufferSetting(OptionsSetting):
+    def get(self):
+        return util.kcm.memorySize
+
+    def set(self, val):
+        old = self.get()
+        if old != val:
+            util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]'.format(self.ID, old, val))
+            plexnet.util.APP.trigger('change:{0}'.format(self.ID), value=val)
+
+        util.kcm.write(val)
 
 
 class InfoSetting(BasicSetting):
@@ -306,6 +320,18 @@ class Settings(object):
                 ),
                 BoolSetting('gdm_discovery', T(32042, 'Server Discovery (GDM)'), True),
                 BoolSetting('kiosk.mode', T(32043, 'Start Plex On Kodi Startup'), False),
+                BufferSetting('cache_size',
+                               T(33613, 'Kodi Buffer Size (MB)'),
+                               20,
+                               [(mem, '{} MB'.format(mem)) for mem in util.kcm.viableOptions])
+                .description(T(33614, 'Set the Kodi Cache/Buffer size. Free: {} MB, '
+                                      'Recommended max: {} MB, Default: 20 MB. '
+                                      'Needs Kodi restart. WARNING: This will overwrite advancedsettings.xml!\n\n'
+                                      'To customize other cache/network-related values, '
+                                      'copy "script.plexmod/pm4k_cache_template.xml" to profile folder and edit it to '
+                                      'your liking. (See About section for the file paths)'
+                               ).format(util.kcm.free, util.kcm.recMax)
+                ),
                 BoolSetting('debug', T(32024, 'Debug Logging'), False),
             )
         ),
@@ -326,8 +352,12 @@ class Settings(object):
                 InfoSetting('addon_version', T(32054, 'Addon Version'), util.ADDON.getAddonInfo('version')),
                 InfoSetting('kodi_version', T(32055, 'Kodi Version'), xbmc.getInfoLabel('System.BuildVersion')),
                 PlatformSetting(),
-                InfoSetting('screen_res', T(32056, 'Screen Resolution'), xbmc.getInfoLabel('System.ScreenResolution').split('-')[0].strip()),
-                ServerVersionSetting('server_version', T(32057, 'Current Server Version'), None)
+                InfoSetting('screen_res', T(32056, 'Screen Resolution'),
+                            xbmc.getInfoLabel('System.ScreenResolution').split('-')[0].strip()),
+                ServerVersionSetting('server_version', T(32057, 'Current Server Version'), None),
+                InfoSetting('addon_path', T(33616, 'Addon Path'), util.ADDON.getAddonInfo("path")),
+                InfoSetting('userdata_path', T(33617, 'Userdata/Profile Path'),
+                            xbmcvfs.translatePath("special://profile")),
             )
         ),
     }

@@ -1229,3 +1229,76 @@ msgstr ""
 msgctxt "#33510"
 msgid "When showing the intro skip button early, only do so if the intro occurs within the first X seconds."
 msgstr ""
+
+msgctxt "#33600"
+msgid "System"
+msgstr ""
+
+msgctxt "#33601"
+msgid "Show video chapters"
+msgstr ""
+
+msgctxt "#33602"
+msgid "If available, show video chapters from the video-file instead of the timeline-big-seek-steps."
+msgstr ""
+
+msgctxt "#33603"
+msgid "Use virtual chapters"
+msgstr ""
+
+msgctxt "#33604"
+msgid "When the above is enabled and no video chapters are available, simulate them by using the markers identified by the Plex Server (Intro, Credits)."
+msgstr ""
+
+msgctxt "#33605"
+msgid "Video Chapters"
+msgstr ""
+
+msgctxt "#33606"
+msgid "Virtual Chapters"
+msgstr ""
+
+msgctxt "#33607"
+msgid "Chapter {}"
+msgstr ""
+
+msgctxt "#33608"
+msgid "Intro"
+msgstr ""
+
+msgctxt "#33609"
+msgid "Credits"
+msgstr ""
+
+msgctxt "#33610"
+msgid "Main"
+msgstr ""
+
+msgctxt "#33611"
+msgid "Chapters"
+msgstr ""
+
+msgctxt "#33612"
+msgid "Markers"
+msgstr ""
+
+msgctxt "#33613"
+msgid "Kodi Buffer Size (MB)"
+msgstr ""
+
+msgctxt "#33614"
+msgid "Set the Kodi Cache/Buffer size. Free: {} MB, Recommended max: {} MB, Default: 20 MB. Needs Kodi restart. WARNING: This will overwrite advancedsettings.xml!\n\nTo customize other cache/network-related values, copy \"script.plexmod/pm4k_cache_template.xml\" to profile folder and edit it to your liking. (See About section for the file paths)"
+msgstr ""
+
+msgctxt "#33615"
+msgid "{time} left"
+msgstr ""
+
+msgctxt "#33616"
+msgid "Addon Path"
+msgstr ""
+
+msgctxt "#33617"
+msgid "Userdata/Profile Path"
+msgstr ""
+

@@ -1526,3 +1526,76 @@ msgstr "Frühes Intro-Überspringen Grenzwert (default: < 120s/2m)"
 msgctxt "#33510"
 msgid "When showing the intro skip button early, only do so if the intro starts within the first X seconds."
 msgstr "Wenn der Into-Überspringen-Knopf früher angezeigt werden soll, nur anzeigen, wenn das Intro innerhalb der ersten X Sekunden startet."
+
+
+msgctxt "#33600"
+msgid "System"
+msgstr ""
+
+msgctxt "#33601"
+msgid "Show video chapters"
+msgstr "Video-Kapitel anzeigen"
+
+msgctxt "#33602"
+msgid "If available, show video chapters from the video-file instead of the timeline-big-seek-steps."
+msgstr "Wenn verfügbar, Video-Kapitel aus der Video-Datei anstatt der Zeitleiste-Big-Seek-Schritte anzeigen."
+
+msgctxt "#33603"
+msgid "Use virtual chapters"
+msgstr "Virtuelle Kapitel verwenden"
+
+msgctxt "#33604"
+msgid "When the above is enabled and no video chapters are available, simulate them by using the markers identified by the Plex Server (Intro, Credits)."
+msgstr "Wenn die obrige aktiviert ist und keine Video-Kapitel verfügbar sind, virtuelle Kapitel aus den Plex Server Markern (Intro, Abspann) erzeugen."
+
+msgctxt "#33605"
+msgid "Video Chapters"
+msgstr "Video-Kapitel"
+
+msgctxt "#33606"
+msgid "Virtual Chapters"
+msgstr "Virtuelle Kapitel"
+
+msgctxt "#33607"
+msgid "Chapter {}"
+msgstr "Kapitel {}"
+
+msgctxt "#33608"
+msgid "Intro"
+msgstr "Intro"
+
+msgctxt "#33609"
+msgid "Credits"
+msgstr "Abspann"
+
+msgctxt "#33610"
+msgid "Main"
+msgstr "Haupt"
+
+msgctxt "#33611"
+msgid "Chapters"
+msgstr ""
+
+msgctxt "#33612"
+msgid "Markers"
+msgstr ""
+
+msgctxt "#33613"
+msgid "Kodi Buffer Size (MB)"
+msgstr "Kodi Puffergröße (MB)"
+
+msgctxt "#33614"
+msgid "Set the Kodi Cache/Buffer size. Free: {} MB, Recommended max: {} MB, Default: 20 MB. Needs Kodi restart. WARNING: This will overwrite advancedsettings.xml!\n\nTo customize other cache/network-related values, copy \"script.plexmod/pm4k_cache_template.xml\" to profile folder and edit it to your liking. (See About section for the file paths)"
+msgstr "Setzt die Kodi Cache/Puffer Größe. Frei: {} MB, empfohlenes Max.: {} MB, Default: 20 MB. Benötigt Kodi Neustart. ACHTUNG: Überschreibt advancedsettings.xml!\n\nUm weitere Cache-/Netzwerkbezogene Werte zu ändern, kopiere \"script.plexmod/pm4k_cache_template.xml\" in den Profilordner und editiere sie. (Für die Dateipfade schaue in die Über-Sektion)"
+
+msgctxt "#33615"
+msgid "{time} left"
+msgstr "{time} übrig"
+
+msgctxt "#33616"
+msgid "Addon Path"
+msgstr "Addon-Pfad"
+
+msgctxt "#33617"
+msgid "Userdata/Profile Path"
+msgstr "Benutzerdaten-/Profilpfad"
