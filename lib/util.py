@@ -187,7 +187,10 @@ class KodiCacheManager(object):
     A pretty cheap approach at managing the <cache> section of advancedsettings.xml
     """
     _cleanData = None
-    memorySize = 20971520
+    memorySize = 20  # in MB
+
+    # give Android a little more leeway with its sometimes weird memory management; otherwise stick with 23% of free mem
+    safeFactor = .20 if xbmc.getCondVisibility('System.Platform.Android') else .23
 
     def __init__(self):
         self.load()
@@ -205,8 +208,8 @@ class KodiCacheManager(object):
                 cachexml = cachexml_match.group(0)
 
                 try:
-                    self.memorySize = int(ADV_MSIZE_RE.search(cachexml).group(1))
-                except (ValueError, IndexError):
+                    self.memorySize = int(ADV_MSIZE_RE.search(cachexml).group(1)) // 1024 // 1024
+                except (ValueError, IndexError, TypeError):
                     DEBUG_LOG("script.plex: invalid or not found memorysize in advancedsettings.xml")
 
                 self._cleanData = data.replace(cachexml, "")
@@ -214,11 +217,16 @@ class KodiCacheManager(object):
                 self._cleanData = data
 
     def write(self, memorySize=None):
-        memorySize = memorySize or self.memorySize
+        if memorySize:
+            self.memorySize = memorySize
+        else:
+            memorySize = self.memorySize
+
         cd = self._cleanData
         if not cd:
             cd = "<advancedsettings>\n</advancedsettings>"
-        finalxml = "{}</advancedsettings>".format(cd.replace("</advancedsettings>", DEFXML.format(memorySize)))
+        finalxml = "{}</advancedsettings>".format(cd.replace("</advancedsettings>",
+                                                             DEFXML.format(memorySize * 1024 * 1024)))
 
         try:
             f = xbmcvfs.File("special://profile/advancedsettings.xml", "w")
@@ -228,11 +236,23 @@ class KodiCacheManager(object):
             ERROR("Couldn't write advancedsettings.xml")
 
     @property
-    def currentMaxSize(self):
-        freeMem = xbmc.getInfoLabel('System.Memory(free)')
-        recMem = min(int(float(freeMem[:-2]) * .23), 2000)
-        LOG("Free memory: {}, recommended max: {}MB".format(freeMem, recMem))
-        return recMem * 1024 * 1024
+    def viableOptions(self):
+        default = list(filter(lambda x: x < self.recMax, [20, 40, 60, 80, 120, 160, 200, 400]))
+
+        # re-append current memorySize here, as recommended max might have changed
+        default.append(self.memorySize)
+        return list(sorted(list(set(default)))) + [self.recMax]
+
+    @property
+    def free(self):
+        return float(xbmc.getInfoLabel('System.Memory(free)')[:-2])
+
+    @property
+    def recMax(self):
+        freeMem = self.free
+        recMem = min(int(freeMem * self.safeFactor), 2000)
+        LOG("Free memory: {} MB, recommended max: {} MB".format(freeMem, recMem))
+        return recMem
 
 
 kcm = KodiCacheManager()

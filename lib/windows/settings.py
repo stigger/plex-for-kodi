@@ -124,6 +124,19 @@ class OptionsSetting(BasicSetting):
         return 0
 
 
+class BufferSetting(OptionsSetting):
+    def get(self):
+        return util.kcm.memorySize
+
+    def set(self, val):
+        old = self.get()
+        if old != val:
+            util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]'.format(self.ID, old, val))
+            plexnet.util.APP.trigger('change:{0}'.format(self.ID), value=val)
+
+        util.kcm.write(val)
+
+
 class InfoSetting(BasicSetting):
     type = 'INFO'
 
@@ -306,6 +319,13 @@ class Settings(object):
                 ),
                 BoolSetting('gdm_discovery', T(32042, 'Server Discovery (GDM)'), True),
                 BoolSetting('kiosk.mode', T(32043, 'Start Plex On Kodi Startup'), False),
+                BufferSetting('cache_size',
+                               'Kodi Buffer Size (MB)',
+                               20,
+                               [(mem, '{} MB'.format(mem)) for mem in util.kcm.viableOptions])
+                .description("Set the Kodi Cache/Buffer size. Free: {} MB, "
+                             "Recommended max: {} MB, Default: 20 MB. "
+                             "Needs Kodi restart.".format(util.kcm.free, util.kcm.recMax)),
                 BoolSetting('debug', T(32024, 'Debug Logging'), False),
             )
         ),
