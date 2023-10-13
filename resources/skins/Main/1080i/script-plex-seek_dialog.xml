@@ -757,6 +757,11 @@
 
             <control type="group" id="500">
                 <animation effect="slide" time="100" start="0,0" end="0,20" reversible="true" condition="Control.HasFocus(501) + String.IsEmpty(Window.Property(has.chapters))">Conditional</animation>
+
+                <!-- CHAPTERS -->
+                <animation effect="slide" time="100" start="0,0" end="0,-60" reversible="true" condition="Control.HasFocus(501) + !String.IsEmpty(Window.Property(has.chapters))">Conditional</animation>
+                <!-- /CHAPTERS -->
+
                 <visible allowhiddenfocus="true">String.IsEmpty(Window.Property(mouse.mode)) + String.IsEmpty(Window.Property(hide.bigseek)) + [Control.HasFocus(501) | Control.HasFocus(100)]</visible>
                 <posx>-8</posx>
                 <posy>917</posy>
@@ -769,9 +774,10 @@
                     <colordiffuse>A0000000</colordiffuse>
                     <visible>String.IsEmpty(Window.Property(has.chapters))</visible>
                 </control>
+                <!-- CHAPTERS -->
                 <control type="image">
                     <posx>0</posx>
-                    <posy>-200</posy>
+                    <posy>-175</posy>
                     <width>1928</width>
                     <height>200</height>
                     <texture>script.plex/white-square.png</texture>
@@ -780,7 +786,7 @@
                 </control>
                 <control type="label">
                     <posx>40</posx>
-                    <posy>-190</posy>
+                    <posy>-162</posy>
                     <width>auto</width>
                     <height>20</height>
                     <font>font10</font>
@@ -792,7 +798,7 @@
                 </control>
                 <control type="label">
                     <posx>40</posx>
-                    <posy>-190</posy>
+                    <posy>-162</posy>
                     <width>auto</width>
                     <height>20</height>
                     <font>font10</font>
@@ -802,6 +808,7 @@
                     <label>CHAPTERS [UPPERCASE]$ADDON[script.plexmod 44444][/UPPERCASE]</label>
                     <visible>!String.IsEmpty(Window.Property(has.chapters)) + Control.HasFocus(501)</visible>
                 </control>
+                <!-- /CHAPTERS -->
                 <control type="list" id="501">
                     <hitrect x="-20" y="-20" w="10" h="10" />
                     <posx>0</posx>
@@ -867,7 +874,7 @@
                                 <height>100</height>
                                 <texture>$INFO[ListItem.Thumb]</texture>
                                 <aspectratio>scale</aspectratio>
-                                <colordiffuse>FFAAAAAA</colordiffuse>
+                                <colordiffuse>DDAAAAAA</colordiffuse>
                                 <visible>!Control.HasFocus(501)</visible>
                             </control>
                             <control type="image">
@@ -910,7 +917,7 @@
                                 <font>font10</font>
                                 <align>center</align>
                                 <aligny>center</aligny>
-                                <textcolor>FF606060</textcolor>
+                                <textcolor>FFAAAAAA</textcolor>
                                 <label>$INFO[ListItem.Label]</label>
                                 <visible>Control.HasFocus(501)</visible>
                             </control>
@@ -957,7 +964,7 @@
                                 <height>100</height>
                                 <texture>$INFO[ListItem.Thumb]</texture>
                                 <aspectratio>scale</aspectratio>
-                                <colordiffuse>FFFFFFFF</colordiffuse>
+<!--                                <colordiffuse>FFFFFFFF</colordiffuse>-->
                                 <visible>Control.HasFocus(501)</visible>
                             </control>
                             <control type="label">
@@ -980,7 +987,7 @@
                                 <font>font10</font>
                                 <align>center</align>
                                 <aligny>center</aligny>
-                                <textcolor>FFFFFFFF</textcolor>
+<!--                                <textcolor>FFFFFFFF</textcolor>-->
                                 <label>$INFO[ListItem.Label]</label>
                                 <visible>Control.HasFocus(501)</visible>
                             </control>

@@ -494,13 +494,23 @@ class SeekDialog(kodigui.BaseDialog):
         self.previousFocusID = self.lastFocusID
         self.lastFocusID = controlID
         if controlID == self.MAIN_BUTTON_ID:
-            self.selectedOffset = self.trueOffset()
+            # when seeking via ENTER/CLICK on chapters, coming directly from bigSeekSelected, don't assume we've
+            # already seeked.  bigSeekSelected sets self.selectedOffset
+            if not self.showChapters:
+                self.selectedOffset = self.trueOffset()
+
             if lastFocusID == self.BIG_SEEK_LIST_ID and self.bigSeekChanged:
-                xbmc.sleep(100)
                 self.updateBigSeek(changed=True)
                 self.updateProgress(set_to_current=False)
-                if self.useAutoSeek:
-                    self.delayedSeek()
+
+                # immediately seek bigSeek after click action on Chapter view
+                if self.showChapters:
+                    self._performSeek()
+                    self._osdHideFast = True
+                    self.tick()
+                else:
+                    if self.useAutoSeek:
+                        self.delayedSeek()
 
             else:
                 self.setBigSeekShift()
@@ -897,14 +907,21 @@ class SeekDialog(kodigui.BaseDialog):
         # xbmc.sleep(100)
 
     def updateBigSeek(self, changed=False):
-        if changed:
+        if changed and not self.showChapters:
             self.bigSeekChanged = True
             self.selectedOffset = self.bigSeekControl.getSelectedItem().dataSource + self.bigSeekOffset
             self.updateProgress(set_to_current=False)
         self.resetSkipSteps()
 
     def bigSeekSelected(self):
+        # this gets called when a click action happened on the bigSeek, defer the actual action to onFocus
+        # by setFocusId(MAIN)
+
         self.bigSeekChanged = True
+        if self.showChapters:
+            self.resetAutoSeekTimer(None)
+            self.selectedOffset = self.bigSeekControl.getSelectedItem().dataSource + self.bigSeekOffset
+
         self.setFocusId(self.MAIN_BUTTON_ID)
 
     def updateProperties(self, **kwargs):
@@ -933,7 +950,8 @@ class SeekDialog(kodigui.BaseDialog):
             self.setProperty('pq.repeat.one', pq.isRepeatOne and '1' or '')
             self.setProperty('pq.shuffled', pq.isShuffled and '1' or '')
         else:
-            self.setProperties(('pq.isRemote', 'pq.hasnext', 'pq.hasprev', 'pq.repeat', 'pq.shuffled', 'has.playlist'), '')
+            self.setProperties(('pq.isRemote', 'pq.hasnext', 'pq.hasprev', 'pq.repeat', 'pq.shuffled', 'has.playlist'),
+                               '')
 
         self.updateCurrent()
 
@@ -959,7 +977,7 @@ class SeekDialog(kodigui.BaseDialog):
             #ctrly = self.bigSeekGroupControl.getY()
             #self.bigSeekGroupControl.setPosition(ctrlx, ctrly-47)
             self.bigSeekControl.control.setHeight(160)
-            self.bigSeekControl.control.setPosition(self.bigSeekControl.getX(), self.bigSeekControl.getY() - 160)
+            self.bigSeekControl.control.setPosition(self.bigSeekControl.getX(), self.bigSeekControl.getY() - 126)
 
     def updateCurrent(self, update_position_control=True):
         ratio = self.trueOffset() / float(self.duration)
@@ -1053,8 +1071,6 @@ class SeekDialog(kodigui.BaseDialog):
         """
         Show intro/credits skip button at current time
         """
-
-        util.DEBUG_LOG("MARKERS: %s, %s" % (self.markers, self.showIntroSkipEarly))
 
         if not self.markers:
             return
