@@ -1040,12 +1040,19 @@ class SeekDialog(kodigui.BaseDialog):
             for x in range(12):
                 offset = div * x
                 items.append(kodigui.ManagedListItem(data_source=offset))
+
+            # we might've been reinizialized by the handler and have had markers/chapters before. reset height and
+            # positioning of the bigSeekControl
+            self.bigSeekControl.control.setHeight(16)
+            self.bigSeekControl.control.setPosition(self.bigSeekControl.getX(), 0)
+
         self.bigSeekControl.reset()
         self.bigSeekControl.addItems(items)
 
         if self.showChapters:
+            # adjust height and positioning of bigSeekControl to accomodate chapters
             self.bigSeekControl.control.setHeight(160)
-            self.bigSeekControl.control.setPosition(self.bigSeekControl.getX(), self.bigSeekControl.getY() - 126)
+            self.bigSeekControl.control.setPosition(self.bigSeekControl.getX(), -126)
 
     def updateCurrent(self, update_position_control=True):
         ratio = self.trueOffset() / float(self.duration)
@@ -1180,6 +1187,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.title = title
         self.title2 = title2
         self.chapters = chapters or []
+        self._markers = None
         self.showChapters = util.getSetting('show_chapters', True) and (
                     bool(chapters) or (util.getSetting('virtual_chapters', True) and bool(self.markers)))
         self.setProperty('video.title', title)
