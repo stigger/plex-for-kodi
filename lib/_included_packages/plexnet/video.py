@@ -235,6 +235,21 @@ class Video(media.MediaItem):
         else:
             return ""
 
+    @property
+    def remainingTime(self):
+        if not self.viewOffset.asInt():
+            return
+        return (self.duration.asInt() - self.viewOffset.asInt()) // 1000
+
+    @property
+    def remainingTimeString(self):
+        if not self.remainingTime:
+            return ''
+        seconds = self.remainingTime
+        hours = seconds // 3600
+        minutes = (seconds - hours * 3600) // 60
+        return (hours and "{}h ".format(hours) or '') + (minutes and "{}m".format(minutes) or "0m")
+
     def available(self):
         return self.media()[0].isAccessible()
 
