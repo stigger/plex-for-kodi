@@ -148,6 +148,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.bifURL = ''
         self.title = ''
         self.title2 = ''
+        self.chapters = None
         self.reset()
 
     def reset(self):
@@ -170,7 +171,8 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.chapters = chapters or []
         self.playedThreshold = plexapp.util.INTERFACE.getPlayedThresholdValue()
         self.getDialog(setup=True)
-        self.dialog.setup(self.duration, int(self.baseOffset * 1000), self.bifURL, self.title, self.title2, chapters=self.chapters)
+        self.dialog.setup(self.duration, int(self.baseOffset * 1000), self.bifURL, self.title, self.title2,
+                          chapters=self.chapters)
 
     def getDialog(self, setup=False):
         if not self.dialog:
@@ -881,7 +883,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
         self.stopAndWait()  # Stop before setting up the handler to prevent player events from causing havoc
 
-        self.handler.setup(self.video.duration.asInt(), offset, bifURL, title=self.video.grandparentTitle, title2=self.video.title, seeking=seeking, chapters=self.video.chapters)
+        self.handler.setup(self.video.duration.asInt(), offset, bifURL, title=self.video.grandparentTitle,
+                           title2=self.video.title, seeking=seeking, chapters=self.video.chapters)
 
         if meta.isTranscoded:
             self.handler.mode = self.handler.MODE_RELATIVE
