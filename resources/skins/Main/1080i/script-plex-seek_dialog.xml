@@ -856,7 +856,7 @@
                                 <height>100</height>
                                 <texture>script.plex/thumb_fallbacks/movie16x9.png</texture>
                                 <aspectratio>scale</aspectratio>
-                                <colordiffuse>FF606060</colordiffuse>
+                                <colordiffuse>FFAAAAAA</colordiffuse>
                                 <visible>Control.HasFocus(501)</visible>
                             </control>
                             <control type="image">
@@ -906,7 +906,7 @@
                                 <height>100</height>
                                 <texture>script.plex/thumb_fallbacks/movie16x9.png</texture>
                                 <aspectratio>scale</aspectratio>
-                                <colordiffuse>CC606060</colordiffuse>
+                                <colordiffuse>CC909090</colordiffuse>
                                 <visible>!Control.HasFocus(501)</visible>
                             </control>
                             <control type="image">
@@ -926,7 +926,7 @@
                                 <height>100</height>
                                 <texture>script.plex/thumb_fallbacks/movie16x9.png</texture>
                                 <aspectratio>scale</aspectratio>
-                                <colordiffuse>FF606060</colordiffuse>
+<!--                                <colordiffuse>FF606060</colordiffuse>-->
                                 <visible>Control.HasFocus(501)</visible>
                             </control>
                             <control type="image">
