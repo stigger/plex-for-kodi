@@ -1001,7 +1001,7 @@ class SeekDialog(kodigui.BaseDialog):
                         *PlaylistDialog.LI_AR16X9_THUMB_DIM) or None
                     mli = kodigui.ManagedListItem(data_source=chapter.startTime(),
                                                   thumbnailImage=thumb,
-                                                  label=chapter.tag or 'Chapter {}'.format(index+1))
+                                                  label=chapter.tag or T(33607, 'Chapter {}').format(index+1))
                     items.append(mli)
             # fake chapters by using markers
             elif util.getSetting('virtual_chapters', True) and self.markers:
@@ -1012,12 +1012,12 @@ class SeekDialog(kodigui.BaseDialog):
                     marker = markerDef["marker"]
                     if marker:
                         if markerDef["marker_type"] == "intro":
-                            preparedMarkers.append((int(marker.startTimeOffset), "Intro"))
-                            preparedMarkers.append((int(marker.endTimeOffset), "Main"))
+                            preparedMarkers.append((int(marker.startTimeOffset), T(33608, "Intro")))
+                            preparedMarkers.append((int(marker.endTimeOffset), T(33610, "Main")))
 
                         elif markerDef["marker_type"] == "credits":
                             creditsCounter += 1
-                            preparedMarkers.append((int(marker.startTimeOffset), "Credits{}"))
+                            preparedMarkers.append((int(marker.startTimeOffset), T(33609, "Credits") + "{}"))
 
                 # add staggered virtual markers
                 preparedMarkers.append((int(self.duration * 0.25), "25 %"))
