@@ -955,7 +955,12 @@ class SeekDialog(kodigui.BaseDialog):
         if self.showChapters:
             self.resetAutoSeekTimer(None)
             self._navigatedViaMarkerOrChapter = True
-            self.selectedOffset = self.bigSeekControl.getSelectedItem().dataSource + MARKER_OFF
+
+            sel = self.bigSeekControl.getSelectedItem()
+            if self.bigSeekControl.isLastItem(sel):
+                self.selectedOffset = sel.dataSource - FINAL_MARKER_NEGOFF
+            else:
+                self.selectedOffset = sel.dataSource + MARKER_OFF
 
         self.setFocusId(self.MAIN_BUTTON_ID)
 
