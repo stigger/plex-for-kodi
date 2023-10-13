@@ -144,20 +144,16 @@ class EpisodesPaginator(pagination.MCLPaginator):
                 left = max(tmpEpIdx - leftBoundary, 0)
                 offset += left
                 epsLeft = self.leafCount - offset
-                #util.DEBUG_LOG("%s, %s, %s, %s, %s, %s" % (tmpEpIdx, leftBoundary, left, offset, self.leafCount, epsLeft))
                 # avoid short pages on the right end
                 if epsLeft <= self.initialPageSize + self.orphans:
                     amount = epsLeft
-                    #util.DEBUG_LOG("PADDING RIGHT")
 
                 # avoid short pages on the left end
                 if offset < self.orphans and amount + offset < self.initialPageSize + self.orphans:
                     amount += offset
                     left = 0
                     offset = 0
-                    #util.DEBUG_LOG("PADDING LEFT")
 
-                #util.DEBUG_LOG("AMOUNT: %s OFFSET: %s" % (amount, offset))
                 episodes = episodes[left:left + amount]
 
         self.offset = offset
