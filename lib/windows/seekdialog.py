@@ -64,9 +64,14 @@ MARKERS = OrderedDict([
 ])
 
 FINAL_MARKER_NEGOFF = 1000
+MARKER_OFF = 500
 
 
 class SeekDialog(kodigui.BaseDialog):
+    """
+    fixme: This is a convoluted mess.
+    """
+
     xmlFile = 'script-plex-seek_dialog.xml'
     path = util.ADDON.getAddonInfo('path')
     theme = 'Main'
@@ -151,12 +156,15 @@ class SeekDialog(kodigui.BaseDialog):
         self._atSkipStep = -1
         self._lastSkipDirection = None
         self._forcedLastSkipAmount = None
+        self._navigatedViaMarkerOrChapter = False
+        self._lastAction = None
         self.lastTimelineResponse = None
         self._ignoreInput = False
 
         # optimize
         self._enableMarkerSkip = plexapp.ACCOUNT.hasPlexPass()
         self._markers = None
+        self.chapters = None
         self._introSkipShownStarted = None
         self._introAutoSkipped = False
         self._creditsSkipShownStarted = None
@@ -213,6 +221,8 @@ class SeekDialog(kodigui.BaseDialog):
         self.bigSeekChanged = False
         self.selectedOffset = None
         self.forceNextTimeAsChapter = False
+        self._navigatedViaMarkerOrChapter = False
+        self.setProperty('show.chapters', '')
         self.setProperty('button.seek', '')
         self.resetAutoSeekTimer(None)
         self.resetSkipSteps()
@@ -225,7 +235,6 @@ class SeekDialog(kodigui.BaseDialog):
 
     @property
     def markers(self):
-        #self.handler.player.video.credits
         if not self._enableMarkerSkip:
             return None
 
@@ -281,6 +290,7 @@ class SeekDialog(kodigui.BaseDialog):
         self._creditsSkipShownStarted = None
         self._creditsAutoSkipped = False
         self._markers = None
+        self._lastAction = None
 
         self.resetTimeout()
         self.resetSeeking()
@@ -297,6 +307,9 @@ class SeekDialog(kodigui.BaseDialog):
             self.resetTimeout()
 
             controlID = self.getFocusId()
+
+            lastAction = self._lastAction
+            self._lastAction = currentAction = (action.getId(), controlID)
 
             if not self._ignoreInput:
                 if action.getId() in KEY_MOVE_SET:
@@ -351,6 +364,10 @@ class SeekDialog(kodigui.BaseDialog):
                                     xbmcgui.ACTION_STEP_BACK):
                         # allow no-OSD-seeking with intro skip button shown
                         passThroughMain = True
+                    elif action == xbmcgui.ACTION_MOVE_UP and self.osdVisible() and self.showChapters:
+                        self.setProperty('show.chapters', '1')
+                        self.setFocusId(self.BIG_SEEK_LIST_ID)
+                        return
 
                 if controlID == self.MAIN_BUTTON_ID:
                     # we're seeking from the timeline with the OSD open - do an actual timeline seek
@@ -367,8 +384,22 @@ class SeekDialog(kodigui.BaseDialog):
                             return self.skipBack()
                         return self.seekByOffset(-10000, auto_seek=self.useAutoSeek)
 
+                    elif action == xbmcgui.ACTION_MOVE_UP:
+                        if self.getProperty('show.markerSkip'):
+                            # pressed up on player controls, then up on MAIN BUTTON; focus marker button
+                            if currentAction == lastAction:
+                                self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
+                                return
+                        elif self.showChapters:
+                            self.setProperty('show.chapters', '1')
+
                     elif action == xbmcgui.ACTION_MOVE_DOWN:
+                        if self.previousFocusID == self.BIG_SEEK_LIST_ID and self.getProperty('show.markerSkip'):
+                            self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
+                            self.setProperty('show.chapters', '')
+
                         self.updateBigSeek()
+
                     # elif action == xbmcgui.ACTION_MOVE_UP:
                     #     self.seekForward(60000)
                     # elif action == xbmcgui.ACTION_MOVE_DOWN:
@@ -408,7 +439,7 @@ class SeekDialog(kodigui.BaseDialog):
                         self.setBigSeekShift()
                         self.updateProgress()
                         self.showOSD()
-                        self.setFocusId(self.BIG_SEEK_LIST_ID)
+
                     elif action.getButtonCode() == 61519:
                         if self.getProperty('show.PPI'):
                             self.hidePPIDialog()
@@ -420,9 +451,11 @@ class SeekDialog(kodigui.BaseDialog):
                         return self.updateBigSeek(changed=True)
                     elif action in (xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_BIG_STEP_BACK):
                         return self.updateBigSeek(changed=True)
-                    elif action == xbmcgui.ACTION_MOVE_UP and self.getProperty('show.markerSkip'):
-                        self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
-                        return
+
+                    elif action == xbmcgui.ACTION_MOVE_DOWN:
+                        if self.getProperty('show.markerSkip'):
+                            self.setProperty('show.chapters', '')
+                            self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
 
                 if action.getButtonCode() == 61516:
                     builtin.Action('CycleSubtitle')
@@ -503,14 +536,10 @@ class SeekDialog(kodigui.BaseDialog):
                 self.updateBigSeek(changed=True)
                 self.updateProgress(set_to_current=False)
 
-                # immediately seek bigSeek after click action on Chapter view
-                if self.showChapters:
-                    self._performSeek()
-                    self._osdHideFast = True
-                    self.tick()
-                else:
-                    if self.useAutoSeek:
-                        self.delayedSeek()
+                # immediately seek bigSeek after click
+                self._performSeek()
+                self._osdHideFast = True
+                self.tick()
 
             else:
                 self.setBigSeekShift()
@@ -519,6 +548,7 @@ class SeekDialog(kodigui.BaseDialog):
         elif controlID == self.BIG_SEEK_LIST_ID:
             self.setBigSeekShift()
             self.updateBigSeek(changed=False)
+
         elif xbmc.getCondVisibility('ControlGroup(400).HasFocus(0)'):
             self.selectedOffset = self.trueOffset()
             self.updateProgress()
@@ -911,6 +941,10 @@ class SeekDialog(kodigui.BaseDialog):
             self.bigSeekChanged = True
             self.selectedOffset = self.bigSeekControl.getSelectedItem().dataSource + self.bigSeekOffset
             self.updateProgress(set_to_current=False)
+        elif self.showChapters:
+            # when hovering chapters, show its corresponding time on the timeline, but don't act like we're seeking
+            self.updateProgress(set_to_current=False, offset=self.bigSeekControl.getSelectedItem().dataSource,
+                                onlyTimeIndicator=True)
         self.resetSkipSteps()
 
     def bigSeekSelected(self):
@@ -920,7 +954,8 @@ class SeekDialog(kodigui.BaseDialog):
         self.bigSeekChanged = True
         if self.showChapters:
             self.resetAutoSeekTimer(None)
-            self.selectedOffset = self.bigSeekControl.getSelectedItem().dataSource + self.bigSeekOffset
+            self._navigatedViaMarkerOrChapter = True
+            self.selectedOffset = self.bigSeekControl.getSelectedItem().dataSource + MARKER_OFF
 
         self.setFocusId(self.MAIN_BUTTON_ID)
 
@@ -956,14 +991,50 @@ class SeekDialog(kodigui.BaseDialog):
         self.updateCurrent()
 
         items = []
+
+        # replace bigSeek with chapters or markers if possible
         if self.showChapters:
-            for chapter in self.chapters:
-                thumb = chapter.thumb and chapter.thumb.asTranscodedImageURL(
-                    *PlaylistDialog.LI_AR16X9_THUMB_DIM) or None
-                mli = kodigui.ManagedListItem(data_source=chapter.startTime(),
-                                              thumbnailImage=thumb,
-                                              label=chapter.tag or '')
-                items.append(mli)
+            if self.chapters:
+                self.setProperty('chapters.label', T(33605, 'Video Chapters').upper())
+                for index, chapter in enumerate(self.chapters):
+                    thumb = chapter.thumb and chapter.thumb.asTranscodedImageURL(
+                        *PlaylistDialog.LI_AR16X9_THUMB_DIM) or None
+                    mli = kodigui.ManagedListItem(data_source=chapter.startTime(),
+                                                  thumbnailImage=thumb,
+                                                  label=chapter.tag or 'Chapter {}'.format(index+1))
+                    items.append(mli)
+            # fake chapters by using markers
+            elif util.getSetting('virtual_chapters', True) and self.markers:
+                self.setProperty('chapters.label', T(33606, 'Virtual Chapters').upper())
+                creditsCounter = 0
+                preparedMarkers = []
+                for markerDef in self.markers:
+                    marker = markerDef["marker"]
+                    if marker:
+                        if markerDef["marker_type"] == "intro":
+                            preparedMarkers.append((int(marker.startTimeOffset), "Intro"))
+                            preparedMarkers.append((int(marker.endTimeOffset), "Main"))
+
+                        elif markerDef["marker_type"] == "credits":
+                            creditsCounter += 1
+                            preparedMarkers.append((int(marker.startTimeOffset), "Credits{}"))
+
+                # add staggered virtual markers
+                preparedMarkers.append((int(self.duration * 0.25), "25 %"))
+                preparedMarkers.append((int(self.duration * 0.50), "50 %"))
+                preparedMarkers.append((int(self.duration * 0.75), "75 %"))
+
+                credCnt = 1
+                for offset, label in sorted(preparedMarkers):
+                    mli = kodigui.ManagedListItem(data_source=offset,
+                                                  label=label.format(
+                                                      " #{}".format(credCnt) if creditsCounter > 1 else ""
+                                                      ))
+                    items.append(mli)
+
+                    if creditsCounter > 1:
+                        credCnt += 1
+
         else:
             div = int(self.duration / 12)
             for x in range(12):
@@ -973,9 +1044,6 @@ class SeekDialog(kodigui.BaseDialog):
         self.bigSeekControl.addItems(items)
 
         if self.showChapters:
-            #ctrlx = self.bigSeekGroupControl.getX()
-            #ctrly = self.bigSeekGroupControl.getY()
-            #self.bigSeekGroupControl.setPosition(ctrlx, ctrly-47)
             self.bigSeekControl.control.setHeight(160)
             self.bigSeekControl.control.setPosition(self.bigSeekControl.getX(), self.bigSeekControl.getY() - 126)
 
@@ -1112,12 +1180,13 @@ class SeekDialog(kodigui.BaseDialog):
         self.title = title
         self.title2 = title2
         self.chapters = chapters or []
-        self.showChapters = bool(chapters)
+        self.showChapters = util.getSetting('show_chapters', True) and (
+                    bool(chapters) or (util.getSetting('virtual_chapters', True) and bool(self.markers)))
         self.setProperty('video.title', title)
         self.setProperty('is.show', (self.player.video.type == 'episode') and '1' or '')
         self.setProperty('has.playlist', self.handler.playlist and '1' or '')
         self.setProperty('shuffled', (self.handler.playlist and self.handler.playlist.isShuffled) and '1' or '')
-        self.setProperty('has.chapters', self.chapters and '1' or '')
+        self.setProperty('has.chapters', self.showChapters and '1' or '')
         self.baseOffset = offset
         self.offset = 0
         self._duration = duration
@@ -1147,7 +1216,7 @@ class SeekDialog(kodigui.BaseDialog):
         except RuntimeError:  # Not playing
             return 1
 
-    def updateProgress(self, set_to_current=True, offset=None):
+    def updateProgress(self, set_to_current=True, offset=None, onlyTimeIndicator=False):
         """
         Updates the progress bars (seek and position) and the currently-selected-time-label for the current position or
         seek state on the timeline.
@@ -1185,6 +1254,9 @@ class SeekDialog(kodigui.BaseDialog):
         else:
             self.setProperty('time.selection', util.simplifiedTimeDisplay(offset))
             self.selectionIndicatorImage.setWidth(101)
+
+        if onlyTimeIndicator:
+            return
 
         if self.hasBif:
             self.setProperty('bif.image', self.handler.player.playerObject.getBifUrl(offset))
@@ -1263,7 +1335,8 @@ class SeekDialog(kodigui.BaseDialog):
 
         # auto skip marker
         if markerDef and getattr(self, markerDef["markerAutoSkip"]) \
-                and not getattr(self, markerDef["markerAutoSkipped"]):
+                and not getattr(self, markerDef["markerAutoSkipped"])\
+                and not self._navigatedViaMarkerOrChapter:
             setattr(self, markerDef["markerAutoSkipped"], True)
             self.resetAutoSeekTimer(None)
             markerOff = 0
@@ -1273,7 +1346,7 @@ class SeekDialog(kodigui.BaseDialog):
                 markerOff = FINAL_MARKER_NEGOFF
 
             util.DEBUG_LOG('MarkerAutoSkip: Skipping marker {}'.format(markerDef["marker"]))
-            self.doSeek(math.ceil(float(markerDef["marker"].endTimeOffset)) - markerOff)
+            self.doSeek(math.ceil(float(markerDef["marker"].endTimeOffset) + 1) - markerOff)
             if not final:
                 self.setProperty('show.markerSkip', '')
                 self.setProperty('show.markerSkip_OSDOnly', '')
