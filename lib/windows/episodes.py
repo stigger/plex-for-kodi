@@ -33,7 +33,6 @@ import re
 VIDEO_RELOAD_KW = dict(includeExtras=1, includeExtrasCount=10, includeChapters=1)
 
 
-
 class EpisodeReloadTask(backgroundthread.Task):
     def setup(self, episode, callback):
         self.episode = episode
