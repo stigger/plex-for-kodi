@@ -78,6 +78,7 @@ class SeekDialog(kodigui.BaseDialog):
     SEEK_IMAGE_ID = 200
     POSITION_IMAGE_ID = 201
     SELECTION_INDICATOR = 202
+    SELECTION_INDICATOR_GROUP = 203
     SELECTION_INDICATOR_IMAGE = 204
     SELECTION_INDICATOR_TEXT = 205
     BIF_IMAGE_ID = 300
@@ -262,6 +263,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.selectionIndicator = self.getControl(self.SELECTION_INDICATOR)
         self.selectionIndicatorImage = self.getControl(self.SELECTION_INDICATOR_IMAGE)
         self.selectionIndicatorText = self.getControl(self.SELECTION_INDICATOR_TEXT)
+        self.selectionIndicatorGroup = self.getControl(self.SELECTION_INDICATOR_GROUP)
         self.selectionBox = self.getControl(203)
         self.bigSeekControl = kodigui.ManagedControlList(self, self.BIG_SEEK_LIST_ID, 12)
         self.bigSeekGroupControl = self.getControl(self.BIG_SEEK_GROUP_ID)
@@ -1138,6 +1140,8 @@ class SeekDialog(kodigui.BaseDialog):
 
         if self.forceNextTimeAsChapter:
             self.setProperty('time.selection', self.forceNextTimeAsChapter)
+
+            # fixme: might be superfluous
             self.selectionIndicatorImage.setWidth(self.selectionIndicatorText.getWidth())
             self.forceNextTimeAsChapter = False
         else:
