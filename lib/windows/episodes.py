@@ -206,6 +206,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     def __init__(self, *args, **kwargs):
         kodigui.ControlledWindow.__init__(self, *args, **kwargs)
         windowutils.UtilMixin.__init__(self)
+        self.episode = None
         self.reset(kwargs.get('episode'), kwargs.get('season'), kwargs.get('show'))
         self.initialEpisode = kwargs.get('episode')
         self.parentList = kwargs.get('parentList')
@@ -271,7 +272,9 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if not mli:
             return
 
-        self.fillEpisodes()
+        # fixme: this broke returning from the info screen (selected the wrong episode)
+        #self.fillEpisodes()
+        self.reloadItems(items=[mli])
         self.fillRelated()
 
     def postSetup(self, from_select_episode=False):
