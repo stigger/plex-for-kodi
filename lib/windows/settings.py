@@ -219,15 +219,6 @@ class Settings(object):
                     T(32100, 'Skip user selection and pin entry on startup.')
                 ),
                 BoolSetting(
-                    'post_play_auto', T(32039, 'Post Play Auto Play'), True
-                ).description(
-                    T(
-                        32101,
-                        "If enabled, when playback ends and there is a 'Next Up' item available, it will be automatical"
-                        "ly be played after a 15 second delay."
-                    )
-                ),
-                BoolSetting(
                     'speedy_home_hubs', T(33503, 'Use alternative home refresh'), True
                 ).description(
                     T(
@@ -235,22 +226,6 @@ class Settings(object):
                         "Use an alternative method to speed up watched state updates in the home hub after playing an i"
                         "tem."
                     )
-                ),
-                BoolSetting(
-                    'auto_skip_intro', T(32522, 'Automatically Skip Intro'), False
-                ).description(
-                    T(32523, 'Automatically skip intros if available.')
-                ),
-                BoolSetting(
-                    'auto_skip_credits', T(32526, 'Auto Skip Credits'), False
-                ).description(
-                    T(32527, 'Automatically skip credits if available.')
-                ),
-                BoolSetting(
-                    'show_intro_skip_early', T(33505, 'Show intro skip button early'), False
-                ).description(
-                    T(33506, 'Show the intro skip button from the start of a video with an intro marker. The auto-skipp'
-                             'ing setting applies.')
                 ),
                 ThemeMusicSetting('theme_music', T(32480, 'Theme music'), 5),
                 PlayedThresholdSetting('played_threshold', T(33501, 'Video played threshold'), 1).description(
@@ -300,6 +275,47 @@ class Settings(object):
                 ),
             )
         ),
+        'player': (
+            T(32464, 'Player'), (
+                BoolSetting(
+                    'post_play_auto', T(32039, 'Post Play Auto Play'), True
+                ).description(
+                    T(
+                        32101,
+                        "If enabled, when playback ends and there is a 'Next Up' item available, it will be automatical"
+                        "ly be played after a 15 second delay."
+                    )
+                ),
+                BoolSetting(
+                    'auto_skip_intro', T(32522, 'Automatically Skip Intro'), False
+                ).description(
+                    T(32523, 'Automatically skip intros if available.')
+                ),
+                BoolSetting(
+                    'auto_skip_credits', T(32526, 'Auto Skip Credits'), False
+                ).description(
+                    T(32527, 'Automatically skip credits if available.')
+                ),
+                BoolSetting(
+                    'show_intro_skip_early', T(33505, 'Show intro skip button early'), False
+                ).description(
+                    T(33506, 'Show the intro skip button from the start of a video with an intro marker. The auto-skipp'
+                             'ing setting applies.')
+                ),
+                BoolSetting(
+                    'show_chapters', T(33601, 'Show video chapters'), True
+                ).description(
+                    T(33602, 'If available, show video chapters from the video-file instead of the '
+                             'timeline-big-seek-steps.')
+                ),
+                BoolSetting(
+                    'virtual_chapters', T(33603, 'Use virtual chapters'), True
+                ).description(
+                    T(33604, 'When the above is enabled and no video chapters are available, simulate them by using the'
+                             ' markers identified by the Plex Server (Intro, Credits).')
+                ),
+            )
+        ),
         'subtitles': (
             T(32396, 'Subtitles'), (
                 OptionsSetting(
@@ -311,8 +327,8 @@ class Settings(object):
                 BoolSetting('subtitle_downloads', T(32040, 'Enable Subtitle Downloading'), False)
             )
         ),
-        'advanced': (
-            T(32049, 'Advanced'), (
+        'system': (
+            T(33600, 'System'), (
                 OptionsSetting(
                     'allow_insecure', T(32032), 'never', (('never', T(32033)), ('same_network', T(32034)), ('always', T(32035)))
                 ).description(
@@ -362,7 +378,7 @@ class Settings(object):
         ),
     }
 
-    SECTION_IDS = ('main', 'video', 'audio', 'subtitles', 'advanced', 'manual', 'about')
+    SECTION_IDS = ('main', 'video', 'audio', 'player', 'subtitles', 'system', 'manual', 'about')
 
     def __getitem__(self, key):
         return self.SETTINGS[key]
