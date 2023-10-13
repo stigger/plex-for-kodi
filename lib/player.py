@@ -335,7 +335,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             self.updateNowPlaying()
 
             # show post play if possible, if an item has been watched (90% by Plex standards)
-            if self.seeking != self.SEEK_PLAYLIST:
+            if self.seeking != self.SEEK_PLAYLIST and self.duration:
                 playedFac = self.trueTime * 1000 / float(self.duration)
                 util.DEBUG_LOG("Player - played-threshold: {}/{}".format(playedFac, self.playedThreshold))
                 if playedFac >= self.playedThreshold and self.next(on_end=True):

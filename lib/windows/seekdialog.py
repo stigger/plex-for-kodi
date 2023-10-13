@@ -78,6 +78,8 @@ class SeekDialog(kodigui.BaseDialog):
     SEEK_IMAGE_ID = 200
     POSITION_IMAGE_ID = 201
     SELECTION_INDICATOR = 202
+    SELECTION_INDICATOR_IMAGE = 204
+    SELECTION_INDICATOR_TEXT = 205
     BIF_IMAGE_ID = 300
     SEEK_IMAGE_WIDTH = 1920
 
@@ -134,6 +136,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.lastFocusID = None
         self.previousFocusID = None
         self.playlistDialogVisible = False
+        self.forceNextTimeAsChapter = False
         self._seeking = False
         self._applyingSeek = False
         self._seekingWithoutOSD = False
@@ -207,6 +210,7 @@ class SeekDialog(kodigui.BaseDialog):
         self._applyingSeek = False
         self.bigSeekChanged = False
         self.selectedOffset = None
+        self.forceNextTimeAsChapter = False
         self.setProperty('button.seek', '')
         self.resetAutoSeekTimer(None)
         self.resetSkipSteps()
@@ -256,6 +260,8 @@ class SeekDialog(kodigui.BaseDialog):
         self.positionControl = self.getControl(self.POSITION_IMAGE_ID)
         self.bifImageControl = self.getControl(self.BIF_IMAGE_ID)
         self.selectionIndicator = self.getControl(self.SELECTION_INDICATOR)
+        self.selectionIndicatorImage = self.getControl(self.SELECTION_INDICATOR_IMAGE)
+        self.selectionIndicatorText = self.getControl(self.SELECTION_INDICATOR_TEXT)
         self.selectionBox = self.getControl(203)
         self.bigSeekControl = kodigui.ManagedControlList(self, self.BIG_SEEK_LIST_ID, 12)
         self.bigSeekGroupControl = self.getControl(self.BIG_SEEK_GROUP_ID)
@@ -677,7 +683,7 @@ class SeekDialog(kodigui.BaseDialog):
 
     def skipChapter(self, forward=True, without_osd=False):
         lastSelectedOffset = self.selectedOffset
-        util.DEBUG_LOG('chapter skipping from {0} with formawrd {1}'.format(lastSelectedOffset, forward))
+        util.DEBUG_LOG('chapter skipping from {0} with forward {1}'.format(lastSelectedOffset, forward))
         if forward:
             nextChapters = [c for c in self.chapters if c.startTime() > lastSelectedOffset]
             util.DEBUG_LOG('Found {0} chapters among {1}'.format(len(nextChapters), len(self.chapters)))
@@ -693,6 +699,10 @@ class SeekDialog(kodigui.BaseDialog):
             if len(lastChapters) == 0:
                 return False
             chapter = lastChapters[-1]
+
+        if chapter.tag:
+            util.DEBUG_LOG('Skipping to chapter: {}'.format(chapter.tag))
+            self.forceNextTimeAsChapter = chapter.tag
 
         util.DEBUG_LOG('New start time is {0}'.format(chapter.startTime()))
         self.skipByOffset(chapter.startTime() - lastSelectedOffset, without_osd=without_osd)
@@ -736,7 +746,7 @@ class SeekDialog(kodigui.BaseDialog):
     def _delayedSeek(self):
         try:
             while not util.MONITOR.waitForAbort(0.1):
-                if time.time() > self._delayedSeekTimeout or not self._delayedSeekTimeout:
+                if not self._delayedSeekTimeout or time.time() > self._delayedSeekTimeout:
                     break
 
             if not util.MONITOR.abortRequested() and self._delayedSeekTimeout is not None:
@@ -1125,7 +1135,15 @@ class SeekDialog(kodigui.BaseDialog):
             self.selectionBox.setPosition(-100 + (1920 - w), 0)
         else:
             self.selectionBox.setPosition(-50, 0)
-        self.setProperty('time.selection', util.simplifiedTimeDisplay(offset))
+
+        if self.forceNextTimeAsChapter:
+            self.setProperty('time.selection', self.forceNextTimeAsChapter)
+            self.selectionIndicatorImage.setWidth(self.selectionIndicatorText.getWidth())
+            self.forceNextTimeAsChapter = False
+        else:
+            self.setProperty('time.selection', util.simplifiedTimeDisplay(offset))
+            self.selectionIndicatorImage.setWidth(101)
+
         if self.hasBif:
             self.setProperty('bif.image', self.handler.player.playerObject.getBifUrl(offset))
             self.bifImageControl.setPosition(bifx, 752)
