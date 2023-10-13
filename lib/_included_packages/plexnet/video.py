@@ -288,7 +288,7 @@ class PlayableVideo(Video, RelatedMixin):
         Video._setData(self, data)
         if self.isFullObject():
             self.extras = PlexVideoItemList(data.find('Extras'), initpath=self.initpath, server=self.server, container=self)
-            self.chapters = plexobjects.PlexItemList(data, media.Chapter, media.Chapter.TYPE)
+            self.chapters = plexobjects.PlexItemList(data, media.Chapter, media.Chapter.TYPE, server=self.server)
 
     def reload(self, *args, **kwargs):
         if not kwargs.get('_soft'):

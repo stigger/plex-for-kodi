@@ -138,6 +138,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.previousFocusID = None
         self.playlistDialogVisible = False
         self.forceNextTimeAsChapter = False
+        self.showChapters = False
         self._seeking = False
         self._applyingSeek = False
         self._seekingWithoutOSD = False
@@ -887,8 +888,11 @@ class SeekDialog(kodigui.BaseDialog):
 
         self.bigSeekOffset = self.selectedOffset - closest.dataSource
         pxOffset = int(self.bigSeekOffset / float(self.duration) * 1920)
-        self.bigSeekGroupControl.setPosition(-8 + pxOffset, 917)
+
+        if not self.showChapters:
+            self.bigSeekGroupControl.setPosition(-8 + pxOffset, 917)
         self.bigSeekControl.selectItem(closest.pos())
+
         self._seeking = True
         # xbmc.sleep(100)
 
@@ -933,13 +937,29 @@ class SeekDialog(kodigui.BaseDialog):
 
         self.updateCurrent()
 
-        div = int(self.duration / 12)
         items = []
-        for x in range(12):
-            offset = div * x
-            items.append(kodigui.ManagedListItem(data_source=offset))
+        if self.showChapters:
+            for chapter in self.chapters:
+                thumb = chapter.thumb and chapter.thumb.asTranscodedImageURL(
+                    *PlaylistDialog.LI_AR16X9_THUMB_DIM) or None
+                mli = kodigui.ManagedListItem(data_source=chapter.startTime(),
+                                              thumbnailImage=thumb,
+                                              label=chapter.tag or '')
+                items.append(mli)
+        else:
+            div = int(self.duration / 12)
+            for x in range(12):
+                offset = div * x
+                items.append(kodigui.ManagedListItem(data_source=offset))
         self.bigSeekControl.reset()
         self.bigSeekControl.addItems(items)
+
+        if self.showChapters:
+            #ctrlx = self.bigSeekGroupControl.getX()
+            #ctrly = self.bigSeekGroupControl.getY()
+            #self.bigSeekGroupControl.setPosition(ctrlx, ctrly-47)
+            self.bigSeekControl.control.setHeight(160)
+            self.bigSeekControl.control.setPosition(self.bigSeekControl.getX(), self.bigSeekControl.getY() - 160)
 
     def updateCurrent(self, update_position_control=True):
         ratio = self.trueOffset() / float(self.duration)
@@ -1075,14 +1095,16 @@ class SeekDialog(kodigui.BaseDialog):
     def setup(self, duration, offset=0, bif_url=None, title='', title2='', chapters=None):
         self.title = title
         self.title2 = title2
+        self.chapters = chapters or []
+        self.showChapters = bool(chapters)
         self.setProperty('video.title', title)
         self.setProperty('is.show', (self.player.video.type == 'episode') and '1' or '')
         self.setProperty('has.playlist', self.handler.playlist and '1' or '')
         self.setProperty('shuffled', (self.handler.playlist and self.handler.playlist.isShuffled) and '1' or '')
+        self.setProperty('has.chapters', self.chapters and '1' or '')
         self.baseOffset = offset
         self.offset = 0
         self._duration = duration
-        self.chapters = chapters or []
         self.bifURL = bif_url
         self.hasBif = bool(self.bifURL)
         if self.hasBif:
