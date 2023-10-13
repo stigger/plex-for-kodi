@@ -84,7 +84,7 @@ class AdvancedSettings(object):
         ("debug", False),
         ("kodi_skip_stepping", False),
         ("auto_seek", True),
-        ("auto_seek_delay", 0),
+        ("auto_seek_delay", 1),
         ("dynamic_timeline_seek", False),
         ("forced_subtitles_override", False),
         ("fast_back", False),
@@ -257,8 +257,7 @@ class KodiCacheManager(object):
         default = list(filter(lambda x: x < self.recMax, [20, 40, 60, 80, 120, 160, 200, 400]))
 
         # re-append current memorySize here, as recommended max might have changed
-        default.append(self.memorySize)
-        return list(sorted(list(set(default)))) + [self.recMax]
+        return list(sorted(list(set(default + [self.memorySize, self.recMax]))))
 
     @property
     def free(self):
