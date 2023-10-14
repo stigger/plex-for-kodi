@@ -335,12 +335,7 @@ class Settings(object):
         ),
         'system': (
             T(33600, 'System'), (
-                OptionsSetting(
-                    'allow_insecure', T(32032), 'never', (('never', T(32033)), ('same_network', T(32034)), ('always', T(32035)))
-                ).description(
-                    T(32104, 'When to connect to servers with no secure connections...')
-                ),
-                BoolSetting('gdm_discovery', T(32042, 'Server Discovery (GDM)'), True),
+
                 BoolSetting('kiosk.mode', T(32043, 'Start Plex On Kodi Startup'), False),
                 BufferSetting('cache_size',
                                T(33613, 'Kodi Buffer Size (MB)'),
@@ -357,8 +352,15 @@ class Settings(object):
                 BoolSetting('debug', T(32024, 'Debug Logging'), False),
             )
         ),
-        'manual': (
-            T(32050, 'Manual Servers'), (
+        'network': (
+            T(33624, 'Network'), (
+                OptionsSetting(
+                    'allow_insecure', T(32032), 'never',
+                    (('never', T(32033)), ('same_network', T(32034)), ('always', T(32035)))
+                ).description(
+                    T(32104, 'When to connect to servers with no secure connections...')
+                ),
+                BoolSetting('gdm_discovery', T(32042, 'Server Discovery (GDM)'), True),
                 IPSetting('manual_ip_0', T(32044, 'Connection 1 IP'), ''),
                 IntegerSetting('manual_port_0', T(32045, 'Connection 1 Port'), 32400),
                 IPSetting('manual_ip_1', T(32046, 'Connection 2 IP'), ''),
@@ -384,7 +386,7 @@ class Settings(object):
         ),
     }
 
-    SECTION_IDS = ('main', 'video', 'audio', 'player', 'subtitles', 'system', 'manual', 'about')
+    SECTION_IDS = ('main', 'video', 'audio', 'player', 'subtitles', 'system', 'network', 'about')
 
     def __getitem__(self, key):
         return self.SETTINGS[key]
@@ -494,6 +496,8 @@ class SettingsWindow(kodigui.BaseWindow, windowutils.UtilMixin):
             if setting.type == 'BOOL':
                 item.setProperty('checkbox', '1')
                 item.setProperty('checkbox.checked', setting.get() and '1' or '')
+            elif setting.type == 'BUTTON':
+                item.setProperty('button', '1')
 
             items.append(item)
 
@@ -515,6 +519,8 @@ class SettingsWindow(kodigui.BaseWindow, windowutils.UtilMixin):
             self.editIP(mli, setting)
         elif setting.type == 'INTEGER' and not from_right:
             self.editInteger(mli, setting)
+        elif setting.type == 'BUTTON':
+            self.buttonDialog(mli, setting)
 
     def changeSetting(self):
         optionItem = self.optionsList.getSelectedItem()

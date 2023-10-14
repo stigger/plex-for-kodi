@@ -1623,3 +1623,7 @@ msgstr "LAN-Erreichbarkeits-Zeitlimit (ms)"
 msgctxt "#33623"
 msgid "When checking for Server-in-LAN reachability, use this timeout. Default: 10ms"
 msgstr "Wenn die lokale Serververbindung im LAN überprüft wird, benutze dieses Zeitlimit. Default: 10ms"
+
+msgctxt "#33624"
+msgid "Network"
+msgstr "Netzwerk"

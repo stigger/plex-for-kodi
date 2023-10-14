@@ -1325,3 +1325,7 @@ msgstr ""
 msgctxt "#33623"
 msgid "When checking for LAN reachability, use this timeout. Default: 10ms"
 msgstr ""
+
+msgctxt "#33624"
+msgid "Network"
+msgstr ""

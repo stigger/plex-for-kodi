@@ -134,12 +134,14 @@ class BingeModeManager(object):
             self.default = value
 
     def setServerUUID(self, server=None):
+        if not server and not plexapp.SERVERMANAGER.selectedServer:
+            return
         self._currentServerUUID = (server if server is not None else plexapp.SERVERMANAGER.selectedServer).uuid
-        util.DEBUG_LOG("SERVER CHANGED: %s" % self._currentServerUUID)
 
     def setUserID(self, account=None, reallyChanged=False):
+        if not account and not plexapp.ACCOUNT:
+            return
         self._currentUserID = (account if account is not None and reallyChanged else plexapp.ACCOUNT).ID
-        util.DEBUG_LOG("USER CHANGED: %s" % self._currentUserID)
 
     def load(self):
         jstring = plexapp.util.INTERFACE.getRegistry("BingeModeSettings")
