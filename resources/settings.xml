@@ -18,6 +18,18 @@
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
+                <setting id="requests_timeout" type="number" label="33620" help="33621">
+                    <level>0</level>
+                    <default>5</default>
+                    <constraints>
+                        <minimum>0.1</minimum>
+                        <step>0.05</step>
+                        <maximum>20</maximum>
+                    </constraints>
+                    <control type="slider" format="number">
+                        <popup>false</popup>
+                    </control>
+                </setting>
             </group>
         </category>
         <category id="player" label="32464">

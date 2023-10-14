@@ -1309,3 +1309,11 @@ msgstr ""
 msgctxt "#33619"
 msgid "Automatically skips episode intros, credits and tries to skip episode recaps. Doesn\'t skip the intro of the first episode of a season.\n\nCan be disabled/enabled per TV show."
 msgstr ""
+
+msgctxt "#33620"
+msgid "Plex requests timeout"
+msgstr ""
+
+msgctxt "#33621"
+msgid "Set the (async and connection) timeout value of the Python requests library in seconds. Default: 5"
+msgstr ""

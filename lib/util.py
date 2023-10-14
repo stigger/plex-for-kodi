@@ -21,7 +21,7 @@ from kodi_six import xbmcaddon
 from kodi_six import xbmcvfs
 
 from . import colors
-from plexnet import signalsmixin
+from plexnet import signalsmixin, util as pnutil
 
 DEBUG = True
 _SHUTDOWN = False
@@ -102,7 +102,8 @@ class AdvancedSettings(object):
         ("show_media_ends_label", True),
         ("background_colour", None),
         ("oldprofile", False),
-        ("skip_intro_button_show_early_threshold", 120)
+        ("skip_intro_button_show_early_threshold", 120),
+        ("requests_timeout", 5.0)
     )
 
     def __init__(self):
@@ -114,6 +115,9 @@ class AdvancedSettings(object):
 
 
 advancedSettings = AdvancedSettings()
+
+# set requests timeout
+pnutil.TIMEOUT = float(advancedSettings.requestsTimeout)
 
 
 def LOG(msg, level=xbmc.LOGINFO):
