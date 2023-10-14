@@ -688,7 +688,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
     def optionsButtonClicked(self, from_item=False):
         options = []
-        oldSkipIntroValue = None
+        oldBingeModeValue = None
 
         mli = self.episodeListControl.getSelectedItem()
 
@@ -715,11 +715,13 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 options.append({'key': 'mark_season_watched', 'display': T(32321, 'Mark Season Played')})
 
         if self.show_:
-            oldSkipIntroValue = INTERFACE.autoSkipIntroManager(self.show_)
-            if oldSkipIntroValue:
-                options.append({'key': 'auto_skip_intro', 'display': T(33508, 'Disable Auto skip intro')})
+            if options:
+                options.append(dropdown.SEPARATOR)
+            oldBingeModeValue = INTERFACE.bingeModeManager(self.show_)
+            if oldBingeModeValue:
+                options.append({'key': 'binge_mode', 'display': T(33508, 'Disable binge mode')})
             else:
-                options.append({'key': 'auto_skip_intro', 'display': T(33507, 'Enable Auto skip intro')})
+                options.append({'key': 'binge_mode', 'display': T(33507, 'Enable binge mode')})
 
         if mli.dataSource.server.allowsMediaDeletion:
             options.append({'key': 'delete', 'display': T(32322, 'Delete')})
@@ -778,11 +780,11 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.goHome(self.show_.getLibrarySectionId())
         elif choice['key'] == 'delete':
             self.delete()
-        elif choice['key'] == 'auto_skip_intro':
+        elif choice['key'] == 'binge_mode':
             util.DEBUG_LOG(
-                "Changing auto-skip setting for {} from {} to {}".format(self.show_.ratingKey, oldSkipIntroValue,
-                                                                         not oldSkipIntroValue))
-            INTERFACE.autoSkipIntroManager(self.show_, not oldSkipIntroValue)
+                "Changing binge mode setting for {} from {} to {}".format(self.show_.ratingKey, oldBingeModeValue,
+                                                                          not oldBingeModeValue))
+            INTERFACE.bingeModeManager(self.show_, not oldBingeModeValue)
 
     def delete(self):
         button = optionsdialog.show(

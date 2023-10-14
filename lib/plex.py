@@ -73,7 +73,7 @@ def defaultUserAgent():
                      '%s/%s' % (p_system, p_release)])
 
 
-class AutoSkipIntroManager(object):
+class BingeModeManager(object):
     """
     Manages the auto-skip-intro setting for individual shows; falls back to the global default if no specifics set
     """
@@ -85,7 +85,7 @@ class AutoSkipIntroManager(object):
 
     def __init__(self):
         self.reset()
-        plexapp.util.APP.on('change:auto_skip_intro', lambda **kwargs: self.setDefault(**kwargs))
+        plexapp.util.APP.on('change:binge_mode', lambda **kwargs: self.setDefault(**kwargs))
         plexapp.util.APP.on('change:selectedServer', lambda **kwargs: self.setServerUUID(**kwargs))
         plexapp.util.APP.on("change:user", lambda **kwargs: self.setUserID(**kwargs))
         plexapp.util.APP.on('init', lambda **kwargs: self.setUserID(**kwargs))
@@ -93,7 +93,7 @@ class AutoSkipIntroManager(object):
     def __call__(self, obj, value=None):
         # shouldn't happen
         if not self._currentServerUUID or not self._currentUserID:
-            util.DEBUG_LOG("APP.AutoSkipIntroManager, something's wrong: ServerUUID: %s, UserID: %s" % (
+            util.DEBUG_LOG("APP.BingeModeManager, something's wrong: ServerUUID: %s, UserID: %s" % (
                 self._currentServerUUID, self._currentUserID))
             return
 
@@ -129,7 +129,7 @@ class AutoSkipIntroManager(object):
 
     def setDefault(self, value=None):
         if value is None:
-            self.default = util.getSetting('auto_skip_intro', False)
+            self.default = util.getSetting('binge_mode', False)
         else:
             self.default = value
 
@@ -142,7 +142,10 @@ class AutoSkipIntroManager(object):
         util.DEBUG_LOG("USER CHANGED: %s" % self._currentUserID)
 
     def load(self):
-        jstring = plexapp.util.INTERFACE.getRegistry("AutoSkipSettings")
+        jstring = plexapp.util.INTERFACE.getRegistry("BingeModeSettings")
+        if not jstring:
+            # fallback
+            jstring = plexapp.util.INTERFACE.getRegistry("AutoSkipSettings")
         if not jstring:
             return {}
 
@@ -153,7 +156,7 @@ class AutoSkipIntroManager(object):
         return obj
 
     def save(self):
-        plexapp.util.INTERFACE.setRegistry("AutoSkipSettings", json.dumps(self._data))
+        plexapp.util.INTERFACE.setRegistry("BingeModeSettings", json.dumps(self._data))
         return self._data
 
 
@@ -195,7 +198,7 @@ class PlexInterface(plexapp.AppInterface):
         'deviceInfo': plexapp.DeviceInfo()
     }
 
-    autoSkipIntroManager = None
+    bingeModeManager = None
 
     def getPreference(self, pref, default=None):
         if pref == 'manual_connections':
@@ -335,7 +338,7 @@ class PlexInterface(plexapp.AppInterface):
 
 plexapp.util.setInterface(PlexInterface())
 plexapp.setUserAgent(defaultUserAgent())
-plexapp.util.INTERFACE.autoSkipIntroManager = AutoSkipIntroManager()
+plexapp.util.INTERFACE.bingeModeManager = BingeModeManager()
 
 
 class CallbackEvent(plexapp.util.CompatEvent):

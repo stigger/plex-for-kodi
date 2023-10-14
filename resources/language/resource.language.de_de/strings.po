@@ -1360,7 +1360,7 @@ msgstr "Intro automatisch überspringen"
 #: 
 msgctxt "#32523"
 msgid "Automatically skip intros if available."
-msgstr "Automatisches Überspringen von Intros, falls vorhanden."
+msgstr "Automatisches Überspringen von Intros, falls vorhanden. Überschreibt aktivierten Binge-Modus nicht."
 
 #: 
 msgctxt "#32524"
@@ -1380,7 +1380,7 @@ msgstr "Automatisches Überspringen von Credits"
 #: 
 msgctxt "#32527"
 msgid "Automatically skip credits if available."
-msgstr "Automatisches Überspringen von Credits, falls vorhanden."
+msgstr "Automatisches Überspringen von Credits, falls vorhanden. Überschreibt aktivierten Binge-Modus nicht."
 
 #: 
 msgctxt "#32528"
@@ -1509,15 +1509,15 @@ msgstr "Intro überspringen früher anzeigen"
 
 msgctxt "#33506"
 msgid "Show the intro skip button from the start of a video with an intro marker. The auto-skipping setting applies."
-msgstr "Zeige den Intro-Überspringen-Knopf von Anfang an. Die Automatische-Intro-Überspringen-Einstellung wird angewandt."
+msgstr "Zeige den Intro-Überspringen-Knopf von Anfang an. Die Automatische-Intro-Überspringen-Einstellung wird angewandt. Überschreibt aktivierten Binge-Modus nicht."
 
 msgctxt "#33507"
-msgid "Enable Auto skip intro"
-msgstr "Aktiv. auto-skip Intro"
+msgid "Enable binge mode"
+msgstr "Binge mode aktivieren"
 
 msgctxt "#33508"
-msgid "Disable Auto skip intro"
-msgstr "Deaktiv. auto-skip Intro"
+msgid "Disable binge mode"
+msgstr "Binge mode deaktiv."
 
 msgctxt "#33509"
 msgid "Early intro skip threshold (default: < 120s/2m)"
@@ -1599,3 +1599,11 @@ msgstr "Addon-Pfad"
 msgctxt "#33617"
 msgid "Userdata/Profile Path"
 msgstr "Benutzerdaten-/Profilpfad"
+
+msgctxt "#33618"
+msgid "TV binge-viewing mode"
+msgstr "TV Binge-Viewing-Modus"
+
+msgctxt "#33619"
+msgid "Automatically skips episode intros, credits and tries to skip episode recaps. Doesn\'t skip the intro of the first episode of a season.\n\nCan be disabled/enabled per TV show."
+msgstr "Überspringt automatisch Intros und Abspänne von Episoden und versucht Recaps zu vermeiden. Überspringt das Intro der ersten Episode einer Staffel nicht."

@@ -287,20 +287,26 @@ class Settings(object):
                     )
                 ),
                 BoolSetting(
+                    'binge_mode', T(33618, 'TV binge-viewing mode'), False
+                ).description(
+                    T(33619, 'Automatically skips episode intros, credits and tries to skip episode recaps. Doesn\'t '
+                             'skip the intro of the first episode of a season.\n\nCan be disabled/enabled per TV show.')
+                ),
+                BoolSetting(
                     'auto_skip_intro', T(32522, 'Automatically Skip Intro'), False
                 ).description(
-                    T(32523, 'Automatically skip intros if available.')
+                    T(32523, 'Automatically skip intros if available. Doesn\'t override enabled binge mode.')
                 ),
                 BoolSetting(
                     'auto_skip_credits', T(32526, 'Auto Skip Credits'), False
                 ).description(
-                    T(32527, 'Automatically skip credits if available.')
+                    T(32527, 'Automatically skip credits if available. Doesn\'t override enabled binge mode.')
                 ),
                 BoolSetting(
                     'show_intro_skip_early', T(33505, 'Show intro skip button early'), False
                 ).description(
                     T(33506, 'Show the intro skip button from the start of a video with an intro marker. The auto-skipp'
-                             'ing setting applies.')
+                             'ing setting applies. Doesn\'t override enabled binge mode.')
                 ),
                 BoolSetting(
                     'show_chapters', T(33601, 'Show video chapters'), True

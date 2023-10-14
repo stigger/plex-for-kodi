@@ -174,13 +174,15 @@ class SeekDialog(kodigui.BaseDialog):
         self.useAutoSeek = util.advancedSettings.autoSeek
         self.useDynamicStepsForTimeline = util.advancedSettings.dynamicTimelineSeek
 
-        self.autoSkipIntro = self.player.video.type == 'episode' and self.player.video.autoSkipIntro
-        self.autoSkipCredits = util.getSetting('auto_skip_credits', False)
+        self.bingeMode = False
+        self.autoSkipIntro = False
+        self.autoSkipCredits = False
+        self.showIntroSkipEarly = False
+
         self.skipIntroButtonTimeout = util.advancedSettings.skipIntroButtonTimeout
         self.skipCreditsButtonTimeout = util.advancedSettings.skipCreditsButtonTimeout
         self.showItemEndsInfo = util.advancedSettings.showMediaEndsInfo
         self.showItemEndsLabel = util.advancedSettings.showMediaEndsLabel
-        self.showIntroSkipEarly = util.getSetting('show_intro_skip_early', False)
 
         self.player.video.server.on("np:timelineResponse", self.timelineResponseCallback)
 
@@ -226,6 +228,22 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('button.seek', '')
         self.resetAutoSeekTimer(None)
         self.resetSkipSteps()
+
+    def applyMarkerProps(self):
+        self.bingeMode = self.player.video.type == 'episode' and self.player.video.bingeMode
+
+        # don't auto skip intro when on binge mode on the first episode of a season
+        firstEp = self.player.video.index == '1'
+
+        self.autoSkipIntro = (self.bingeMode and not firstEp) or util.getSetting('auto_skip_intro', False)
+        self.autoSkipCredits = self.bingeMode or util.getSetting('auto_skip_credits', False)
+        self.showIntroSkipEarly = self.bingeMode or util.getSetting('show_intro_skip_early', False)
+
+        self._introSkipShownStarted = None
+        self._introAutoSkipped = False
+        self._creditsSkipShownStarted = None
+        self._creditsAutoSkipped = False
+        self._markers = None
 
     def trueOffset(self):
         if self.handler.mode == self.handler.MODE_ABSOLUTE:
@@ -279,21 +297,18 @@ class SeekDialog(kodigui.BaseDialog):
         self.bigSeekGroupControl = self.getControl(self.BIG_SEEK_GROUP_ID)
         self.initialized = True
         self.setBoolProperty('subtitle.downloads', util.getSetting('subtitle_downloads', False))
+        self.applyMarkerProps()
         self.updateProperties()
         self.videoSettingsHaveChanged()
         self.update()
 
     def onReInit(self):
         self.lastTimelineResponse = None
-        self._introSkipShownStarted = None
-        self._introAutoSkipped = False
-        self._creditsSkipShownStarted = None
-        self._creditsAutoSkipped = False
-        self._markers = None
         self._lastAction = None
 
         self.resetTimeout()
         self.resetSeeking()
+        self.applyMarkerProps()
         self.updateProperties()
         self.videoSettingsHaveChanged()
         self.updateProgress()
