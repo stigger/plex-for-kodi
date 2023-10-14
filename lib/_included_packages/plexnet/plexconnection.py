@@ -1,9 +1,26 @@
 from __future__ import absolute_import
 import random
+import socket
 
 from . import http
 from . import callback
 from . import util
+
+HAS_ICMPLIB = False
+try:
+    from icmplib import ping, resolve, ICMPLibError
+except:
+    util.WARN_LOG("icmplib not found, can't check local connectivity")
+else:
+    HAS_ICMPLIB = True
+    from urllib.parse import urlparse
+    from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network
+
+    # local networks
+    LOCAL_NETWORKS = {
+        4: [IPv4Network('10.0.0.0/8'), IPv4Network('192.168.0.0/16'), IPv4Network('127.0.0.0/8')],
+        6: [IPv6Network('fd00::/8')]
+    }
 
 
 class ConnectionSource(int):
@@ -60,6 +77,10 @@ class PlexConnection(object):
         self.lastTestedAt = 0
         self.hasPendingRequest = False
 
+        # check whether hostname is on LAN
+        if HAS_ICMPLIB:
+            self.checkLocal()
+
         self.getScore(True)
 
     def __eq__(self, other):
@@ -73,16 +94,46 @@ class PlexConnection(object):
         return not self.__eq__(other)
 
     def __str__(self):
-        return "Connection: {0} local: {1} token: {2} sources: {3} state: {4}".format(
+        return "Connection: {0} local: {1} token: {2} sources: {3} state: {4} score: {5}".format(
             self.address,
             self.isLocal,
             util.hideToken(self.token),
             repr(self.sources),
-            self.state
+            self.state,
+            self.getScore()
         )
 
     def __repr__(self):
         return self.__str__()
+
+    def ipInLocalNet(self, ip):
+        key = ":" in ip and 6 or 4
+        addr = IPv4Address(ip)
+        for network in LOCAL_NETWORKS[key]:
+            if addr in network:
+                return True
+        return False
+
+    def checkLocal(self):
+        hostname = urlparse(self.address).hostname
+        try:
+            ips = resolve(hostname)
+        except (socket.gaierror, ICMPLibError):
+            return False
+
+        for ip in ips:
+            if not self.ipInLocalNet(ip):
+                continue
+
+            try:
+                host = ping(ip, count=1, interval=1, timeout=util.LAN_REACHABILITY_TIMEOUT, privileged=False)
+            except:
+                continue
+
+            if host.is_alive:
+                self.isLocal = True
+
+        return False
 
     def merge(self, other):
         # plex.tv trumps all, otherwise assume newer is better

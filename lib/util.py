@@ -103,7 +103,8 @@ class AdvancedSettings(object):
         ("background_colour", None),
         ("oldprofile", False),
         ("skip_intro_button_show_early_threshold", 120),
-        ("requests_timeout", 5.0)
+        ("requests_timeout", 5.0),
+        ("local_reach_timeout", 10)
     )
 
     def __init__(self):
@@ -118,6 +119,7 @@ advancedSettings = AdvancedSettings()
 
 # set requests timeout
 pnutil.TIMEOUT = float(advancedSettings.requestsTimeout)
+pnutil.LAN_REACHABILITY_TIMEOUT = advancedSettings.localReachTimeout / 1000.0
 
 
 def LOG(msg, level=xbmc.LOGINFO):

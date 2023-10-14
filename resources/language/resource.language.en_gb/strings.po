@@ -1311,9 +1311,17 @@ msgid "Automatically skips episode intros, credits and tries to skip episode rec
 msgstr ""
 
 msgctxt "#33620"
-msgid "Plex requests timeout"
+msgid "Plex requests timeout (seconds)"
 msgstr ""
 
 msgctxt "#33621"
 msgid "Set the (async and connection) timeout value of the Python requests library in seconds. Default: 5"
+msgstr ""
+
+msgctxt "#33622"
+msgid "LAN reachability timeout (ms)"
+msgstr ""
+
+msgctxt "#33623"
+msgid "When checking for LAN reachability, use this timeout. Default: 10ms"
 msgstr ""

@@ -1607,3 +1607,19 @@ msgstr "TV Binge-Viewing-Modus"
 msgctxt "#33619"
 msgid "Automatically skips episode intros, credits and tries to skip episode recaps. Doesn\'t skip the intro of the first episode of a season.\n\nCan be disabled/enabled per TV show."
 msgstr "Überspringt automatisch Intros und Abspänne von Episoden und versucht Recaps zu vermeiden. Überspringt das Intro der ersten Episode einer Staffel nicht."
+
+msgctxt "#33620"
+msgid "Plex requests timeout (seconds)"
+msgstr "Plex HTTP Zeitlimit (Sekunden)"
+
+msgctxt "#33621"
+msgid "Set the (async and connection) timeout value of the Python requests library in seconds. Default: 5 seconds"
+msgstr "Setzt das Zeitlimit für die Python Requests Bibliothek bei asynchronen Verbindungen und Verbindungsanfragen. Default: 5 Sekunden"
+
+msgctxt "#33622"
+msgid "LAN reachability timeout (ms)"
+msgstr "LAN-Erreichbarkeits-Zeitlimit (ms)"
+
+msgctxt "#33623"
+msgid "When checking for Server-in-LAN reachability, use this timeout. Default: 10ms"
+msgstr "Wenn die lokale Serververbindung im LAN überprüft wird, benutze dieses Zeitlimit. Default: 10ms"

@@ -385,6 +385,7 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         best = self.activeConnection
         for i in range(len(self.connections) - 1, -1, -1):
             conn = self.connections[i]
+            util.DEBUG_LOG("Connection score: {0}, {1}".format(conn.address, conn.getScore()))
 
             if not best or conn.getScore() > best.getScore():
                 best = conn

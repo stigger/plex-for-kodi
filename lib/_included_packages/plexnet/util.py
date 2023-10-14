@@ -38,6 +38,7 @@ def resetBaseHeaders():
 PROJECT = 'PlexNet'                                 # name provided to plex server
 VERSION = '0.0.0a1'                                 # version of this api
 TIMEOUT = 10                                        # request timeout
+LAN_REACHABILITY_TIMEOUT = 0.010
 X_PLEX_CONTAINER_SIZE = 50                          # max results to return in a single search page
 
 # Plex Header Configuation
