@@ -191,6 +191,7 @@ class PlexConnection(object):
             context.server = server
             util.addPlexHeaders(self.request, server.getToken())
             self.hasPendingRequest = util.APP.startRequest(self.request, context)
+            util.DEBUG_LOG("Testing insecure connection test for: {0}".format(server))
             return True
 
         return False

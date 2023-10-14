@@ -231,10 +231,10 @@ class HttpRequest(object):
     def addHeader(self, name, value):
         self.session.headers[name] = value
 
-    def createRequestContext(self, requestType, callback_=None):
+    def createRequestContext(self, requestType, callback_=None, timeout=None):
         context = RequestContext()
         context.requestType = requestType
-        context.timeout = DEFAULT_TIMEOUT
+        context.timeout = timeout or DEFAULT_TIMEOUT
 
         if callback_:
             context.callback = callback.Callable(self.onResponse)
