@@ -88,6 +88,19 @@
                         <heading>32501</heading>
                     </control>
                 </setting>
+                <setting id="auto_skip_offset" type="integer" label="33629" help="33630">
+                    <level>0</level>
+                    <default>2</default>
+                    <constraints>
+                        <minimum>-10</minimum>
+                        <step>1</step>
+                        <maximum>10</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <heading>33630</heading>
+                        <popup>false</popup>
+                    </control>
+                </setting>
                 <setting id="skip_intro_button_timeout" type="integer" label="32521" help="32524">
                     <level>0</level>
                     <default>10</default>

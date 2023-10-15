@@ -1180,8 +1180,7 @@ class SeekDialog(kodigui.BaseDialog):
                         startTimeOffset <= util.advancedSettings.skipIntroButtonShowEarlyThreshold * 1000:
                     startTimeOffset = 0
 
-                if startTimeOffset <= self.offset < math.ceil(float(marker.endTimeOffset)) \
-                        - FINAL_MARKER_NEGOFF:
+                if startTimeOffset <= self.offset < int(marker.endTimeOffset) - FINAL_MARKER_NEGOFF:
                     # we've had a marker already; reset autoSkip state
                     if self._currentMarker and self._currentMarker != markerDef:
                         setattr(self, markerDef["markerAutoSkipped"], False)
@@ -1357,14 +1356,19 @@ class SeekDialog(kodigui.BaseDialog):
             return
 
         markerDef = self.shouldShowMarkerSkip()
+        startTimeOff = None
         if markerDef:
             self.setProperty('skipMarkerName', markerDef["name"])
             self._currentMarker = markerDef
+            startTimeOff = int(markerDef["marker"].startTimeOffset)
 
         # auto skip marker
+        # delay marker autoskip ny autoSkipOffset to avoid cutting off content at the expense of being slightly too late
         if markerDef and getattr(self, markerDef["markerAutoSkip"]) \
                 and not getattr(self, markerDef["markerAutoSkipped"])\
-                and not self._navigatedViaMarkerOrChapter:
+                and not self._navigatedViaMarkerOrChapter \
+                and (startTimeOff == 0 or (startTimeOff + util.advancedSettings.autoSkipOffset * 1000) <= self.offset):
+
             setattr(self, markerDef["markerAutoSkipped"], True)
             self.resetAutoSeekTimer(None)
             markerOff = 0
@@ -1374,14 +1378,14 @@ class SeekDialog(kodigui.BaseDialog):
                 markerOff = FINAL_MARKER_NEGOFF
 
             util.DEBUG_LOG('MarkerAutoSkip: Skipping marker {}'.format(markerDef["marker"]))
-            self.doSeek(math.ceil(float(markerDef["marker"].endTimeOffset) + 1) - markerOff)
+            self.doSeek(int(markerDef["marker"].endTimeOffset) + 1000 - markerOff)
             if not final:
                 self.setProperty('show.markerSkip', '')
                 self.setProperty('show.markerSkip_OSDOnly', '')
             return True
 
         if markerDef and not self.osdVisible() and self.lastFocusID != self.SKIP_MARKER_BUTTON_ID and \
-                not self.getProperty('show.markerSkip_OSDOnly'):
+                not self.getProperty('show.markerSkip_OSDOnly') and self.getProperty('show.markerSkip'):
             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
 
         if offset or (self.autoSeekTimeout and time.time() >= self.autoSeekTimeout and

@@ -1345,3 +1345,11 @@ msgstr ""
 msgctxt "#33628"
 msgid "Prioritizes local connections over secure ones. Needs the proper setting in \"Allow Insecure Connections\" and the Plex Server's \"Secure connections\" at \"Preferred\". Can be used to enforce manual servers."
 msgstr ""
+
+msgctxt "#33629"
+msgid "Auto-skip intro/credits offset"
+msgstr ""
+
+msgctxt "#33630"
+msgid "Intro/credits markers might be a little early in Plex. When auto skipping add (or subtract) this many seconds from the marker. This avoids cutting off content, while possibly skipping the marker a little late."
+msgstr ""

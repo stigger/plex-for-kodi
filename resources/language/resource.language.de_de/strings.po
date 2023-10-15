@@ -1643,3 +1643,11 @@ msgstr "LAN/lokale Server bevorzugen"
 msgctxt "#33628"
 msgid "Prioritizes local connections over secure ones. Needs the proper setting in \"Allow Insecure Connections\" and the Plex Server's \"Secure connections\" at \"Preferred\". Can be used to enforce manual servers."
 msgstr "Priorisiert lokale Verbindungen über sichere. Benötigt die korrekte Einstellung in \"Unsichere Verbindung erlauben\" und die Plex Server Einstellung \"Sichere Verbindungen\" auf \"Bevorzugt\". Kann verwendet werden um manuelle Server zu forcieren."
+
+msgctxt "#33629"
+msgid "Auto-skip intro/credits offset"
+msgstr "Auto-Überspringen-Versatz"
+
+msgctxt "#33630"
+msgid "Intro/credits markers might be a little early in Plex. When auto skipping add (or subtract) this many seconds from the marker. This avoids cutting off content, while possibly skipping the marker a little late."
+msgstr "Intro-/Abspann-Markierungen können ein wenig früh erscheinen in Plex. Wenn diese automatisch übersprungen werden sollen, addiere (oder subtrahiere) diese Menge an Sekunden. Das verhindert das verfrühte Abschneiden von Inhalten, kann aber zu etwas verspätetem Springen führen."

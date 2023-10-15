@@ -104,7 +104,8 @@ class AdvancedSettings(object):
         ("oldprofile", False),
         ("skip_intro_button_show_early_threshold", 120),
         ("requests_timeout", 5.0),
-        ("local_reach_timeout", 10)
+        ("local_reach_timeout", 10),
+        ("auto_skip_offset", 2)
     )
 
     def __init__(self):
