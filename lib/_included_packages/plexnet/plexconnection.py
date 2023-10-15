@@ -108,7 +108,7 @@ class PlexConnection(object):
 
     def ipInLocalNet(self, ip):
         key = ":" in ip and 6 or 4
-        addr = IPv4Address(ip)
+        addr = key == 4 and IPv4Address(ip) or IPv6Address(ip)
         for network in LOCAL_NETWORKS[key]:
             if addr in network:
                 return network
