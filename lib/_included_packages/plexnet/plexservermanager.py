@@ -456,6 +456,8 @@ class PlexServerManager(signalsmixin.SignalsMixin):
         })
 
         util.LOG("Starting selected server search, hoping for {0}".format(self.searchContext.preferredServer))
+        if util.LOCAL_OVER_SECURE:
+            util.WARN_LOG("Preferring local server connections over secure ones!")
 
     def onAccountChange(self, account, reallyChanged=False):
         # Clear any AudioPlayer data before invalidating the active server
