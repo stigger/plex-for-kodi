@@ -1353,3 +1353,7 @@ msgstr ""
 msgctxt "#33630"
 msgid "Intro/credits markers might be a little early in Plex. When auto skipping add (or subtract) this many seconds from the marker. This avoids cutting off content, while possibly skipping the marker a little late."
 msgstr ""
+
+msgctxt "#32631"
+msgid "Player (user-specific)"
+msgstr ""

@@ -235,9 +235,9 @@ class SeekDialog(kodigui.BaseDialog):
         # don't auto skip intro when on binge mode on the first episode of a season
         firstEp = self.player.video.index == '1'
 
-        self.autoSkipIntro = (self.bingeMode and not firstEp) or util.getSetting('auto_skip_intro', False)
-        self.autoSkipCredits = self.bingeMode or util.getSetting('auto_skip_credits', False)
-        self.showIntroSkipEarly = self.bingeMode or util.getSetting('show_intro_skip_early', False)
+        self.autoSkipIntro = (self.bingeMode and not firstEp) or util.getUserSetting('auto_skip_intro', False)
+        self.autoSkipCredits = self.bingeMode or util.getUserSetting('auto_skip_credits', False)
+        self.showIntroSkipEarly = self.bingeMode or util.getUserSetting('show_intro_skip_early', False)
 
         self._introSkipShownStarted = None
         self._introAutoSkipped = False
@@ -1207,8 +1207,8 @@ class SeekDialog(kodigui.BaseDialog):
         self.title2 = title2
         self.chapters = chapters or []
         self._markers = None
-        self.showChapters = util.getSetting('show_chapters', True) and (
-                    bool(chapters) or (util.getSetting('virtual_chapters', True) and bool(self.markers)))
+        self.showChapters = util.getUserSetting('show_chapters', True) and (
+                    bool(chapters) or (util.getUserSetting('virtual_chapters', True) and bool(self.markers)))
         self.setProperty('video.title', title)
         self.setProperty('is.show', (self.player.video.type == 'episode') and '1' or '')
         self.setProperty('has.playlist', self.handler.playlist and '1' or '')

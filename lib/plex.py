@@ -120,16 +120,16 @@ class BingeModeManager(object):
 
     def reset(self):
         self._data = self.load()
-        self.setDefault()
         if plexapp.SERVERMANAGER and plexapp.SERVERMANAGER.selectedServer:
             self.setServerUUID()
 
         if plexapp.ACCOUNT:
             self.setUserID()
+        self.setDefault()
 
-    def setDefault(self, value=None):
-        if value is None:
-            self.default = util.getSetting('binge_mode', False)
+    def setDefault(self, key=None, value=None):
+        if value is None and self._currentUserID:
+            self.default = util.getSetting('binge_mode.{}'.format(self._currentUserID), False)
         else:
             self.default = value
 

@@ -21,7 +21,7 @@ from kodi_six import xbmcaddon
 from kodi_six import xbmcvfs
 
 from . import colors
-from plexnet import signalsmixin, util as pnutil
+from plexnet import signalsmixin, plexapp
 
 DEBUG = True
 _SHUTDOWN = False
@@ -52,6 +52,13 @@ except:
 
 
 def getSetting(key, default=None):
+    with SETTINGS_LOCK:
+        setting = ADDON.getSetting(key)
+        return _processSetting(setting, default)
+
+
+def getUserSetting(key, default=None):
+    key = '{}.{}'.format(key, plexapp.ACCOUNT.ID)
     with SETTINGS_LOCK:
         setting = ADDON.getSetting(key)
         return _processSetting(setting, default)

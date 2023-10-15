@@ -1651,3 +1651,7 @@ msgstr "Auto-Überspringen-Versatz"
 msgctxt "#33630"
 msgid "Intro/credits markers might be a little early in Plex. When auto skipping add (or subtract) this many seconds from the marker. This avoids cutting off content, while possibly skipping the marker a little late."
 msgstr "Intro-/Abspann-Markierungen können ein wenig früh erscheinen in Plex. Wenn diese automatisch übersprungen werden sollen, addiere (oder subtrahiere) diese Menge an Sekunden. Das verhindert das verfrühte Abschneiden von Inhalten, kann aber zu etwas verspätetem Springen führen."
+
+msgctxt "#32631"
+msgid "Player (user-specific)"
+msgstr "Wiedergabe (benutzerspezifisch)"

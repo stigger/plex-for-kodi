@@ -18,6 +18,7 @@ class Setting(object):
     label = None
     desc = None
     default = None
+    userAware = False
 
     def translate(self, val):
         return str(val)
@@ -99,6 +100,27 @@ class PlayedThresholdSetting(ListSetting):
 
 class BoolSetting(BasicSetting):
     type = 'BOOL'
+
+
+class BoolUserSetting(BoolSetting):
+    """
+    A user-aware BoolSetting
+    """
+    userAware = True
+
+    @property
+    def userAwareID(self):
+        return '{}.{}'.format(self.ID, plexnet.plexapp.ACCOUNT.ID)
+
+    def get(self):
+        return util.getSetting(self.userAwareID, self.default)
+
+    def set(self, val):
+        old = self.get()
+        if old != val:
+            util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]'.format(self.userAwareID, old, val))
+            plexnet.util.APP.trigger('change:{0}'.format(self.ID), key=self.userAwareID, value=val)
+        return util.setSetting(self.userAwareID, val)
 
 
 class OptionsSetting(BasicSetting):
@@ -276,8 +298,8 @@ class Settings(object):
             )
         ),
         'player': (
-            T(32464, 'Player'), (
-                BoolSetting(
+            T(32631, 'Player (user-specific)'), (
+                BoolUserSetting(
                     'post_play_auto', T(32039, 'Post Play Auto Play'), True
                 ).description(
                     T(
@@ -286,35 +308,35 @@ class Settings(object):
                         "ly be played after a 15 second delay."
                     )
                 ),
-                BoolSetting(
+                BoolUserSetting(
                     'binge_mode', T(33618, 'TV binge-viewing mode'), False
                 ).description(
                     T(33619, 'Automatically skips episode intros, credits and tries to skip episode recaps. Doesn\'t '
                              'skip the intro of the first episode of a season.\n\nCan be disabled/enabled per TV show.')
                 ),
-                BoolSetting(
+                BoolUserSetting(
                     'auto_skip_intro', T(32522, 'Automatically Skip Intro'), False
                 ).description(
                     T(32523, 'Automatically skip intros if available. Doesn\'t override enabled binge mode.')
                 ),
-                BoolSetting(
+                BoolUserSetting(
                     'auto_skip_credits', T(32526, 'Auto Skip Credits'), False
                 ).description(
                     T(32527, 'Automatically skip credits if available. Doesn\'t override enabled binge mode.')
                 ),
-                BoolSetting(
+                BoolUserSetting(
                     'show_intro_skip_early', T(33505, 'Show intro skip button early'), False
                 ).description(
                     T(33506, 'Show the intro skip button from the start of a video with an intro marker. The auto-skipp'
                              'ing setting applies. Doesn\'t override enabled binge mode.')
                 ),
-                BoolSetting(
+                BoolUserSetting(
                     'show_chapters', T(33601, 'Show video chapters'), True
                 ).description(
                     T(33602, 'If available, show video chapters from the video-file instead of the '
                              'timeline-big-seek-steps.')
                 ),
-                BoolSetting(
+                BoolUserSetting(
                     'virtual_chapters', T(33603, 'Use virtual chapters'), True
                 ).description(
                     T(33604, 'When the above is enabled and no video chapters are available, simulate them by using the'
@@ -512,6 +534,9 @@ class SettingsWindow(kodigui.BaseWindow, windowutils.UtilMixin):
                 item.setProperty('checkbox.checked', setting.get() and '1' or '')
             elif setting.type == 'BUTTON':
                 item.setProperty('button', '1')
+
+            if setting.userAware:
+                item.setProperty('useraware', '1')
 
             items.append(item)
 
