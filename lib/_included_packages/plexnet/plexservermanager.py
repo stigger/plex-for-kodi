@@ -334,12 +334,12 @@ class PlexServerManager(signalsmixin.SignalsMixin):
 
             for i in range(len(serverObj.get('connections', []))):
                 conn = serverObj['connections'][i]
-                isFallback = hasSecureConn and conn['address'][:5] != "https"
+                isFallback = hasSecureConn and conn['address'][:5] != "https" and not util.LOCAL_OVER_SECURE
                 sources = plexconnection.PlexConnection.SOURCE_BY_VAL[conn['sources']]
                 connection = plexconnection.PlexConnection(sources, conn['address'], conn['isLocal'], conn['token'], isFallback)
 
                 # Keep the secure connection on top
-                if connection.isSecure:
+                if connection.isSecure and not util.LOCAL_OVER_SECURE:
                     server.connections.insert(0, connection)
                 else:
                     server.connections.append(connection)
