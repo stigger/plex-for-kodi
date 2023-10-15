@@ -194,6 +194,9 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.playlist and self.playlist.TYPE == 'playlist':
             return False
 
+        if self.player.video.bingeMode:
+            return False
+
         if (not util.advancedSettings.postplayAlways and self.player.video.duration.asInt() <= FIVE_MINUTES_MILLIS)\
                 or util.advancedSettings.postplayTimeout <= 0:
             return False
