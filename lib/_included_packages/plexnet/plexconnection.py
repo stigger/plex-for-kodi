@@ -166,7 +166,7 @@ class PlexConnection(object):
 
         allowConnectionTest = not self.isFallback or (util.LOCAL_OVER_SECURE and insecureAllowed)
         if not allowConnectionTest:
-            if insecurePolicy == "always" or (insecurePolicy == "same_network" and server.sameNetwork and self.isLocal):
+            if insecureAllowed:
                 allowConnectionTest = allowFallback
                 server.hasFallback = not allowConnectionTest
                 util.LOG(
