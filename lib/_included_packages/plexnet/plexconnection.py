@@ -78,7 +78,7 @@ class PlexConnection(object):
         self.hasPendingRequest = False
 
         # check whether hostname is on LAN
-        if HAS_ICMPLIB:
+        if HAS_ICMPLIB and util.CHECK_LOCAL:
             self.checkLocal()
 
         self.getScore(True)
@@ -111,7 +111,7 @@ class PlexConnection(object):
         addr = IPv4Address(ip)
         for network in LOCAL_NETWORKS[key]:
             if addr in network:
-                return True
+                return network
         return False
 
     def checkLocal(self):
@@ -122,7 +122,8 @@ class PlexConnection(object):
             return False
 
         for ip in ips:
-            if not self.ipInLocalNet(ip):
+            network = self.ipInLocalNet(ip)
+            if not network:
                 continue
 
             try:
@@ -132,6 +133,7 @@ class PlexConnection(object):
 
             if host.is_alive:
                 self.isLocal = True
+                util.LOG("Found IP {0} in local network ({1}).".format(ip, network))
 
         return False
 
@@ -158,10 +160,12 @@ class PlexConnection(object):
         # after secure tests have completed and failed). Insecure connections will be
         # tested if the policy "always" allows them, or if set to "same_network" and
         # the current connection is local and server has (publicAddressMatches=1).
+        insecurePolicy = util.INTERFACE.getPreference("allow_insecure")
+        insecureAllowed = insecurePolicy == "always" or (insecurePolicy == "same_network" and
+                                                         server.sameNetwork and self.isLocal)
 
-        allowConnectionTest = not self.isFallback
+        allowConnectionTest = not self.isFallback or (util.LOCAL_OVER_SECURE and insecureAllowed)
         if not allowConnectionTest:
-            insecurePolicy = util.INTERFACE.getPreference("allow_insecure")
             if insecurePolicy == "always" or (insecurePolicy == "same_network" and server.sameNetwork and self.isLocal):
                 allowConnectionTest = allowFallback
                 server.hasFallback = not allowConnectionTest
@@ -178,7 +182,7 @@ class PlexConnection(object):
                 return True
 
         if allowConnectionTest:
-            if not self.isSecure and (
+            if not self.isSecure and not util.LOCAL_OVER_SECURE and (
                 not allowFallback and
                 server.hasSecureConnections() or
                 server.activeConnection and
@@ -260,6 +264,6 @@ class PlexConnection(object):
             if self.isSecure:
                 self.score += self.SCORE_SECURE
             if self.isLocal:
-                self.score += self.SCORE_LOCAL
+                self.score += self.SCORE_LOCAL + (not self.isSecure and util.LOCAL_OVER_SECURE and 2 or 0)
 
         return self.score

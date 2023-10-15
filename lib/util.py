@@ -117,10 +117,6 @@ class AdvancedSettings(object):
 
 advancedSettings = AdvancedSettings()
 
-# set requests timeout
-pnutil.TIMEOUT = float(advancedSettings.requestsTimeout)
-pnutil.LAN_REACHABILITY_TIMEOUT = advancedSettings.localReachTimeout / 1000.0
-
 
 def LOG(msg, level=xbmc.LOGINFO):
     xbmc.log('script.plex: {0}'.format(msg), level)
@@ -168,6 +164,7 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
         self.trigger('changed.watchstatus')
 
     def onNotification(self, sender, method, data):
+        DEBUG_LOG("Notification: {} {} {}".format(sender, method, data))
         if sender == 'script.plexmod' and method.endswith('RESTORE'):
             from .windows import kodigui
             getAdvancedSettings()

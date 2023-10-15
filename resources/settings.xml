@@ -23,7 +23,7 @@
                     <default>5</default>
                     <constraints>
                         <minimum>0.1</minimum>
-                        <step>0.05</step>
+                        <step>0.1</step>
                         <maximum>20</maximum>
                     </constraints>
                     <control type="slider" format="number">

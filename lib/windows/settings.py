@@ -360,6 +360,20 @@ class Settings(object):
                 ).description(
                     T(32104, 'When to connect to servers with no secure connections...')
                 ),
+                BoolSetting('smart_discover_local', T(33625, 'Smart LAN/local server discovery'), True)
+                .description(
+                    T(33626, "Checks whether servers returned from Plex.tv are actually local/in your LAN. "
+                             "For specific setups (e.g. Docker) Plex.tv might not properly detect a local "
+                             "server.\n\nNOTE: Only works on Kodi 19 or above."
+                      )
+                ),
+                BoolSetting('prefer_local', T(33627, 'Prefer LAN/local servers over security'), False)
+                .description(
+                    T(33628, "Prioritizes local connections over secure ones. Needs the proper setting in \"Allow "
+                             "Insecure Connections\" and the Plex Server's \"Secure connections\" at \"Preferred\". "
+                             "Can be used to enforce manual servers."
+                      )
+                ),
                 BoolSetting('gdm_discovery', T(32042, 'Server Discovery (GDM)'), True),
                 IPSetting('manual_ip_0', T(32044, 'Connection 1 IP'), ''),
                 IntegerSetting('manual_port_0', T(32045, 'Connection 1 Port'), 32400),
@@ -386,7 +400,7 @@ class Settings(object):
         ),
     }
 
-    SECTION_IDS = ('main', 'video', 'audio', 'player', 'subtitles', 'system', 'network', 'about')
+    SECTION_IDS = ('main', 'video', 'audio', 'player', 'subtitles', 'network', 'system', 'about')
 
     def __getitem__(self, key):
         return self.SETTINGS[key]

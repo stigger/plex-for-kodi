@@ -338,9 +338,26 @@ class PlexInterface(plexapp.AppInterface):
         return int(values[self.getPreference("played_threshold", 1)].replace(" %", "")) / 100.0
 
 
+def onSmartDiscoverLocalChange(value=None, **kwargs):
+    plexnet_util.CHECK_LOCAL = value
+
+
+def onPreferLANChange(value=None, **kwargs):
+    plexnet_util.LOCAL_OVER_SECURE = value
+
+
 plexapp.util.setInterface(PlexInterface())
 plexapp.setUserAgent(defaultUserAgent())
 plexapp.util.INTERFACE.bingeModeManager = BingeModeManager()
+plexapp.util.APP.on('change:smart_discover_local', onSmartDiscoverLocalChange)
+plexapp.util.APP.on('change:prefer_local', onPreferLANChange)
+
+plexapp.util.CHECK_LOCAL = util.getSetting('smart_discover_local', True)
+plexapp.util.LOCAL_OVER_SECURE = util.getSetting('prefer_local', False)
+
+# set requests timeout
+plexapp.util.TIMEOUT = float(util.advancedSettings.requestsTimeout)
+plexapp.util.LAN_REACHABILITY_TIMEOUT = util.advancedSettings.localReachTimeout / 1000.0
 
 
 class CallbackEvent(plexapp.util.CompatEvent):

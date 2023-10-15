@@ -1627,3 +1627,19 @@ msgstr "Wenn die lokale Serververbindung im LAN überprüft wird, benutze dieses
 msgctxt "#33624"
 msgid "Network"
 msgstr "Netzwerk"
+
+msgctxt "#33625"
+msgid "Smart LAN/local server discovery"
+msgstr "Smartes LAN/lokale Server-Auffinden"
+
+msgctxt "#33626"
+msgid "Checks whether servers returned from Plex.tv are actually local/in your LAN. For specific setups (e.g. Docker) Plex.tv might not properly detect a local server.\n\nNOTE: Only works on Kodi 19 or above."
+msgstr "Überprüft, ob von Plex.tv zurückgegebene Server tatsächlich lokal/in Deinem LAN sind. Für bestimmte Setups (z. B. Docker) könnte Plex.tv einen lokalen Servern nicht als solchen entdecken.\n\nACHTUNG: Funktioniert nur unter Kodi 19 oder neuer."
+
+msgctxt "#33627"
+msgid "Prefer LAN/local servers over security"
+msgstr "LAN/lokale Server bevorzugen"
+
+msgctxt "#33628"
+msgid "Prioritizes local connections over secure ones. Needs the proper setting in \"Allow Insecure Connections\" and the Plex Server's \"Secure connections\" at \"Preferred\". Can be used to enforce manual servers."
+msgstr "Priorisiert lokale Verbindungen über sichere. Benötigt die korrekte Einstellung in \"Unsichere Verbindung erlauben\" und die Plex Server Einstellung \"Sichere Verbindungen\" auf \"Bevorzugt\". Kann verwendet werden um manuelle Server zu forcieren."

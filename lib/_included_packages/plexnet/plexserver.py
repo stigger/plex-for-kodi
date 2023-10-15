@@ -90,7 +90,8 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         return not self.__eq__(other)
 
     def __str__(self):
-        return "<PlexServer {0} owned: {1} uuid: {2} version: {3}>".format(repr(self.name), self.owned, self.uuid, self.versionNorm)
+        return "<PlexServer {0} owned: {1} uuid: {2} version: {3} connection: {4}>"\
+            .format(repr(self.name), self.owned, self.uuid, self.versionNorm, self.activeConnection)
 
     def __repr__(self):
         return self.__str__()
@@ -391,7 +392,7 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
                 best = conn
 
         if best and best.state == best.STATE_REACHABLE:
-            if best.isSecure or self.pendingSecureRequests <= 0:
+            if best.isSecure or util.LOCAL_OVER_SECURE or self.pendingSecureRequests <= 0:
                 self.activeConnection = best
             else:
                 util.DEBUG_LOG("Found a good connection for {0}, but holding out for better".format(repr(self.name)))
