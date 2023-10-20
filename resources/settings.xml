@@ -58,12 +58,12 @@
         </category>
         <category id="player" label="32464">
             <group id="2" label="">
-                <setting id="auto_seek" type="boolean" label="32466">
+                <setting id="auto_seek" type="boolean" label="32466" help="32900">
                     <level>0</level>
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="auto_seek_delay" parent="auto_seek" type="number" label="32487">
+                <setting id="auto_seek_delay" parent="auto_seek" type="number" label="32487" help="32901">
                     <level>0</level>
                     <default>1</default>
                     <constraints>
@@ -78,12 +78,12 @@
                         <dependency type="enable" setting="auto_seek">true</dependency>
                     </dependencies>
                 </setting>
-                <setting id="kodi_skip_stepping" type="boolean" label="32465">
+                <setting id="kodi_skip_stepping" type="boolean" label="32465" help="32902">
                     <level>0</level>
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="dynamic_timeline_seek" type="boolean" label="32471">
+                <setting id="dynamic_timeline_seek" type="boolean" label="32471" help="32903">
                     <level>0</level>
                     <default>false</default>
                     <control type="toggle"/>
@@ -93,7 +93,7 @@
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="postplay_timeout" type="integer" label="32501">
+                <setting id="postplay_timeout" type="integer" label="32501" help="32904">
                     <level>0</level>
                     <default>16</default>
                     <control type="edit" format="integer">

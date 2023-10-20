@@ -742,7 +742,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             options.append(dropdown.SEPARATOR)
 
         options.append({'key': 'to_show', 'display': T(32323, 'Go To Show')})
-        options.append({'key': 'to_section', 'display': T(32324, u'Go to {0}').format(self.show_.getLibrarySectionTitle())})
+        options.append({'key': 'to_section', 'display': T(32324, u'Go to {0}').format(
+            self.show_.getLibrarySectionTitle())})
 
         pos = (500, 620)
         bottom = False
@@ -756,7 +757,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 pos = (1490, 167 + (viewPos * 100))
                 bottom = False
             setDropdownProp = True
-        choice = dropdown.showDropdown(options, pos, pos_is_bottom=bottom, close_direction='left', set_dropdown_prop=setDropdownProp)
+        choice = dropdown.showDropdown(options, pos, pos_is_bottom=bottom, close_direction='left',
+                                       set_dropdown_prop=setDropdownProp)
         if not choice:
             return
 
