@@ -387,7 +387,7 @@ class PlexServerManager(signalsmixin.SignalsMixin):
                 obj['servers'].append(serverObj)
 
         if self.selectedServer and not self.selectedServer.synced and not self.selectedServer.isSecondary():
-            util.INTERFACE.setPreference("lastServerId", self.selectedServer.uuid)
+            util.INTERFACE.setPreference("lastServerId.{}".format(plexapp.ACCOUNT.ID), self.selectedServer.uuid)
 
         util.INTERFACE.setRegistry("PlexServerManager", json.dumps(obj))
 
@@ -455,7 +455,7 @@ class PlexServerManager(signalsmixin.SignalsMixin):
         # Keep track of some information during our search
         self.searchContext = SearchContext({
             'bestServer': None,
-            'preferredServer': util.INTERFACE.getPreference('lastServerId', ''),
+            'preferredServer': util.INTERFACE.getPreference("lastServerId.{}".format(plexapp.ACCOUNT.ID), ''),
             'waitingForResources': plexapp.ACCOUNT.isSignedIn
         })
 
