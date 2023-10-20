@@ -631,7 +631,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if not mli.dataSource.exists():
             try:
                 control.removeItem(mli.pos())
-            except ValueError:
+            except (ValueError, TypeError):
                 # fixme: why?
                 pass
 

@@ -277,12 +277,12 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         reloadItems = [mli]
         for v in self._reloadVideos:
-            for mli in self.episodeListControl:
-                if mli.dataSource == v:
-                    reloadItems.append(mli)
+            for m in self.episodeListControl:
+                if m.dataSource == v:
+                    reloadItems.append(m)
 
         self.reloadItems(items=reloadItems, with_progress=True)
-        self.episodesPaginator.setEpisode(self._reloadVideos[-1])
+        self.episodesPaginator.setEpisode(self._reloadVideos and self._reloadVideos[-1] or mli)
         self._reloadVideos = []
         self.fillRelated()
 
