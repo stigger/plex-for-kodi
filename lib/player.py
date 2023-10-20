@@ -97,7 +97,8 @@ class BasePlayerHandler(object):
 
         return 0
 
-    def updateNowPlaying(self, force=False, refreshQueue=False, state=None):
+    def updateNowPlaying(self, force=False, refreshQueue=False, state=None, time=None):
+        util.DEBUG_LOG("UpdateNowPlaying: force: {0} refreshQueue: {1} state: {2}".format(force, refreshQueue, state))
         if self.ignoreTimelines:
             return
 
@@ -116,7 +117,7 @@ class BasePlayerHandler(object):
         self.lastTimelineState = state
         # self.timelineTimer.reset()
 
-        time = int(self.trueTime * 1000)
+        time = time or int(self.trueTime * 1000)
 
         # self.trigger("progress", [m, item, time])
 

@@ -685,6 +685,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             if choice['key'] == 'resume':
                 resume = True
 
+        self._reloadVideos.append(episode)
+
         pl = playlist.LocalPlaylist(self.show_.all(), self.show_.getServer())
         if len(pl):  # Don't use playlist if it's only this video
             pl.setCurrent(episode)

@@ -1366,6 +1366,14 @@ msgctxt "#33633"
 msgid "Set the maximum amount of time a server connection has to answer a connectivity request. Default: 2.5"
 msgstr ""
 
+msgctxt "#33634"
+msgid "Combined Chapters"
+msgstr ""
+
+msgctxt "#33635"
+msgid "Final Credits"
+msgstr ""
+
 msgctxt "#32700"
 msgid "Action on Sleep event"
 msgstr ""
