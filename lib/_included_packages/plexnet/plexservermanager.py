@@ -483,13 +483,14 @@ class PlexServerManager(signalsmixin.SignalsMixin):
             # to clear out any connections for the previous user and then start
             # our selected server search.
 
+            self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_MANUAL)
             self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_MYPLEX)
             self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_DISCOVERED)
-            self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_MANUAL)
 
             self.startSelectedServerSearch(True)
         else:
             # Clear servers/connections from plex.tv
+            self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_MANUAL)
             self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_MYPLEX)
 
     def deferUpdateReachability(self, addTimer=True, logInfo=True):

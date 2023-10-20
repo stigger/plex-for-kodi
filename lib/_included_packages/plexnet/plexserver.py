@@ -107,6 +107,11 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         if self.activeConnection:
             return self.activeConnection.isSecure
 
+    @property
+    def isLocal(self):
+        if self.activeConnection:
+            return self.activeConnection.isLocal
+
     def getObject(self, key):
         data = self.query(key)
         return plexobjects.buildItem(self, data[0], key, container=self)
@@ -386,13 +391,13 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         best = self.activeConnection
         for i in range(len(self.connections) - 1, -1, -1):
             conn = self.connections[i]
-            util.DEBUG_LOG("Connection score: {0}, {1}".format(conn.address, conn.getScore()))
+            util.DEBUG_LOG("Connection score: {0}, {1}".format(conn.address, conn.getScore(True)))
 
             if not best or conn.getScore() > best.getScore():
                 best = conn
 
         if best and best.state == best.STATE_REACHABLE:
-            if best.isSecure or util.LOCAL_OVER_SECURE or self.pendingSecureRequests <= 0:
+            if (best.isSecure or util.LOCAL_OVER_SECURE) or self.pendingSecureRequests <= 0:
                 self.activeConnection = best
             else:
                 util.DEBUG_LOG("Found a good connection for {0}, but holding out for better".format(repr(self.name)))
@@ -437,7 +442,7 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
                     hasSecureConn = True
                 toKeep.append(conn)
             else:
-                util.DEBUG_LOG("Removed connection for {0} after updating connections for {1}".format(repr(self.name), source))
+                util.DEBUG_LOG("Removed connection {0} for {1} after updating connections for {2}".format(conn, repr(self.name), source))
                 if conn == self.activeConnection:
                     util.DEBUG_LOG("Active connection lost")
                     self.activeConnection = None
@@ -592,12 +597,12 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
 
         for i in range(len(serverObj.get('connections', []))):
             conn = serverObj['connections'][i]
-            isFallback = hasSecureConn and conn['address'][:5] != "https"
+            isFallback = hasSecureConn and conn['address'][:5] != "https" and not util.LOCAL_OVER_SECURE
             sources = plexconnection.PlexConnection.SOURCE_BY_VAL[conn['sources']]
             connection = plexconnection.PlexConnection(sources, conn['address'], conn['isLocal'], conn['token'], isFallback)
 
             # Keep the secure connection on top
-            if connection.isSecure:
+            if connection.isSecure and not util.LOCAL_OVER_SECURE:
                 server.connections.insert(0, connection)
             else:
                 server.connections.append(connection)

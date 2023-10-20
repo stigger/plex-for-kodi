@@ -174,6 +174,9 @@ class ServerListItem(kodigui.ManagedListItem):
         if not self.listItem:  # ex. can happen on Kodi shutdown
             return
 
+        if self.dataSource == kodigui.DUMMY_DATA_SOURCE:
+            return
+
         if not self.dataSource.isSupported or not self.dataSource.isReachable():
             if self.dataSource.pendingReachabilityRequests > 0:
                 self.safeSetProperty('status', 'refreshing.gif')
@@ -181,6 +184,8 @@ class ServerListItem(kodigui.ManagedListItem):
                 self.safeSetProperty('status', 'unreachable.png')
         else:
             self.safeSetProperty('status', self.dataSource.isSecure and 'secure.png' or '')
+            self.safeSetProperty('secure', self.dataSource.isSecure and '1' or '')
+            self.safeSetProperty('local', self.dataSource.isLocal and '1' or '')
 
         self.safeSetProperty('current', plexapp.SERVERMANAGER.selectedServer == self.dataSource and '1' or '')
         self.safeSetLabel(self.dataSource.name)
@@ -211,6 +216,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
     SEARCH_BUTTON_ID = 203
     SERVER_LIST_ID = 260
+    REFRESH_SL_ID = 262
 
     PLAYER_STATUS_BUTTON_ID = 204
 
@@ -316,6 +322,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.lastNonOptionsFocusID = None
         self.sectionHubs = {}
         self.updateHubs = {}
+        self.currentServers = None
+        self._currentServersItems = None
         windowutils.HOME = self
 
         self.lock = threading.Lock()
@@ -408,6 +416,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.SERVERMANAGER.on('new:server', self.onNewServer)
         plexapp.SERVERMANAGER.on('remove:server', self.onRemoveServer)
         plexapp.SERVERMANAGER.on('reachable:server', self.onReachableServer)
+        plexapp.SERVERMANAGER.on('reachable:server', self.displayServerAndUser)
 
         plexapp.util.APP.on('change:selectedServer', self.onSelectedServerChange)
         plexapp.util.APP.on('account:response', self.displayServerAndUser)
@@ -419,6 +428,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.SERVERMANAGER.off('new:server', self.onNewServer)
         plexapp.SERVERMANAGER.off('remove:server', self.onRemoveServer)
         plexapp.SERVERMANAGER.off('reachable:server', self.onReachableServer)
+        plexapp.SERVERMANAGER.off('reachable:server', self.displayServerAndUser)
 
         plexapp.util.APP.off('change:selectedServer', self.onSelectedServerChange)
         plexapp.util.APP.off('account:response', self.displayServerAndUser)
@@ -703,12 +713,18 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         if plexapp.SERVERMANAGER.selectedServer:
             self.setProperty('server.name', plexapp.SERVERMANAGER.selectedServer.name)
-            self.setProperty('server.icon', 'script.plex/home/device/plex.png')  # TODO: Set dynamically to whatever it should be if that's how it even works :)
-            self.setProperty('server.iconmod', plexapp.SERVERMANAGER.selectedServer.isSecure and 'script.plex/home/device/lock.png' or '')
+            self.setProperty('server.icon',
+                             'script.plex/home/device/plex.png')  # TODO: Set dynamically to whatever it should be if that's how it even works :)
+            self.setProperty('server.iconmod',
+                             plexapp.SERVERMANAGER.selectedServer.isSecure and 'script.plex/home/device/lock.png' or '')
+            self.setProperty('server.iconmod2',
+                             plexapp.SERVERMANAGER.selectedServer.isLocal and 'script.plex/home/device/home_small.png'
+                             or '')
         else:
             self.setProperty('server.name', T(32338, 'No Servers Found'))
             self.setProperty('server.icon', 'script.plex/home/device/error.png')
             self.setProperty('server.iconmod', '')
+            self.setProperty('server.iconmod2', '')
 
     def cleanTasks(self):
         self.tasks = [t for t in self.tasks if t.isValid()]
@@ -1127,6 +1143,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
     def onReachableServer(self, server=None, **kwargs):
         for mli in self.serverList:
             if mli.dataSource == server:
+                mli.onUpdate()
                 return
         else:
             self.onNewServer()
@@ -1158,12 +1175,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         if len(items) > 1:
             items[0].setProperty('first', '1')
-            items[-1].setProperty('last', '1')
         elif items:
             items[0].setProperty('only', '1')
-
-        forceRefreshMLI = kodigui.ManagedListItem('Refresh Servers', properties={"is_refresh": '1'})
-        items.append(forceRefreshMLI)
 
         self.serverList.replaceItems(items)
 
