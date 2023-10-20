@@ -977,6 +977,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         if video.viewOffset.asInt():
             mli.setProperty('remainingTime', T(33615, "{time} left").format(time=video.remainingTimeString))
+        else:
+            mli.setProperty('remainingTime', '')
 
     def createListItem(self, episode):
         if episode.index:
