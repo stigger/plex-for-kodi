@@ -1357,3 +1357,27 @@ msgstr ""
 msgctxt "#32631"
 msgid "Player (user-specific)"
 msgstr ""
+
+msgctxt "#32700"
+msgid "Action on Sleep event"
+msgstr ""
+
+msgctxt "#32701"
+msgid "When Kodi receives a sleep event from the system, run the following action."
+msgstr ""
+
+msgctxt "#32702"
+msgid "Nothing"
+msgstr ""
+
+msgctxt "#32703"
+msgid "Stop playback"
+msgstr ""
+
+msgctxt "#32704"
+msgid "Quit Kodi"
+msgstr ""
+
+msgctxt "#32705"
+msgid "CEC Standby"
+msgstr ""

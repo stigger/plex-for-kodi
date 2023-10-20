@@ -1655,3 +1655,27 @@ msgstr "Intro-/Abspann-Markierungen können ein wenig früh erscheinen in Plex. 
 msgctxt "#32631"
 msgid "Player (user-specific)"
 msgstr "Wiedergabe (benutzerspezifisch)"
+
+msgctxt "#32700"
+msgid "Action on Sleep event"
+msgstr "Aktion bei Sleep-Ereignis"
+
+msgctxt "#32701"
+msgid "When Kodi receives a sleep event from the system, run the following action."
+msgstr "Wenn Kodi ein Sleep-Ereignis vom System erhält, folgende Aktion ausführen."
+
+msgctxt "#32702"
+msgid "Nothing"
+msgstr "Nichts"
+
+msgctxt "#32703"
+msgid "Stop playback"
+msgstr "Abspielen stoppen"
+
+msgctxt "#32704"
+msgid "Quit Kodi"
+msgstr "Kodi beenden"
+
+msgctxt "#32705"
+msgid "CEC Standby"
+msgstr "CEC Standby"

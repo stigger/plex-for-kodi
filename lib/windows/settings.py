@@ -371,6 +371,16 @@ class Settings(object):
                                       'your liking. (See About section for the file paths)'
                                ).format(util.kcm.free, util.kcm.recMax)
                 ),
+                OptionsSetting(
+                    'action_on_sleep',
+                    T(32700, 'Action on Sleep event'),
+                    'none',
+                    (('none', T(32702, 'Nothing')), ('stop', T(32703, 'Stop playback')),
+                     ('quit', T(32704, 'Quit Kodi')), ('reboot', T(32426, 'Reboot')),
+                     ('shutdown', T(32423, 'Shutdown')),
+                     ('hibernate', T(32425, 'Hibernate')), ('suspend', T(32424, 'Suspend')),
+                     ('cecstandby', T(32705, 'CEC Standby')), ('logoff', T(32421, 'Sign Out')))
+                ).description(T(32701, 'When Kodi receives a sleep event from the system, run the following action.')),
                 BoolSetting('debug', T(32024, 'Debug Logging'), False),
             )
         ),

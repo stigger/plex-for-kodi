@@ -171,6 +171,39 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
     def watchStatusChanged(self):
         self.trigger('changed.watchstatus')
 
+    def actionStop(self):
+        if xbmc.Player().isPlaying():
+            LOG('OnSleep: Stopping media playback')
+            xbmc.Player().stop()
+
+    def actionQuit(self):
+        LOG('OnSleep: Exit Kodi')
+        xbmc.executebuiltin('Quit')
+
+    def actionReboot(self):
+        LOG('OnSleep: Reboot')
+        xbmc.restart()
+
+    def actionShutdown(self):
+        LOG('OnSleep: Shutdown')
+        xbmc.shutdown()
+
+    def actionHibernate(self):
+        LOG('OnSleep: Hibernate')
+        xbmc.executebuiltin('Hibernate')
+
+    def actionSuspend(self):
+        LOG('OnSleep: Suspend')
+        xbmc.executebuiltin('Suspend')
+
+    def actionCecstandby(self):
+        LOG('OnSleep: CEC Standby')
+        xbmc.executebuiltin('CECStandby')
+
+    def actionLogoff(self):
+        LOG('OnSleep: Sign Out')
+        xbmc.executebuiltin('System.LogOff')
+
     def onNotification(self, sender, method, data):
         DEBUG_LOG("Notification: {} {} {}".format(sender, method, data))
         if sender == 'script.plexmod' and method.endswith('RESTORE'):
@@ -178,6 +211,9 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
             getAdvancedSettings()
             populateTimeFormat()
             xbmc.executebuiltin('ActivateWindow({0})'.format(kodigui.BaseFunctions.lastWinID))
+
+        elif sender == "xbmc" and method == "System.OnSleep" and getSetting('action_on_sleep', "none") != "none":
+            getattr(self, "action{}".format(getSetting('action_on_sleep', "none").capitalize()))()
 
 
 MONITOR = UtilityMonitor()
