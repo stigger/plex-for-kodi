@@ -432,11 +432,14 @@ def init():
         plexapp.init()
         util.DEBUG_LOG('Waiting for account initialization...')
 
+    util.DEBUG_LOG('Account initialized: {}'.format(plexapp.ACCOUNT.ID))
+
     retry = True
 
     while retry:
         retry = False
         if not plexapp.ACCOUNT.authToken:
+            util.DEBUG_LOG("No auth token, authorizing")
             token = authorize()
 
             if not token:

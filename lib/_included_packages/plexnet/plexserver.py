@@ -280,7 +280,10 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         # on self.connections when something else was in the middle of an iteration.
 
         for i in range(len(self.connections)):
-            conn = self.connections[i]
+            try:
+                conn = self.connections[i]
+            except IndexError:
+                continue
             if conn.token:
                 return conn.token
 
@@ -434,7 +437,11 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         hasSecureConn = False
 
         for i in range(len(self.connections)):
-            conn = self.connections[i]
+            try:
+                conn = self.connections[i]
+            except IndexError:
+                util.DEBUG_LOG("Connection lost during iteration")
+                continue
             if not conn.refreshed:
                 conn.sources = conn.sources & (~source)
 

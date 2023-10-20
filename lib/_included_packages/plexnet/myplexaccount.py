@@ -100,6 +100,7 @@ class MyPlexAccount(object):
                 self.adminHasPlexPass = obj.get('adminHasPlexPass') or self.adminHasPlexPass
                 self.thumb = obj.get('thumb')
 
+    def verifyAccount(self):
         if self.authToken:
             request = myplexrequest.MyPlexRequest("/users/account")
             context = request.createRequestContext("account", callback.Callable(self.onAccountResponse),
