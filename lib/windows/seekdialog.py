@@ -1197,7 +1197,7 @@ class SeekDialog(kodigui.BaseDialog):
 
                 # show intro skip early? (only if intro is during the first X minutes)
                 if self.showIntroSkipEarly and markerDef["marker_type"] == "intro" and \
-                        startTimeOffset <= util.advancedSettings.skipIntroButtonShowEarlyThreshold * 1000:
+                        startTimeOffset <= util.advancedSettings.skipIntroButtonShowEarlyThreshold1 * 1000:
                     startTimeOffset = 0
                     markerDef["overrideStartOff"] = 0
 
