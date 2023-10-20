@@ -100,15 +100,15 @@
                         <heading>32501</heading>
                     </control>
                 </setting>
-                <setting id="auto_skip_offset" type="integer" label="33629" help="33630">
+                <setting id="auto_skip_offset" type="number" label="33629" help="33630">
                     <level>0</level>
-                    <default>2</default>
+                    <default>2.5</default>
                     <constraints>
                         <minimum>-10</minimum>
-                        <step>1</step>
+                        <step>0.5</step>
                         <maximum>10</maximum>
                     </constraints>
-                    <control type="slider" format="integer">
+                    <control type="slider" format="number">
                         <heading>33630</heading>
                         <popup>false</popup>
                     </control>
@@ -141,7 +141,7 @@
                 </setting>
                 <setting id="skip_intro_button_show_early_threshold" type="integer" label="33509" help="33510">
                     <level>0</level>
-                    <default>120</default>
+                    <default>60</default>
                     <constraints>
                         <minimum>10</minimum>
                         <step>10</step>

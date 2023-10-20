@@ -112,10 +112,10 @@ class AdvancedSettings(object):
         ("show_media_ends_label", True),
         ("background_colour", None),
         ("oldprofile", False),
-        ("skip_intro_button_show_early_threshold", 120),
+        ("skip_intro_button_show_early_threshold", 60),
         ("requests_timeout", 5.0),
         ("local_reach_timeout", 10),
-        ("auto_skip_offset", 2),
+        ("auto_skip_offset", 2.5),
         ("conn_check_timeout", 2.5)
     )
 
