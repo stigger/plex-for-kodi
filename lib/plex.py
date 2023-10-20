@@ -81,11 +81,13 @@ class BingeModeManager(object):
     _data = None
     _currentServerUUID = None
     _currentUserID = None
-    default = False
+
+    # this could be a property, but w/e
+    glob = False
 
     def __init__(self):
         self.reset()
-        plexapp.util.APP.on('change:binge_mode', lambda **kwargs: self.setDefault(**kwargs))
+        plexapp.util.APP.on('change:binge_mode', lambda **kwargs: self.setGlob(**kwargs))
         plexapp.util.APP.on('change:selectedServer', lambda **kwargs: self.setServerUUID(**kwargs))
         plexapp.util.APP.on("change:user", lambda **kwargs: self.setUserID(**kwargs))
         plexapp.util.APP.on('init', lambda **kwargs: self.setUserID(**kwargs))
@@ -113,10 +115,10 @@ class BingeModeManager(object):
             return value
 
         if not obj.ratingKey:
-            return self.default
+            return self.glob
 
         # get
-        return self._data.get(csid, {}).get(cuid, {}).get(obj.ratingKey, self.default)
+        return self._data.get(csid, {}).get(cuid, {}).get(obj.ratingKey, self.glob)
 
     def reset(self):
         self._data = self.load()
@@ -125,13 +127,13 @@ class BingeModeManager(object):
 
         if plexapp.ACCOUNT:
             self.setUserID()
-        self.setDefault()
+        self.setGlob()
 
-    def setDefault(self, key=None, value=None):
-        if value is None and self._currentUserID:
-            self.default = util.getSetting('binge_mode.{}'.format(self._currentUserID), False)
-        else:
-            self.default = value
+    def setGlob(self, key=None, value=None):
+        if value is None:
+            self.glob = util.getUserSetting('binge_mode', False)
+        elif value is not None:
+            self.glob = value
 
     def setServerUUID(self, server=None):
         if not server and not plexapp.SERVERMANAGER.selectedServer:
@@ -142,6 +144,7 @@ class BingeModeManager(object):
         if not account and not plexapp.ACCOUNT:
             return
         self._currentUserID = (account if account is not None and reallyChanged else plexapp.ACCOUNT).ID
+        self.setGlob()
 
     def load(self):
         jstring = plexapp.util.INTERFACE.getRegistry("BingeModeSettings")

@@ -58,6 +58,9 @@ def getSetting(key, default=None):
 
 
 def getUserSetting(key, default=None):
+    if not plexapp.ACCOUNT:
+        return default
+
     key = '{}.{}'.format(key, plexapp.ACCOUNT.ID)
     with SETTINGS_LOCK:
         setting = ADDON.getSetting(key)
