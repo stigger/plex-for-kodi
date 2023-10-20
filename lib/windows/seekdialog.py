@@ -513,6 +513,8 @@ class SeekDialog(kodigui.BaseDialog):
                         else:
                             self.doClose()
                             # self.handler.onSeekAborted()
+                            if self.bingeMode:
+                                self.handler.stoppedInBingeMode = True
                             self.handler.player.stop()
                         return
         except:

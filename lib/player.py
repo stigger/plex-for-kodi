@@ -149,6 +149,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.title = ''
         self.title2 = ''
         self.chapters = None
+        self.stoppedInBingeMode = False
         self.reset()
 
     def reset(self):
@@ -159,6 +160,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.seekOnStart = 0
         self.mode = self.MODE_RELATIVE
         self.ended = False
+        self.stoppedInBingeMode = False
 
     def setup(self, duration, offset, bif_url, title='', title2='', seeking=NO_SEEK, chapters=None):
         self.ended = False
@@ -194,7 +196,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.playlist and self.playlist.TYPE == 'playlist':
             return False
 
-        if self.player.video.bingeMode:
+        if self.player.video.bingeMode and not self.stoppedInBingeMode:
             return False
 
         if (not util.advancedSettings.postplayAlways and self.player.video.duration.asInt() <= FIVE_MINUTES_MILLIS)\
@@ -210,7 +212,10 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.seeking = self.SEEK_POST_PLAY
         self.hideOSD(delete=True)
 
-        self.player.trigger('post.play', video=self.player.video, playlist=self.playlist, handler=self)
+        self.player.trigger('post.play', video=self.player.video, playlist=self.playlist, handler=self,
+                            stoppedInBingeMode=self.stoppedInBingeMode)
+
+        self.stoppedInBingeMode = False
 
         return True
 
