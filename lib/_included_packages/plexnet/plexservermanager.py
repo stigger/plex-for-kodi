@@ -60,7 +60,7 @@ class PlexServerManager(signalsmixin.SignalsMixin):
             self.selectedServer = server
 
             # Update our saved state.
-            self.saveState()
+            self.saveState(setPreferred=True)
 
             # Notify anyone who might care.
             util.APP.trigger("change:selectedServer", server=server)
@@ -116,12 +116,14 @@ class PlexServerManager(signalsmixin.SignalsMixin):
         for server in servers:
             self.mergeServer(server)
 
-        if self.searchContext and source == plexresource.ResourceConnection.SOURCE_MYPLEX:
-            self.searchContext.waitingForResources = False
+        if self.searchContext and source in self.searchContext.waitingForResources:
+            #self.searchContext.waitingForResources = False
+            self.searchContext.waitingForResources.remove(source)
 
-        self.deviceRefreshComplete(source)
-        self.updateReachability(True, True)
-        self.saveState()
+        if not self.searchContext.waitingForResources:
+            self.deviceRefreshComplete(source)
+            self.updateReachability(True, True)
+            self.saveState()
 
     def updateFromDiscovery(self, server):
         merged = self.mergeServer(server)
@@ -345,6 +347,8 @@ class PlexServerManager(signalsmixin.SignalsMixin):
                 # Keep the secure connection on top
                 if connection.isSecure and not util.LOCAL_OVER_SECURE:
                     server.connections.insert(0, connection)
+                elif not connection.isSecure and util.LOCAL_OVER_SECURE:
+                    server.connections.insert(0, connection)
                 else:
                     server.connections.append(connection)
 
@@ -353,7 +357,7 @@ class PlexServerManager(signalsmixin.SignalsMixin):
         util.LOG("Loaded {0} servers from registry".format(len(obj['servers'])))
         self.updateReachability(False, True)
 
-    def saveState(self):
+    def saveState(self, setPreferred=False):
         # Serialize our important information to JSON and save it to the registry.
         # We'll always update server info upon connecting, so we don't need much
         # info here. We do have to use roArray instead of roList, because Brightscript.
@@ -386,7 +390,8 @@ class PlexServerManager(signalsmixin.SignalsMixin):
 
                 obj['servers'].append(serverObj)
 
-        if self.selectedServer and not self.selectedServer.synced and not self.selectedServer.isSecondary():
+        if self.selectedServer and not self.selectedServer.synced and not self.selectedServer.isSecondary() \
+                and setPreferred:
             util.INTERFACE.setPreference("lastServerId.{}".format(plexapp.ACCOUNT.ID), self.selectedServer.uuid)
 
         util.INTERFACE.setRegistry("PlexServerManager", json.dumps(obj))
@@ -446,17 +451,28 @@ class PlexServerManager(signalsmixin.SignalsMixin):
 
         return self.selectedServer
 
-    def startSelectedServerSearch(self, reset=False):
+    def startSelectedServerSearch(self, reset=False, ID=None):
         if reset:
             self.selectedServer = None
             self.transcodeServer = None
             self.channelServer = None
 
+        ID = ID is not None and ID or plexapp.ACCOUNT.ID
+        pServ = util.INTERFACE.getPreference("lastServerId.{}".format(ID), '')
+        util.DEBUG_LOG("Preferred server for {0} is: {1}".format(ID, pServ))
         # Keep track of some information during our search
+
+        waitFor = []
+        if plexapp.ACCOUNT.isSignedIn:
+            waitFor.append(plexresource.ResourceConnection.SOURCE_MYPLEX)
+
+        if util.LOCAL_OVER_SECURE and self.getManualConnections():
+            waitFor.append(plexresource.ResourceConnection.SOURCE_MANUAL)
+
         self.searchContext = SearchContext({
             'bestServer': None,
-            'preferredServer': util.INTERFACE.getPreference("lastServerId.{}".format(plexapp.ACCOUNT.ID), ''),
-            'waitingForResources': plexapp.ACCOUNT.isSignedIn
+            'preferredServer': pServ,
+            'waitingForResources': waitFor
         })
 
         util.LOG("Starting selected server search, hoping for {0}".format(self.searchContext.preferredServer))
@@ -468,6 +484,8 @@ class PlexServerManager(signalsmixin.SignalsMixin):
         if reallyChanged:
             # AudioPlayer().Cleanup()
             # PhotoPlayer().Cleanup()
+
+            util.DEBUG_LOG("Account really changed, clearing all servers")
 
             # Clear selected and transcode servers on user change
             self.selectedServer = None
@@ -487,11 +505,15 @@ class PlexServerManager(signalsmixin.SignalsMixin):
             # to clear out any connections for the previous user and then start
             # our selected server search.
 
-            self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_MANUAL)
             self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_MYPLEX)
             self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_DISCOVERED)
+            self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_MANUAL)
 
-            self.startSelectedServerSearch(True)
+            self.startSelectedServerSearch(True, ID=account.ID)
+
+            if reallyChanged:
+                util.DEBUG_LOG("User really changed, refreshing resources now")
+                plexapp.refreshResources()
         else:
             # Clear servers/connections from plex.tv
             self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_MYPLEX)
@@ -564,6 +586,7 @@ class PlexServerManager(signalsmixin.SignalsMixin):
     def refreshManualConnections(self):
         manualConnections = self.getManualConnections()
         if not manualConnections:
+            util.DEBUG_LOG("No manual connections.")
             return
 
         util.LOG("Refreshing {0} manual connections".format(len(manualConnections)))

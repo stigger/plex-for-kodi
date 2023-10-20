@@ -406,6 +406,7 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
 
         if best and best.state == best.STATE_REACHABLE:
             if (best.isSecure or util.LOCAL_OVER_SECURE) or self.pendingSecureRequests <= 0:
+                util.DEBUG_LOG("Using connection for {0} for now: {1}".format(repr(self.name), best.address))
                 self.activeConnection = best
             else:
                 util.DEBUG_LOG("Found a good connection for {0}, but holding out for better".format(repr(self.name)))
@@ -475,6 +476,9 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         if other.sourceType != plexresource.ResourceConnection.SOURCE_MANUAL:
             self.name = other.name
             self.versionNorm = other.versionNorm
+            self.sameNetwork = other.sameNetwork
+
+        if other.sourceType == plexresource.ResourceConnection.SOURCE_MANUAL and util.LOCAL_OVER_SECURE:
             self.sameNetwork = other.sameNetwork
 
         # Merge connections
@@ -615,6 +619,8 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
 
             # Keep the secure connection on top
             if connection.isSecure and not util.LOCAL_OVER_SECURE:
+                server.connections.insert(0, connection)
+            elif not connection.isSecure and util.LOCAL_OVER_SECURE:
                 server.connections.insert(0, connection)
             else:
                 server.connections.append(connection)

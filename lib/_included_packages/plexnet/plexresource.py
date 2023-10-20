@@ -49,6 +49,8 @@ class PlexResource(object):
             # Keep the secure connection on top
             if connection.isSecure and not util.LOCAL_OVER_SECURE:
                 self.connections.insert(0, connection)
+            elif not connection.isSecure and util.LOCAL_OVER_SECURE:
+                self.connections.insert(0, connection)
             else:
                 self.connections.append(connection)
 

@@ -169,7 +169,13 @@ class MyPlexAccount(object):
 
             self.saveState()
             util.MANAGER.publish()
-            plexapp.refreshResources()
+
+            if oldId != self.ID or self.switchUser:
+                util.DEBUG_LOG("User changed, deferring refresh resources (force=False)")
+            else:
+                util.DEBUG_LOG("User selected, refreshing resources (force=False)")
+                plexapp.refreshResources()
+
         elif response.getStatus() >= 400 and response.getStatus() < 500:
             # The user is specifically unauthorized, clear everything
             util.WARN_LOG("Sign Out: User is unauthorized")
