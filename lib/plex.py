@@ -348,7 +348,11 @@ def onPreferLANChange(value=None, **kwargs):
     plexapp.refreshResources(True)
 
 
-def onPreferLocalChange(value=None, **kwargs):
+def onPreferLocalChange(**kwargs):
+    plexapp.refreshResources(True)
+
+
+def onManualIPChange(**kwargs):
     plexapp.refreshResources(True)
 
 
@@ -358,6 +362,10 @@ plexapp.util.INTERFACE.bingeModeManager = BingeModeManager()
 plexapp.util.APP.on('change:smart_discover_local', onSmartDiscoverLocalChange)
 plexapp.util.APP.on('change:prefer_local', onPreferLANChange)
 plexapp.util.APP.on('change:same_network', onPreferLocalChange)
+plexapp.util.APP.on('change:manual_ip_0', onManualIPChange)
+plexapp.util.APP.on('change:manual_ip_1', onManualIPChange)
+plexapp.util.APP.on('change:manual_port_0', onManualIPChange)
+plexapp.util.APP.on('change:manual_port_1', onManualIPChange)
 
 plexapp.util.CHECK_LOCAL = util.getSetting('smart_discover_local', True)
 plexapp.util.LOCAL_OVER_SECURE = util.getSetting('prefer_local', False)

@@ -155,6 +155,10 @@ class PlexServerManager(signalsmixin.SignalsMixin):
                 toRemove.append(uuid)
 
         for uuid in toRemove:
+            if uuid not in self.serversByUuid:
+                util.DEBUG_LOG("Server {} lost - removing".format(uuid))
+                continue
+
             server = self.serversByUuid[uuid]
 
             util.DEBUG_LOG("Server {0} has no more connections - removing".format(repr(server.name)))
@@ -490,7 +494,6 @@ class PlexServerManager(signalsmixin.SignalsMixin):
             self.startSelectedServerSearch(True)
         else:
             # Clear servers/connections from plex.tv
-            self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_MANUAL)
             self.updateFromConnectionType([], plexresource.ResourceConnection.SOURCE_MYPLEX)
 
     def deferUpdateReachability(self, addTimer=True, logInfo=True):
@@ -515,7 +518,8 @@ class PlexServerManager(signalsmixin.SignalsMixin):
                     )
                     return
 
-        self.deferReachabilityTimer.cancel()
+        if self.deferReachabilityTimer:
+            self.deferReachabilityTimer.cancel()
         self.deferReachabilityTimer = None
         self.updateReachability(True, False, False)
 

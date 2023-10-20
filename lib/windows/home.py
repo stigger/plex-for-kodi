@@ -144,8 +144,8 @@ class PlaylistsSection(object):
 
 class ServerListItem(kodigui.ManagedListItem):
     def init(self):
-        self.dataSource.on('completed:reachability', self.onUpdate)
-        self.dataSource.on('started:reachability', self.onUpdate)
+        self.dataSource.on('completed:reachability', self.onReachability)
+        self.dataSource.on('started:reachability', self.onReachability)
         return self
 
     def setRefreshing(self):
@@ -162,6 +162,8 @@ class ServerListItem(kodigui.ManagedListItem):
         return False
 
     def safeSetLabel(self, value):
+        if value is None:
+            return False
         try:
             self.setLabel(value)
             return True
@@ -170,6 +172,13 @@ class ServerListItem(kodigui.ManagedListItem):
 
         return False
 
+    def safeGetDSProperty(self, prop):
+        return getattr(self.dataSource, prop, None)
+
+    def onReachability(self, **kwargs):
+        plexapp.util.APP.trigger('sli:reachability:received')
+        return self.onUpdate(**kwargs)
+
     def onUpdate(self, **kwargs):
         if not self.listItem:  # ex. can happen on Kodi shutdown
             return
@@ -177,18 +186,30 @@ class ServerListItem(kodigui.ManagedListItem):
         if self.dataSource == kodigui.DUMMY_DATA_SOURCE:
             return
 
-        if not self.dataSource.isSupported or not self.dataSource.isReachable():
-            if self.dataSource.pendingReachabilityRequests > 0:
+        # this looks a little ridiculous, but we're experiencing timing issues here
+        isSupported = self.safeGetDSProperty("isSupported")
+        isReachable = False
+        isReachableFunc = self.safeGetDSProperty("isReachable")
+        isSecure = self.safeGetDSProperty("isSecure")
+        isLocal = self.safeGetDSProperty("isLocal")
+        name = self.safeGetDSProperty("name")
+        pendingReachabilityRequests = self.safeGetDSProperty("pendingReachabilityRequests")
+        if isReachableFunc:
+            isReachable = isReachableFunc()
+
+        if not isSupported or not isReachable:
+            if pendingReachabilityRequests is not None and pendingReachabilityRequests > 0:
                 self.safeSetProperty('status', 'refreshing.gif')
             else:
                 self.safeSetProperty('status', 'unreachable.png')
         else:
-            self.safeSetProperty('status', self.dataSource.isSecure and 'secure.png' or '')
-            self.safeSetProperty('secure', self.dataSource.isSecure and '1' or '')
-            self.safeSetProperty('local', self.dataSource.isLocal and '1' or '')
+            self.safeSetProperty('status', isSecure and 'secure.png' or '')
+            self.safeSetProperty('secure', isSecure and '1' or '')
+            self.safeSetProperty('local', isLocal and '1' or '')
 
         self.safeSetProperty('current', plexapp.SERVERMANAGER.selectedServer == self.dataSource and '1' or '')
-        self.safeSetLabel(self.dataSource.name)
+        if name:
+            self.safeSetLabel(name)
 
     def onDestroy(self):
         try:
@@ -418,6 +439,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         plexapp.util.APP.on('change:selectedServer', self.onSelectedServerChange)
         plexapp.util.APP.on('account:response', self.displayServerAndUser)
+        plexapp.util.APP.on('sli:reachability:received', self.displayServerAndUser)
 
         player.PLAYER.on('session.ended', self.updateOnDeckHubs)
         util.MONITOR.on('changed.watchstatus', self.updateOnDeckHubs)

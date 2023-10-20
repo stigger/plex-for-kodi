@@ -391,7 +391,11 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         # available)
         best = self.activeConnection
         for i in range(len(self.connections) - 1, -1, -1):
-            conn = self.connections[i]
+            try:
+                conn = self.connections[i]
+            except IndexError:
+                continue
+
             util.DEBUG_LOG("Connection score: {0}, {1}".format(conn.address, conn.getScore(True)))
 
             if not best or conn.getScore() > best.getScore():
@@ -451,7 +455,7 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         # Update fallback flag if our connections have changed
         if len(toKeep) != len(self.connections):
             for conn in toKeep:
-                conn.isFallback = hasSecureConn and conn.address[:5] != "https"
+                conn.isFallback = hasSecureConn and conn.address[:5] != "https" and not util.LOCAL_OVER_SECURE
 
         self.connections = toKeep
 

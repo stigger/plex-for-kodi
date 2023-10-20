@@ -377,7 +377,7 @@ class Settings(object):
                              "Can be used to enforce manual servers."
                       )
                 ),
-                BoolSetting('gdm_discovery', T(32042, 'Server Discovery (GDM)'), True),
+                BoolSetting('gdm_discovery', T(32042, 'Server Discovery (GDM)'), False),
                 IPSetting('manual_ip_0', T(32044, 'Connection 1 IP'), ''),
                 IntegerSetting('manual_port_0', T(32045, 'Connection 1 Port'), 32400),
                 IPSetting('manual_ip_1', T(32046, 'Connection 2 IP'), ''),
