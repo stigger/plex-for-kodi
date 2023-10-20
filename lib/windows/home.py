@@ -322,8 +322,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.lastNonOptionsFocusID = None
         self.sectionHubs = {}
         self.updateHubs = {}
-        self.currentServers = None
-        self._currentServersItems = None
         windowutils.HOME = self
 
         self.lock = threading.Lock()

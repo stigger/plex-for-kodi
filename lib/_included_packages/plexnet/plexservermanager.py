@@ -80,7 +80,7 @@ class PlexServerManager(signalsmixin.SignalsMixin):
 
     def getServers(self):
         servers = []
-        for uuid in self.serversByUuid:
+        for uuid in list(self.serversByUuid.keys()):
             if uuid != "myplex":
                 servers.append(self.serversByUuid[uuid])
 
@@ -133,7 +133,7 @@ class PlexServerManager(signalsmixin.SignalsMixin):
             pass
 
     def markDevicesAsRefreshing(self):
-        for uuid in self.serversByUuid.keys():
+        for uuid in list(self.serversByUuid.keys()):
             self.serversByUuid[uuid].markAsRefreshing()
 
     def mergeServer(self, server):
@@ -150,7 +150,7 @@ class PlexServerManager(signalsmixin.SignalsMixin):
 
     def deviceRefreshComplete(self, source):
         toRemove = []
-        for uuid in self.serversByUuid:
+        for uuid in list(self.serversByUuid.keys()):
             if not self.serversByUuid[uuid].markUpdateFinished(source):
                 toRemove.append(uuid)
 
@@ -192,7 +192,7 @@ class PlexServerManager(signalsmixin.SignalsMixin):
                 self.deferReachabilityTimer = None
 
             util.LOG("Updating reachability for all devices: force={0}".format(force))
-            for uuid in self.serversByUuid:
+            for uuid in list(self.serversByUuid.keys()):
                 self.serversByUuid[uuid].updateReachability(force)
 
     def cancelReachability(self):
@@ -200,7 +200,7 @@ class PlexServerManager(signalsmixin.SignalsMixin):
             self.deferReachabilityTimer.cancel()
             self.deferReachabilityTimer = None
 
-        for uuid in self.serversByUuid:
+        for uuid in list(self.serversByUuid.keys()):
             self.serversByUuid[uuid].cancelReachability()
 
     def updateReachabilityResult(self, server, reachable=False):
@@ -520,7 +520,7 @@ class PlexServerManager(signalsmixin.SignalsMixin):
         self.updateReachability(True, False, False)
 
     def resetLastTest(self):
-        for uuid in self.serversByUuid:
+        for uuid in list(self.serversByUuid.keys()):
             self.serversByUuid[uuid].resetLastTest()
 
     def clearServers(self):
