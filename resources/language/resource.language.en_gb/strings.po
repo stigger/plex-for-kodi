@@ -1381,3 +1381,11 @@ msgstr ""
 msgctxt "#32705"
 msgid "CEC Standby"
 msgstr ""
+
+msgctxt "#32800"
+msgid "Skipping intro"
+msgstr ""
+
+msgctxt "#32801"
+msgid "Skipping credits"
+msgstr ""

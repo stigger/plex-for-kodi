@@ -1330,7 +1330,7 @@ msgstr "Intro überspringen"
 #: 
 msgctxt "#32496"
 msgid "Skip credits"
-msgstr "Credits überspringen"
+msgstr "Abspann überspringen"
 
 #: 
 msgctxt "#32500"
@@ -1370,22 +1370,22 @@ msgstr "Festlegen, wie lange die Schaltfläche zum Überspringen des Intros ange
 #: 
 msgctxt "#32525"
 msgid "Skip Credits Button Timeout"
-msgstr "Zeitlimit für die Schaltfläche Credits überspringen"
+msgstr "Zeitlimit für die Schaltfläche Abspann überspringen"
 
 #: 
 msgctxt "#32526"
 msgid "Automatically Skip Credits"
-msgstr "Automatisches Überspringen von Credits"
+msgstr "Automatisches Überspringen von Abspann"
 
 #: 
 msgctxt "#32527"
 msgid "Automatically skip credits if available."
-msgstr "Automatisches Überspringen von Credits, falls vorhanden. Überschreibt aktivierten Binge-Modus nicht."
+msgstr "Automatisches Überspringen von Abspann, falls vorhanden. Überschreibt aktivierten Binge-Modus nicht."
 
 #: 
 msgctxt "#32528"
 msgid "Set how long the skip credits button shows for."
-msgstr "Festlegen, wie lange die Schaltfläche zum Überspringen des Credits angezeigt werden soll."
+msgstr "Festlegen, wie lange die Schaltfläche zum Überspringen des Abspann angezeigt werden soll."
 
 #: 
 msgctxt "#32540"
@@ -1679,3 +1679,11 @@ msgstr "Kodi beenden"
 msgctxt "#32705"
 msgid "CEC Standby"
 msgstr "CEC Standby"
+
+msgctxt "#32800"
+msgid "Überspringe Intro"
+msgstr ""
+
+msgctxt "#32801"
+msgid "Überspringe Abspann"
+msgstr ""

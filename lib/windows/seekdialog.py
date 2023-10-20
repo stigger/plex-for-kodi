@@ -46,6 +46,8 @@ MARKERS = OrderedDict([
     ("intro", {
         "marker": None,
         "name": T(32495, 'Skip intro'),
+        "autoSkipName": T(32800, 'Skipping intro'),
+        "overrideStartOff": None,
 
         # attrs
         "markerAutoSkip": "autoSkipIntro",
@@ -56,6 +58,9 @@ MARKERS = OrderedDict([
     ("credits", {
         "marker": None,
         "name": T(32496, 'Skip credits'),
+        "autoSkipName": T(32801, 'Skipping credits'),
+        "overrideStartOff": None,
+
         "markerAutoSkip": "autoSkipCredits",
         "markerAutoSkipped": "_creditsAutoSkipped",
         "markerAutoSkipShownTimer": "_creditsSkipShownStarted",
@@ -64,6 +69,7 @@ MARKERS = OrderedDict([
 ])
 
 FINAL_MARKER_NEGOFF = 1000
+MARKER_SHOW_NEGOFF = 3000
 MARKER_OFF = 500
 
 
@@ -1164,7 +1170,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.updateProgress(set_to_current=False)
             self.setProperty('button.seek', '1')
 
-    def shouldShowMarkerSkip(self):
+    def getCurrentMarkerDef(self):
         """
         Show intro/credits skip button at current time
         """
@@ -1181,17 +1187,23 @@ class SeekDialog(kodigui.BaseDialog):
                 if self.showIntroSkipEarly and markerDef["marker_type"] == "intro" and \
                         startTimeOffset <= util.advancedSettings.skipIntroButtonShowEarlyThreshold * 1000:
                     startTimeOffset = 0
+                    markerDef["overrideStartOff"] = 0
 
-                if startTimeOffset <= self.offset < int(marker.endTimeOffset) - FINAL_MARKER_NEGOFF:
+                if startTimeOffset - MARKER_SHOW_NEGOFF <= self.offset < \
+                        int(marker.endTimeOffset) - FINAL_MARKER_NEGOFF:
                     # we've had a marker already; reset autoSkip state
                     if self._currentMarker and self._currentMarker != markerDef:
                         setattr(self, markerDef["markerAutoSkipped"], False)
 
-                    if getattr(self, markerDef["markerAutoSkip"], False) \
-                            and not getattr(self, markerDef["markerAutoSkipped"], False):
-                        return markerDef
+                    markerAutoSkip = getattr(self, markerDef["markerAutoSkip"], False)
+                    markerAutoSkipped = getattr(self, markerDef["markerAutoSkipped"], False)
 
-                    self.setProperty('show.markerSkip', '1')
+                    if startTimeOffset > 0:
+                        self.setProperty('show.markerSkip', '1')
+                        self.setProperty('marker.autoSkip', markerAutoSkip and not markerAutoSkipped and '1' or '')
+
+                    if markerAutoSkip and not markerAutoSkipped:
+                        return markerDef
 
                     timer = getattr(self, markerDef["markerAutoSkipShownTimer"])
 
@@ -1357,17 +1369,26 @@ class SeekDialog(kodigui.BaseDialog):
             self.resetSeeking()
             return
 
-        markerDef = self.shouldShowMarkerSkip()
+        # fixme: we should pre-cache marker offsets instead of calculating them every tick
+        markerDef = self.getCurrentMarkerDef()
+        markerAutoSkip = False
+        markerAutoSkipped = False
         startTimeOff = None
         if markerDef:
-            self.setProperty('skipMarkerName', markerDef["name"])
+            markerAutoSkip = getattr(self, markerDef["markerAutoSkip"])
+            markerAutoSkipped = getattr(self, markerDef["markerAutoSkipped"])
+            self.setProperty('skipMarkerName',
+                             markerDef[markerAutoSkip and not markerAutoSkipped and "autoSkipName" or "name"])
             self._currentMarker = markerDef
-            startTimeOff = int(markerDef["marker"].startTimeOffset)
+
+            # getCurrentMarkerDef might have overridden the startTimeOffset, use that
+            startTimeOff = markerDef["overrideStartOff"] if markerDef["overrideStartOff"] is not None else \
+                int(markerDef["marker"].startTimeOffset)
 
         # auto skip marker
-        # delay marker autoskip ny autoSkipOffset to avoid cutting off content at the expense of being slightly too late
-        if markerDef and getattr(self, markerDef["markerAutoSkip"]) \
-                and not getattr(self, markerDef["markerAutoSkipped"])\
+        # delay marker autoskip by autoSkipOffset to avoid cutting off content at the expense of being slightly too late
+        if markerDef and markerAutoSkip \
+                and not markerAutoSkipped \
                 and not self._navigatedViaMarkerOrChapter \
                 and (startTimeOff == 0 or (startTimeOff + util.advancedSettings.autoSkipOffset * 1000) <= self.offset):
 
@@ -1387,7 +1408,8 @@ class SeekDialog(kodigui.BaseDialog):
             return True
 
         if markerDef and not self.osdVisible() and self.lastFocusID != self.SKIP_MARKER_BUTTON_ID and \
-                not self.getProperty('show.markerSkip_OSDOnly') and self.getProperty('show.markerSkip'):
+                not self.getProperty('show.markerSkip_OSDOnly') and self.getProperty('show.markerSkip') \
+                and not markerAutoSkip:
             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
 
         if offset or (self.autoSeekTimeout and time.time() >= self.autoSeekTimeout and
@@ -1429,7 +1451,7 @@ class SeekDialog(kodigui.BaseDialog):
     def hideOSD(self):
         self.setProperty('show.OSD', '')
         self.setFocusId(self.NO_OSD_BUTTON_ID)
-        if self.shouldShowMarkerSkip() and not self.getProperty('show.markerSkip_OSDOnly'):
+        if self.getCurrentMarkerDef() and not self.getProperty('show.markerSkip_OSDOnly'):
             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
 
         self.resetSeeking()
