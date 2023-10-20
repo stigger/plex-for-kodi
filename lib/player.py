@@ -14,7 +14,6 @@ from plexnet import plexplayer
 from plexnet import plexapp
 from plexnet import signalsmixin
 from plexnet import util as plexnetUtil
-
 from six.moves import range
 
 FIVE_MINUTES_MILLIS = 300000
@@ -396,11 +395,13 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.updateOffset()
         # self.showOSD(from_seek=True)
 
-    def setSubtitles(self):
+    def setSubtitles(self, do_sleep=True):
         subs = self.player.video.selectedSubtitleStream(
             forced_subtitles_override=util.advancedSettings.forcedSubtitlesOverride)
         if subs:
-            xbmc.sleep(100)
+            if do_sleep:
+                xbmc.sleep(100)
+
             self.player.showSubtitles(False)
             path = subs.getSubtitleServerPath()
             if path:
@@ -450,7 +451,7 @@ class SeekPlayerHandler(BasePlayerHandler):
     def initPlayback(self):
         self.seeking = self.NO_SEEK
 
-        self.setSubtitles()
+        #self.setSubtitles()
         self.setAudioTrack()
 
         if self.mode == self.MODE_ABSOLUTE:
@@ -632,6 +633,7 @@ class AudioPlayerHandler(BasePlayerHandler):
 
     def onPlayBackStarted(self):
         self.player.lastPlayWasBGM = False
+        self.handler.setSubtitles(do_sleep=False)
         self.updatePlayQueue(delay=True)
         self.extractTrackInfo()
         self.updateNowPlaying(state='playing')
@@ -1039,11 +1041,12 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         return (url, li)
 
     def onPrePlayStarted(self):
-        util.DEBUG_LOG('Player - PRE-PLAY')
+        util.DEBUG_LOG('Player - PRE-PLAY; handler: %r' % self.handler)
         self.trigger('preplay.started')
         if not self.handler:
             return
         self.handler.onPrePlayStarted()
+        self.handler.setSubtitles(do_sleep=False)
 
     def onPlayBackStarted(self):
         self.started = True
