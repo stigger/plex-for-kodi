@@ -1195,15 +1195,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if not mli:
             return
 
-        if mli.getProperty('is_refresh'):
-            util.DEBUG_LOG("Force-Refreshing available servers")
-            for mli in self.serverList:
-                if isinstance(mli, ServerListItem):
-                    mli.setRefreshing()
-            plexapp.refreshResources(True)
-            self.setFocusId(self.SERVER_BUTTON_ID)
-            return
-
         server = mli.dataSource
         self.setFocusId(self.SERVER_BUTTON_ID)
 

@@ -354,7 +354,8 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
             diff = epoch - (conn.lastTestedAt or 0)
             if conn.hasPendingRequest:
                 util.DEBUG_LOG("Skip reachability test for {0} (has pending request)".format(conn))
-            elif diff < minSeconds or (not self.isSecondary() and self.isReachable() and diff < retrySeconds):
+            elif (diff < minSeconds or (not self.isSecondary() and self.isReachable() and diff < retrySeconds)) and \
+                    not conn.state == "unauthorized":
                 util.DEBUG_LOG("Skip reachability test for {0} (checked {1} secs ago)".format(conn, diff))
             elif conn.testReachability(self, allowFallback):
                 self.pendingReachabilityRequests += 1

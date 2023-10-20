@@ -355,6 +355,35 @@ class Settings(object):
                 BoolSetting('subtitle_downloads', T(32040, 'Enable Subtitle Downloading'), False)
             )
         ),
+        'network': (
+            T(33624, 'Network'), (
+                OptionsSetting(
+                    'allow_insecure', T(32032), 'never',
+                    (('never', T(32033)), ('same_network', T(32034)), ('always', T(32035)))
+                ).description(
+                    T(32104, 'When to connect to servers with no secure connections...')
+                ),
+                BoolSetting('smart_discover_local', T(33625, 'Smart LAN/local server discovery'), True)
+                    .description(
+                    T(33626, "Checks whether servers returned from Plex.tv are actually local/in your LAN. "
+                             "For specific setups (e.g. Docker) Plex.tv might not properly detect a local "
+                             "server.\n\nNOTE: Only works on Kodi 19 or above."
+                      )
+                ),
+                BoolSetting('prefer_local', T(33627, 'Prefer LAN/local servers over security'), False)
+                    .description(
+                    T(33628, "Prioritizes local connections over secure ones. Needs the proper setting in \"Allow "
+                             "Insecure Connections\" and the Plex Server's \"Secure connections\" at \"Preferred\". "
+                             "Can be used to enforce manual servers."
+                      )
+                ),
+                BoolSetting('gdm_discovery', T(32042, 'Server Discovery (GDM)'), True),
+                IPSetting('manual_ip_0', T(32044, 'Connection 1 IP'), ''),
+                IntegerSetting('manual_port_0', T(32045, 'Connection 1 Port'), 32400),
+                IPSetting('manual_ip_1', T(32046, 'Connection 2 IP'), ''),
+                IntegerSetting('manual_port_1', T(32047, 'Connection 2 Port'), 32400)
+            )
+        ),
         'system': (
             T(33600, 'System'), (
 
@@ -382,35 +411,6 @@ class Settings(object):
                      ('cecstandby', T(32705, 'CEC Standby')), ('logoff', T(32421, 'Sign Out')))
                 ).description(T(32701, 'When Kodi receives a sleep event from the system, run the following action.')),
                 BoolSetting('debug', T(32024, 'Debug Logging'), False),
-            )
-        ),
-        'network': (
-            T(33624, 'Network'), (
-                OptionsSetting(
-                    'allow_insecure', T(32032), 'never',
-                    (('never', T(32033)), ('same_network', T(32034)), ('always', T(32035)))
-                ).description(
-                    T(32104, 'When to connect to servers with no secure connections...')
-                ),
-                BoolSetting('smart_discover_local', T(33625, 'Smart LAN/local server discovery'), True)
-                .description(
-                    T(33626, "Checks whether servers returned from Plex.tv are actually local/in your LAN. "
-                             "For specific setups (e.g. Docker) Plex.tv might not properly detect a local "
-                             "server.\n\nNOTE: Only works on Kodi 19 or above."
-                      )
-                ),
-                BoolSetting('prefer_local', T(33627, 'Prefer LAN/local servers over security'), False)
-                .description(
-                    T(33628, "Prioritizes local connections over secure ones. Needs the proper setting in \"Allow "
-                             "Insecure Connections\" and the Plex Server's \"Secure connections\" at \"Preferred\". "
-                             "Can be used to enforce manual servers."
-                      )
-                ),
-                BoolSetting('gdm_discovery', T(32042, 'Server Discovery (GDM)'), True),
-                IPSetting('manual_ip_0', T(32044, 'Connection 1 IP'), ''),
-                IntegerSetting('manual_port_0', T(32045, 'Connection 1 Port'), 32400),
-                IPSetting('manual_ip_1', T(32046, 'Connection 2 IP'), ''),
-                IntegerSetting('manual_port_1', T(32047, 'Connection 2 Port'), 32400)
             )
         ),
         'privacy': (
