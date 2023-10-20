@@ -139,7 +139,7 @@
                         <popup>false</popup>
                     </control>
                 </setting>
-                <setting id="skip_intro_button_show_early_threshold" type="integer" label="33509" help="33510">
+                <setting id="skip_intro_button_show_early_threshold1" type="integer" label="33509" help="33510">
                     <level>0</level>
                     <default>60</default>
                     <constraints>
