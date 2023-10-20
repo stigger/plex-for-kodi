@@ -133,7 +133,8 @@ class PlexConnection(object):
 
             if host.is_alive:
                 self.isLocal = True
-                util.LOG("Found IP {0} in local network ({1}).".format(ip, network))
+                util.LOG("Found IP {0} in local network ({1}). Ping: {2}ms (max: {3}ms)"
+                         .format(ip, network, host.max_rtt, int(util.LAN_REACHABILITY_TIMEOUT * 1000)))
 
         return False
 
@@ -191,7 +192,8 @@ class PlexConnection(object):
             ):
                 util.DEBUG_LOG("Invalid insecure connection test in progress")
             self.request = http.HttpRequest(self.buildUrl(server, "/"))
-            context = self.request.createRequestContext("reachability", callback.Callable(self.onReachabilityResponse))
+            context = self.request.createRequestContext("reachability", callback.Callable(self.onReachabilityResponse),
+                                                        timeout=util.CONN_CHECK_TIMEOUT)
             context.server = server
             util.addPlexHeaders(self.request, server.getToken())
             self.hasPendingRequest = util.APP.startRequest(self.request, context)

@@ -1358,6 +1358,14 @@ msgctxt "#32631"
 msgid "Player (user-specific)"
 msgstr ""
 
+msgctxt "#33632"
+msgid "Server connectivity check timeout (seconds)"
+msgstr ""
+
+msgctxt "#33633"
+msgid "Set the maximum amount of time a server connection has to answer a connectivity request. Default: 2.5"
+msgstr ""
+
 msgctxt "#32700"
 msgid "Action on Sleep event"
 msgstr ""

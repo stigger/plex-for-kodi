@@ -30,6 +30,18 @@
                         <popup>false</popup>
                     </control>
                 </setting>
+                <setting id="conn_check_timeout" type="number" label="33632" help="33633">
+                    <level>0</level>
+                    <default>2.5</default>
+                    <constraints>
+                        <minimum>0.1</minimum>
+                        <step>0.1</step>
+                        <maximum>20</maximum>
+                    </constraints>
+                    <control type="slider" format="number">
+                        <popup>false</popup>
+                    </control>
+                </setting>
                 <setting id="local_reach_timeout" type="number" label="33622" help="33623">
                     <level>0</level>
                     <default>10</default>

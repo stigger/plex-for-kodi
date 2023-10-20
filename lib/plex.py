@@ -11,7 +11,7 @@ import six
 
 from kodi_six import xbmc
 
-from plexnet import plexapp, myplex, util as plexnet_util
+from plexnet import plexapp, myplex, util as plexnet_util, asyncadapter, http as pnhttp
 from . windows.settings import PlayedThresholdSetting
 from . import util
 from six.moves import range
@@ -374,8 +374,13 @@ plexapp.util.CHECK_LOCAL = util.getSetting('smart_discover_local', True)
 plexapp.util.LOCAL_OVER_SECURE = util.getSetting('prefer_local', False)
 
 # set requests timeout
-plexapp.util.TIMEOUT = float(util.advancedSettings.requestsTimeout)
+TIMEOUT = float(util.advancedSettings.requestsTimeout)
+CONNCHECK_TIMEOUT = float(util.advancedSettings.connCheckTimeout)
+plexapp.util.TIMEOUT = TIMEOUT
+plexapp.util.CONN_CHECK_TIMEOUT = asyncadapter.AsyncTimeout(CONNCHECK_TIMEOUT).setConnectTimeout(CONNCHECK_TIMEOUT)
 plexapp.util.LAN_REACHABILITY_TIMEOUT = util.advancedSettings.localReachTimeout / 1000.0
+pnhttp.DEFAULT_TIMEOUT = asyncadapter.AsyncTimeout(TIMEOUT).setConnectTimeout(TIMEOUT)
+asyncadapter.DEFAULT_TIMEOUT = pnhttp.DEFAULT_TIMEOUT
 
 
 class CallbackEvent(plexapp.util.CompatEvent):
