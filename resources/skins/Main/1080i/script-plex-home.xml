@@ -7989,7 +7989,7 @@
                             <width>16</width>
                             <height>14</height>
                             <texture>$INFO[Window.Property(server.iconmod2)]</texture>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
+                            <colordiffuse>FFEEEEEE</colordiffuse>
                         </control>
                         <!-- local -->
                         <control type="image">
@@ -7999,7 +7999,7 @@
                             <width>16</width>
                             <height>14</height>
                             <texture>$INFO[Window.Property(server.iconmod2)]</texture>
-                            <colordiffuse>FFCCCCCC</colordiffuse>
+                            <colordiffuse>FFEEEEEE</colordiffuse>
                         </control>
                         <control type="image">
                             <visible>!Control.HasFocus(201)</visible>
