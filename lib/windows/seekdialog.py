@@ -165,6 +165,7 @@ class SeekDialog(kodigui.BaseDialog):
         self._lastAction = None
         self.lastTimelineResponse = None
         self._ignoreInput = False
+        self._ignoreTick = False
 
         # optimize
         self._enableMarkerSkip = plexapp.ACCOUNT.hasPlexPass()
@@ -320,6 +321,7 @@ class SeekDialog(kodigui.BaseDialog):
     def onReInit(self):
         self.lastTimelineResponse = None
         self._lastAction = None
+        self._ignoreTick = False
 
         self.resetTimeout()
         self.resetSeeking()
@@ -525,6 +527,7 @@ class SeekDialog(kodigui.BaseDialog):
                         if self.osdVisible():
                             self.hideOSD()
                         else:
+                            self._ignoreTick = True
                             self.doClose()
                             # self.handler.onSeekAborted()
                             if self.bingeMode:
@@ -1222,6 +1225,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.baseOffset = offset
         self.offset = 0
         self._duration = duration
+        self._ignoreTick = False
         self.bifURL = bif_url
         self.hasBif = bool(self.bifURL)
         if self.hasBif:
@@ -1405,7 +1409,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
 
     def tick(self, offset=None):
-        if not self.initialized:
+        if not self.initialized or self._ignoreTick:
             return
 
         if xbmc.getCondVisibility('Window.IsActive(busydialog) + !Player.Caching'):
