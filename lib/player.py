@@ -75,6 +75,9 @@ class BasePlayerHandler(object):
     def close(self):
         pass
 
+    def setSubtitles(self, *args, **kwargs):
+        pass
+
     @property
     def trueTime(self):
         return self.baseOffset + self.player.currentTime
@@ -633,7 +636,6 @@ class AudioPlayerHandler(BasePlayerHandler):
 
     def onPlayBackStarted(self):
         self.player.lastPlayWasBGM = False
-        self.handler.setSubtitles(do_sleep=False)
         self.updatePlayQueue(delay=True)
         self.extractTrackInfo()
         self.updateNowPlaying(state='playing')
