@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+from functools import wraps
+
 from . import plexobjects
 from . import media
 from . import plexmedia
@@ -7,6 +9,7 @@ from . import exceptions
 from . import compat
 from . import plexlibrary
 from . import util
+from . import mediachoice
 
 
 class PlexVideoItemList(plexobjects.PlexItemList):
@@ -26,6 +29,16 @@ class PlexVideoItemList(plexobjects.PlexItemList):
                 self._items = []
 
         return self._items
+
+
+def forceMediaChoice(method):
+    @wraps(method)
+    def _impl(self, *method_args, **method_kwargs):
+        # skipOn denotes the kwarg that when it's False, we won't call setMediaChoice
+        if not self.mediaChoice:
+            self.setMediaChoice()
+        return method(self, *method_args, **method_kwargs)
+    return _impl
 
 
 class Video(media.MediaItem):
@@ -87,6 +100,10 @@ class Video(media.MediaItem):
                     return stream
         return None
 
+    def setMediaChoice(self, media=None, partIndex=0):
+        self.mediaChoice = mediachoice.MediaChoice(media or self.media()[0], partIndex=partIndex)
+
+    @forceMediaChoice
     def selectStream(self, stream, _async=True):
         self.mediaChoice.part.setSelectedStream(stream.streamType.asInt(), stream.id, _async)
         # Update any affected streams
@@ -106,11 +123,14 @@ class Video(media.MediaItem):
     def isVideoItem(self):
         return True
 
-    def _findStreams(self, streamtype):
+    @forceMediaChoice
+    def _findStreams(self, streamtype, withMC=True):
         idx = 0
         streams = []
-        for media_ in self.media():
-            for part in media_.parts:
+        source = [self.mediaChoice.media] if withMC else self.media()
+        for media_ in source:
+            parts = [self.mediaChoice.part] if withMC else media_.parts
+            for part in parts:
                 for stream in part.streams:
                     if stream.streamType.asInt() == streamtype:
                         stream.typeIndex = idx
@@ -175,18 +195,20 @@ class Video(media.MediaItem):
         return server.buildUrl('/{0}/:/transcode/universal/start.m3u8?{1}'.format(streamtype, compat.urlencode(final)), includeToken=True)
         # path = "/video/:/transcode/universal/" + command + "?session=" + AppSettings().GetGlobal("clientIdentifier")
 
+    @forceMediaChoice
     def resolutionString(self):
-        res = self.media[0].videoResolution
+        res = self.mediaChoice.media.videoResolution
         if not res:
             return ''
 
         if res.isdigit():
-            return '{0}p'.format(self.media[0].videoResolution)
+            return '{0}p'.format(self.mediaChoice.media.videoResolution)
         else:
             return res.upper()
 
+    @forceMediaChoice
     def audioCodecString(self):
-        codec = (self.media[0].audioCodec or '').lower()
+        codec = (self.mediaChoice.media.audioCodec or '').lower()
 
         if codec in ('dca', 'dca-ma', 'dts-hd', 'dts-es', 'dts-hra'):
             codec = "DTS"
@@ -195,19 +217,14 @@ class Video(media.MediaItem):
 
         return codec
 
+    @forceMediaChoice
     def videoCodecString(self):
-        return (self.media[0].videoCodec or '').upper()
+        return (self.mediaChoice.media.videoCodec or '').upper()
 
+    @forceMediaChoice
     def videoCodecRendering(self):
         render = "sdr"
-        stream = None
-
-        for media in self.media:
-            for part in media.parts:
-                for s in part.streams:
-                    if s.streamType.asInt() == plexstream.PlexStream.TYPE_VIDEO:
-                        stream = s
-                        break
+        stream = self.mediaChoice.videoStream
 
         if not stream:
             return ''
@@ -224,8 +241,9 @@ class Video(media.MediaItem):
 
         return render.upper()
 
+    @forceMediaChoice
     def audioChannelsString(self, translate_func=util.dummyTranslate):
-        channels = self.media[0].audioChannels.asInt()
+        channels = self.mediaChoice.media.audioChannels.asInt()
 
         if channels == 1:
             return translate_func("Mono")
