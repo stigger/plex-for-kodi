@@ -35,8 +35,11 @@ def forceMediaChoice(method):
     @wraps(method)
     def _impl(self, *method_args, **method_kwargs):
         # skipOn denotes the kwarg that when it's False, we won't call setMediaChoice
-        if not self.mediaChoice:
-            self.setMediaChoice()
+        # set mediaChoice if we don't have any yet, or the one we have is incomplete and the new one isn't
+        media = method_kwargs.get("media", self.media()[0])
+        partIndex = method_kwargs.get("partIndex", 0)
+        if not self.mediaChoice or (not self.mediaChoice.media.hasStreams() and media.hasStreams()):
+            self.setMediaChoice(media=media, partIndex=partIndex)
         return method(self, *method_args, **method_kwargs)
     return _impl
 
@@ -101,7 +104,8 @@ class Video(media.MediaItem):
         return None
 
     def setMediaChoice(self, media=None, partIndex=0):
-        self.mediaChoice = mediachoice.MediaChoice(media or self.media()[0], partIndex=partIndex)
+        media = media or self.media()[0]
+        self.mediaChoice = mediachoice.MediaChoice(media, partIndex=partIndex)
 
     @forceMediaChoice
     def selectStream(self, stream, _async=True):
@@ -317,12 +321,29 @@ class SectionOnDeckMixin(object):
 
 class PlayableVideo(Video, RelatedMixin):
     TYPE = None
+    _videoStreams = None
+    _audioStreams = None
+    _subtitleStreams = None
 
     def _setData(self, data):
         Video._setData(self, data)
         if self.isFullObject():
             self.extras = PlexVideoItemList(data.find('Extras'), initpath=self.initpath, server=self.server, container=self)
             self.chapters = plexobjects.PlexItemList(data, media.Chapter, media.Chapter.TYPE, server=self.server)
+
+        self.resetStreams()
+
+    def setMediaChoice(self, *args, **kwargs):
+        """
+        Reset cached streams after setting a mediaChoice
+        """
+        super(PlayableVideo, self).setMediaChoice(*args, **kwargs)
+        self.resetStreams()
+
+    def resetStreams(self):
+        self._videoStreams = None
+        self._audioStreams = None
+        self._subtitleStreams = None
 
     def reload(self, *args, **kwargs):
         if not kwargs.get('_soft'):
@@ -366,10 +387,6 @@ class Movie(PlayableVideo):
                 self.media = plexobjects.PlexMediaItemList(data, plexmedia.PlexMedia, media.Media.TYPE, initpath=self.initpath, server=self.server, media=self)
 
         self.markers = plexobjects.PlexItemList(data, media.Marker, media.Marker.TYPE, server=self.server)
-
-        self._videoStreams = None
-        self._audioStreams = None
-        self._subtitleStreams = None
 
         # data for active sessions
         self.sessionKey = plexobjects.PlexValue(data.attrib.get('sessionKey', ''), self)
@@ -534,10 +551,6 @@ class Episode(PlayableVideo, SectionOnDeckMixin):
                 self.media = plexobjects.PlexMediaItemList(data, plexmedia.PlexMedia, media.Media.TYPE, initpath=self.initpath, server=self.server, media=self)
 
         self.markers = plexobjects.PlexItemList(data, media.Marker, media.Marker.TYPE, server=self.server)
-
-        self._videoStreams = None
-        self._audioStreams = None
-        self._subtitleStreams = None
 
         # data for active sessions
         self.sessionKey = plexobjects.PlexValue(data.attrib.get('sessionKey', ''), self)
