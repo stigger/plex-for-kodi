@@ -1033,6 +1033,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         for mli in self.episodeListControl:
             if mli.dataSource == episode:
+                episode.setMediaChoice()
                 self.setPostReloadItemInfo(episode, mli)
                 if with_progress:
                     self.episodesPaginator.prepareListItem(None, mli)
