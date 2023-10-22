@@ -376,9 +376,11 @@ class PlayableVideo(Video, RelatedMixin):
             partID = self.mediaChoice.part.id
             streamIDs = []
             if self.mediaChoice.media.hasStreams():
+                subtitleStream = self.selectedSubtitleStream(fallback=False)
                 streamIDs = [self.selectedVideoStream(fallback=True).id,
-                             self.selectedAudioStream(fallback=True).id,
-                             self.selectedSubtitleStream(fallback=True).id]
+                             self.selectedAudioStream(fallback=True).id]
+                if subtitleStream:
+                    streamIDs.append(subtitleStream.id)
 
         Video.reload(self, *args, **kwargs)
 
