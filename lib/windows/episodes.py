@@ -44,7 +44,7 @@ class EpisodeReloadTask(backgroundthread.Task):
             return
 
         try:
-            self.episode.reload(checkFiles=1, includeChapters=1)
+            self.episode.reload(checkFiles=1, includeChapters=1, fromMediaChoice=self.episode.mediaChoice is not None)
             if self.isCanceled():
                 return
             self.callback(self, self.episode, with_progress=self.withProgress)
@@ -202,6 +202,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     OPTIONS_BUTTON_ID = 303
     INFO_BUTTON_ID = 304
     SETTINGS_BUTTON_ID = 305
+    MEDIA_BUTTON_ID = 307
 
     def __init__(self, *args, **kwargs):
         kodigui.ControlledWindow.__init__(self, *args, **kwargs)
@@ -434,6 +435,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.optionsButtonClicked()
         elif controlID == self.SETTINGS_BUTTON_ID:
             self.settingsButtonClicked()
+        elif controlID == self.MEDIA_BUTTON_ID:
+            self.mediaButtonClicked()
         elif controlID == self.INFO_BUTTON_ID:
             self.infoButtonClicked()
         elif controlID == self.SEARCH_BUTTON_ID:
@@ -649,7 +652,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             video=episode
         )
 
-    def episodeListClicked(self, play_version=False, force_episode=None):
+    def episodeListClicked(self, force_episode=None):
         if not force_episode:
             mli = self.episodeListControl.getSelectedItem()
             if not mli or mli.getProperty("is.boundary"):
@@ -662,12 +665,6 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if not episode.available():
             util.messageDialog(T(32312, 'unavailable'), T(32332, 'This item is currently unavailable.'))
             return
-
-        if play_version:
-            if not preplayutils.chooseVersion(episode):
-                return
-        else:
-            preplayutils.resetVersion(episode)
 
         resume = False
         if episode.viewOffset.asInt():
@@ -706,9 +703,6 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         mli = self.episodeListControl.getSelectedItem()
 
         if mli and not mli.getProperty("is.boundary"):
-            if len(mli.dataSource.media) > 1:
-                options.append({'key': 'play_version', 'display': T(32451, 'Play Version...')})
-
             inProgress = mli.dataSource.viewOffset.asInt()
             if not mli.dataSource.isWatched or inProgress:
                 options.append({'key': 'mark_watched', 'display': T(32319, 'Mark Played')})
@@ -767,9 +761,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if not choice:
             return
 
-        if choice['key'] == 'play_version':
-            self.episodeListClicked(play_version=True)
-        elif choice['key'] == 'play_next':
+        if choice['key'] == 'play_next':
             xbmc.executebuiltin('PlayerControl(Next)')
         elif choice['key'] == 'mark_watched':
             mli.dataSource.markWatched()
@@ -801,6 +793,26 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 "Changing binge mode setting for {} from {} to {}".format(self.show_.ratingKey, oldBingeModeValue,
                                                                           not oldBingeModeValue))
             INTERFACE.bingeModeManager(self.show_, not oldBingeModeValue)
+
+    def mediaButtonClicked(self):
+        options = []
+        mli = self.episodeListControl.getSelectedItem()
+        ds = mli.dataSource
+        for media in ds.media:
+            ind = ''
+            if ds.mediaChoice and media.id == ds.mediaChoice.media.id:
+                ind = 'script.plex/home/device/check.png'
+            options.append({'key': media, 'display': media.versionString(), 'indicator': ind})
+        choice = dropdown.showDropdown(options, header=T(32450, 'Choose Version'), with_indicator=True)
+        if not choice:
+            return False
+
+        for media in ds.media:
+            media.set('selected', '')
+
+        ds.setMediaChoice(choice['key'])
+        choice['key'].set('selected', 1)
+        self.setPostReloadItemInfo(ds, mli)
 
     def delete(self):
         button = optionsdialog.show(
@@ -963,6 +975,26 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         mli.setProperty('video.rendering', video.videoCodecRendering())
         mli.setBoolProperty('unavailable', not video.available())
 
+        defW = 176
+        defH = 140
+        ids = [301, 302, 303, 304, 305]
+        if bool(len(video.media) > 1):
+            mli.setBoolProperty('media.multiple', True)
+            # adjust button sizes
+            ids.append(307)
+            for id in ids:
+                ctrl = self.getControl(id)
+                ctrl.setWidth(161)
+                ctrl.setHeight(125)
+                del ctrl
+        else:
+            # reset button sizes
+            for id in ids:
+                ctrl = self.getControl(id)
+                ctrl.setWidth(defW)
+                ctrl.setHeight(defH)
+                del ctrl
+
     def setItemAudioAndSubtitleInfo(self, video, mli):
         sas = video.selectedAudioStream()
         mli.setProperty('audio', sas and sas.getTitle(metadata.apiTranslate) or T(32309, 'None'))
@@ -1036,7 +1068,9 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         for mli in self.episodeListControl:
             if mli.dataSource == episode:
-                episode.setMediaChoice()
+                if not episode.mediaChoice:
+                    episode.setMediaChoice()
+
                 self.setPostReloadItemInfo(episode, mli)
                 if with_progress:
                     self.episodesPaginator.prepareListItem(None, mli)
