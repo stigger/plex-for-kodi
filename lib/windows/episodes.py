@@ -988,6 +988,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 ctrl.setHeight(125)
                 del ctrl
         else:
+            mli.setBoolProperty('media.multiple', False)
             # reset button sizes
             for id in ids:
                 ctrl = self.getControl(id)
