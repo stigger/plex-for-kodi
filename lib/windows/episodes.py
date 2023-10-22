@@ -235,7 +235,10 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if self.tasks:
             self.tasks.cancel()
             self.tasks = None
-        player.PLAYER.off('new.video', self.onNewVideo)
+        try:
+            player.PLAYER.off('new.video', self.onNewVideo)
+        except KeyError:
+            pass
 
     @busy.dialog()
     def _onFirstInit(self):
