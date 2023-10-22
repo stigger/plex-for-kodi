@@ -71,14 +71,25 @@ class Video(media.MediaItem):
     def settings(self, value):
         self._settings = value
 
-    def selectedAudioStream(self):
+    def selectedVideoStream(self, fallback=False):
+        if self.videoStreams:
+            for stream in self.videoStreams:
+                if stream.isSelected():
+                    return stream
+            if fallback:
+                return self.videoStreams[0]
+        return None
+
+    def selectedAudioStream(self, fallback=False):
         if self.audioStreams:
             for stream in self.audioStreams:
                 if stream.isSelected():
                     return stream
+            if fallback:
+                return self.audioStreams[0]
         return None
 
-    def selectedSubtitleStream(self, forced_subtitles_override=False):
+    def selectedSubtitleStream(self, forced_subtitles_override=False, fallback=False):
         if self.subtitleStreams:
             for stream in self.subtitleStreams:
                 if stream.isSelected():
@@ -101,6 +112,8 @@ class Video(media.MediaItem):
                             possible_alt.setSelected(True)
                             return possible_alt
                     return stream
+            if fallback:
+                return self.subtitleStreams[0]
         return None
 
     def setMediaChoice(self, media=None, partIndex=0):
@@ -345,13 +358,46 @@ class PlayableVideo(Video, RelatedMixin):
         self._audioStreams = None
         self._subtitleStreams = None
 
-    def reload(self, *args, **kwargs):
+    def reload(self, *args, fromMediaChoice=False, **kwargs):
         if not kwargs.get('_soft'):
             if self.get('viewCount'):
                 del self.viewCount
             if self.get('viewOffset'):
                 del self.viewOffset
+
+        # capture current IDs
+        mediaID = None
+        partID = None
+        streamIDs = None
+        reSelect = False
+        if fromMediaChoice and self.mediaChoice:
+            reSelect = True
+            mediaID = self.mediaChoice.media.id
+            partID = self.mediaChoice.part.id
+            streamIDs = []
+            if self.mediaChoice.media.hasStreams():
+                streamIDs = [self.selectedVideoStream(fallback=True).id,
+                             self.selectedAudioStream(fallback=True).id,
+                             self.selectedSubtitleStream(fallback=True).id]
+
         Video.reload(self, *args, **kwargs)
+
+        # re-select selected IDs
+        if reSelect:
+            selMedia = None
+            selPartIndex = 0
+            for media in self.media:
+                if media.id == mediaID:
+                    selMedia = media
+                    media.set('selected', '1')
+                    for index, part in enumerate(media.parts):
+                        if part.id == partID:
+                            selPartIndex = index
+                            for stream in part.streams:
+                                if stream.id in streamIDs:
+                                    stream.setSelected(True)
+            self.mediaChoice = mediachoice.MediaChoice(selMedia, partIndex=selPartIndex)
+
         return self
 
     def postPlay(self, **params):
