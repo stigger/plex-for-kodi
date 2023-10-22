@@ -34,7 +34,6 @@ class PlexVideoItemList(plexobjects.PlexItemList):
 def forceMediaChoice(method):
     @wraps(method)
     def _impl(self, *method_args, **method_kwargs):
-        # skipOn denotes the kwarg that when it's False, we won't call setMediaChoice
         # set mediaChoice if we don't have any yet, or the one we have is incomplete and the new one isn't
         media = method_kwargs.get("media", self.media()[0])
         partIndex = method_kwargs.get("partIndex", 0)
