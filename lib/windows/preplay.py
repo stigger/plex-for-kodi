@@ -61,6 +61,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     TRAILER_BUTTON_ID = 303
     SETTINGS_BUTTON_ID = 305
     OPTIONS_BUTTON_ID = 306
+    MEDIA_BUTTON_ID = 307
 
     PLAYER_STATUS_BUTTON_ID = 204
 
@@ -173,6 +174,8 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.openItem(item=self.trailer)
         elif controlID == self.OPTIONS_BUTTON_ID:
             self.optionsButtonClicked()
+        elif controlID == self.MEDIA_BUTTON_ID:
+            self.mediaButtonClicked()
         elif controlID == self.SEARCH_BUTTON_ID:
             self.searchButtonClicked()
 
@@ -212,11 +215,6 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
     def optionsButtonClicked(self):
         options = []
-        # if xbmc.getCondVisibility('Player.HasAudio + MusicPlayer.HasNext'):
-        #     options.append({'key': 'play_next', 'display': 'Play Next'})
-
-        if len(self.video.media) > 1:
-            options.append({'key': 'play_version', 'display': T(32451, 'Play Version...')})
 
         inProgress = self.video.viewOffset.asInt()
         if not self.video.isWatched or inProgress:
@@ -249,9 +247,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if not choice:
             return
 
-        if choice['key'] == 'play_version':
-            self.playVideo(play_version=True)
-        elif choice['key'] == 'play_next':
+        if choice['key'] == 'play_next':
             xbmc.executebuiltin('PlayerControl(Next)')
         elif choice['key'] == 'mark_watched':
             self.video.markWatched(**VIDEO_RELOAD_KW)
@@ -269,6 +265,24 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.goHome(self.video.getLibrarySectionId())
         elif choice['key'] == 'delete':
             self.delete()
+
+    def mediaButtonClicked(self):
+        options = []
+        for media in self.video.media:
+            ind = ''
+            if self.video.mediaChoice and media.id == self.video.mediaChoice.media.id:
+                ind = 'script.plex/home/device/check.png'
+            options.append({'key': media, 'display': media.versionString(), 'indicator': ind})
+        choice = dropdown.showDropdown(options, header=T(32450, 'Choose Version'), with_indicator=True)
+        if not choice:
+            return False
+
+        for media in self.video.media:
+            media.set('selected', '')
+
+        self.video.setMediaChoice(choice['key'])
+        choice['key'].set('selected', 1)
+        self.setInfo()
 
     def delete(self):
         button = optionsdialog.show(
@@ -414,16 +428,10 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         x = ((focus + 1) * 304) - 100
         return x, y
 
-    def playVideo(self, play_version=False):
+    def playVideo(self):
         if not self.video.available():
             util.messageDialog(T(32312, 'Unavailable'), T(32313, 'This item is currently unavailable.'))
             return
-
-        if play_version:
-            if not preplayutils.chooseVersion(self.video):
-                return
-        else:
-            preplayutils.resetVersion(self.video)
 
         resume = False
         if self.video.viewOffset.asInt():
@@ -522,6 +530,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.setProperty('video.codec', self.video.videoCodecString())
         self.setProperty('video.rendering', self.video.videoCodecRendering())
         self.setProperty('audio.channels', self.video.audioChannelsString(metadata.apiTranslate))
+        self.setBoolProperty('media.multiple', bool(len(self.video.media) > 1))
 
         self.setProperties(('rating.stars', 'rating', 'rating.image', 'rating2', 'rating2.image'), '')
         if self.video.userRating:
