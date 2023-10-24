@@ -1426,6 +1426,8 @@ class SeekDialog(kodigui.BaseDialog):
                 if self.handler.playlist and self.handler.playlist.hasNext() and self.bingeMode:
                     # skip final marker
                     util.DEBUG_LOG("MarkerAutoSkip: Skipping final marker, going to next video")
+                    self.handler.ignoreTimelines = True
+                    self._ignoreTick = True
                     next(self.handler)
                     return True
                 else:

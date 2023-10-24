@@ -175,6 +175,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.title2 = title2
         self.chapters = chapters or []
         self.playedThreshold = plexapp.util.INTERFACE.getPlayedThresholdValue()
+        self.ignoreTimelines = False
         self.getDialog(setup=True)
         self.dialog.setup(self.duration, int(self.baseOffset * 1000), self.bifURL, self.title, self.title2,
                           chapters=self.chapters)
