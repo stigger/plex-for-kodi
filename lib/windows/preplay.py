@@ -559,6 +559,8 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         if self.video.viewOffset.asInt():
             self.setProperty('remainingTime', T(33615, "{time} left").format(time=self.video.remainingTimeString))
+        else:
+            self.setProperty('remainingTime', '')
 
     def setAudioAndSubtitleInfo(self):
         sas = self.video.selectedAudioStream()
