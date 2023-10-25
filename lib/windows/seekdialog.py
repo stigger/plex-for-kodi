@@ -502,8 +502,12 @@ class SeekDialog(kodigui.BaseDialog):
                     # Alt-right
                     builtin.PlayerControl('tempoup')
                 elif action == xbmcgui.ACTION_NEXT_ITEM:
+                    self.handler.ignoreTimelines = True
+                    self._ignoreTick = True
                     self.handler.next()
                 elif action == xbmcgui.ACTION_PREV_ITEM:
+                    self.handler.ignoreTimelines = True
+                    self._ignoreTick = True
                     self.handler.prev()
 
             if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
@@ -610,8 +614,12 @@ class SeekDialog(kodigui.BaseDialog):
         elif controlID == self.SHUFFLE_BUTTON_ID:
             self.shuffleButtonClicked()
         elif controlID == self.PREV_BUTTON_ID:
+            self.handler.ignoreTimelines = True
+            self._ignoreTick = True
             self.handler.prev()
         elif controlID == self.NEXT_BUTTON_ID:
+            self.handler.ignoreTimelines = True
+            self._ignoreTick = True
             next(self.handler)
         elif controlID == self.PLAYLIST_BUTTON_ID:
             self.showPlaylistDialog()
