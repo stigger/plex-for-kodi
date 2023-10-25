@@ -1426,3 +1426,7 @@ msgctxt "#32904"
 msgid "In seconds."
 msgstr ""
 
+msgctxt "#32905"
+msgid "Cancel post-play timer by pressing OK/SELECT"
+msgstr ""
+

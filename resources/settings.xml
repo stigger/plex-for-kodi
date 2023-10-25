@@ -100,6 +100,11 @@
                         <heading>32501</heading>
                     </control>
                 </setting>
+                <setting id="postplay_cancel" type="boolean" label="32905">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
                 <setting id="auto_skip_offset" type="number" label="33629" help="33630">
                     <level>0</level>
                     <default>2.5</default>

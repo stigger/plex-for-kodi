@@ -118,7 +118,8 @@ class AdvancedSettings(object):
         ("requests_timeout", 5.0),
         ("local_reach_timeout", 10),
         ("auto_skip_offset", 2.5),
-        ("conn_check_timeout", 2.5)
+        ("conn_check_timeout", 2.5),
+        ("postplayCancel", True),
     )
 
     def __init__(self):

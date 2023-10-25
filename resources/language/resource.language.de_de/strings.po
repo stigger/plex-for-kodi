@@ -1723,3 +1723,7 @@ msgstr "Benutze die obrige Einstellung auch für die Zeitleiste."
 msgctxt "#32904"
 msgid "In seconds."
 msgstr "In Sekunden."
+
+msgctxt "#32905"
+msgid "Post-Play Timer durch OK/SELECT abbrechen"
+msgstr ""
