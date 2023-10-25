@@ -1430,3 +1430,19 @@ msgctxt "#32905"
 msgid "Cancel post-play timer by pressing OK/SELECT"
 msgstr ""
 
+msgctxt "#32906"
+msgid "Cancel skip marker timer with BACK"
+msgstr ""
+
+msgctxt "#32907"
+msgid "When auto-skipping a marker, allow cancelling the timer by pressing BACK."
+msgstr ""
+
+msgctxt "#32908"
+msgid "Immediately skip marker with OK/SELECT"
+msgstr ""
+
+msgctxt "#32909"
+msgid "When auto-skipping a marker with a timer, allow skipping immediately by pressing OK/SELECT."
+msgstr ""
+

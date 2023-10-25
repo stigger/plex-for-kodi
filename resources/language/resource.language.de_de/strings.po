@@ -1725,5 +1725,21 @@ msgid "In seconds."
 msgstr "In Sekunden."
 
 msgctxt "#32905"
-msgid "Post-Play Timer durch OK/SELECT abbrechen"
-msgstr ""
+msgid "Cancel post-play timer by pressing OK/SELECT"
+msgstr "Post-Play Timer durch OK/SELECT abbrechen"
+
+msgctxt "#32906"
+msgid "Cancel skip marker timer with BACK"
+msgstr "Markierung überspringen durch Zurück abbrechen"
+
+msgctxt "#32907"
+msgid "When auto-skipping a marker, allow cancelling the timer by pressing BACK."
+msgstr "Wenn eine Markierung mit einem Zeitgeber automatisch übersprungen wird, durch Zurück-Taste abbrechen."
+
+msgctxt "#32908"
+msgid "Immediately skip marker with OK/SELECT"
+msgstr "Markierung sofort überspringen mit OK/SELECT"
+
+msgctxt "#32909"
+msgid "When auto-skipping a marker with a timer, allow skipping immediately by pressing OK/SELECT."
+msgstr "Wenn eine Markierung mit einem Zeitgeber automatisch übersprungen wird, durch OK/SELECT-Taste sofort überspringen."

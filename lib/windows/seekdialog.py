@@ -51,7 +51,7 @@ MARKERS = OrderedDict([
 
         # attrs
         "markerAutoSkip": "autoSkipIntro",
-        "markerAutoSkipped": "_introAutoSkipped",
+        "markerAutoSkipped": False,
         "markerAutoSkipShownTimer": "_introSkipShownStarted",
         "markerSkipBtnTimeout": "skipIntroButtonTimeout",
     }),
@@ -63,7 +63,7 @@ MARKERS = OrderedDict([
         "countdown": None,
 
         "markerAutoSkip": "autoSkipCredits",
-        "markerAutoSkipped": "_creditsAutoSkipped",
+        "markerAutoSkipped": False,
         "markerAutoSkipShownTimer": "_creditsSkipShownStarted",
         "markerSkipBtnTimeout": "skipCreditsButtonTimeout"
     })
@@ -175,9 +175,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.markers = None
         self.chapters = None
         self._introSkipShownStarted = None
-        self._introAutoSkipped = False
         self._creditsSkipShownStarted = None
-        self._creditsAutoSkipped = False
         self._currentMarker = None
         self.skipSteps = self.SKIP_STEPS
         self.useAutoSeek = util.advancedSettings.autoSeek
@@ -346,6 +344,8 @@ class SeekDialog(kodigui.BaseDialog):
             lastAction = self._lastAction
             self._lastAction = currentAction = (action.getId(), controlID)
 
+            cancelActions = (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_STOP)
+
             if not self._ignoreInput:
                 if action.getId() in KEY_MOVE_SET:
                     self.setProperty('mouse.mode', '')
@@ -384,6 +384,8 @@ class SeekDialog(kodigui.BaseDialog):
                             self.setProperty('show.markerSkip', '')
                             self.setProperty('show.markerSkip_OSDOnly', '')
                             self.doSeek(math.ceil(float(marker.endTimeOffset)) - markerOff)
+                            self._osdHideFast = True
+                            self.tick()
 
                             if marker.type == "credits" and not final:
                                 # non-final marker
@@ -419,7 +421,7 @@ class SeekDialog(kodigui.BaseDialog):
                         return self.seekByOffset(-10000, auto_seek=self.useAutoSeek)
 
                     elif action == xbmcgui.ACTION_MOVE_UP:
-                        if self.getProperty('show.markerSkip'):
+                        if self.getProperty('show.markerSkip') or self.getProperty('show.markerSkip_OSDOnly'):
                             # pressed up on player controls, then up on MAIN BUTTON; focus marker button
                             if currentAction == lastAction:
                                 self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
@@ -428,7 +430,8 @@ class SeekDialog(kodigui.BaseDialog):
                             self.setProperty('show.chapters', '1')
 
                     elif action == xbmcgui.ACTION_MOVE_DOWN:
-                        if self.previousFocusID == self.BIG_SEEK_LIST_ID and self.getProperty('show.markerSkip'):
+                        if self.previousFocusID == self.BIG_SEEK_LIST_ID and (
+                                self.getProperty('show.markerSkip') or self.getProperty('show.markerSkip_OSDOnly')):
                             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
                             self.setProperty('show.chapters', '')
 
@@ -510,12 +513,25 @@ class SeekDialog(kodigui.BaseDialog):
                     self._ignoreTick = True
                     self.handler.prev()
 
-            if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
-                if self.getProperty('show.PPI'):
+            if action in cancelActions + (xbmcgui.ACTION_SELECT_ITEM,):
+                if self.getProperty('show.PPI') and action in cancelActions:
                     self.hidePPIDialog()
                     return
 
-                if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_STOP):
+                # immediate marker timer actions
+                if self._currentMarker and self._currentMarker["countdown"] is not None \
+                        and (self.getProperty('show.markerSkip') or self.getProperty('show.markerSkip_OSDOnly')):
+
+                    if util.advancedSettings.skipMarkerTimerCancel or util.advancedSettings.skipMarkerTimerImmediate:
+                        if util.advancedSettings.skipMarkerTimerCancel and \
+                                action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
+                            self.displayMarkers(cancelTimer=True)
+                        elif util.advancedSettings.skipMarkerTimerImmediate and action == xbmcgui.ACTION_SELECT_ITEM:
+                            self.displayMarkers(immediate=True)
+                            self._osdHideFast = True
+                        return
+
+                if action in cancelActions:
                     if self._seeking and not self._ignoreInput:
                         self.resetSeeking()
                         self.updateCurrent()
@@ -602,7 +618,11 @@ class SeekDialog(kodigui.BaseDialog):
                     self.doSeek()
                 elif controlID == self.NO_OSD_BUTTON_ID:
                     if not self._seeking:
-                        self.showOSD()
+                        # we might be reacting to an immediate marker skip while showing a marker with timeout;
+                        # in that case, don't show the OSD
+                        if not self._currentMarker or not util.advancedSettings.skipMarkerTimerImmediate or \
+                                self._currentMarker["countdown"] is None:
+                            self.showOSD()
                     else:
                         # currently seeking without the OSD, apply the seek
                         self.doSeek()
@@ -1240,11 +1260,10 @@ class SeekDialog(kodigui.BaseDialog):
                     startTimeOffset = 0
                     markerDef["overrideStartOff"] = 0
 
+                markerEndNegoff = FINAL_MARKER_NEGOFF if getattr(markerDef["marker"], "final", False) else 0
+
                 if startTimeOffset - MARKER_SHOW_NEGOFF <= self.offset < \
-                        int(marker.endTimeOffset) - FINAL_MARKER_NEGOFF:
-                    # we've had a marker already; reset autoSkip state
-                    if self._currentMarker and self._currentMarker != markerDef:
-                        setattr(self, markerDef["markerAutoSkipped"], False)
+                        int(marker.endTimeOffset) - markerEndNegoff:
 
                     return markerDef
 
@@ -1378,7 +1397,7 @@ class SeekDialog(kodigui.BaseDialog):
     def onPlaybackPaused(self):
         self._osdHideFast = False
 
-    def displayMarkers(self):
+    def displayMarkers(self, cancelTimer=False, immediate=False):
         # intro/credits marker display logic
         markerDef = self.getCurrentMarkerDef()
 
@@ -1386,12 +1405,20 @@ class SeekDialog(kodigui.BaseDialog):
             # no marker to display, hide it
             self.setProperty('show.markerSkip', '')
             self.setProperty('show.markerSkip_OSDOnly', '')
+
+            # this might be counter intuitive, but self._currentMarker is a reference to a dict
             if self._currentMarker:
                 self._currentMarker["countdown"] = None
+            self._currentMarker = None
             return False
 
+        if cancelTimer and self._currentMarker and self._currentMarker["countdown"] is not None:
+            self._currentMarker["countdown"] = None
+            markerDef["markerAutoSkipped"] = True
+            setattr(self, markerDef["markerAutoSkipShownTimer"], None)
+
         markerAutoSkip = getattr(self, markerDef["markerAutoSkip"])
-        markerAutoSkipped = getattr(self, markerDef["markerAutoSkipped"])
+        markerAutoSkipped = markerDef["markerAutoSkipped"]
 
         # getCurrentMarkerDef might have overridden the startTimeOffset, use that
         startTimeOff = markerDef["overrideStartOff"] if markerDef["overrideStartOff"] is not None else \
@@ -1402,14 +1429,15 @@ class SeekDialog(kodigui.BaseDialog):
             and markerAutoSkip \
             and not markerAutoSkipped \
             and not self._navigatedViaMarkerOrChapter \
-            and (markerDef["countdown"] == 0 or startTimeOff == 0)
+            and (markerDef["countdown"] == 0 or startTimeOff == 0 or immediate)
         # and (startTimeOff == 0 or sTOffWThres <= self.offset) \
 
         # auto skip marker
         # delay marker autoskip by autoSkipOffset to avoid cutting off content at the expense of being
         # slightly too late
         if autoSkippingNow:
-            setattr(self, markerDef["markerAutoSkipped"], True)
+            markerDef["markerAutoSkipped"] = True
+            setattr(self, markerDef["markerAutoSkipShownTimer"], None)
             self.setProperty('show.markerSkip', '')
             self.setProperty('show.markerSkip_OSDOnly', '')
             self.resetAutoSeekTimer(None)
@@ -1461,7 +1489,7 @@ class SeekDialog(kodigui.BaseDialog):
                 self.setProperty('show.markerSkip_OSDOnly', '')
 
         # no marker auto skip or not yet auto skipped, normal display
-        if not markerAutoSkip or markerAutoSkip and not markerAutoSkipped:
+        if not markerAutoSkip or (markerAutoSkip and not markerAutoSkipped):
             self.setProperty('show.markerSkip', '1')
         # marker auto skip and already skipped - hide in OSD
         elif markerAutoSkip and markerAutoSkipped:
@@ -1497,6 +1525,8 @@ class SeekDialog(kodigui.BaseDialog):
         if not self.initialized or self._ignoreTick:
             return
 
+        cancelTick = self.displayMarkers()
+
         if xbmc.getCondVisibility('Window.IsActive(busydialog) + !Player.Caching'):
             util.DEBUG_LOG('SeekDialog: Possible stuck busy dialog - closing')
             xbmc.executebuiltin('Dialog.Close(busydialog,1)')
@@ -1521,7 +1551,6 @@ class SeekDialog(kodigui.BaseDialog):
             self.resetSeeking()
             return
 
-        cancelTick = self.displayMarkers()
         if cancelTick:
             return
 

@@ -60,6 +60,7 @@ def signout():
 def main():
     global BACKGROUND
     util.setGlobalProperty('running', '1')
+    # fixme: reopen windowutils.HOME if still running?
     try:
         with util.Cron(1):
             BACKGROUND = background.BackgroundWindow.create(function=_main)

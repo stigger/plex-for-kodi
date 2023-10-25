@@ -120,6 +120,8 @@ class AdvancedSettings(object):
         ("auto_skip_offset", 2.5),
         ("conn_check_timeout", 2.5),
         ("postplayCancel", True),
+        ("skip_marker_timer_cancel", True),
+        ("skip_marker_timer_immediate", False),
     )
 
     def __init__(self):

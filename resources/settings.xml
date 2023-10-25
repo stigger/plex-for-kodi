@@ -157,6 +157,16 @@
                         <popup>false</popup>
                     </control>
                 </setting>
+                <setting id="skip_marker_timer_cancel" type="boolean" label="32906" help="32907">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="skip_marker_timer_immediate" type="boolean" label="32908" help="32909">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
                 <setting id="show_media_ends_info" type="boolean" label="32540" help="32541">
                     <level>0</level>
                     <default>true</default>
