@@ -94,6 +94,7 @@ class SeekDialog(kodigui.BaseDialog):
     SELECTION_INDICATOR_GROUP = 203
     SELECTION_INDICATOR_IMAGE = 204
     SELECTION_INDICATOR_TEXT = 205
+    CACHE_IMAGE_ID = 206
     BIF_IMAGE_ID = 300
     SEEK_IMAGE_WIDTH = 1920
 
@@ -304,6 +305,7 @@ class SeekDialog(kodigui.BaseDialog):
 
         self.seekbarControl = self.getControl(self.SEEK_IMAGE_ID)
         self.positionControl = self.getControl(self.POSITION_IMAGE_ID)
+        self.cacheControl = self.getControl(self.CACHE_IMAGE_ID)
         self.bifImageControl = self.getControl(self.BIF_IMAGE_ID)
         self.selectionIndicator = self.getControl(self.SELECTION_INDICATOR)
         self.selectionIndicatorImage = self.getControl(self.SELECTION_INDICATOR_IMAGE)
@@ -1160,6 +1162,10 @@ class SeekDialog(kodigui.BaseDialog):
             w = int(ratio * self.SEEK_IMAGE_WIDTH)
             self.positionControl.setWidth(w)
 
+        # update cache/buffer bar
+        cache_w = int(xbmc.getInfoLabel("Player.ProgressCache")) * self.SEEK_IMAGE_WIDTH // 100
+        self.cacheControl.setWidth(cache_w)
+
         to = self.trueOffset()
         self.setProperty('time.current', util.timeDisplay(to))
         self.setProperty('time.left', util.timeDisplay(self.duration - to))
@@ -1364,6 +1370,8 @@ class SeekDialog(kodigui.BaseDialog):
             self.positionControl.setWidth(w)
         else:
             # we're seeking
+            if not self.selectedOffset:
+                return
 
             # current seek position below current offset? set the position bar's width to the current position of the
             # seek and the seek bar to the current position of the video, to visually indicate the backwards-seeking

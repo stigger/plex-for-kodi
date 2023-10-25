@@ -163,6 +163,14 @@
                     <texture>script.plex/white-square.png</texture>
                     <colordiffuse>A0000000</colordiffuse>
                 </control>
+                <control type="image" id="206">
+                    <posx>0</posx>
+                    <posy>2</posy>
+                    <width>1</width>
+                    <height>6</height>
+                    <texture>script.plex/white-square.png</texture>
+                    <colordiffuse>EE4E4842</colordiffuse>
+                </control>
                 <control type="image" id="201">
                     <posx>0</posx>
                     <posy>2</posy>
