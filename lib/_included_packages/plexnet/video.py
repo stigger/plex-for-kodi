@@ -692,3 +692,21 @@ class Clip(PlayableVideo):
 
     def getStreamURL(self, **params):
         return self._getStreamURL(**params)
+
+    @property
+    def videoStreams(self):
+        if self._videoStreams is None:
+            self._videoStreams = self._findStreams(plexstream.PlexStream.TYPE_VIDEO)
+        return self._videoStreams
+
+    @property
+    def audioStreams(self):
+        if self._audioStreams is None:
+            self._audioStreams = self._findStreams(plexstream.PlexStream.TYPE_AUDIO)
+        return self._audioStreams
+
+    @property
+    def subtitleStreams(self):
+        if self._subtitleStreams is None:
+            self._subtitleStreams = self._findStreams(plexstream.PlexStream.TYPE_SUBTITLE)
+        return self._subtitleStreams
