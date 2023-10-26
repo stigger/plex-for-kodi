@@ -263,7 +263,7 @@ class Settings(object):
         'video': (
             T(32053, 'Video'), (
                 QualitySetting('local_quality', T(32020, 'Local Quality'), 13),
-                QualitySetting('remote_quality', T(32021, 'Remote Quality'), 8),
+                QualitySetting('remote_quality', T(32021, 'Remote Quality'), 13),
                 QualitySetting('online_quality', T(32022, 'Online Quality'), 13),
                 BoolSetting('playback_directplay', T(32025, 'Allow Direct Play'), True),
                 BoolSetting('playback_remux', T(32026, 'Allow Direct Stream'), True),
