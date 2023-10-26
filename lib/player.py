@@ -386,6 +386,9 @@ class SeekPlayerHandler(BasePlayerHandler):
             self.dialog.onPlaybackPaused()
 
     def onPlayBackSeek(self, stime, offset):
+        if self.dialog:
+            self.dialog.onPlaybackSeek(stime, offset)
+
         if self.seekOnStart:
             seeked = False
             if self.dialog:
@@ -1190,7 +1193,11 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
         ct = 0
         while self.isPlayingVideo() and not util.MONITOR.abortRequested() and not self._closed:
-            self.currentTime = self.getTime()
+            try:
+                self.currentTime = self.getTime()
+            except RuntimeError:
+                break
+
             util.MONITOR.waitForAbort(0.1)
             if xbmc.getCondVisibility('Window.IsActive(videoosd)'):
                 if not self.hasOSD:
@@ -1227,7 +1234,11 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler.onMonitorInit()
         ct = 0
         while self.isPlayingAudio() and not util.MONITOR.abortRequested() and not self._closed:
-            self.currentTime = self.getTime()
+            try:
+                self.currentTime = self.getTime()
+            except RuntimeError:
+                break
+
             util.MONITOR.waitForAbort(0.1)
 
             ct += 1

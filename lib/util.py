@@ -122,6 +122,7 @@ class AdvancedSettings(object):
         ("postplayCancel", True),
         ("skip_marker_timer_cancel", True),
         ("skip_marker_timer_immediate", False),
+        ("low_drift_timer", True),
     )
 
     def __init__(self):

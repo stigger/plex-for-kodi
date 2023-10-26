@@ -224,23 +224,25 @@ class CompatEvent(Event):
 
 
 class Timer(object):
-    def __init__(self, timeout, function, repeat=False, *args, **kwargs):
+    def __init__(self, timeout, function, repeat=False, name=None, fname=None, *args, **kwargs):
         self.function = function
         self.timeout = timeout
         self.repeat = repeat
         self.args = args
         self.kwargs = kwargs
         self._reset = False
+        self.name = name or 'TIMER:{0}'.format(self.function)
+        self.fname = fname or repr(self.function)
         self.event = CompatEvent()
         self.start()
 
     def start(self):
         self.event.clear()
-        self.thread = threading.Thread(target=self.run, name='TIMER:{0}'.format(self.function), *self.args, **self.kwargs)
+        self.thread = threading.Thread(target=self.run, name=self.name, *self.args, **self.kwargs)
         self.thread.start()
 
     def run(self):
-        DEBUG_LOG('Timer {0}: {1}'.format(repr(self.function), self._reset and 'RESET'or 'STARTED'))
+        DEBUG_LOG('Timer {0}: {1}'.format(self.fname, self._reset and 'RESET'or 'STARTED'))
         try:
             while not self.event.isSet() and not self.shouldAbort():
                 while not self.event.wait(self.timeout) and not self.shouldAbort():
@@ -255,7 +257,7 @@ class Timer(object):
                 if self in APP.timers:
                     APP.timers.remove(self)
 
-                DEBUG_LOG('Timer {0}: FINISHED'.format(repr(self.function)))
+                DEBUG_LOG('Timer {0}: FINISHED'.format(self.fname))
 
             self._reset = False
 
@@ -278,6 +280,23 @@ class Timer(object):
 
     def isExpired(self):
         return self.event.isSet()
+
+
+class RepeatingCounterTimer(Timer):
+    def __init__(self, timeout, function, repeat=True, *args, **kwargs):
+        self.ticks = 0
+        self._function = function
+        super(RepeatingCounterTimer, self).__init__(timeout, self.count, repeat=repeat,
+                                                    name='TIMER:{0}'.format(function),
+                                                    fname=repr(function), *args, **kwargs)
+
+    def count(self):
+        self.ticks += 1
+        self._function(*self.args, **self.kwargs)
+
+    def reset(self):
+        super(RepeatingCounterTimer, self).reset()
+        self.ticks = 0
 
 
 TIMER = Timer

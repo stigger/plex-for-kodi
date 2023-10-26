@@ -170,6 +170,9 @@ class SeekDialog(kodigui.BaseDialog):
         self.lastTimelineResponse = None
         self._ignoreInput = False
         self._ignoreTick = False
+        self.ldTimer = util.advancedSettings.lowDriftTimer
+        self.timeKeeper = None
+        self.timeKeeperTime = None
 
         # optimize
         self._enableMarkerSkip = plexapp.ACCOUNT.hasPlexPass()
@@ -675,6 +678,11 @@ class SeekDialog(kodigui.BaseDialog):
                     del self.playlistDialog
                     self.playlistDialog = None
                     util.garbageCollect()
+
+            if self.timeKeeper:
+                self.timeKeeper.cancel()
+                del self.timeKeeper
+                self.timeKeeper = None
         finally:
             kodigui.BaseDialog.doClose(self)
 
@@ -1155,7 +1163,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.bigSeekControl.control.setHeight(160)
             self.bigSeekControl.control.setPosition(self.bigSeekControl.getX(), -126)
 
-    def updateCurrent(self, update_position_control=True):
+    def updateCurrent(self, update_position_control=True, atOffset=None):
         ratio = self.trueOffset() / float(self.duration)
 
         if update_position_control:
@@ -1166,7 +1174,7 @@ class SeekDialog(kodigui.BaseDialog):
         cache_w = int(xbmc.getInfoLabel("Player.ProgressCache")) * self.SEEK_IMAGE_WIDTH // 100
         self.cacheControl.setWidth(cache_w)
 
-        to = self.trueOffset()
+        to = atOffset if atOffset is not None else self.trueOffset()
         self.setProperty('time.current', util.timeDisplay(to))
         self.setProperty('time.left', util.timeDisplay(self.duration - to))
 
@@ -1394,16 +1402,46 @@ class SeekDialog(kodigui.BaseDialog):
                 self.positionControl.setWidth(w)
 
     def onPlaybackResumed(self):
+        util.DEBUG_LOG("SeekDialog: OnPlaybackResumed")
         self._osdHideFast = True
+        self.ldTimer and self.syncTimeKeeper()
         self.tick()
 
     def onPlaybackStarted(self):
+        util.DEBUG_LOG("SeekDialog: OnPlaybackStarted")
         if self._ignoreInput:
             self._ignoreInput = False
+        self.ldTimer and self.syncTimeKeeper()
         self.tick()
 
     def onPlaybackPaused(self):
+        util.DEBUG_LOG("SeekDialog: OnPlaybackPaused")
         self._osdHideFast = False
+
+    def onPlaybackSeek(self, stime, offset):
+        util.DEBUG_LOG("SeekDialog: OnPlaybackSeek")
+        self.ldTimer and self.syncTimeKeeper()
+
+    def syncTimeKeeper(self):
+        self.timeKeeperTime = int(self.handler.player.getTime() * 1000)
+        if not self.timeKeeper:
+            self.timeKeeper = plexapp.util.RepeatingCounterTimer(1.0, self.onTimeKeeperCallback)
+        self.onTimeKeeperCallback(tick=False)
+        self.timeKeeper.reset()
+
+    def onTimeKeeperCallback(self, tick=True):
+        """
+        called by playbackTimer periodically, sets playback time/ends in UI
+        """
+        # we might be a little early on slower systems
+        if not self.started:
+            return
+
+        if tick and xbmc.getCondVisibility('Player.Playing'):
+            self.timeKeeperTime += 1000
+
+        self.updateCurrent(
+            update_position_control=not self._seeking and not self._applyingSeek, atOffset=self.timeKeeperTime)
 
     def displayMarkers(self, cancelTimer=False, immediate=False):
         # intro/credits marker display logic
@@ -1530,8 +1568,15 @@ class SeekDialog(kodigui.BaseDialog):
             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
 
     def tick(self, offset=None):
+        """
+        Called ~1/s; can be wildly inaccurate.
+        """
         if not self.initialized or self._ignoreTick:
             return
+
+        # invisibly sync low-drift timer to current playback every X seconds, as Player.getTime() can be wildly off
+        if self.ldTimer and not self.osdVisible() and self.timeKeeper and self.timeKeeper.ticks >= 10:
+            self.syncTimeKeeper()
 
         cancelTick = False
         # don't auto skip while we're initializing and waiting for the handler to seek on start
@@ -1571,7 +1616,8 @@ class SeekDialog(kodigui.BaseDialog):
             self.doSeek()
             return True
 
-        self.updateCurrent(update_position_control=not self._seeking and not self._applyingSeek)
+        if not self.ldTimer:
+            self.updateCurrent(update_position_control=not self._seeking and not self._applyingSeek)
 
     @property
     def playlistDialogVisible(self):
