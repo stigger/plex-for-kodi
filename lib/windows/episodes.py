@@ -833,6 +833,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     def checkForHeaderFocus(self, action):
         # don't continue if we're still waiting for tasks
         if self.tasks or not self.episodesPaginator:
+            if self.tasks:
+                util.DEBUG_LOG("Episodes: Moving too fast through paginator, throttling.")
             return
 
         if self.episodesPaginator.boundaryHit:
@@ -846,15 +848,10 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         lastItem = self.lastItem
 
+        if not lastItem:
+            return
+
         if action in (xbmcgui.ACTION_MOVE_RIGHT, xbmcgui.ACTION_MOVE_LEFT):
-            mliPos = self.episodeListControl.getManagedItemPosition(mli)
-
-            # don't act on actions at the absolute data boundaries
-            if action == xbmcgui.ACTION_MOVE_LEFT and mliPos == 0:
-                return
-            elif action == xbmcgui.ACTION_MOVE_RIGHT and mliPos + 1 == len(self.episodeListControl):
-                return
-
             items = self.episodesPaginator.wrap(mli, lastItem, action)
             xbmc.sleep(100)
             mli = self.episodeListControl.getSelectedItem()
