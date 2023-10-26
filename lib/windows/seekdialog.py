@@ -1533,7 +1533,10 @@ class SeekDialog(kodigui.BaseDialog):
         if not self.initialized or self._ignoreTick:
             return
 
-        cancelTick = self.displayMarkers()
+        cancelTick = False
+        # don't auto skip while we're initializing and waiting for the handler to seek on start
+        if offset is None and not self.handler.seekOnStart:
+            cancelTick = self.displayMarkers()
 
         if xbmc.getCondVisibility('Window.IsActive(busydialog) + !Player.Caching'):
             util.DEBUG_LOG('SeekDialog: Possible stuck busy dialog - closing')
