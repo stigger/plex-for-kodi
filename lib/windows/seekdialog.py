@@ -1425,7 +1425,11 @@ class SeekDialog(kodigui.BaseDialog):
         self.ldTimer and self.syncTimeKeeper()
 
     def syncTimeKeeper(self):
-        self.timeKeeperTime = int(self.handler.player.getTime() * 1000)
+        try:
+            self.timeKeeperTime = int(self.handler.player.getTime() * 1000)
+        except RuntimeError:
+            self.timeKeeper.cancel()
+
         if not self.timeKeeper:
             self.timeKeeper = plexapp.util.RepeatingCounterTimer(1.0, self.onTimeKeeperCallback)
         self.onTimeKeeperCallback(tick=False)

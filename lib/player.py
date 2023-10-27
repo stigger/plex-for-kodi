@@ -88,7 +88,7 @@ class BasePlayerHandler(object):
         return None
 
     def shouldSendTimeline(self, item):
-        return item.ratingKey and item.getServer()
+        return item.ratingKey and item.getServer() and self.player.isPlaying()
 
     def currentDuration(self):
         if self.player.playerObject:
@@ -453,7 +453,10 @@ class SeekPlayerHandler(BasePlayerHandler):
                 self.player.setAudioStream(track.typeIndex)
 
     def updateOffset(self):
-        self.offset = int(self.player.getTime() * 1000)
+        try:
+            self.offset = int(self.player.getTime() * 1000)
+        except RuntimeError:
+            pass
 
     def initPlayback(self):
         self.seeking = self.NO_SEEK
@@ -491,7 +494,8 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.hideOSD()
         util.DEBUG_LOG('SeekHandler: onVideoWindowClosed - Seeking={0}'.format(self.seeking))
         if not self.seeking:
-            self.player.stop()
+            if self.player.isPlaying():
+                self.player.stop()
             if not self.playlist or not self.playlist.hasNext():
                 if not self.shouldShowPostPlay():
                     self.sessionEnded()
