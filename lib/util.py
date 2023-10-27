@@ -123,6 +123,7 @@ class AdvancedSettings(object):
         ("skip_marker_timer_cancel", True),
         ("skip_marker_timer_immediate", False),
         ("low_drift_timer", True),
+        ("player_show_buffer", True),
     )
 
     def __init__(self):

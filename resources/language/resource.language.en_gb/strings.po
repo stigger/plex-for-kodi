@@ -1223,7 +1223,7 @@ msgid "Disable binge mode"
 msgstr ""
 
 msgctxt "#33509"
-msgid "Early intro skip threshold (default: < 120s/2m)"
+msgid "Early intro skip threshold (default: < 60s/1m)"
 msgstr ""
 
 msgctxt "#33510"
@@ -1451,5 +1451,13 @@ msgid "Use accurate timer for time calculations"
 msgstr ""
 
 msgctxt "#32911"
-msgid "Uses a different timer implementation for time-left/ends-at/current-video-time in a separate thread that doesn't drift/jump as much as the old implementation. No negative effects observed yet."
+msgid "Uses a different timer implementation for time-left/ends-at/current-video-time in a separate thread that doesn't visibly drift/jump as much as the old implementation. No negative effects observed yet."
+msgstr ""
+
+msgctxt "#32912"
+msgid "Show buffer-state on timeline"
+msgstr ""
+
+msgctxt "#32913"
+msgid "Shows the current Kodi buffer/cache state on the video player timeline."
 msgstr ""

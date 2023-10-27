@@ -164,6 +164,7 @@
                     <colordiffuse>A0000000</colordiffuse>
                 </control>
                 <control type="image" id="206">
+                    <visible>!String.IsEmpty(Window.Property(show.buffer))</visible>
                     <posx>0</posx>
                     <posy>2</posy>
                     <width>1</width>

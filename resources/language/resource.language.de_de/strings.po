@@ -1520,8 +1520,8 @@ msgid "Disable binge mode"
 msgstr "Binge mode deaktiv."
 
 msgctxt "#33509"
-msgid "Early intro skip threshold (default: < 120s/2m)"
-msgstr "Frühes Intro-Überspringen Grenzwert (default: < 120s/2m)"
+msgid "Early intro skip threshold (default: < 60s/1m)"
+msgstr "Frühes Intro-Überspringen Grenzwert (default: < 60s/1m)"
 
 msgctxt "#33510"
 msgid "When showing the intro skip button early, only do so if the intro starts within the first X seconds."
@@ -1750,4 +1750,12 @@ msgstr "Benutze akkuraten Zeitgeber für Zeitberechnungen"
 
 msgctxt "#32911"
 msgid "Uses a different timer implementation for time-left/ends-at/current-video-time in a separate thread that doesn't drift/jump as much as the old implementation. No negative effects observed yet."
-msgstr "Benutzt eine andere Zeitgeber-Implementation für Zeit-übrig/Ended-um/Aktuelle-Video-Zeit in einem separaten Thread, die nicht so sehr abdriftet/springt, wie die alte. Bis jetzt keine negativen Effekte beobachtet."
+msgstr "Benutzt eine andere Zeitgeber-Implementation für Zeit-übrig/Ended-um/Aktuelle-Video-Zeit in einem separaten Thread, die visuell nicht so sehr abdriftet/springt, wie die alte. Bis jetzt keine negativen Effekte beobachtet."
+
+msgctxt "#32912"
+msgid "Show buffer-state on timeline"
+msgstr "Zeige Puffer-Stand auf Zeitachse"
+
+msgctxt "#32913"
+msgid "Shows the current Kodi buffer/cache state on the video player timeline."
+msgstr "Zeigt den aktuellen Kodi Puffer/Cache-Stand auf der Videoplayer Zeitachse."

@@ -23,18 +23,6 @@
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="postplay_timeout" type="integer" label="32501" help="32904">
-                    <level>0</level>
-                    <default>16</default>
-                    <control type="edit" format="integer">
-                        <heading>32501</heading>
-                    </control>
-                </setting>
-                <setting id="postplay_cancel" type="boolean" label="32905">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle"/>
-                </setting>
             </group>
         </category>
         <!-- Player -->
@@ -84,6 +72,11 @@
                     </dependencies>
                 </setting>
                 <setting id="low_drift_timer" type="boolean" label="32910" help="32911">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="player_show_buffer" type="boolean" label="32912" help="32913">
                     <level>0</level>
                     <default>true</default>
                     <control type="toggle"/>
@@ -214,6 +207,18 @@
                     </dependencies>
                 </setting>
                 <setting id="playlist_visit_media" type="boolean" label="32505">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="postplay_timeout" type="integer" label="32501" help="32904">
+                    <level>0</level>
+                    <default>16</default>
+                    <control type="edit" format="integer">
+                        <heading>32501</heading>
+                    </control>
+                </setting>
+                <setting id="postplay_cancel" type="boolean" label="32905">
                     <level>0</level>
                     <default>true</default>
                     <control type="toggle"/>

@@ -1171,8 +1171,9 @@ class SeekDialog(kodigui.BaseDialog):
             self.positionControl.setWidth(w)
 
         # update cache/buffer bar
-        cache_w = int(xbmc.getInfoLabel("Player.ProgressCache")) * self.SEEK_IMAGE_WIDTH // 100
-        self.cacheControl.setWidth(cache_w)
+        if util.advancedSettings.playerShowBuffer:
+            cache_w = int(xbmc.getInfoLabel("Player.ProgressCache")) * self.SEEK_IMAGE_WIDTH // 100
+            self.cacheControl.setWidth(cache_w)
 
         to = atOffset if atOffset is not None else self.trueOffset()
         self.setProperty('time.current', util.timeDisplay(to))
@@ -1293,6 +1294,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('has.playlist', self.handler.playlist and '1' or '')
         self.setProperty('shuffled', (self.handler.playlist and self.handler.playlist.isShuffled) and '1' or '')
         self.setProperty('has.chapters', self.showChapters and '1' or '')
+        self.setProperty('show.buffer', util.advancedSettings.playerShowBuffer and '1' or '')
         self.applyMarkerProps()
         self.baseOffset = offset
         self.offset = 0
