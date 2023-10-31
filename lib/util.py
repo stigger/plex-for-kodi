@@ -314,8 +314,16 @@ class KodiCacheManager(object):
     def viableOptions(self):
         default = list(filter(lambda x: x < self.recMax, [20, 40, 60, 80, 120, 160, 200, 400]))
 
+        # add option to overcommit slightly
+        overcommit = []
+        if xbmc.getCondVisibility('System.Platform.Android'):
+            overcommit.append(min(int(self.free * 0.23), 2000))
+
+        overcommit.append(min(int(self.free * 0.26), 2000))
+        overcommit.append(min(int(self.free * 0.3), 2000))
+
         # re-append current memorySize here, as recommended max might have changed
-        return list(sorted(list(set(default + [self.memorySize, self.recMax]))))
+        return list(sorted(list(set(default + [self.memorySize, self.recMax] + overcommit))))
 
     @property
     def free(self):
