@@ -88,10 +88,10 @@ class BasePlayerHandler(object):
         return None
 
     def shouldSendTimeline(self, item):
-        return item.ratingKey and item.getServer() and self.player.isPlaying()
+        return item.ratingKey and item.getServer()
 
     def currentDuration(self):
-        if self.player.playerObject:
+        if self.player.playerObject and self.player.isPlaying():
             try:
                 return int(self.player.getTotalTime() * 1000)
             except RuntimeError:
