@@ -1744,14 +1744,6 @@ msgctxt "#32909"
 msgid "When auto-skipping a marker with a timer, allow skipping immediately by pressing OK/SELECT."
 msgstr "Wenn eine Markierung mit einem Zeitgeber automatisch übersprungen wird, durch OK/SELECT-Taste sofort überspringen."
 
-msgctxt "#32910"
-msgid "Use accurate timer for time calculations"
-msgstr "Benutze akkuraten Zeitgeber für Zeitberechnungen"
-
-msgctxt "#32911"
-msgid "Uses a different timer implementation for time-left/ends-at/current-video-time in a separate thread that doesn't drift/jump as much as the old implementation. No negative effects observed yet."
-msgstr "Benutzt eine andere Zeitgeber-Implementation für Zeit-übrig/Ended-um/Aktuelle-Video-Zeit in einem separaten Thread, die visuell nicht so sehr abdriftet/springt, wie die alte. Bis jetzt keine negativen Effekte beobachtet."
-
 msgctxt "#32912"
 msgid "Show buffer-state on timeline"
 msgstr "Zeige Puffer-Stand auf Zeitachse"

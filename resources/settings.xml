@@ -71,11 +71,6 @@
                         <dependency type="enable" setting="show_media_ends_info">true</dependency>
                     </dependencies>
                 </setting>
-                <setting id="low_drift_timer" type="boolean" label="32910" help="32911">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle"/>
-                </setting>
                 <setting id="player_show_buffer" type="boolean" label="32912" help="32913">
                     <level>0</level>
                     <default>true</default>
