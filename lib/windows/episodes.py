@@ -978,7 +978,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         defW = 176
         defH = 140
         ids = [301, 302, 303, 304, 305]
-        if len(list(filter(lambda x: x.isAccessible(), self.video.media()))) > 1:
+        if len(list(filter(lambda x: x.isAccessible(), video.media()))) > 1:
             mli.setBoolProperty('media.multiple', True)
             # adjust button sizes
             ids.append(307)

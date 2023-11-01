@@ -1720,8 +1720,15 @@ class PlaylistDialog(kodigui.BaseDialog):
 
     def updatePlayingItem(self):
         playing = self.handler.player.video.ratingKey
-        for mli in self.playlistListControl:
-            mli.setProperty('playing', mli.dataSource.ratingKey == playing and '1' or '')
+        selectIndex = None
+        for (index, mli) in enumerate(self.playlistListControl):
+            isMLI = mli.dataSource.ratingKey == playing
+            mli.setProperty('playing', isMLI and '1' or '')
+            if isMLI:
+                selectIndex = index
+
+        if selectIndex is not None:
+            xbmc.executebuiltin('Control.SetFocus({0}, {1})'.format(self.PLAYLIST_LIST_ID, selectIndex))
 
     def fillPlaylist(self):
         items = []
