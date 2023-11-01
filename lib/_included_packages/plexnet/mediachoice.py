@@ -27,7 +27,7 @@ class MediaChoice(object):
             self.part = media.parts[partIndex]
             if not self.part:
                 for part in media.parts:
-                    if part:
+                    if part.isAccessible():
                         self.part = part
 
             if self.part:
