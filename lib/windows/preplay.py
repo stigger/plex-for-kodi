@@ -530,7 +530,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.setProperty('video.codec', self.video.videoCodecString())
         self.setProperty('video.rendering', self.video.videoCodecRendering())
         self.setProperty('audio.channels', self.video.audioChannelsString(metadata.apiTranslate))
-        self.setBoolProperty('media.multiple', bool(len(self.video.media) > 1))
+        self.setBoolProperty('media.multiple', len(list(filter(lambda x: x.isAccessible(), self.video.media()))) > 1)
 
         self.setProperties(('rating.stars', 'rating', 'rating.image', 'rating2', 'rating2.image'), '')
         if self.video.userRating:
@@ -558,7 +558,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         self.setAudioAndSubtitleInfo()
 
-        self.setProperty('unavailable', not self.video.media()[0].isAccessible() and '1' or '')
+        self.setProperty('unavailable', all(not v.isAccessible() for v in self.video.media()) and '1' or '')
 
         if self.video.viewOffset.asInt():
             width = self.video.viewOffset.asInt() and (1 + int((self.video.viewOffset.asInt() / self.video.duration.asFloat()) * self.width)) or 1

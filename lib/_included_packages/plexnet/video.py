@@ -286,7 +286,7 @@ class Video(media.MediaItem):
         return (hours and "{}h ".format(hours) or '') + (minutes and "{}m".format(minutes) or "0m")
 
     def available(self):
-        return self.media()[0].isAccessible()
+        return any(v.isAccessible() for v in self.media())
 
 
 class RelatedMixin(object):

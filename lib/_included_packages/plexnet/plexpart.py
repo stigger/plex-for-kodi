@@ -39,7 +39,7 @@ class PlexPart(plexobjects.PlexObject):
 
     def isAvailable(self):
         # If we haven't fetched availability info, assume it's available
-        return not self.exists or self.exists.asBool()
+        return not self.exists or (hasattr(self.exists, "asBool") and self.exists.asBool())
 
     def getStreamsOfType(self, streamType):
         streams = []
@@ -157,8 +157,11 @@ class PlexPart(plexobjects.PlexObject):
     def hasStreams(self):
         return bool(self.streams)
 
+    def __bool__(self):
+        return self.isAvailable()
+
     def __str__(self):
-        return "Part {0} {1}".format(self.id("NaN"), self.key)
+        return "PlexPart {0} {1}".format(self.id("NaN"), self.key)
 
     def __eq__(self, other):
         if other is None:

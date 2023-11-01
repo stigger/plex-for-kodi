@@ -82,6 +82,7 @@
                     <label> </label>
                 </control> -->
                 <control type="button" id="302">
+                    <visible>String.IsEmpty(Window.Property(unavailable))</visible>
                     <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
                     <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
