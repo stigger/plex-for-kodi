@@ -237,25 +237,15 @@ class Video(media.MediaItem):
     def videoCodecString(self):
         return (self.mediaChoice.media.videoCodec or '').upper()
 
+    @property
     @forceMediaChoice
     def videoCodecRendering(self):
-        render = "sdr"
         stream = self.mediaChoice.videoStream
 
         if not stream:
             return ''
 
-        if stream.colorTrc == "smpte2084":
-            if stream.DOVIProfile == "8" and stream.DOVIBLCompatID == "1":
-                render = "dv/hdr10"
-            elif stream.DOVIProfile:
-                render = "dv"
-            else:
-                render = "hdr"
-        elif stream.colorTrc == "arib-std-b67":
-            render = "hlg"
-
-        return render.upper()
+        return stream.videoCodecRendering
 
     @forceMediaChoice
     def audioChannelsString(self, translate_func=util.dummyTranslate):

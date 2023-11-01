@@ -926,7 +926,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         mli.setProperty('show.title', video.grandparentTitle or (self.show_.title if self.show_ else ''))
         mli.setProperty('duration', util.durationToText(video.duration.asInt()))
         mli.setProperty('summary', video.summary.strip().replace('\t', ' '))
-        mli.setProperty('video.rendering', video.videoCodecRendering())
+        mli.setProperty('video.rendering', video.videoCodecRendering)
 
         if video.index:
             mli.setProperty('season', u'{0} {1}'.format(T(32303, 'Season'), video.parentIndex))
@@ -972,13 +972,13 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         mli.setProperty('audio.codec', video.audioCodecString())
         mli.setProperty('video.codec', video.videoCodecString())
         mli.setProperty('audio.channels', video.audioChannelsString(metadata.apiTranslate))
-        mli.setProperty('video.rendering', video.videoCodecRendering())
+        mli.setProperty('video.rendering', video.videoCodecRendering)
         mli.setBoolProperty('unavailable', not video.available())
 
         defW = 176
         defH = 140
         ids = [301, 302, 303, 304, 305]
-        if bool(len(video.media) > 1):
+        if len(list(filter(lambda x: x.isAccessible(), self.video.media()))) > 1:
             mli.setBoolProperty('media.multiple', True)
             # adjust button sizes
             ids.append(307)

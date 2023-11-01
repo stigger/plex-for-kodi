@@ -4,6 +4,8 @@ from . import plexstream
 from . import plexrequest
 from . import util
 
+import types
+
 
 class PlexPart(plexobjects.PlexObject):
     def reload(self):
@@ -39,7 +41,8 @@ class PlexPart(plexobjects.PlexObject):
 
     def isAvailable(self):
         # If we haven't fetched availability info, assume it's available
-        return not self.exists or (hasattr(self.exists, "asBool") and self.exists.asBool())
+        return not isinstance(self.exists, types.FunctionType) \
+               or (hasattr(self.exists, "asBool") and self.exists.asBool())
 
     def getStreamsOfType(self, streamType):
         streams = []
