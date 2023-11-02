@@ -428,7 +428,7 @@ class Settings(object):
                 ServerVersionSetting('server_version', T(32057, 'Current Server Version'), None),
                 InfoSetting('addon_path', T(33616, 'Addon Path'), util.ADDON.getAddonInfo("path")),
                 InfoSetting('userdata_path', T(33617, 'Userdata/Profile Path'),
-                            xbmcvfs.translatePath("special://profile")),
+                            util.translatePath("special://profile")),
             )
         ),
     }

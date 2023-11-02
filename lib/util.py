@@ -34,9 +34,11 @@ _splitver = xbmc.getInfoLabel('System.BuildVersion').split()[0].split(".")
 KODI_VERSION_MAJOR, KODI_VERSION_MINOR = int(_splitver[0].split("-")[0]), int(_splitver[1].split("-")[0])
 
 if KODI_VERSION_MAJOR > 18:
-    PROFILE = xbmcvfs.translatePath(ADDON.getAddonInfo('profile'))
+    translatePath = xbmcvfs.translatePath
 else:
-    PROFILE = xbmc.translatePath(ADDON.getAddonInfo('profile'))
+    translatePath = xbmc.translatePath
+
+PROFILE = translatePath(ADDON.getAddonInfo('profile'))
 
 
 def getChannelMapping():
@@ -235,7 +237,7 @@ class KodiCacheManager(object):
     template = None
     orig_tpl_path = os.path.join(ADDON.getAddonInfo('path'), "pm4k_cache_template.xml")
     custom_tpl_path = "special://profile/pm4k_cache_template.xml"
-    translated_ctpl_path = xbmcvfs.translatePath(custom_tpl_path)
+    translated_ctpl_path = translatePath(custom_tpl_path)
 
     # give Android a little more leeway with its sometimes weird memory management; otherwise stick with 23% of free mem
     safeFactor = .20 if xbmc.getCondVisibility('System.Platform.Android') else .23
@@ -368,10 +370,7 @@ def getGlobalProperty(key):
 
 def showNotification(message, time_ms=3000, icon_path=None, header=ADDON.getAddonInfo('name')):
     try:
-        if KODI_VERSION_MAJOR > 18:
-            icon_path = icon_path or xbmcvfs.translatePath(ADDON.getAddonInfo('icon'))
-        else:
-            icon_path = icon_path or xbmc.translatePath(ADDON.getAddonInfo('icon'))
+        icon_path = icon_path or translatePath(ADDON.getAddonInfo('icon'))
         xbmc.executebuiltin('Notification({0},{1},{2},{3})'.format(header, message, time_ms, icon_path))
     except RuntimeError:  # Happens when disabling the addon
         LOG(message)

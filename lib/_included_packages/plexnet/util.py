@@ -7,6 +7,7 @@ import platform
 import uuid
 import threading
 import six
+from kodi_six import xbmcaddon
 
 from . import verlib
 from . import compat
@@ -18,9 +19,11 @@ else:
 
 BASE_HEADERS = ''
 
+# to maintain py2 compatibility, duplicate ADDON from lib.util to avoid circular import
+ADDON = xbmcaddon.Addon()
+
 
 def resetBaseHeaders():
-    from lib.util import ADDON
     return {
         'X-Plex-Platform': X_PLEX_PLATFORM,
         'X-Plex-Platform-Version': X_PLEX_PLATFORM_VERSION,
