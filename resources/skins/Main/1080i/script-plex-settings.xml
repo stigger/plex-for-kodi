@@ -413,7 +413,6 @@
                     <posy>0</posy>
                     <width>845</width>
                     <height>566</height>
-                    <onup>noop</onup>
                     <onleft>100</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>vertical</orientation>
