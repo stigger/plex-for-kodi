@@ -47,7 +47,6 @@ class Video(media.MediaItem):
     TYPE = None
     manually_selected_sub_stream = False
     current_subtitle_is_embedded = False
-    bingeMode = False
 
     def __init__(self, *args, **kwargs):
         self._settings = None
@@ -494,12 +493,8 @@ class Show(Video, RelatedMixin, SectionOnDeckMixin):
         return self.viewedLeafCount == self.leafCount
 
     @property
-    def bingeMode(self):
-        return util.INTERFACE.bingeModeManager(self)
-
-    @bingeMode.setter
-    def bingeMode(self, value):
-        util.INTERFACE.bingeModeManager(self, value)
+    def playbackSettings(self):
+        return util.INTERFACE.playbackManager(self)
 
     def seasons(self):
         path = self.key
@@ -630,12 +625,8 @@ class Episode(PlayableVideo, SectionOnDeckMixin):
         return self.get('viewCount').asInt() > 0 or self.get('viewOffset').asInt() > 0
 
     @property
-    def bingeMode(self):
-        return self.show().bingeMode
-
-    @bingeMode.setter
-    def bingeMode(self, value):
-        self.show().bingeMode(value)
+    def playbackSettings(self):
+        return self.show().playbackSettings
 
     def getStreamURL(self, **params):
         return self._getStreamURL(**params)

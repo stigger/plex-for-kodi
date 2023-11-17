@@ -22,6 +22,7 @@ from . import info
 from . import optionsdialog
 from . import preplayutils
 from . import pagination
+from . import playbacksettings
 
 from lib.util import T
 
@@ -168,7 +169,7 @@ class RelatedPaginator(pagination.BaseRelatedPaginator):
         return self.parentWindow.show_.getRelated(offset=offset, limit=amount)
 
 
-class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
+class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, playbacksettings.PlaybackSettingsMixin):
     xmlFile = 'script-plex-episodes.xml'
     path = util.ADDON.getAddonInfo('path')
     theme = 'Main'
@@ -705,7 +706,6 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
     def optionsButtonClicked(self, from_item=False):
         options = []
-        oldBingeModeValue = None
 
         mli = self.episodeListControl.getSelectedItem()
 
@@ -731,11 +731,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if self.show_:
             if options:
                 options.append(dropdown.SEPARATOR)
-            oldBingeModeValue = INTERFACE.bingeModeManager(self.show_)
-            if oldBingeModeValue:
-                options.append({'key': 'binge_mode', 'display': T(33508, 'Disable binge mode')})
-            else:
-                options.append({'key': 'binge_mode', 'display': T(33507, 'Enable binge mode')})
+
+            options.append({'key': 'playback_settings', 'display': T(32925, 'Playback Settings')})
             options.append(dropdown.SEPARATOR)
 
         if mli.dataSource.server.allowsMediaDeletion:
@@ -795,11 +792,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.goHome(self.show_.getLibrarySectionId())
         elif choice['key'] == 'delete':
             self.delete()
-        elif choice['key'] == 'binge_mode':
-            util.DEBUG_LOG(
-                "Changing binge mode setting for {} from {} to {}".format(self.show_.ratingKey, oldBingeModeValue,
-                                                                          not oldBingeModeValue))
-            INTERFACE.bingeModeManager(self.show_, not oldBingeModeValue)
+        elif choice['key'] == 'playback_settings':
+            self.playbackSettings(self.show_, pos, bottom)
 
     def mediaButtonClicked(self):
         options = []

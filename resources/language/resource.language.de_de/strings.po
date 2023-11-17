@@ -1512,12 +1512,12 @@ msgid "Show the intro skip button from the start of a video with an intro marker
 msgstr "Zeige den Intro-Überspringen-Knopf von Anfang an. Die Automatische-Intro-Überspringen-Einstellung wird angewandt. Überschreibt aktivierten Binge-Modus nicht."
 
 msgctxt "#33507"
-msgid "Enable binge mode"
-msgstr "Binge mode aktivieren"
+msgid "Enabled"
+msgstr "Aktiviert"
 
 msgctxt "#33508"
-msgid "Disable binge mode"
-msgstr "Binge mode deaktiv."
+msgid "Disabled"
+msgstr "Deaktiviert"
 
 msgctxt "#33509"
 msgid "Early intro skip threshold (default: < 60s/1m)"
@@ -1795,3 +1795,7 @@ msgstr "Setzt den Kodi Cache/Puffer readfactor Wert. Default: 4, empfohlen: 4-10
 msgctxt "#32924"
 msgid "Minimize"
 msgstr "Minimieren"
+
+msgctxt "#32925"
+msgid "Playback Settings"
+msgstr "Abspieleinstell."

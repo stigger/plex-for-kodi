@@ -246,14 +246,18 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('marker.autoSkip', '')
         self.setProperty('skipMarkerName', '')
 
-        self.bingeMode = self.player.video.type == 'episode' and self.player.video.bingeMode
+        if self.player.video.type == 'episode':
+            pbs = self.player.video.playbackSettings
+            util.DEBUG_LOG("Playback settings for {}: {}".format(self.player.video.ratingKey, pbs))
 
-        # don't auto skip intro when on binge mode on the first episode of a season
-        firstEp = self.player.video.index == '1'
+            self.bingeMode = pbs.binge_mode
 
-        self.autoSkipIntro = (self.bingeMode and not firstEp) or util.getUserSetting('auto_skip_intro', False)
-        self.autoSkipCredits = self.bingeMode or util.getUserSetting('auto_skip_credits', False)
-        self.showIntroSkipEarly = self.bingeMode or util.getUserSetting('show_intro_skip_early', False)
+            # don't auto skip intro when on binge mode on the first episode of a season
+            firstEp = self.player.video.index == '1'
+
+            self.autoSkipIntro = (self.bingeMode and not firstEp) or pbs.auto_skip_intro
+            self.autoSkipCredits = self.bingeMode or pbs.auto_skip_credits
+            self.showIntroSkipEarly = self.bingeMode or pbs.show_intro_skip_early
 
         self._introSkipShownStarted = None
         self._introAutoSkipped = False

@@ -1215,11 +1215,11 @@ msgid "Show the intro skip button from the start of a video with an intro marker
 msgstr ""
 
 msgctxt "#33507"
-msgid "Enable binge mode"
+msgid "Enabled"
 msgstr ""
 
 msgctxt "#33508"
-msgid "Disable binge mode"
+msgid "Disabled"
 msgstr ""
 
 msgctxt "#33509"
@@ -1497,3 +1497,8 @@ msgstr ""
 msgctxt "#32924"
 msgid "Minimize"
 msgstr ""
+
+msgctxt "#32925"
+msgid "Playback Settings"
+msgstr ""
+

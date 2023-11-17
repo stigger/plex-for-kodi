@@ -120,7 +120,7 @@ class BoolUserSetting(BoolSetting):
         old = self.get()
         if old != val:
             util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]'.format(self.userAwareID, old, val))
-            plexnet.util.APP.trigger('change:{0}'.format(self.ID), key=self.userAwareID, value=val)
+            plexnet.util.APP.trigger('change:{0}'.format(self.ID), key=self.userAwareID, value=val, skey=self.ID)
         return util.setSetting(self.userAwareID, val)
 
 
