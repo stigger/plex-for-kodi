@@ -382,7 +382,7 @@ class Settings(object):
                 IPSetting('manual_ip_0', T(32044, 'Connection 1 IP'), ''),
                 IntegerSetting('manual_port_0', T(32045, 'Connection 1 Port'), 32400),
                 IPSetting('manual_ip_1', T(32046, 'Connection 2 IP'), ''),
-                IntegerSetting('manual_port_1', T(32047, 'Connection 2 Port'), 32400)
+                IntegerSetting('manual_port_1', T(32047, 'Connection 2 Port'), 32400),
             )
         ),
         'system': (
@@ -401,6 +401,10 @@ class Settings(object):
                                       'your liking. (See About section for the file paths)'
                                ).format(util.kcm.free, util.kcm.recMax)
                 ),
+                BoolSetting(
+                    'slow_connection', T(32915, 'Slow connection'), False
+                ).description("Use with a wonky/slow connection, e.g. in a hotel room. Adjusts the UI to visually "
+                              "wait for item refreshes and waits for the buffer to fill when starting playback."),
                 OptionsSetting(
                     'action_on_sleep',
                     T(32700, 'Action on Sleep event'),

@@ -11,6 +11,7 @@ from collections import OrderedDict
 from . import kodigui
 from . import playersettings
 from . import dropdown
+from . import busy
 from plexnet import plexapp
 
 from lib import util
@@ -170,6 +171,8 @@ class SeekDialog(kodigui.BaseDialog):
         self.lastTimelineResponse = None
         self._ignoreInput = False
         self._ignoreTick = False
+        self._abortBufferWait = False
+        self.waitingForBuffer = False
 
         # optimize
         self._enableMarkerSkip = plexapp.ACCOUNT.hasPlexPass()
@@ -325,6 +328,8 @@ class SeekDialog(kodigui.BaseDialog):
         self.lastTimelineResponse = None
         self._lastAction = None
         self._ignoreTick = False
+        self.waitingForBuffer = False
+        self._abortBufferWait = False
 
         self.resetTimeout()
         self.resetSeeking()
@@ -534,6 +539,11 @@ class SeekDialog(kodigui.BaseDialog):
                         return
 
                 if action in cancelActions:
+                    if self.waitingForBuffer:
+                        self._abortBufferWait = True
+                        self.waitingForBuffer = False
+                        return
+
                     if self._seeking and not self._ignoreInput:
                         self.resetSeeking()
                         self.updateCurrent()
@@ -1397,6 +1407,101 @@ class SeekDialog(kodigui.BaseDialog):
                 self.seekbarControl.setWidth(w)
                 self.positionControl.setWidth(w)
 
+    def waitForBuffer(self):
+        # current filesize in bytes
+        size = float(self.handler.player.video.mediaChoice.part.size)
+
+        # current buffer fill percentage
+        currentBufferPerc = int(xbmc.getInfoLabel("Player.ProgressCache")) - int(xbmc.getInfoLabel("Player.Progress"))
+
+        # configured buffer size
+        bufferBytes = util.kcm.memorySize * 1024 * 1024
+
+        # wait for the full buffer or for 10% of the file at max
+        # a full buffer is typically 30% of the configured cache value
+        sensibleBufferPerc = min(bufferBytes / size * 100.0 / 2.8, 10)
+
+        # can wait for buffer?
+        # we're relying on integer based percentages coming from kodi's internal ProgressCache.
+        # with a typical device buffer of 20-160 MB, this might be less than 1% of available buffer based on the playing
+        # media item. If we're below that value, wait for a defined amount of time instead of being smart.
+        if sensibleBufferPerc >= 1.0:
+            if currentBufferPerc < sensibleBufferPerc:
+                # pause
+                wasPlaying = False
+                if self.player.playState == self.player.STATE_PLAYING:
+                    util.DEBUG_LOG("SeekDialog.buffer: Waiting for buffer to reach {} (is: {})"
+                                   .format(sensibleBufferPerc, currentBufferPerc))
+                    self.player.pause()
+                    wasPlaying = True
+
+                waitedFor = 0
+                waitMax = util.advancedSettings.bufferWaitMax
+                waitExceeded = False
+                with busy.BusyMsgContext() as bc:
+                    # check for the buffer fill-state every 200ms
+                    # this may be canceled by the usual actions;
+                    # depending on who receives the cancel action, _abortBufferWait might be set by our onAction
+                    # or by the busy window via the context manager
+                    while not self._abortBufferWait and not bc.shouldClose and waitedFor < waitMax and \
+                            (int(xbmc.getInfoLabel("Player.ProgressCache")) -
+                             int(xbmc.getInfoLabel("Player.Progress"))) < sensibleBufferPerc:
+                        self.waitingForBuffer = True
+                        curBuf = int(xbmc.getInfoLabel("Player.ProgressCache")) - \
+                                 int(xbmc.getInfoLabel("Player.Progress"))
+
+                        bc.setMessage("Buffer: {} %".format(int(curBuf / sensibleBufferPerc * 100)))
+
+                        xbmc.sleep(200)
+                        waitedFor += 0.2
+
+                        # report buffer state every 10 seconds
+                        if int(waitedFor) > 0 and int(waitedFor) % 10 == 0:
+                            util.DEBUG_LOG("SeekDialog.buffer: "
+                                           "Buffer filled {}/{}".format(curBuf, sensibleBufferPerc))
+
+                    # buffer wait canceled via busy window
+                    if bc.shouldClose:
+                        self._abortBufferWait = True
+
+                self.waitingForBuffer = False
+
+                if waitedFor >= waitMax:
+                    waitExceeded = True
+
+                if waitExceeded or self._abortBufferWait:
+                    if not self._abortBufferWait:
+                        util.showNotification(util.T(32917, "Couldn't fill buffer in time ({}s)").format(waitMax),
+                                              header="Buffer")
+                    self.stop()
+                    return True
+
+                if self.player.playState == self.player.STATE_PAUSED and wasPlaying:
+                    # resume
+                    util.DEBUG_LOG("SeekDialog.buffer: Buffer filled, resuming")
+                    self.player.pause()
+                    return True
+            else:
+                util.DEBUG_LOG("SeekDialog.buffer: Buffer already filled, not waiting for buffer")
+
+        else:
+            wait = util.advancedSettings.bufferInsufficientWait
+            util.DEBUG_LOG("SeekDialog.buffer: Buffer is too small for us to see, waiting {} seconds".format(wait))
+            self.waitingForBuffer = True
+
+            wasPlaying = False
+            if self.player.playState == self.player.STATE_PLAYING:
+                self.player.pause()
+                wasPlaying = True
+
+            with busy.BusyMsgContext() as bc:
+                bc.setMessage("Buffering")
+                util.MONITOR.waitForAbort(wait)
+                self.waitingForBuffer = False
+                if self.player.playState == self.player.STATE_PAUSED and wasPlaying:
+                    self.player.pause()
+                return True
+
     def onPlaybackResumed(self):
         util.DEBUG_LOG("SeekDialog: OnPlaybackResumed")
         self._osdHideFast = True
@@ -1406,6 +1511,12 @@ class SeekDialog(kodigui.BaseDialog):
         util.DEBUG_LOG("SeekDialog: OnPlaybackStarted")
         if self._ignoreInput:
             self._ignoreInput = False
+
+        # wait for buffer if we're not expecting a seek
+        if not self.handler.seekOnStart and util.getSetting("slow_connection", False):
+            self.tick(waitForBuffer=True)
+            return
+
         self.tick()
 
     def onPlaybackPaused(self):
@@ -1413,7 +1524,9 @@ class SeekDialog(kodigui.BaseDialog):
         self._osdHideFast = False
 
     def onPlaybackSeek(self, stime, offset):
-        util.DEBUG_LOG("SeekDialog: OnPlaybackSeek")
+        util.DEBUG_LOG("SeekDialog: OnPlaybackSeek: {} {}, {}".format(stime, offset, self.handler.seekOnStart))
+        if self.handler.seekOnStart and util.getSetting("slow_connection", False):
+            self.tick(waitForBuffer=True)
 
     def displayMarkers(self, cancelTimer=False, immediate=False):
         # intro/credits marker display logic
@@ -1539,10 +1652,15 @@ class SeekDialog(kodigui.BaseDialog):
                 and not markerAutoSkip:
             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
 
-    def tick(self, offset=None):
+    def tick(self, offset=None, waitForBuffer=False):
         """
         Called ~1/s; can be wildly inaccurate.
         """
+        if waitForBuffer:
+            cont = self.waitForBuffer()
+            if not cont:
+                return
+
         if not self.initialized or self._ignoreTick:
             return
 

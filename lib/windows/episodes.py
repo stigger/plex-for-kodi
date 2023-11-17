@@ -267,7 +267,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 player.PLAYER.playBackgroundMusic(self.show_.theme.asURL(True), volume,
                                                   self.show_.ratingKey)
 
-    @busy.dialog()
+    @busy.dialog(condition=lambda: util.getSetting("slow_connection", False))
     def onReInit(self):
         if not self.tasks:
             self.tasks = backgroundthread.Tasks()
@@ -286,8 +286,9 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                     self.episodesPaginator.prepareListItem(v, m)
 
         # re-set current item's progress to a loading state
-        self.progressImageControl.setWidth(1)
-        mli.setProperty('remainingTime', T(32914, "Loading"))
+        if util.getSetting("slow_connection", False):
+            self.progressImageControl.setWidth(1)
+            mli.setProperty('remainingTime', T(32914, "Loading"))
 
         self.reloadItems(items=reloadItems, with_progress=True)
         self.episodesPaginator.setEpisode(self._reloadVideos and self._reloadVideos[-1] or mli)

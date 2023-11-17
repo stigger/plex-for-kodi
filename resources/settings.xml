@@ -76,6 +76,30 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
+                <setting id="buffer_wait_max" type="integer" label="32918" help="32919">
+                    <level>0</level>
+                    <default>120</default>
+                    <constraints>
+                        <minimum>0</minimum>
+                        <step>1</step>
+                        <maximum>600</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                </setting>
+                <setting id="buffer_insufficient_wait" type="integer" label="32920" help="32921">
+                    <level>0</level>
+                    <default>10</default>
+                    <constraints>
+                        <minimum>0</minimum>
+                        <step>1</step>
+                        <maximum>600</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                </setting>
             </group>
         </category>
         <!-- Markers -->

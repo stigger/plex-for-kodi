@@ -124,6 +124,8 @@ class AdvancedSettings(object):
         ("skip_marker_timer_immediate", False),
         ("low_drift_timer", True),
         ("player_show_buffer", True),
+        ("buffer_wait_max", 120),
+        ("buffer_insufficient_wait", 10),
     )
 
     def __init__(self):

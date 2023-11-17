@@ -1457,3 +1457,31 @@ msgstr ""
 msgctxt "#32914"
 msgid "Loading"
 msgstr ""
+
+msgctxt "#32915"
+msgid "Slow connection"
+msgstr ""
+
+msgctxt "#32916"
+msgid "Use with a wonky/slow connection, e.g. in a hotel room. Adjusts the UI to visually wait for item refreshes and waits for the buffer to fill when starting playback. Really only makes sense with cache settings readfactor=20."
+msgstr ""
+
+msgctxt "#32917"
+msgid "Couldn't fill buffer in time ({}s)"
+msgstr ""
+
+msgctxt "#32918"
+msgid "Buffer wait timeout (seconds)"
+msgstr ""
+
+msgctxt "#32919"
+msgid "When slow connection is enabled in the addon, wait this long for the buffer to fill. Default: 120 s"
+msgstr ""
+
+msgctxt "#32920"
+msgid "Insufficient buffer wait (seconds)"
+msgstr ""
+
+msgctxt "#32921"
+msgid "When slow connection is enabled in the addon and the configured buffer isn't big enough for us to determine its fill state, wait this long when starting playback. Default: 10 s"
+msgstr ""
