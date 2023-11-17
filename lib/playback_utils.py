@@ -199,6 +199,3 @@ class PlaybackManager(object):
         except:
             util.ERROR("Couldn't write playback_settings.json")
             return
-        return
-        plexapp.util.INTERFACE.setRegistry("BingeModeSettings", json.dumps(data or self._data))
-        return self._data
