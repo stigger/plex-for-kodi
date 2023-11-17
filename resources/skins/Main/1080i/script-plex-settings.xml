@@ -90,7 +90,7 @@
                     <posy>0</posy>
                     <width>590</width>
                     <height>666</height>
-                    <onup>201</onup>
+                    <onleft>201</onleft>
                     <onright>100</onright>
                     <scrolltime>200</scrolltime>
                     <orientation>vertical</orientation>
@@ -189,7 +189,6 @@
                     <posy>0</posy>
                     <width>776</width>
                     <height>666</height>
-                    <onup>201</onup>
                     <onleft>75</onleft>
                     <onright>150</onright>
                     <scrolltime>200</scrolltime>
