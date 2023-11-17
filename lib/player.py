@@ -244,6 +244,8 @@ class SeekPlayerHandler(BasePlayerHandler):
         if not self.playlist:
             return False
 
+        xbmc.sleep(500)
+
         self.player.playVideoPlaylist(self.playlist, handler=self, resume=self.player.resume)
 
         return True
@@ -253,6 +255,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             return False
 
         self.seeking = self.SEEK_PLAYLIST
+        xbmc.sleep(500)
         self.player.playVideoPlaylist(self.playlist, handler=self, resume=self.player.resume)
 
         return True
