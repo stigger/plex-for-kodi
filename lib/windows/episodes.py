@@ -863,10 +863,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         lastItem = self.lastItem
 
-        if not lastItem:
-            return
-
-        if action in (xbmcgui.ACTION_MOVE_RIGHT, xbmcgui.ACTION_MOVE_LEFT):
+        if action in (xbmcgui.ACTION_MOVE_RIGHT, xbmcgui.ACTION_MOVE_LEFT) and lastItem:
             items = self.episodesPaginator.wrap(mli, lastItem, action)
             xbmc.sleep(100)
             mli = self.episodeListControl.getSelectedItem()
