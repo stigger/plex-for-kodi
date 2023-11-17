@@ -319,8 +319,8 @@ class SeekDialog(kodigui.BaseDialog):
         self.bigSeekGroupControl = self.getControl(self.BIG_SEEK_GROUP_ID)
         self.initialized = True
         self.setBoolProperty('subtitle.downloads', util.getSetting('subtitle_downloads', False))
-        self.applyMarkerProps()
         self.updateProperties()
+        self.updateChapters()
         self.videoSettingsHaveChanged()
         self.update()
 
@@ -333,8 +333,8 @@ class SeekDialog(kodigui.BaseDialog):
 
         self.resetTimeout()
         self.resetSeeking()
-        self.applyMarkerProps()
         self.updateProperties()
+        self.updateChapters()
         self.videoSettingsHaveChanged()
         self.updateProgress()
 
@@ -1081,6 +1081,7 @@ class SeekDialog(kodigui.BaseDialog):
 
         self.updateCurrent()
 
+    def updateChapters(self):
         items = []
 
         # replace bigSeek with chapters or markers if possible
@@ -1147,9 +1148,9 @@ class SeekDialog(kodigui.BaseDialog):
                     if credits:
                         credCnt += 1
 
-                for offset, thumb, label in sorted(chaps):
-                    mli = kodigui.ManagedListItem(data_source=offset, thumbnailImage=thumb, label=label)
-                    items.append(mli)
+            for offset, thumb, label in sorted(chaps):
+                mli = kodigui.ManagedListItem(data_source=offset, thumbnailImage=thumb, label=label)
+                items.append(mli)
 
         else:
             div = int(self.duration / 12)
@@ -1290,6 +1291,9 @@ class SeekDialog(kodigui.BaseDialog):
                     return markerDef
 
     def setup(self, duration, offset=0, bif_url=None, title='', title2='', chapters=None):
+        """
+        this is called by our handler and occurs earlier than onFirstInit.
+        """
         self.title = title
         self.title2 = title2
         self.chapters = chapters or []
