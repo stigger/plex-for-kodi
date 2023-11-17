@@ -241,6 +241,7 @@ class KodiCacheManager(object):
     A pretty cheap approach at managing the <cache> section of advancedsettings.xml
     """
     _cleanData = None
+    useModernAPI = False
     memorySize = 20  # in MB
     readFactor = 4
     template = None
@@ -252,8 +253,17 @@ class KodiCacheManager(object):
     safeFactor = .20 if xbmc.getCondVisibility('System.Platform.Android') else .23
 
     def __init__(self):
-        self.load()
-        self.template = self.getTemplate()
+        try:
+            self.memorySize = rpc.Settings.GetSettingValue(setting='filecache.memorysize')['value']
+            self.readFactor = rpc.Settings.GetSettingValue(setting='filecache.readfactor')['value'] // 100
+            DEBUG_LOG("Not using advancedsettings.xml for cache/buffer management, we're at least Kodi 21 non-alpha")
+            self.useModernAPI = True
+        except:
+            pass
+
+        if not self.useModernAPI:
+            self.load()
+            self.template = self.getTemplate()
 
         plexapp.util.APP.on('change:slow_connection',
                             lambda value=None, **kwargs: self.write(readFactor=value and 20 or 4))
@@ -304,6 +314,15 @@ class KodiCacheManager(object):
     def write(self, memorySize=None, readFactor=None):
         memorySize = self.memorySize = memorySize if memorySize is not None else self.memorySize
         readFactor = self.readFactor = readFactor if readFactor is not None else self.readFactor
+
+        if self.useModernAPI:
+            # kodi cache settings have moved to Services>Caching
+            try:
+                rpc.Settings.SetSettingValue(setting='filecache.memorysize', value=self.memorySize)
+                rpc.Settings.SetSettingValue(setting='filecache.readfactor', value=self.readFactor * 100)
+            except:
+                pass
+            return
 
         cd = self._cleanData
         if not cd:
