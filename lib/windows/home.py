@@ -554,7 +554,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
                     ex = self.confirmExit()
                     # 0 = exit; 1 = minimize; 2 = cancel
-                    if ex == 2:
+                    if ex in (2, None):
                         return
                     elif ex == 1:
                         xbmc.executebuiltin('ActivateWindow(10000)')
