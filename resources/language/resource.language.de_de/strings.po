@@ -1761,8 +1761,8 @@ msgid "Slow connection"
 msgstr "Langsame Verbindung"
 
 msgctxt "#32916"
-msgid "Use with a wonky/slow connection, e.g. in a hotel room. Adjusts the UI to visually wait for item refreshes and waits for the buffer to fill when starting playback. Really only makes sense with cache settings readfactor=20."
-msgstr "Mit wackeliger/langsamer Verbindung benutzen, z.B. im Hotel. Passt die Oberfläche visuell an um auf Media Auffrischungen zu warten und füllt den Kodi Puffer vor dem Abspielen. Macht nur Sinn mit Kodi Cache readfactor=20."
+msgid "Use with a wonky/slow connection, e.g. in a hotel room. Adjusts the UI to visually wait for item refreshes and waits for the buffer to fill when starting playback. Automatically sets readfactor=20, requires Kodi restart."
+msgstr "Mit wackeliger/langsamer Verbindung benutzen, z.B. im Hotel. Passt die Oberfläche visuell an um auf Media Auffrischungen zu warten und füllt den Kodi Puffer vor dem Abspielen. Setzt automatisch Kodi Cache readfactor=20, benötigt Kodi Neustart."
 
 msgctxt "#32917"
 msgid "Couldn't fill buffer in time ({}s)"
@@ -1783,3 +1783,11 @@ msgstr "Ungenügender Puffer Wartezeit (Sekunden)"
 msgctxt "#32921"
 msgid "When slow connection is enabled in the addon and the configured cache/buffer isn't big enough for us to determine its fill state, wait this long when starting playback. Default: 10 s"
 msgstr "Wenn Langsame Verbindung im Addon aktiviert und der konfigurierte Puffer/Cache nicht groß genug ist, damit wir dessen Füllstand ermitteln können, warte so lange vor dem Abspielen. Default: 10 s"
+
+msgctxt "#32922"
+msgid "Kodi Cache Readfactor"
+msgstr "Kodi Puffer Readfactor"
+
+msgctxt "#32923"
+msgid "Sets the Kodi cache readfactor value. Default: 4, recommended: 4-10. With \"Slow connection\" enabled this will be set to 20, as otherwise the cache doesn't fill fast/aggressively enough."
+msgstr "Setzt den Kodi Cache/Puffer readfactor Wert. Default: 4, empfohlen: 4-10. Bei aktivem \"Langsame Verbindung\" wird dies automatisch auf 20 gesetzt, da ansonsten der Cache nicht schnell/agressiv genug gefüllt wird."

@@ -232,6 +232,7 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
 MONITOR = UtilityMonitor()
 
 ADV_MSIZE_RE = re.compile(r'<memorysize>(\d+)</memorysize>')
+ADV_RFACT_RE = re.compile(r'<readfactor>(\d+)</readfactor>')
 ADV_CACHE_RE = re.compile(r'\s*<cache>.*</cache>', re.S | re.I)
 
 
@@ -241,6 +242,7 @@ class KodiCacheManager(object):
     """
     _cleanData = None
     memorySize = 20  # in MB
+    readFactor = 4
     template = None
     orig_tpl_path = os.path.join(ADDON.getAddonInfo('path'), "pm4k_cache_template.xml")
     custom_tpl_path = "special://profile/pm4k_cache_template.xml"
@@ -252,6 +254,9 @@ class KodiCacheManager(object):
     def __init__(self):
         self.load()
         self.template = self.getTemplate()
+
+        plexapp.util.APP.on('change:slow_connection',
+                            lambda value=None, **kwargs: self.write(readFactor=value and 20 or 4))
 
     def getTemplate(self):
         if xbmcvfs.exists(self.custom_tpl_path):
@@ -287,22 +292,26 @@ class KodiCacheManager(object):
                 except (ValueError, IndexError, TypeError):
                     DEBUG_LOG("script.plex: invalid or not found memorysize in advancedsettings.xml")
 
+                try:
+                    self.readFactor = int(ADV_RFACT_RE.search(cachexml).group(1))
+                except (ValueError, IndexError, TypeError):
+                    DEBUG_LOG("script.plex: invalid or not found readfactor in advancedsettings.xml")
+
                 self._cleanData = data.replace(cachexml, "")
             else:
                 self._cleanData = data
 
-    def write(self, memorySize=None):
-        if memorySize:
-            self.memorySize = memorySize
-        else:
-            memorySize = self.memorySize
+    def write(self, memorySize=None, readFactor=None):
+        memorySize = self.memorySize = memorySize if memorySize is not None else self.memorySize
+        readFactor = self.readFactor = readFactor if readFactor is not None else self.readFactor
 
         cd = self._cleanData
         if not cd:
             cd = "<advancedsettings>\n</advancedsettings>"
 
         finalxml = "{}\n</advancedsettings>".format(
-            cd.replace("</advancedsettings>", self.template.format(memorysize=memorySize * 1024 * 1024))
+            cd.replace("</advancedsettings>", self.template.format(memorysize=memorySize * 1024 * 1024,
+                                                                   readfactor=readFactor))
         )
 
         try:
@@ -326,6 +335,10 @@ class KodiCacheManager(object):
 
         # re-append current memorySize here, as recommended max might have changed
         return list(sorted(list(set(default + [self.memorySize, self.recMax] + overcommit))))
+
+    @property
+    def readFactorOpts(self):
+        return list(sorted(list(set([4, 5, 10, 20] + [self.readFactor]))))
 
     @property
     def free(self):

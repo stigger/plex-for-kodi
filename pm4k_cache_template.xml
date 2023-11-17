@@ -1,5 +1,5 @@
   <cache><!-- managed by PM4K -->
     <buffermode>1</buffermode>
     <memorysize>{memorysize}</memorysize>
-    <readfactor>5</readfactor>
+    <readfactor>{readfactor}</readfactor>
   </cache>

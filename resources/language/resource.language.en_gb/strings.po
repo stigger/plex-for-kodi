@@ -1463,7 +1463,7 @@ msgid "Slow connection"
 msgstr ""
 
 msgctxt "#32916"
-msgid "Use with a wonky/slow connection, e.g. in a hotel room. Adjusts the UI to visually wait for item refreshes and waits for the buffer to fill when starting playback. Really only makes sense with cache settings readfactor=20."
+msgid "Use with a wonky/slow connection, e.g. in a hotel room. Adjusts the UI to visually wait for item refreshes and waits for the buffer to fill when starting playback. Automatically sets readfactor=20, requires Kodi restart."
 msgstr ""
 
 msgctxt "#32917"
@@ -1484,4 +1484,12 @@ msgstr ""
 
 msgctxt "#32921"
 msgid "When slow connection is enabled in the addon and the configured buffer isn't big enough for us to determine its fill state, wait this long when starting playback. Default: 10 s"
+msgstr ""
+
+msgctxt "#32922"
+msgid "Kodi Cache Readfactor"
+msgstr ""
+
+msgctxt "#32923"
+msgid "Sets the Kodi cache readfactor value. Default: 4, recommended: 4-10. With \"Slow connection\" enabled this will be set to 20, as otherwise the cache doesn't fill fast/aggressively enough."
 msgstr ""
