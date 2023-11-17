@@ -1754,7 +1754,7 @@ msgstr "Zeigt den aktuellen Kodi Puffer/Cache-Stand auf der Videoplayer Zeitachs
 
 msgctxt "#32914"
 msgid "Loading"
-msgstr ""
+msgstr "Lädt"
 
 msgctxt "#32915"
 msgid "Slow connection"
