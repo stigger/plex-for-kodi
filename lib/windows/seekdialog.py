@@ -902,12 +902,11 @@ class SeekDialog(kodigui.BaseDialog):
             self.initialAudioStream = self.player.video.selectedAudioStream()
             changed = True
 
-        if self.player.video.selectedSubtitleStream(
-                forced_subtitles_override=util.advancedSettings.forcedSubtitlesOverride
-        ) != self.initialSubtitleStream:
-            self.initialSubtitleStream = \
-                self.player.video.selectedSubtitleStream(
-                    forced_subtitles_override=util.advancedSettings.forcedSubtitlesOverride)
+        sss = self.player.video.selectedSubtitleStream(
+            forced_subtitles_override=util.advancedSettings.forcedSubtitlesOverride
+        )
+        if sss != self.initialSubtitleStream:
+            self.initialSubtitleStream = sss
             if changed or self.handler.mode == self.handler.MODE_RELATIVE:
                 return True
             else:
@@ -992,7 +991,12 @@ class SeekDialog(kodigui.BaseDialog):
 
         changed = self.videoSettingsHaveChanged()
         if changed == 'SUBTITLE':
-            self.handler.setSubtitles()
+            self.handler.setSubtitles(do_sleep=False)
+            if self.player.video.current_subtitle_is_embedded:
+                # this is an embedded stream, seek back a second after setting the subtitle due to long standing kodi
+                # issue: https://github.com/xbmc/xbmc/issues/21086
+                util.DEBUG_LOG("Switching embedded subtitle stream, seeking due to Kodi issue #21086")
+                self.doSeek(self.trueOffset()-1000)
         elif changed:
             self.doSeek(self.trueOffset(), settings_changed=True)
 

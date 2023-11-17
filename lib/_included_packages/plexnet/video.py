@@ -46,6 +46,7 @@ def forceMediaChoice(method):
 class Video(media.MediaItem):
     TYPE = None
     manually_selected_sub_stream = False
+    current_subtitle_is_embedded = False
     bingeMode = False
 
     def __init__(self, *args, **kwargs):
@@ -109,6 +110,7 @@ class Video(media.MediaItem):
                                            (possible_alt, stream))
                             stream.setSelected(False)
                             possible_alt.setSelected(True)
+                            self.current_subtitle_is_embedded = possible_alt.embedded
                             return possible_alt
                     return stream
             if fallback:
@@ -133,6 +135,7 @@ class Video(media.MediaItem):
             for subtitleStream in self.subtitleStreams:
                 if subtitleStream.id == stream.id:
                     subtitleStream.setSelected(True)
+                    self.current_subtitle_is_embedded = subtitleStream.embedded
                 elif subtitleStream.isSelected():
                     subtitleStream.setSelected(False)
 

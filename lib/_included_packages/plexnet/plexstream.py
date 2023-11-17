@@ -117,6 +117,10 @@ class PlexStream(plexobjects.PlexObject):
 
         return self.getServer().buildUrl(self.getSubtitlePath(), True)
 
+    @property
+    def embedded(self):
+        return not bool(self.getSubtitleServerPath())
+
     def isSelected(self):
         return self.selected.asBool()
 
