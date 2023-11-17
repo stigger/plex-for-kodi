@@ -79,6 +79,7 @@ def _main():
         while not util.MONITOR.abortRequested():
             if plex.init():
                 background.setSplash(False)
+                fromSwitch = False
                 while not util.MONITOR.abortRequested():
                     if (
                         not plexapp.ACCOUNT.isOffline and not
@@ -94,7 +95,12 @@ def _main():
                             break
                         elif result == 'signin':
                             break
-                        util.DEBUG_LOG('Main: User selected')
+                        elif result == 'cancel' and fromSwitch:
+                            util.DEBUG_LOG('Main: User selection canceled, reusing previous user')
+                            plexapp.ACCOUNT.isAuthenticated = True
+
+                        if not fromSwitch:
+                            util.DEBUG_LOG('Main: User selected')
 
                     try:
                         selectedServer = plexapp.SERVERMANAGER.selectedServer
@@ -131,6 +137,7 @@ def _main():
                             break
                         elif closeOption == 'switch':
                             plexapp.ACCOUNT.isAuthenticated = False
+                            fromSwitch = True
                     finally:
                         windowutils.shutdownHome()
                         BACKGROUND.activate()

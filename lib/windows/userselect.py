@@ -72,6 +72,10 @@ class UserSelectWindow(kodigui.BaseWindow):
                 if xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(self.PIN_ENTRY_GROUP_ID)):
                     self.pinEntryClicked(211)
                     return
+                # return to selected user
+                self.selected = 'cancel'
+                self.doClose()
+                return
         except:
             util.ERROR()
 
@@ -106,7 +110,8 @@ class UserSelectWindow(kodigui.BaseWindow):
             users = plexapp.ACCOUNT.homeUsers
 
             items = []
-            for user in users:
+            selectIndex = None
+            for idx, user in enumerate(users):
                 # thumb, back = image.getImage(user.thumb, user.id)
                 # mli = kodigui.ManagedListItem(user.title, thumbnailImage=thumb, data_source=user)
                 mli = kodigui.ManagedListItem(user.title, user.title[0].upper(), data_source=user)
@@ -114,13 +119,22 @@ class UserSelectWindow(kodigui.BaseWindow):
                 # mli.setProperty('back.image', back)
                 mli.setProperty('protected', user.isProtected and '1' or '')
                 mli.setProperty('admin', user.isAdmin and '1' or '')
+
+                if plexapp.ACCOUNT.ID == user.id:
+                   selectIndex = idx
+
                 items.append(mli)
 
             self.userList.addItems(items)
+
             self.task = UserThumbTask().setup(users, self.userThumbCallback)
             backgroundthread.BGThreader.addTask(self.task)
 
             self.setFocusId(self.USER_LIST_ID)
+
+            if selectIndex is not None:
+                self.userList.setSelectedItemByPos(selectIndex)
+
             self.setProperty('initialized', '1')
         finally:
             self.setProperty('busy', '')
