@@ -299,6 +299,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.started = False
 
     def _onFirstInit(self):
+        util.DEBUG_LOG("SeekDialog: onFirstInit")
         self.resetTimeout()
         self.setProperty('skipMarkerName', T(32495, 'Skip intro'))
         self.bigSeekHideTimer = kodigui.PropertyTimer(self._winID, 0.5, 'hide.bigseek')
@@ -325,6 +326,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.update()
 
     def onReInit(self):
+        util.DEBUG_LOG("SeekDialog: onReInit")
         self.lastTimelineResponse = None
         self._lastAction = None
         self._ignoreTick = False
@@ -1294,6 +1296,7 @@ class SeekDialog(kodigui.BaseDialog):
         """
         this is called by our handler and occurs earlier than onFirstInit.
         """
+        util.DEBUG_LOG("SeekDialog: setup")
         self.title = title
         self.title2 = title2
         self.chapters = chapters or []
@@ -1523,6 +1526,9 @@ class SeekDialog(kodigui.BaseDialog):
 
         # wait for buffer if we're not expecting a seek
         if not self.handler.seekOnStart and util.getSetting("slow_connection", False) and not self.waitingForBuffer:
+            # fixme: not sure why this is necessary, but something breaks when playing back a next item from playback
+            #        that doesn't have a seek value. Adding a slight delay here fixes that. Timing issue?
+            xbmc.sleep(100)
             self.tick(waitForBuffer=True)
             return
 
