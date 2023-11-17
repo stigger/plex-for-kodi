@@ -1517,8 +1517,6 @@ class SeekDialog(kodigui.BaseDialog):
             self.tick(waitForBuffer=True)
             return
 
-        self.tick()
-
     def onPlaybackPaused(self):
         util.DEBUG_LOG("SeekDialog: OnPlaybackPaused")
         self._osdHideFast = False
@@ -1528,7 +1526,7 @@ class SeekDialog(kodigui.BaseDialog):
         if self.handler.seekOnStart and util.getSetting("slow_connection", False):
             self.tick(waitForBuffer=True)
 
-    def displayMarkers(self, cancelTimer=False, immediate=False):
+    def displayMarkers(self, cancelTimer=False, immediate=False, onlyReturnIntroMD=False):
         # intro/credits marker display logic
         markerDef = self.getCurrentMarkerDef()
 
@@ -1543,18 +1541,25 @@ class SeekDialog(kodigui.BaseDialog):
             self._currentMarker = None
             return False
 
-        if cancelTimer and self._currentMarker and self._currentMarker["countdown"] is not None:
-            self._currentMarker["countdown"] = None
-            markerDef["markerAutoSkipped"] = True
-            setattr(self, markerDef["markerAutoSkipShownTimer"], None)
+        # getCurrentMarkerDef might have overridden the startTimeOffset, use that
+        startTimeOff = markerDef["overrideStartOff"] if markerDef["overrideStartOff"] is not None else \
+            int(markerDef["marker"].startTimeOffset)
 
         markerAutoSkip = getattr(self, markerDef["markerAutoSkip"])
         markerAutoSkipped = markerDef["markerAutoSkipped"]
 
-        # getCurrentMarkerDef might have overridden the startTimeOffset, use that
-        startTimeOff = markerDef["overrideStartOff"] if markerDef["overrideStartOff"] is not None else \
-            int(markerDef["marker"].startTimeOffset)
         sTOffWThres = startTimeOff + util.advancedSettings.autoSkipOffset * 1000
+
+        # we just want to return an early marker if we want to autoSkip it, so we can tell the handler to seekOnStart
+        if onlyReturnIntroMD and markerDef["marker_type"] == "intro" and markerAutoSkip:
+            if startTimeOff == 0:
+                return int(markerDef["marker"].endTimeOffset) + 1000
+            return False
+
+        if cancelTimer and self._currentMarker and self._currentMarker["countdown"] is not None:
+            self._currentMarker["countdown"] = None
+            markerDef["markerAutoSkipped"] = True
+            setattr(self, markerDef["markerAutoSkipShownTimer"], None)
 
         autoSkippingNow = markerDef \
             and markerAutoSkip \
@@ -1585,9 +1590,8 @@ class SeekDialog(kodigui.BaseDialog):
                     self.doSeek(target)
                     return False
 
-                self.handler.seekOnStart = 0  # fixme: might be unnecessary
                 # tell plex we've arrived at the end of the video, playing back
-                self.handler.updateNowPlaying(True, state=self.player.STATE_PLAYING, time=self.duration - 1000)
+                self.handler.updateNowPlaying(True, state=self.player.STATE_STOPPED, time=self.duration - 1000)
 
                 # go to next video immediately if on bingeMode
                 if self.handler.playlist and self.handler.playlist.hasNext() and self.bingeMode:
@@ -1595,6 +1599,9 @@ class SeekDialog(kodigui.BaseDialog):
                     util.DEBUG_LOG("MarkerAutoSkip: Skipping final marker, going to next video")
                     self.handler.ignoreTimelines = True
                     self._ignoreTick = True
+                    if self.player.playState == self.player.STATE_PLAYING:
+                        self.player.pause()
+                    xbmc.sleep(500)
                     next(self.handler)
                     return True
                 else:
@@ -1669,6 +1676,9 @@ class SeekDialog(kodigui.BaseDialog):
         if offset is None and not self.handler.seekOnStart:
             cancelTick = self.displayMarkers()
 
+        if cancelTick:
+            return
+
         if xbmc.getCondVisibility('Window.IsActive(busydialog) + !Player.Caching'):
             util.DEBUG_LOG('SeekDialog: Possible stuck busy dialog - closing')
             xbmc.executebuiltin('Dialog.Close(busydialog,1)')
@@ -1691,9 +1701,6 @@ class SeekDialog(kodigui.BaseDialog):
             self.offset = offset or int(self.handler.player.getTime() * 1000)
         except RuntimeError:  # Playback has stopped
             self.resetSeeking()
-            return
-
-        if cancelTick:
             return
 
         if offset or (self.autoSeekTimeout and time.time() >= self.autoSeekTimeout and

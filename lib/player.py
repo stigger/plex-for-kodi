@@ -78,6 +78,12 @@ class BasePlayerHandler(object):
     def setSubtitles(self, *args, **kwargs):
         pass
 
+    def getIntroOffset(self):
+        pass
+
+    def setup(self, duration, offset, bif_url, **kwargs):
+        pass
+
     @property
     def trueTime(self):
         return self.baseOffset + self.player.currentTime
@@ -102,6 +108,7 @@ class BasePlayerHandler(object):
     def updateNowPlaying(self, force=False, refreshQueue=False, state=None, time=None):
         util.DEBUG_LOG("UpdateNowPlaying: force: {0} refreshQueue: {1} state: {2}".format(force, refreshQueue, state))
         if self.ignoreTimelines:
+            util.DEBUG_LOG("UpdateNowPlaying: ignoring timeline as requested")
             return
 
         item = self.getCurrentItem()
@@ -222,6 +229,9 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.stoppedInBingeMode = False
 
         return True
+
+    def getIntroOffset(self):
+        return self.getDialog().displayMarkers(onlyReturnIntroMD=True)
 
     def next(self, on_end=False):
         if self.playlist and next(self.playlist):
@@ -912,6 +922,12 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         else:
             if offset:
                 self.handler.seekOnStart = meta.playStart * 1000
+            else:
+                probOff = self.handler.getIntroOffset()
+                if probOff:
+                    util.DEBUG_LOG("Seeking behind intro: {}".format(probOff))
+                    self.handler.seekOnStart = probOff
+
             self.handler.mode = self.handler.MODE_ABSOLUTE
 
         url = util.addURLParams(url, {
