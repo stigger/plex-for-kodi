@@ -533,6 +533,7 @@ class SeekDialog(kodigui.BaseDialog):
                         if util.advancedSettings.skipMarkerTimerCancel and \
                                 action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
                             self.displayMarkers(cancelTimer=True)
+
                         elif util.advancedSettings.skipMarkerTimerImmediate and action == xbmcgui.ACTION_SELECT_ITEM:
                             self.displayMarkers(immediate=True)
                             self._osdHideFast = True
@@ -1564,6 +1565,7 @@ class SeekDialog(kodigui.BaseDialog):
             self._currentMarker["countdown"] = None
             markerDef["markerAutoSkipped"] = True
             setattr(self, markerDef["markerAutoSkipShownTimer"], None)
+            return False
 
         autoSkippingNow = markerDef \
             and markerAutoSkip \
