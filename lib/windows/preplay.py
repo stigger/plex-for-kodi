@@ -95,6 +95,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.video.reload(checkFiles=1, **VIDEO_RELOAD_KW)
         return self.playVideo()
 
+    @busy.dialog
     def onReInit(self):
         self.initialized = False
         self.video.reload(checkFiles=1, fromMediaChoice=self.video.mediaChoice is not None, **VIDEO_RELOAD_KW)

@@ -1453,3 +1453,7 @@ msgstr ""
 msgctxt "#32913"
 msgid "Shows the current Kodi buffer/cache state on the video player timeline."
 msgstr ""
+
+msgctxt "#32914"
+msgid "Loading"
+msgstr ""

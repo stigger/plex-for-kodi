@@ -1751,3 +1751,7 @@ msgstr "Zeige Puffer-Stand auf Zeitachse"
 msgctxt "#32913"
 msgid "Shows the current Kodi buffer/cache state on the video player timeline."
 msgstr "Zeigt den aktuellen Kodi Puffer/Cache-Stand auf der Videoplayer Zeitachse."
+
+msgctxt "#32914"
+msgid "Loading"
+msgstr ""
