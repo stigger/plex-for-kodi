@@ -498,6 +498,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                     self.showUserMenu(mouse=True)
                     self.setBoolProperty('show.options', True)
                     return
+            elif controlID == self.SERVER_LIST_ID:
+                if action == xbmcgui.ACTION_SELECT_ITEM:
+                    self.setFocusId(self.SERVER_BUTTON_ID)
+                    return
 
             if controlID == self.SERVER_BUTTON_ID and action == xbmcgui.ACTION_MOVE_RIGHT:
                 self.setFocusId(self.USER_BUTTON_ID)
@@ -1216,7 +1220,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             return
 
         server = mli.dataSource
-        self.setFocusId(self.SERVER_BUTTON_ID)
 
         if not server.isReachable():
             if server.pendingReachabilityRequests > 0:
