@@ -551,8 +551,15 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                         self.lastNonOptionsFocusID = None
                         return
 
-                if action in(xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU) and not self.confirmExit():
-                    return
+                if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
+                    ex = self.confirmExit()
+                    # 0 = exit; 1 = minimize; 2 = cancel
+                    if ex == 2:
+                        return
+                    elif ex == 1:
+                        xbmc.executebuiltin('ActivateWindow(10000)')
+                        return
+                    # 0 passes the action to the BaseWindow and exits HOME
         except:
             util.ERROR()
 
@@ -603,10 +610,11 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             T(32334, 'Confirm Exit'),
             T(32335, 'Are you ready to exit Plex?'),
             T(32336, 'Exit'),
+            T(32924, 'Minimize'),
             T(32337, 'Cancel')
         )
 
-        return button == 0
+        return button
 
     def searchButtonClicked(self):
         self.processCommand(search.dialog(self))

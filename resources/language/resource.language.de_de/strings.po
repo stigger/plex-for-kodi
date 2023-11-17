@@ -1791,3 +1791,7 @@ msgstr "Kodi Puffer Readfactor"
 msgctxt "#32923"
 msgid "Sets the Kodi cache readfactor value. Default: 4, recommended: 4-10. With \"Slow connection\" enabled this will be set to 20, as otherwise the cache doesn't fill fast/aggressively enough."
 msgstr "Setzt den Kodi Cache/Puffer readfactor Wert. Default: 4, empfohlen: 4-10. Bei aktivem \"Langsame Verbindung\" wird dies automatisch auf 20 gesetzt, da ansonsten der Cache nicht schnell/agressiv genug gefüllt wird."
+
+msgctxt "#32924"
+msgid "Minimize"
+msgstr "Minimieren"
