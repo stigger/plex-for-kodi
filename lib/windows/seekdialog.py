@@ -1435,7 +1435,7 @@ class SeekDialog(kodigui.BaseDialog):
                 # pause
                 wasPlaying = False
                 if self.player.playState == self.player.STATE_PLAYING:
-                    util.DEBUG_LOG("SeekDialog.buffer: Waiting for buffer to reach {} (is: {})"
+                    util.DEBUG_LOG("SeekDialog.buffer: Waiting for buffer to reach {} (is: {}), pausing"
                                    .format(sensibleBufferPerc, currentBufferPerc))
                     self.player.pause()
                     wasPlaying = True
@@ -1443,6 +1443,8 @@ class SeekDialog(kodigui.BaseDialog):
                 waitedFor = 0
                 waitMax = util.advancedSettings.bufferWaitMax
                 waitExceeded = False
+                self.waitingForBuffer = True
+                self.showOSD(focusButton=False)
                 with busy.BusyMsgContext() as bc:
                     # check for the buffer fill-state every 200ms
                     # this may be canceled by the usual actions;
@@ -1451,7 +1453,6 @@ class SeekDialog(kodigui.BaseDialog):
                     while not self._abortBufferWait and not bc.shouldClose and waitedFor < waitMax and \
                             (int(xbmc.getInfoLabel("Player.ProgressCache")) -
                              int(xbmc.getInfoLabel("Player.Progress"))) < sensibleBufferPerc:
-                        self.waitingForBuffer = True
                         curBuf = int(xbmc.getInfoLabel("Player.ProgressCache")) - \
                                  int(xbmc.getInfoLabel("Player.Progress"))
 
@@ -1469,10 +1470,11 @@ class SeekDialog(kodigui.BaseDialog):
                     if bc.shouldClose:
                         self._abortBufferWait = True
 
-                self.waitingForBuffer = False
+                    # buffer timed out
+                    if waitedFor >= waitMax:
+                        waitExceeded = True
 
-                if waitedFor >= waitMax:
-                    waitExceeded = True
+                self.waitingForBuffer = False
 
                 if waitExceeded or self._abortBufferWait:
                     if not self._abortBufferWait:
@@ -1512,15 +1514,18 @@ class SeekDialog(kodigui.BaseDialog):
         self._osdHideFast = True
         self.tick()
 
+    def onAVChange(self):
+        util.DEBUG_LOG("SeekDialog: onAVChange")
+
+        # wait for buffer if we're not expecting a seek
+        if not self.handler.seekOnStart and util.getSetting("slow_connection", False) and not self.waitingForBuffer:
+            self.tick(waitForBuffer=True)
+            return
+
     def onPlaybackStarted(self):
         util.DEBUG_LOG("SeekDialog: OnPlaybackStarted")
         if self._ignoreInput:
             self._ignoreInput = False
-
-        # wait for buffer if we're not expecting a seek
-        if not self.handler.seekOnStart and util.getSetting("slow_connection", False):
-            self.tick(waitForBuffer=True)
-            return
 
     def onPlaybackPaused(self):
         util.DEBUG_LOG("SeekDialog: OnPlaybackPaused")
@@ -1528,8 +1533,6 @@ class SeekDialog(kodigui.BaseDialog):
 
     def onPlaybackSeek(self, stime, offset):
         util.DEBUG_LOG("SeekDialog: OnPlaybackSeek: {} {}, {}".format(stime, offset, self.handler.seekOnStart))
-        if self.handler.seekOnStart and util.getSetting("slow_connection", False):
-            self.tick(waitForBuffer=True)
 
     def displayMarkers(self, cancelTimer=False, immediate=False, onlyReturnIntroMD=False):
         # intro/credits marker display logic
@@ -1738,12 +1741,14 @@ class SeekDialog(kodigui.BaseDialog):
     def osdVisible(self):
         return xbmc.getCondVisibility('Control.IsVisible(801)')
 
-    def showOSD(self):
+    def showOSD(self, focusButton=True):
         self.setProperty('show.OSD', '1')
         xbmc.executebuiltin('Dialog.Close(videoosd,true)')
         if xbmc.getCondVisibility('Player.showinfo'):
             xbmc.executebuiltin('Action(Info)')
-        self.setFocusId(self.PLAY_PAUSE_BUTTON_ID)
+
+        if focusButton:
+            self.setFocusId(self.PLAY_PAUSE_BUTTON_ID)
 
     def hideOSD(self):
         self.setProperty('show.OSD', '')

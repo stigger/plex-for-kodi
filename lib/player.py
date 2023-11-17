@@ -30,6 +30,9 @@ class BasePlayerHandler(object):
         self.playQueue = None
         self.sessionID = session_id
 
+    def onAVChange(self):
+        pass
+
     def onPrePlayStarted(self):
         pass
 
@@ -339,6 +342,11 @@ class SeekPlayerHandler(BasePlayerHandler):
             util.DEBUG_LOG("SeekAbsolute: Seeking to {0}".format(self.seekOnStart))
             self.player.seekTime(self.seekOnStart / 1000.0)
         return True
+
+    def onAVChange(self):
+        util.DEBUG_LOG('SeekHandler: onAVChange')
+        if self.dialog:
+            self.dialog.onAVChange()
 
     def onPlayBackStarted(self):
         util.DEBUG_LOG('SeekHandler: onPlayBackStarted - mode={0}'.format(self.mode))
@@ -1088,6 +1096,12 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         if not self.handler:
             return
         self.handler.onPlayBackStarted()
+
+    def onAVChange(self):
+        util.DEBUG_LOG('Player - AVChange')
+        if not self.handler:
+            return
+        self.handler.onAVChange()
 
     def onPlayBackPaused(self):
         util.DEBUG_LOG('Player - PAUSED')
