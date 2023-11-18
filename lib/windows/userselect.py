@@ -69,8 +69,12 @@ class UserSelectWindow(kodigui.BaseWindow):
                 self.pinEntryClicked(ID + 60)
                 return
             elif ID in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_BACKSPACE):
+                item = self.userList.getSelectedItem()
                 if xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(self.PIN_ENTRY_GROUP_ID)):
-                    self.pinEntryClicked(211)
+                    if item.getProperty('editing.pin'):
+                        self.pinEntryClicked(211)
+                    else:
+                        self.setFocusId(self.USER_LIST_ID)
                     return
                 # return to selected user
                 self.selected = 'cancel'
@@ -212,7 +216,7 @@ class UserSelectWindow(kodigui.BaseWindow):
                 e.close()
                 item.setProperty('pin', item.dataSource.title)
                 item.setProperty('editing.pin', '')
-                util.messageDialog(T(32427, 'Failed'), T(32428, 'Login failed!'))
+                util.messageDialog(T(32427, 'Failed'), T(32926, 'Wrong pin entered!'))
                 return
 
         self.selected = True

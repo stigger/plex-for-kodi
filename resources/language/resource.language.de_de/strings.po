@@ -1799,3 +1799,7 @@ msgstr "Minimieren"
 msgctxt "#32925"
 msgid "Playback Settings"
 msgstr "Abspieleinstell."
+
+msgctxt "#32926"
+msgid "Wrong pin entered!"
+msgstr "Falsche pin eingegeben!"
