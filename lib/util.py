@@ -380,7 +380,10 @@ def T(ID, eng=''):
     return ADDON.getLocalizedString(ID)
 
 
-hasCustomBGColour = not advancedSettings.dynamicBackgrounds and advancedSettings.backgroundColour != "-"
+hasCustomBGColour = False
+if KODI_VERSION_MAJOR > 18:
+    hasCustomBGColour = not advancedSettings.dynamicBackgrounds and advancedSettings.backgroundColour and \
+                        advancedSettings.backgroundColour != "-"
 
 
 def getAdvancedSettings():

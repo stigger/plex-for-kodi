@@ -1185,7 +1185,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.positionControl.setWidth(w)
 
         # update cache/buffer bar
-        if util.advancedSettings.playerShowBuffer:
+        if util.advancedSettings.playerShowBuffer and util.KODI_VERSION_MAJOR > 18:
             cache_w = int(xbmc.getInfoLabel("Player.ProgressCache")) * self.SEEK_IMAGE_WIDTH // 100
             self.cacheControl.setWidth(cache_w)
 
@@ -1640,7 +1640,7 @@ class SeekDialog(kodigui.BaseDialog):
         # hide marker into OSD after a timeout
         timer = getattr(self, markerDef["markerAutoSkipShownTimer"])
 
-        if timer is None:
+        if timer is None or self.player.playState == self.player.STATE_PAUSED:
             setattr(self, markerDef["markerAutoSkipShownTimer"], time.time())
 
         else:
@@ -1662,9 +1662,11 @@ class SeekDialog(kodigui.BaseDialog):
                 # reset countdown on new marker
                 if not self._currentMarker or self._currentMarker != markerDef or markerDef["countdown"] is None:
                     # fixme: round might not be right here, but who cares
-                    markerDef["countdown"] = max(round((sTOffWThres - self.offset) / 1000.0) + 1, 1)
+                    markerDef["countdown"] = int(max(round((sTOffWThres - self.offset) / 1000.0) + 1, 1))
 
-            markerDef["countdown"] -= 1
+            if self.player.playState == self.player.STATE_PLAYING:
+                markerDef["countdown"] -= 1
+
             if markerDef["countdown"] > 0:
                 markerName = "{} ({})".format(markerDef["autoSkipName"], markerDef["countdown"])
             else:
