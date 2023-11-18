@@ -1697,11 +1697,11 @@ msgstr "CEC Standby"
 
 msgctxt "#32800"
 msgid "Skipping intro"
-msgstr "Intro überspringen"
+msgstr "Überspringe Intro"
 
 msgctxt "#32801"
 msgid "Skipping credits"
-msgstr "Abspann überspringen"
+msgstr "Überspringe Abspann"
 
 msgctxt "#32900"
 msgid "While playing back an item and seeking on the seekbar, automatically seek to the selected position after a delay instead of having to confirm the selection."
@@ -1709,7 +1709,7 @@ msgstr "Wird während des Abspielens die Position auf der Zeitleiste verändert,
 
 msgctxt "#32901"
 msgid "Seek delay in seconds."
-msgstr "Sprungverzögerung in Sekunden"
+msgstr "Sprungverzögerung in Sekunden."
 
 msgctxt "#32902"
 msgid "Kodi has its own skip step settings. Try to use them if they're configured instead of the default ones."
@@ -1797,7 +1797,7 @@ msgstr "Minimieren"
 
 msgctxt "#32925"
 msgid "Playback Settings"
-msgstr "Wiedergabe-Einstellungen"
+msgstr "Abspieleinstell."
 
 msgctxt "#32926"
 msgid "Wrong pin entered!"
