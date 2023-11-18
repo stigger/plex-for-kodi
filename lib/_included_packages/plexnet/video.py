@@ -349,12 +349,14 @@ class PlayableVideo(Video, RelatedMixin):
         self._audioStreams = None
         self._subtitleStreams = None
 
-    def reload(self, *args, fromMediaChoice=False, **kwargs):
+    def reload(self, *args, **kwargs):
         if not kwargs.get('_soft'):
             if self.get('viewCount'):
                 del self.viewCount
             if self.get('viewOffset'):
                 del self.viewOffset
+
+        fromMediaChoice = kwargs.get("fromMediaChoice", False)
 
         # capture current IDs
         mediaID = None
