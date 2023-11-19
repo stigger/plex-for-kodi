@@ -111,7 +111,8 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, playbacksettin
 
     def onInit(self):
         super(ShowWindow, self).onInit()
-        if self.mediaItem.theme and (not self.cameFrom or self.cameFrom != self.mediaItem.ratingKey):
+        if self.mediaItem.theme and (not self.cameFrom or self.cameFrom != self.mediaItem.ratingKey) \
+                and not util.getSetting("slow_connection", False):
             self.cameFrom = self.mediaItem.ratingKey
             volume = self.mediaItem.settings.getThemeMusicValue()
             if volume > 0:
