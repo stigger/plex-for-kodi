@@ -1505,3 +1505,15 @@ msgstr ""
 msgctxt "#32926"
 msgid "Wrong pin entered!"
 msgstr ""
+
+msgctxt "#32927"
+msgid "Use episode thumbnails in continue hub"
+msgstr ""
+
+msgctxt "#32928"
+msgid "Instead of using media artwork, use thumbnails for episodes in the continue hub on the home screen if available."
+msgstr ""
+
+msgctxt "#32929"
+msgid "Use legacy background fallback image"
+msgstr ""

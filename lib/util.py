@@ -126,6 +126,8 @@ class AdvancedSettings(object):
         ("player_show_buffer", True),
         ("buffer_wait_max", 120),
         ("buffer_insufficient_wait", 10),
+        ("continue_use_thumb", True),
+        ("use_bg_fallback", False),
     )
 
     def __init__(self):
