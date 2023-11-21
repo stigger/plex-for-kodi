@@ -163,6 +163,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.title2 = ''
         self.chapters = None
         self.stoppedInBingeMode = False
+        self.prePlayWitnessed = False
         self.reset()
 
     def reset(self):
@@ -174,6 +175,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.mode = self.MODE_RELATIVE
         self.ended = False
         self.stoppedInBingeMode = False
+        self.prePlayWitnessed = False
 
     def setup(self, duration, offset, bif_url, title='', title2='', seeking=NO_SEEK, chapters=None):
         self.ended = False
@@ -186,6 +188,8 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.chapters = chapters or []
         self.playedThreshold = plexapp.util.INTERFACE.getPlayedThresholdValue()
         self.ignoreTimelines = False
+        self.stoppedInBingeMode = False
+        self.prePlayWitnessed = False
         self.getDialog(setup=True)
         self.dialog.setup(self.duration, int(self.baseOffset * 1000), self.bifURL, self.title, self.title2,
                           chapters=self.chapters)
@@ -348,12 +352,20 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.dialog:
             self.dialog.onAVChange()
 
+    def onPrePlayStarted(self):
+        util.DEBUG_LOG('SeekHandler: onPrePlayStarted')
+        self.prePlayWitnessed = True
+        self.setSubtitles(do_sleep=False)
+
     def onPlayBackStarted(self):
         util.DEBUG_LOG('SeekHandler: onPlayBackStarted - mode={0}'.format(self.mode))
         self.updateNowPlaying(force=True, refreshQueue=True)
 
         if self.dialog:
             self.dialog.onPlaybackStarted()
+
+        if not self.prePlayWitnessed:
+            self.setSubtitles(do_sleep=False)
 
     def onPlayBackResumed(self):
         self.updateNowPlaying()
@@ -1095,7 +1107,6 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         if not self.handler:
             return
         self.handler.onPlayBackStarted()
-        self.handler.setSubtitles(do_sleep=False)
 
     def onAVChange(self):
         util.DEBUG_LOG('Player - AVChange')
@@ -1209,6 +1220,9 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
                     self._audioMonitor()
                 elif self.isPlaying():
                     util.DEBUG_LOG('Monitoring pre-play...')
+
+                    # note: this might never be triggered depending on how fast the video playback starts.
+                    # don't rely on it in any way.
                     self._preplayMonitor()
 
             self.handler.close()
