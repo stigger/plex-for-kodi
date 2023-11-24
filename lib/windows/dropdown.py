@@ -22,7 +22,7 @@ class DropdownDialog(kodigui.BaseDialog):
         kodigui.BaseDialog.__init__(self, *args, **kwargs)
         self.options = kwargs.get('options')
         self.pos = kwargs.get('pos')
-        self.lastSelectedItem = 0
+        self.lastSelectedItem = None
         self.roundRobin = kwargs.get('round_robin', True)
         self.posIsBottom = kwargs.get('pos_is_bottom')
         self.closeDirection = kwargs.get('close_direction')
