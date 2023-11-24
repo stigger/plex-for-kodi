@@ -18,11 +18,6 @@
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="forced_subtitles_override" type="boolean" label="32493">
-                    <level>0</level>
-                    <default>false</default>
-                    <control type="toggle"/>
-                </setting>
             </group>
         </category>
         <!-- Player -->

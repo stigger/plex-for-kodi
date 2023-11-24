@@ -437,7 +437,8 @@ class SeekPlayerHandler(BasePlayerHandler):
 
     def setSubtitles(self, do_sleep=True, honor_forced_subtitles_override=True):
         subs = self.player.video.selectedSubtitleStream(
-            forced_subtitles_override=honor_forced_subtitles_override and util.advancedSettings.forcedSubtitlesOverride)
+            forced_subtitles_override=honor_forced_subtitles_override and util.getSetting("forced_subtitles_override",
+                                                                                          False))
         if subs:
             if do_sleep:
                 xbmc.sleep(100)

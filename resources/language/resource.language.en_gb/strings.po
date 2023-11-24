@@ -1062,7 +1062,7 @@ msgid "Kodi Subtitle Settings"
 msgstr ""
 
 msgctxt "#32493"
-msgid "Prefer normal over forced subtitles if available (PMS selects forced by default)"
+msgid "When a media file has a forced/foreign subtitle for a subtitle-enabled language, the Plex Media Server preselects it. This behaviour is usually not necessary and not configurable. This setting fixes that by ignoring the PMSs decision and selecting the same language without a forced flag if possible."
 msgstr ""
 
 msgctxt "#32495"
@@ -1560,4 +1560,8 @@ msgstr ""
 
 msgctxt "#32940"
 msgid "Player UI"
+msgstr ""
+
+msgctxt "#32941"
+msgid "Forced subtitles fix"
 msgstr ""
