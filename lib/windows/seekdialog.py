@@ -341,8 +341,6 @@ class SeekDialog(kodigui.BaseDialog):
             self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE * len(
                 list(x for x in (showRepeat, showFfwdRwd, showShuffle) if not x))
 
-            util.DEBUG_LOG("HELLO 1: %s" % self.subtitleButtonLeft)
-
         self.updateProperties()
         self.updateChapters()
         self.videoSettingsHaveChanged()
