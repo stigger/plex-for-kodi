@@ -675,6 +675,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.handler.prev()
         elif controlID == self.NEXT_BUTTON_ID:
             self.handler.ignoreTimelines = True
+            self.handler.ignorePlaybackEnded = True
             self._ignoreTick = True
             next(self.handler)
         elif controlID == self.PLAYLIST_BUTTON_ID:
@@ -1721,6 +1722,7 @@ class SeekDialog(kodigui.BaseDialog):
                     # skip final marker
                     util.DEBUG_LOG("MarkerAutoSkip: Skipping final marker, going to next video")
                     self.handler.ignoreTimelines = True
+                    self.handler.ignorePlaybackEnded = True
                     self._ignoreTick = True
                     if self.player.playState == self.player.STATE_PLAYING:
                         self.player.pause()
