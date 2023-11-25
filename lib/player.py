@@ -1083,7 +1083,6 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         if not self.handler:
             return
         self.handler.onPrePlayStarted()
-        self.handler.setSubtitles(do_sleep=False)
 
     def onPlayBackStarted(self):
         self.started = True
@@ -1096,6 +1095,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         if not self.handler:
             return
         self.handler.onPlayBackStarted()
+        self.handler.setSubtitles(do_sleep=False)
 
     def onAVChange(self):
         util.DEBUG_LOG('Player - AVChange')

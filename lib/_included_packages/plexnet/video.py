@@ -138,6 +138,30 @@ class Video(media.MediaItem):
                 elif subtitleStream.isSelected():
                     subtitleStream.setSelected(False)
 
+    @forceMediaChoice
+    def nextSubtitle(self):
+        amount = len(self.subtitleStreams)
+        if not amount:
+            return False
+        cur = self.selectedSubtitleStream()
+        if not cur:
+            # use fallback
+            stream = self.selectedSubtitleStream(fallback=True)
+        else:
+            # set next if we're not at the end of the list
+            if cur.typeIndex < len(self.subtitleStreams) - 1:
+                stream = self.subtitleStreams[cur.typeIndex+1]
+            else:
+                stream = self.subtitleStreams[0]
+
+        util.DEBUG_LOG("Selecting subtitle stream: {} (was: {})".format(stream, cur))
+        self.selectStream(stream)
+        return stream
+
+    @forceMediaChoice
+    def disableSubtitles(self):
+        self.selectStream(plexstream.NoneStream())
+
     def isVideoItem(self):
         return True
 

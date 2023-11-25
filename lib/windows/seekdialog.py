@@ -508,9 +508,9 @@ class SeekDialog(kodigui.BaseDialog):
                             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
 
                 if action.getButtonCode() == 61516:
-                    builtin.Action('CycleSubtitle')
+                    self.nextSubtitle()
                 elif action.getButtonCode() == 61524:
-                    builtin.Action('ShowSubtitles')
+                    self.toggleSubtitles()
                 elif action.getButtonCode() == 323714:
                     # Alt-left
                     builtin.PlayerControl('tempodown')
@@ -962,6 +962,7 @@ class SeekDialog(kodigui.BaseDialog):
         options = []
 
         options.append({'key': 'download', 'display': T(32405, 'Download Subtitles')})
+
         if xbmc.getCondVisibility('VideoPlayer.HasSubtitles'):
             if xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled'):
                 options.append({'key': 'delay', 'display': T(32406, 'Subtitle Delay')})
@@ -969,9 +970,8 @@ class SeekDialog(kodigui.BaseDialog):
             options.append(
                 {
                     'key': 'enable',
-                    'display': xbmc.getCondVisibility(
-                        'VideoPlayer.SubtitlesEnabled + VideoPlayer.HasSubtitles'
-                    ) and T(32408, 'Disable Subtitles') or T(32409, 'Enable Subtitles')
+                    'display': xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled + VideoPlayer.HasSubtitles') and T(
+                        32408, 'Disable Subtitles') or T(32409, 'Enable Subtitles')
                 }
             )
 
@@ -988,9 +988,38 @@ class SeekDialog(kodigui.BaseDialog):
             self.hideOSD()
             builtin.Action('SubtitleDelay')
         elif choice['key'] == 'cycle':
-            builtin.Action('CycleSubtitle')
+            self.nextSubtitle()
         elif choice['key'] == 'enable':
-            builtin.Action('ShowSubtitles')
+            self.toggleSubtitles()
+
+    def toggleSubtitles(self):
+        """
+        Used for subtitle toggling from button press or subtitle toggle menu
+        """
+        if xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled + VideoPlayer.HasSubtitles'):
+            self.disableSubtitles()
+        else:
+            self.nextSubtitle()
+
+    def disableSubtitles(self):
+        self.handler.player.video.disableSubtitles()
+        self.setSubtitles()
+
+    def nextSubtitle(self):
+        """
+        Selects the first subtitle or the next one
+        """
+        stream = self.handler.player.video.nextSubtitle()
+        self.setSubtitles()
+        util.showNotification(str(stream), time_ms=1500, header=util.T(32396, "Subtitles"))
+
+    def setSubtitles(self, do_sleep=False):
+        self.handler.setSubtitles(do_sleep=do_sleep)
+        if self.player.video.current_subtitle_is_embedded:
+            # this is an embedded stream, seek back a second after setting the subtitle due to long standing kodi
+            # issue: https://github.com/xbmc/xbmc/issues/21086
+            util.DEBUG_LOG("Switching embedded subtitle stream, seeking due to Kodi issue #21086")
+            self.doSeek(self.trueOffset() - 100)
 
     def showSettings(self):
         with self.propertyContext('settings.visible'):
@@ -998,12 +1027,8 @@ class SeekDialog(kodigui.BaseDialog):
 
         changed = self.videoSettingsHaveChanged()
         if changed == 'SUBTITLE':
-            self.handler.setSubtitles(do_sleep=False)
-            if self.player.video.current_subtitle_is_embedded:
-                # this is an embedded stream, seek back a second after setting the subtitle due to long standing kodi
-                # issue: https://github.com/xbmc/xbmc/issues/21086
-                util.DEBUG_LOG("Switching embedded subtitle stream, seeking due to Kodi issue #21086")
-                self.doSeek(self.trueOffset()-1000)
+            self.setSubtitles(do_sleep=False)
+
         elif changed:
             self.doSeek(self.trueOffset(), settings_changed=True)
 
