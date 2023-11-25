@@ -350,6 +350,14 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         util.setGlobalBoolProperty('off.sections', '')
 
     def onFirstInit(self):
+        # set last BG image if possible
+        if util.advancedSettings.dynamicBackgrounds:
+            bgUrl = util.getSetting("last_bg_url")
+            if bgUrl:
+                self.setProperty(
+                    'background', bgUrl
+                )
+
         self.sectionList = kodigui.ManagedControlList(self, self.SECTION_LIST_ID, 7)
         self.serverList = kodigui.ManagedControlList(self, self.SERVER_LIST_ID, 10)
         self.userList = kodigui.ManagedControlList(self, self.USER_LIST_ID, 3)
@@ -470,6 +478,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
     def shutdown(self):
         self.serverList.reset()
         self.unhookSignals()
+
+        if util.advancedSettings.dynamicBackgrounds and util.LAST_BG_URL:
+            # store last BG url
+            util.setSetting("last_bg_url", util.LAST_BG_URL)
 
     def onAction(self, action):
         controlID = self.getFocusId()
