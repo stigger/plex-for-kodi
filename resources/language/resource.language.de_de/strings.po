@@ -1818,3 +1818,39 @@ msgstr "Veraltetes Ausweich-Hintergrundbild verwenden"
 msgctxt "#32930"
 msgid "Previous Subtitle"
 msgstr "Vorheriger Untertitel"
+
+msgctxt "#32931"
+msgid "Audio/Subtitles"
+msgstr "Audio/Untertitel"
+
+msgctxt "#32932"
+msgid "Show subtitle quick-actions button"
+msgstr "Zeige Untertitel-Schnellaktionen-Knopf"
+
+msgctxt "#32933"
+msgid "Show FFWD/RWD buttons"
+msgstr "Zeige Vorspulen-Zurückspulen-Knopf"
+
+msgctxt "#32934"
+msgid "Show repeat button"
+msgstr "Zeige Wiederholen-Knopf"
+
+msgctxt "#32935"
+msgid "Show shuffle button"
+msgstr "Zeige Zufällige-Wiedergabe-Knopf"
+
+msgctxt "#32936"
+msgid "Show playlist button"
+msgstr "Zeige Wiedergabeliste-Knopf"
+
+msgctxt "#32937"
+msgid "Show prev/next button"
+msgstr "Zeige Vorheriger/Nächster-Knopf"
+
+msgctxt "#32938"
+msgid "Only for Episodes"
+msgstr "Nur bei Episoden"
+
+msgctxt "#32939"
+msgid "Only applies to video player UI"
+msgstr "Gilt nur für die Video Abspieloberfläche"

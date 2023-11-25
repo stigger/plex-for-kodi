@@ -71,6 +71,19 @@ class Video(media.MediaItem):
     def settings(self, value):
         self._settings = value
 
+    # overridden by Movie/Episode
+    @property
+    def subtitleStreams(self):
+        return []
+
+    @property
+    def videoStreams(self):
+        return []
+
+    @property
+    def audioStreams(self):
+        return []
+
     def selectedVideoStream(self, fallback=False):
         if self.videoStreams:
             for stream in self.videoStreams:
@@ -138,6 +151,7 @@ class Video(media.MediaItem):
     @forceMediaChoice
     def selectStream(self, stream, _async=True):
         self.mediaChoice.part.setSelectedStream(stream.streamType.asInt(), stream.id, _async)
+        self.current_subtitle_is_embedded = False
         # Update any affected streams
         if stream.streamType.asInt() == plexstream.PlexStream.TYPE_AUDIO:
             for audioStream in self.audioStreams:
@@ -146,6 +160,7 @@ class Video(media.MediaItem):
                 elif audioStream.isSelected():
                     audioStream.setSelected(False)
         elif stream.streamType.asInt() == plexstream.PlexStream.TYPE_SUBTITLE:
+            self._current_subtitle_idx = None
             for subtitleStream in self.subtitleStreams:
                 if subtitleStream.id == stream.id:
                     subtitleStream.setSelected(True)
@@ -182,11 +197,15 @@ class Video(media.MediaItem):
 
     @forceMediaChoice
     def disableSubtitles(self):
-        self.selectStream(plexstream.NoneStream())
+        self.selectStream(plexstream.NONE_STREAM)
 
     @property
     def hasSubtitle(self):
-        return self.selectedSubtitleStream() != plexstream.NoneStream
+        return bool(self.selectedSubtitleStream())
+
+    @property
+    def hasSubtitles(self):
+        return bool(self.subtitleStreams)
 
     def isVideoItem(self):
         return True

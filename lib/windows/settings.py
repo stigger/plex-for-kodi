@@ -289,7 +289,7 @@ class Settings(object):
             )
         ),
         'audio': (
-            T(32048, 'Audio'), (
+            T(32931, 'Audio/Subtitles'), (
                 BoolSetting('audio_clamp_to_orig', T(32058, 'Never exceed original audio codec'), True).description(
                     T(32059, 'When transcoding audio, never exceed the original audio bitrate or channel '
                              'count on the same codec.')
@@ -309,9 +309,42 @@ class Settings(object):
                     T(32065, 'When the above is enabled, treat DTS the same as AC3 '
                              '(useful for Optical passthrough)')
                 ),
+                OptionsSetting(
+                    'burn_subtitles',
+                    T(32031, 'Burn Subtitles (Direct Play Only)'),
+                    'auto',
+                    (('auto', T(32030, 'Auto')), ('image', T(32029, 'Only Image Formats')),
+                     ('always', T(32028, 'Always')))
+                ),
             )
         ),
         'player': (
+            T(32464, 'Player'), (
+                BoolSetting('subtitle_downloads', T(32932, 'Show subtitle quick-actions button'), False).description(
+                    T(32939, 'Only applies to video player UI')),
+                BoolSetting('video_show_ffwdrwd', T(32933, 'Show FFWD/RWD buttons'), False).description(
+                    T(32939, 'Only applies to video player UI')),
+                BoolSetting('video_show_repeat', T(32934, 'Show repeat button'), False).description(
+                    T(32939, 'Only applies to video player UI')),
+                BoolSetting('video_show_shuffle', T(32935, 'Show shuffle button'), False).description(
+                    T(32939, 'Only applies to video player UI')),
+                OptionsSetting(
+                    'video_show_playlist', T(32936, 'Show playlist button'), 'eponly',
+                    (
+                        ('always', T(32035, 'Always')), ('eponly', T(32938, 'Only for Episodes')),
+                        ('never', T(32033, 'Never'))
+                    )
+                ).description(T(32939, 'Only applies to video player UI')),
+                OptionsSetting(
+                    'video_show_prevnext', T(32937, 'Show prev/next button'), 'eponly',
+                    (
+                        ('always', T(32035, 'Always')), ('eponly', T(32938, 'Only for Episodes')),
+                        ('never', T(32033, 'Never'))
+                    )
+                ).description(T(32939, 'Only applies to video player UI')),
+            )
+        ),
+        'player_user': (
             T(32631, 'Player (user-specific)'), (
                 BoolUserSetting(
                     'post_play_auto', T(32039, 'Post Play Auto Play'), True
@@ -356,17 +389,6 @@ class Settings(object):
                     T(33604, 'When the above is enabled and no video chapters are available, simulate them by using the'
                              ' markers identified by the Plex Server (Intro, Credits).')
                 ),
-            )
-        ),
-        'subtitles': (
-            T(32396, 'Subtitles'), (
-                OptionsSetting(
-                    'burn_subtitles',
-                    T(32031, 'Burn Subtitles (Direct Play Only)'),
-                    'auto',
-                    (('auto', T(32030, 'Auto')), ('image', T(32029, 'Only Image Formats')), ('always', T(32028, 'Always')))
-                ),
-                BoolSetting('subtitle_downloads', T(32040, 'Enable Subtitle Downloading'), False)
             )
         ),
         'network': (
@@ -461,7 +483,7 @@ class Settings(object):
         ),
     }
 
-    SECTION_IDS = ('main', 'video', 'audio', 'player', 'subtitles', 'network', 'system', 'about')
+    SECTION_IDS = ('main', 'video', 'audio', 'player', 'player_user', 'network', 'system', 'about')
 
     def __getitem__(self, key):
         return self.SETTINGS[key]

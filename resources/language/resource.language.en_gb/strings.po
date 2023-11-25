@@ -1521,3 +1521,39 @@ msgstr ""
 msgctxt "#32930"
 msgid "Previous Subtitle"
 msgstr ""
+
+msgctxt "#32931"
+msgid "Audio/Subtitles"
+msgstr ""
+
+msgctxt "#32932"
+msgid "Show subtitle quick-actions button"
+msgstr ""
+
+msgctxt "#32933"
+msgid "Show FFWD/RWD buttons"
+msgstr ""
+
+msgctxt "#32934"
+msgid "Show repeat button"
+msgstr ""
+
+msgctxt "#32935"
+msgid "Show shuffle button"
+msgstr ""
+
+msgctxt "#32936"
+msgid "Show playlist button"
+msgstr ""
+
+msgctxt "#32937"
+msgid "Show prev/next button"
+msgstr ""
+
+msgctxt "#32938"
+msgid "Only for Episodes"
+msgstr ""
+
+msgctxt "#32939"
+msgid "Only applies to video player UI"
+msgstr ""

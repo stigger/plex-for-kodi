@@ -122,6 +122,8 @@ class SeekDialog(kodigui.BaseDialog):
     BAR_RIGHT = 1920
     BAR_BOTTOM = 969
 
+    NAVBAR_BTN_SIZE = 60
+
     HIDE_DELAY = 4  # This uses the Cron tick so is +/- 1 second accurate
     OSD_HIDE_ANIMATION_DURATION = 0.2
     SKIP_STEPS = {"negative": [-10000], "positive": [30000]}
@@ -173,6 +175,8 @@ class SeekDialog(kodigui.BaseDialog):
         self._ignoreTick = False
         self._abortBufferWait = False
         self.waitingForBuffer = False
+        self.lastSubtitleNavAction = "forward"
+        self.subtitleButtonLeft = 0
 
         # optimize
         self._enableMarkerSkip = plexapp.ACCOUNT.hasPlexPass()
@@ -323,7 +327,22 @@ class SeekDialog(kodigui.BaseDialog):
         self.bigSeekControl = kodigui.ManagedControlList(self, self.BIG_SEEK_LIST_ID, 12)
         self.bigSeekGroupControl = self.getControl(self.BIG_SEEK_GROUP_ID)
         self.initialized = True
-        self.setBoolProperty('subtitle.downloads', util.getSetting('subtitle_downloads', False))
+
+        showQuickSubs = util.getSetting('subtitle_downloads', False)
+        showRepeat = util.getSetting('video_show_repeat', False)
+        showFfwdRwd = util.getSetting('video_show_ffwdrwd', False)
+        showShuffle = util.getSetting('video_show_shuffle', False)
+        self.setBoolProperty('nav.quick_subtitles', showQuickSubs)
+        self.setBoolProperty('nav.repeat', showRepeat)
+        self.setBoolProperty('nav.ffwdrwd', showFfwdRwd)
+        self.setBoolProperty('nav.shuffle', showShuffle)
+
+        if showQuickSubs:
+            self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE * len(
+                list(x for x in (showRepeat, showFfwdRwd, showShuffle) if not x))
+
+            util.DEBUG_LOG("HELLO 1: %s" % self.subtitleButtonLeft)
+
         self.updateProperties()
         self.updateChapters()
         self.videoSettingsHaveChanged()
@@ -963,26 +982,46 @@ class SeekDialog(kodigui.BaseDialog):
 
         # select "enable" by default
         selectIndex = 1
+        if self.lastSubtitleNavAction == "download":
+            selectIndex = 0
 
-        if xbmc.getCondVisibility('VideoPlayer.HasSubtitles'):
-            if xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled') and self.player.video.hasSubtitle:
+        if self.player.video.hasSubtitles:
+            if self.player.video.hasSubtitle:
                 options.append({'key': 'delay', 'display': T(32406, 'Subtitle Delay')})
-                options.append({'key': 'prev', 'display': T(32930, 'Previous Subtitle')})
-                options.append({'key': 'next', 'display': T(32407, 'Next Subtitle')})
 
-                # select "next subtitle" if we already have subs active
-                selectIndex = 3
+                # select "disable" if we only have one subtitle
+                selectIndex = 2
+                if self.lastSubtitleNavAction == "delay":
+                    selectIndex = 1
+                elif self.lastSubtitleNavAction == "download":
+                    selectIndex = 0
+
+                if len(self.player.video.subtitleStreams) > 1:
+                    options.append({'key': 'prev', 'display': T(32930, 'Previous Subtitle')})
+                    options.append({'key': 'next', 'display': T(32407, 'Next Subtitle')})
+
+                    # select "next subtitle" if we already have subs active
+                    selectIndex = 3
+
+                    # select "prev subtitle" if we've last cycled backwards
+                    if self.lastSubtitleNavAction == "backward":
+                        selectIndex = 2
+                    elif self.lastSubtitleNavAction == "delay":
+                        selectIndex = 1
+                    elif self.lastSubtitleNavAction == "download":
+                        selectIndex = 0
+
             options.append(
                 {
                     'key': 'enable',
                     'display':
-                        xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled + VideoPlayer.HasSubtitles') and
-                        self.player.video.hasSubtitle and
+                        xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled') and self.player.video.hasSubtitle and
                         T(32408, 'Disable Subtitles') or T(32409, 'Enable Subtitles')
                 }
             )
 
-        choice = dropdown.showDropdown(options, (1360, 1060), close_direction='down', pos_is_bottom=True,
+        # cheap and inaccurate approach to move the dropdown to the left based on how many buttons the user has hidden
+        choice = dropdown.showDropdown(options, (1360 - self.subtitleButtonLeft, 1060), close_direction='down', pos_is_bottom=True,
                                        close_on_playback_ended=True, select_index=selectIndex)
 
         if not choice:
@@ -990,23 +1029,27 @@ class SeekDialog(kodigui.BaseDialog):
 
         if choice['key'] == 'download':
             self.hideOSD()
+            self.lastSubtitleNavAction = "download"
             builtin.ActivateWindow('SubtitleSearch')
         elif choice['key'] == 'delay':
             self.hideOSD()
+            self.lastSubtitleNavAction = "delay"
             builtin.Action('SubtitleDelay')
         elif choice['key'] == 'next':
             self.cycleSubtitles()
+            self.lastSubtitleNavAction = "forward"
         elif choice['key'] == 'prev':
             self.cycleSubtitles(forward=False)
+            self.lastSubtitleNavAction = "backward"
         elif choice['key'] == 'enable':
             self.toggleSubtitles()
+            self.lastSubtitleNavAction = "forward"
 
     def toggleSubtitles(self):
         """
         Used for subtitle toggling from button press or subtitle toggle menu
         """
-        if xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled + VideoPlayer.HasSubtitles') \
-                and self.player.video.selectedSubtitleStream():
+        if xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled') and self.player.video.hasSubtitle:
             self.disableSubtitles()
         else:
             self.cycleSubtitles()
@@ -1020,11 +1063,11 @@ class SeekDialog(kodigui.BaseDialog):
         Selects the first subtitle or the next one
         """
         stream = self.player.video.cycleSubtitles(forward=forward)
-        self.setSubtitles()
+        self.setSubtitles(honor_forced_subtitles_override=False)
         util.showNotification(str(stream), time_ms=1500, header=util.T(32396, "Subtitles"))
 
-    def setSubtitles(self, do_sleep=False):
-        self.handler.setSubtitles(do_sleep=do_sleep)
+    def setSubtitles(self, do_sleep=False, honor_forced_subtitles_override=False):
+        self.handler.setSubtitles(do_sleep=do_sleep, honor_forced_subtitles_override=honor_forced_subtitles_override)
         if self.player.video.current_subtitle_is_embedded:
             # this is an embedded stream, seek back a second after setting the subtitle due to long standing kodi
             # issue: https://github.com/xbmc/xbmc/issues/21086
@@ -1106,6 +1149,14 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('is.show', (self.player.video.type == 'episode') and '1' or '')
         self.setProperty('media.show_ends', self.showItemEndsInfo and '1' or '')
         self.setProperty('time.ends_label', self.showItemEndsLabel and (util.T(32543, 'Ends at')+' ') or '')
+
+        if not self.getProperty('nav.playlist') and self.getProperty('nav.quick_subtitles'):
+            # offset the subtitle button
+            self.getControl(self.SUBTITLE_BUTTON_ID).setPosition(30, 0)
+
+        if not self.getProperty('nav.prevnext'):
+            if self.getProperty('nav.ffwdrwd'):
+                self.getControl(self.SKIP_BACK_BUTTON_ID).setPosition(30, 0)
 
         pq = self.handler.playlist
         if pq:
@@ -1350,9 +1401,24 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('show.buffer', util.advancedSettings.playerShowBuffer and '1' or '')
         self.setProperty('time.fmt', util.timeFormatKN)
         self.setProperty('time.fmt.ends', util.timeFormatKN.replace(":ss", ""))
+        navPlaylist = util.getSetting('video_show_playlist', 'eponly')
+        self.setBoolProperty('nav.playlist', (navPlaylist == "eponly" and self.player.video.type == 'episode') or
+                             navPlaylist == "always")
+
+        if not self.getProperty('nav.playlist'):
+            self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE
+
+        navPrevNext = util.getSetting('video_show_prevnext', 'eponly')
+        self.setBoolProperty('nav.prevnext', (navPrevNext == "eponly" and self.player.video.type == 'episode') or
+                             navPrevNext == "always")
+
+        if not self.getProperty('nav.prevnext'):
+            self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE
+
         self.applyMarkerProps()
         self.baseOffset = offset
         self.offset = 0
+        self.lastSubtitleNavAction = "forward"
         self._duration = duration
         self._ignoreTick = False
         if not self.showChapters:

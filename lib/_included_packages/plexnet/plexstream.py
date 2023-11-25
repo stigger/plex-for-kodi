@@ -169,3 +169,6 @@ class NoneStream(PlexStream):
 
     def getTitle(self, translate_func=util.dummyTranslate):
         return translate_func("None")
+
+
+NONE_STREAM = NoneStream()
