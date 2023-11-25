@@ -508,7 +508,7 @@ class SeekDialog(kodigui.BaseDialog):
                             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
 
                 if action.getButtonCode() == 61516:
-                    self.nextSubtitle()
+                    self.cycleSubtitles()
                 elif action.getButtonCode() == 61524:
                     self.toggleSubtitles()
                 elif action.getButtonCode() == 323714:
@@ -909,9 +909,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.initialAudioStream = self.player.video.selectedAudioStream()
             changed = True
 
-        sss = self.player.video.selectedSubtitleStream(
-            forced_subtitles_override=util.advancedSettings.forcedSubtitlesOverride
-        )
+        sss = self.player.video.selectedSubtitleStream()
         if sss != self.initialSubtitleStream:
             self.initialSubtitleStream = sss
             if changed or self.handler.mode == self.handler.MODE_RELATIVE:
@@ -963,20 +961,29 @@ class SeekDialog(kodigui.BaseDialog):
 
         options.append({'key': 'download', 'display': T(32405, 'Download Subtitles')})
 
+        # select "enable" by default
+        selectIndex = 1
+
         if xbmc.getCondVisibility('VideoPlayer.HasSubtitles'):
-            if xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled'):
+            if xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled') and self.player.video.hasSubtitle:
                 options.append({'key': 'delay', 'display': T(32406, 'Subtitle Delay')})
-                options.append({'key': 'cycle', 'display': T(32407, 'Next Subtitle')})
+                options.append({'key': 'prev', 'display': T(32930, 'Previous Subtitle')})
+                options.append({'key': 'next', 'display': T(32407, 'Next Subtitle')})
+
+                # select "next subtitle" if we already have subs active
+                selectIndex = 3
             options.append(
                 {
                     'key': 'enable',
-                    'display': xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled + VideoPlayer.HasSubtitles') and T(
-                        32408, 'Disable Subtitles') or T(32409, 'Enable Subtitles')
+                    'display':
+                        xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled + VideoPlayer.HasSubtitles') and
+                        self.player.video.hasSubtitle and
+                        T(32408, 'Disable Subtitles') or T(32409, 'Enable Subtitles')
                 }
             )
 
         choice = dropdown.showDropdown(options, (1360, 1060), close_direction='down', pos_is_bottom=True,
-                                       close_on_playback_ended=True)
+                                       close_on_playback_ended=True, select_index=selectIndex)
 
         if not choice:
             return
@@ -987,8 +994,10 @@ class SeekDialog(kodigui.BaseDialog):
         elif choice['key'] == 'delay':
             self.hideOSD()
             builtin.Action('SubtitleDelay')
-        elif choice['key'] == 'cycle':
-            self.nextSubtitle()
+        elif choice['key'] == 'next':
+            self.cycleSubtitles()
+        elif choice['key'] == 'prev':
+            self.cycleSubtitles(forward=False)
         elif choice['key'] == 'enable':
             self.toggleSubtitles()
 
@@ -996,20 +1005,21 @@ class SeekDialog(kodigui.BaseDialog):
         """
         Used for subtitle toggling from button press or subtitle toggle menu
         """
-        if xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled + VideoPlayer.HasSubtitles'):
+        if xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled + VideoPlayer.HasSubtitles') \
+                and self.player.video.selectedSubtitleStream():
             self.disableSubtitles()
         else:
-            self.nextSubtitle()
+            self.cycleSubtitles()
 
     def disableSubtitles(self):
-        self.handler.player.video.disableSubtitles()
+        self.player.video.disableSubtitles()
         self.setSubtitles()
 
-    def nextSubtitle(self):
+    def cycleSubtitles(self, forward=True):
         """
         Selects the first subtitle or the next one
         """
-        stream = self.handler.player.video.nextSubtitle()
+        stream = self.player.video.cycleSubtitles(forward=forward)
         self.setSubtitles()
         util.showNotification(str(stream), time_ms=1500, header=util.T(32396, "Subtitles"))
 

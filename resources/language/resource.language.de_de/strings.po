@@ -1814,3 +1814,7 @@ msgstr "Verwende Vorschaubilder anstatt Media-Artwork für Episoden im Fortsetze
 msgctxt "#32929"
 msgid "Use legacy background fallback image"
 msgstr "Veraltetes Ausweich-Hintergrundbild verwenden"
+
+msgctxt "#32930"
+msgid "Previous Subtitle"
+msgstr "Vorheriger Untertitel"
