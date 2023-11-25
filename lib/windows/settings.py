@@ -319,7 +319,7 @@ class Settings(object):
             )
         ),
         'player': (
-            T(32464, 'Player'), (
+            T(32940, 'Player UI'), (
                 BoolSetting('subtitle_downloads', T(32932, 'Show subtitle quick-actions button'), False).description(
                     T(32939, 'Only applies to video player UI')),
                 BoolSetting('video_show_ffwdrwd', T(32933, 'Show FFWD/RWD buttons'), False).description(
@@ -345,7 +345,7 @@ class Settings(object):
             )
         ),
         'player_user': (
-            T(32631, 'Player (user-specific)'), (
+            T(32631, 'Playback (user-specific)'), (
                 BoolUserSetting(
                     'post_play_auto', T(32039, 'Post Play Auto Play'), True
                 ).description(

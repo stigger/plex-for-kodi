@@ -1355,7 +1355,7 @@ msgid "Intro/credits markers might be a little early in Plex. When auto skipping
 msgstr ""
 
 msgctxt "#32631"
-msgid "Player (user-specific)"
+msgid "Playback (user-specific)"
 msgstr ""
 
 msgctxt "#33632"
@@ -1556,4 +1556,8 @@ msgstr ""
 
 msgctxt "#32939"
 msgid "Only applies to video player UI"
+msgstr ""
+
+msgctxt "#32940"
+msgid "Player UI"
 msgstr ""

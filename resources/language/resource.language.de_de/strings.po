@@ -1652,7 +1652,7 @@ msgid "Intro/credits markers might be a little early in Plex. When auto skipping
 msgstr "Intro-/Abspann-Markierungen können ein wenig früh erscheinen in Plex. Wenn diese automatisch übersprungen werden sollen, addiere (oder subtrahiere) diese Menge an Sekunden. Das verhindert das verfrühte Abschneiden von Inhalten, kann aber zu etwas verspätetem Springen führen."
 
 msgctxt "#32631"
-msgid "Player (user-specific)"
+msgid "Playback (user-specific)"
 msgstr "Wiedergabe (benutzerspezifisch)"
 
 msgctxt "#33632"
@@ -1854,3 +1854,7 @@ msgstr "Nur bei Episoden"
 msgctxt "#32939"
 msgid "Only applies to video player UI"
 msgstr "Gilt nur für die Video Abspieloberfläche"
+
+msgctxt "#32940"
+msgid "Player UI"
+msgstr "Abspieloberfläche"
