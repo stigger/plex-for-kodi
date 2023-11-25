@@ -1319,8 +1319,8 @@ msgstr "Kodi Untertitel-Einstellungen"
 
 #: 
 msgctxt "#32493"
-msgid "Prefer normal over forced subtitles if available (PMS selects forced by default)"
-msgstr "Bevorzuge normale gegenüber erzwungenen Untertiteln, falls verfügbar (PMS wählt standardmäßig erzwungene aus)"
+msgid "When a media file has a forced/foreign subtitle for a subtitle-enabled language, the Plex Media Server preselects it. This behaviour is usually not necessary and not configurable. This setting fixes that by ignoring the PMSs decision and selecting the same language without a forced flag if possible."
+msgstr "Hat eine Mediendatei erzwungenge Untertitel für eine Sprache, bei der Untertitel erwünscht sind, wählt der Plex Media Server diesen standardmäßig aus. Das Verhalten ist normalerweise unerwünscht und nicht konfigurierbar. Diese Einstellung behebt das Problem, indem versucht wird, einen Untertitel der selben Sprache ohne Erzwungen-Markierung zu wählen."
 
 #: 
 msgctxt "#32495"
@@ -1858,3 +1858,7 @@ msgstr "Gilt nur für die Video Abspieloberfläche"
 msgctxt "#32940"
 msgid "Player UI"
 msgstr "Abspieloberfläche"
+
+msgctxt "#32941"
+msgid "Forced subtitles fix"
+msgstr "Erzwungene Untertitel beheben"
