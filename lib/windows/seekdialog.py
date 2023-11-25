@@ -1078,6 +1078,10 @@ class SeekDialog(kodigui.BaseDialog):
             playersettings.showDialog(self.player.video, via_osd=True, parent=self)
 
         changed = self.videoSettingsHaveChanged()
+
+        if self.player.playState == self.player.STATE_PLAYING:
+            self._osdHideFast = True
+
         if changed == 'SUBTITLE':
             self.setSubtitles(do_sleep=False)
             self.lastSubtitleNavAction = "forward"
@@ -1811,9 +1815,10 @@ class SeekDialog(kodigui.BaseDialog):
             xbmc.executebuiltin('Dialog.Close(busydialog,1)')
 
         if not self.hasDialog and not self.playlistDialogVisible and self.osdVisible():
-            if time.time() > self.timeout:
+            if time.time() > self.timeout and not self._osdHideFast:
                 if not xbmc.getCondVisibility('Window.IsActive(videoosd) | Player.Rewinding | Player.Forwarding'):
                     self.hideOSD()
+                    self._osdHideFast = False
 
             # try insta-hiding the OSDs when playback was requested
             elif self._osdHideFast:
@@ -1822,7 +1827,7 @@ class SeekDialog(kodigui.BaseDialog):
                 if not xbmc.getCondVisibility('Window.IsActive(videoosd) | Player.Rewinding | Player.Forwarding'):
                     self.hideOSD()
 
-        self._osdHideFast = False
+                self._osdHideFast = False
 
         try:
             self.offset = offset or int(self.handler.player.getTime() * 1000)
