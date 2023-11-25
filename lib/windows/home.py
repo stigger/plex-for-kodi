@@ -1122,7 +1122,12 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 mli.setProperty('progress', util.getProgressImage(mli.dataSource))
         if with_art:
             for mli in items:
-                mli.setThumbnailImage(mli.dataSource.art.asTranscodedImageURL(*self.THUMB_AR16X9_DIM))
+                thumb = (util.advancedSettings.continueUseThumb
+                         and mli.dataSource.type == 'episode'
+                         and mli.dataSource.thumb
+                         ) \
+                        or mli.dataSource.art
+                mli.setThumbnailImage(thumb.asTranscodedImageURL(*self.THUMB_AR16X9_DIM))
                 mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/movie16x9.png')
         if ar16x9:
             for mli in items:

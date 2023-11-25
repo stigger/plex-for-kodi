@@ -197,7 +197,7 @@
                 </setting>
                 <setting id="background_art_blur_amount" type="integer" label="32469">
                     <level>0</level>
-                    <default>4</default>
+                    <default>0</default>
                     <constraints>
                         <minimum>0</minimum>
                         <step>1</step>
@@ -212,7 +212,7 @@
                 </setting>
                 <setting id="background_art_opacity_amount" type="integer" label="32470">
                     <level>0</level>
-                    <default>30</default>
+                    <default>20</default>
                     <constraints>
                         <minimum>0</minimum>
                         <step>1</step>
@@ -224,6 +224,19 @@
                     <dependencies>
                       <dependency type="enable" setting="dynamic_backgrounds">true</dependency>
                     </dependencies>
+                </setting>
+                <setting id="use_bg_fallback" type="boolean" label="32929">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                    <dependencies>
+                      <dependency type="enable" setting="dynamic_backgrounds">true</dependency>
+                    </dependencies>
+                </setting>
+                <setting id="continue_use_thumb" type="boolean" label="32927" help="32928">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
                 </setting>
                 <setting id="playlist_visit_media" type="boolean" label="32505">
                     <level>0</level>
