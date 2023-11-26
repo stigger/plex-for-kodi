@@ -776,7 +776,7 @@
                         <align>left</align>
                         <aligny>center</aligny>
                         <textcolor>FFFFFFFF</textcolor>
-                        <label>[UPPERCASE]$ADDON[script.plexmod 32942][/UPPERCASE]</label>
+                        <label>[UPPERCASE]$INFO[Window.Property(seasons.header)][/UPPERCASE]</label>
                     </control>
                     <control type="list" id="401">
                         <posx>0</posx>

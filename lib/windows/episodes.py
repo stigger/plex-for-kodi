@@ -460,7 +460,14 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         elif controlID == self.SEARCH_BUTTON_ID:
             self.searchButtonClicked()
         elif controlID == self.SEASONS_LIST_ID:
-            self.openItem(self.seasonsListControl)
+            mli = self.seasonsListControl.getSelectedItem()
+            if not mli:
+                return
+            item = mli.dataSource
+            if item != self.season:
+                self.openItem(self.seasonsListControl)
+            else:
+                self.setFocusId(self.EPISODE_LIST_ID)
         elif controlID == self.EXTRA_LIST_ID:
             self.openItem(self.extraListControl)
         elif controlID == self.RELATED_LIST_ID:
@@ -913,6 +920,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             self.setProperty('episodes.header', u'Episodes')
             self.setProperty('extras.header', u'Extras')
 
+        self.setProperty('seasons.header',
+                         u'{0} \u2022 {1}'.format(showTitle, T(32942, 'Seasons')))
         self.setProperty('related.header', T(32306, 'Related Shows'))
         self.genre = self.show_.genres() and self.show_.genres()[0].tag or ''
 
