@@ -241,6 +241,7 @@ class SeekDialog(kodigui.BaseDialog):
         self._navigatedViaMarkerOrChapter = False
         self.setProperty('show.chapters', '')
         self.setProperty('button.seek', '')
+        self.setProperty('marker.countdown', '')
         self.resetAutoSeekTimer(None)
         self.resetSkipSteps()
 
@@ -414,8 +415,7 @@ class SeekDialog(kodigui.BaseDialog):
                             self.setProperty('show.markerSkip', '')
                             self.setProperty('show.markerSkip_OSDOnly', '')
                             self.doSeek(math.ceil(float(marker.endTimeOffset)) - markerOff)
-                            self._osdHideFast = True
-                            self.tick()
+                            self.hideOSD(skipMarkerFocus=True)
 
                             if marker.type == "credits" and not final:
                                 # non-final marker
@@ -559,7 +559,7 @@ class SeekDialog(kodigui.BaseDialog):
 
                         elif util.advancedSettings.skipMarkerTimerImmediate and action == xbmcgui.ACTION_SELECT_ITEM:
                             self.displayMarkers(immediate=True)
-                            self._osdHideFast = True
+                            self.hideOSD(skipMarkerFocus=True)
                         return
 
                 if action in cancelActions:
@@ -1687,6 +1687,7 @@ class SeekDialog(kodigui.BaseDialog):
             self._currentMarker["countdown"] = None
             markerDef["markerAutoSkipped"] = True
             setattr(self, markerDef["markerAutoSkipShownTimer"], None)
+            self.setProperty('show.markerSkip', '')
             return False
 
         autoSkippingNow = markerDef \
@@ -1773,6 +1774,8 @@ class SeekDialog(kodigui.BaseDialog):
             if self.player.playState == self.player.STATE_PLAYING:
                 markerDef["countdown"] -= 1
 
+            self.setProperty('marker.countdown', '1')
+
             if markerDef["countdown"] > 0:
                 markerName = "{} ({})".format(markerDef["autoSkipName"], markerDef["countdown"])
             else:
@@ -1818,7 +1821,6 @@ class SeekDialog(kodigui.BaseDialog):
             if time.time() > self.timeout and not self._osdHideFast:
                 if not xbmc.getCondVisibility('Window.IsActive(videoosd) | Player.Rewinding | Player.Forwarding'):
                     self.hideOSD()
-                    self._osdHideFast = False
 
             # try insta-hiding the OSDs when playback was requested
             elif self._osdHideFast:
@@ -1873,10 +1875,10 @@ class SeekDialog(kodigui.BaseDialog):
         if focusButton:
             self.setFocusId(self.PLAY_PAUSE_BUTTON_ID)
 
-    def hideOSD(self):
+    def hideOSD(self, skipMarkerFocus=False):
         self.setProperty('show.OSD', '')
         self.setFocusId(self.NO_OSD_BUTTON_ID)
-        if self.getCurrentMarkerDef() and not self.getProperty('show.markerSkip_OSDOnly'):
+        if not skipMarkerFocus and self.getCurrentMarkerDef() and not self.getProperty('show.markerSkip_OSDOnly'):
             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
 
         self.resetSeeking()

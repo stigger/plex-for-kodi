@@ -199,7 +199,7 @@
             <texturefocus>-</texturefocus>
             <texturenofocus>-</texturenofocus>
             <label> </label>
-            <onclick condition="String.IsEmpty(Window.Property(button.seek))">SetProperty(show.OSD,1)</onclick>
+            <onclick condition="String.IsEmpty(Window.Property(button.seek)) + String.IsEmpty(Window.Property(marker.countdown))">SetProperty(show.OSD,1)</onclick>
         </control>
 
         <control type="group" id="803">
