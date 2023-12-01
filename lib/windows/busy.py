@@ -32,7 +32,7 @@ class BusyClosableMsgWindow(BusyClosableWindow):
         self.setProperty("message", msg)
 
 
-def dialog(msg='LOADING', condition=None, delay=False):
+def dialog(msg='LOADING', condition=None, delay=True):
     def methodWrap(func):
         def inner(*args, **kwargs):
             w = BusyWindow.create(delay=delay)
@@ -84,8 +84,9 @@ class BusySignalContext(BusyMsgContext):
     Duplicates functionality of plex.CallbackEvent to a certain degree
     """
     window_cls = BusyWindow
+    delay = True
 
-    def __init__(self, context, signal, wait_max=10, delay=False):
+    def __init__(self, context, signal, wait_max=10, delay=True):
         self.wfSignal = signal
         self.signalEmitter = context
         self.waitMax = wait_max

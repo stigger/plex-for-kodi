@@ -523,7 +523,7 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
         )
         return mli
 
-    @busy.dialog(delay=True)
+    @busy.dialog()
     def fill(self, update=False):
         self.fillSeasons(self.mediaItem, update=update)
 
