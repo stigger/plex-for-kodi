@@ -7,7 +7,8 @@
     </coordinates>
     <controls>
         <control type="group">
-            <animation effect="fade" start="0" end="100">WindowOpen</animation>
+            <animation effect="fade" start="0" end="100" delay="500" condition="!String.IsEmpty(Window.Property(delay))">WindowOpen</animation>
+            <animation effect="fade" start="0" end="100" condition="String.IsEmpty(Window.Property(delay))">WindowOpen</animation>
             <control type="image">
                 <posx>840</posx>
                 <posy>465</posy>

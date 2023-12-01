@@ -1247,7 +1247,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         self.changingServer = True
         try:
-            with busy.BusySignalContext(plexapp.util.APP, "change:selectedServer") as bc:
+            with busy.BusySignalContext(plexapp.util.APP, "change:selectedServer", delay=True) as bc:
                 self.setFocusId(self.SECTION_LIST_ID)
 
                 server = mli.dataSource

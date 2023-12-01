@@ -12,6 +12,10 @@ class BusyWindow(kodigui.BaseDialog):
     width = 1920
     height = 1080
 
+    def __init__(self, *args, delay=False, **kwargs):
+        super(BusyWindow, self).__init__(*args, **kwargs)
+        self.setBoolProperty('delay', delay)
+
 
 class BusyClosableWindow(BusyWindow):
     ctx = None
@@ -28,10 +32,10 @@ class BusyClosableMsgWindow(BusyClosableWindow):
         self.setProperty("message", msg)
 
 
-def dialog(msg='LOADING', condition=None):
+def dialog(msg='LOADING', condition=None, delay=False):
     def methodWrap(func):
         def inner(*args, **kwargs):
-            w = BusyWindow.create()
+            w = BusyWindow.create(delay=delay)
             try:
                 return func(*args, **kwargs)
             finally:
@@ -54,9 +58,10 @@ class BusyMsgContext(object):
     w = None
     shouldClose = False
     window_cls = BusyClosableMsgWindow
+    delay = False
 
     def __enter__(self):
-        self.w = self.window_cls.create()
+        self.w = self.window_cls.create(delay=self.delay)
         self.w.ctx = self
         return self
 
@@ -80,12 +85,13 @@ class BusySignalContext(BusyMsgContext):
     """
     window_cls = BusyWindow
 
-    def __init__(self, context, signal, wait_max=10):
+    def __init__(self, context, signal, wait_max=10, delay=False):
         self.wfSignal = signal
         self.signalEmitter = context
         self.waitMax = wait_max
         self.ignoreSignal = False
         self.signalReceived = False
+        self.delay = delay
 
         super(BusySignalContext, self).__init__()
 

@@ -475,7 +475,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         except (SystemError, RuntimeError):
             self.setFocusId(self.PLAY_BUTTON_ID)
 
-    @busy.dialog(condition=lambda: util.getSetting("slow_connection", False))
+    @busy.dialog(delay=True)
     def setup(self):
         self.focusPlayButton()
 

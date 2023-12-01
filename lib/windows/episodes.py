@@ -247,7 +247,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         except KeyError:
             pass
 
-    @busy.dialog(condition=lambda: util.getSetting("slow_connection", False))
+    @busy.dialog(delay=True)
     def _onFirstInit(self):
         self.episodeListControl = kodigui.ManagedControlList(self, self.EPISODE_LIST_ID, 5)
         self.progressImageControl = self.getControl(self.PROGRESS_IMAGE_ID)
