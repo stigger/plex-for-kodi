@@ -221,6 +221,9 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
         DEBUG_LOG("Notification: {} {} {}".format(sender, method, data))
         if sender == 'script.plexmod' and method.endswith('RESTORE'):
             from .windows import kodigui
+            if not kodigui.BaseFunctions.lastWinID:
+                ERROR("Addon never properly started, can't reactivate")
+                return
             getAdvancedSettings()
             populateTimeFormat()
             xbmc.executebuiltin('ActivateWindow({0})'.format(kodigui.BaseFunctions.lastWinID))

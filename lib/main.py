@@ -19,7 +19,6 @@ from . import player
 from . import backgroundthread
 from . import util
 
-
 BACKGROUND = None
 
 
@@ -58,7 +57,6 @@ def signout():
 
 def main():
     global BACKGROUND
-    util.setGlobalProperty('running', '1')
     # fixme: reopen windowutils.HOME if still running?
     try:
         with util.Cron(1):
@@ -72,6 +70,7 @@ def main():
 def _main():
     util.DEBUG_LOG('[ STARTED: {0} -------------------------------------------------------------------- ]'.format(util.ADDON.getAddonInfo('version')))
     util.DEBUG_LOG('USER-AGENT: {0}'.format(plex.defaultUserAgent()))
+    util.setGlobalProperty('running', '1')
     background.setSplash()
 
     try:
