@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from . import kodigui
 from lib import util
 from kodi_six import xbmcgui
+import threading
 
 
 class BusyWindow(kodigui.BaseDialog):
@@ -11,10 +12,6 @@ class BusyWindow(kodigui.BaseDialog):
     res = '1080i'
     width = 1920
     height = 1080
-
-    def __init__(self, *args, delay=False, **kwargs):
-        super(BusyWindow, self).__init__(*args, **kwargs)
-        self.setBoolProperty('delay', delay)
 
 
 class BusyClosableWindow(BusyWindow):
@@ -35,10 +32,18 @@ class BusyClosableMsgWindow(BusyClosableWindow):
 def dialog(msg='LOADING', condition=None, delay=True):
     def methodWrap(func):
         def inner(*args, **kwargs):
-            w = BusyWindow.create(delay=delay)
+            timer = None
+            w = BusyWindow.create(show=not delay)
+            if delay:
+                timer = threading.Timer(0.5, lambda: w.show())
+                timer.start()
+
             try:
                 return func(*args, **kwargs)
             finally:
+                if timer and timer.is_alive():
+                    timer.cancel()
+                    timer.join()
                 w.doClose()
                 del w
                 util.garbageCollect()
@@ -56,12 +61,15 @@ def widthDialog(method, msg, *args, **kwargs):
 
 class BusyMsgContext(object):
     w = None
+    timer = None
     shouldClose = False
     window_cls = BusyClosableMsgWindow
     delay = False
 
     def __enter__(self):
-        self.w = self.window_cls.create(delay=self.delay)
+        self.w = self.window_cls.create(show=not self.delay)
+        if self.delay:
+            self.timer = threading.Timer(0.5, lambda: self.w.show())
         self.w.ctx = self
         return self
 
@@ -71,6 +79,10 @@ class BusyMsgContext(object):
     def __exit__(self, exc_type, exc_value, tb):
         if exc_type is not None:
             util.ERROR()
+
+        if self.timer and self.timer.is_alive():
+            self.timer.cancel()
+            self.timer.join()
 
         self.w.doClose()
         del self.w

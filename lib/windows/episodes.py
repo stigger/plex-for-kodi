@@ -274,7 +274,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 player.PLAYER.playBackgroundMusic(self.show_.theme.asURL(True), volume,
                                                   self.show_.ratingKey)
 
-    @busy.dialog(condition=lambda: util.getSetting("slow_connection", False))
+    @busy.dialog()
     def onReInit(self):
         if not self.tasks:
             self.tasks = backgroundthread.Tasks()

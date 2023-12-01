@@ -95,7 +95,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.video.reload(checkFiles=1, **VIDEO_RELOAD_KW)
         return self.playVideo()
 
-    @busy.dialog(condition=lambda: util.getSetting("slow_connection", False))
+    @busy.dialog()
     def onReInit(self):
         self.initialized = False
         if util.getSetting("slow_connection", False):
