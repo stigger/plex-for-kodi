@@ -187,9 +187,7 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
         self.trigger('changed.watchstatus')
 
     def actionStop(self):
-        if xbmc.Player().isPlaying():
-            LOG('OnSleep: Stopping media playback')
-            xbmc.Player().stop()
+        self.stopPlayback()
 
     def actionQuit(self):
         LOG('OnSleep: Exit Kodi')
@@ -229,6 +227,19 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
 
         elif sender == "xbmc" and method == "System.OnSleep" and getSetting('action_on_sleep', "none") != "none":
             getattr(self, "action{}".format(getSetting('action_on_sleep', "none").capitalize()))()
+
+    def stopPlayback(self):
+        if xbmc.Player().isPlaying():
+            LOG('Monitor: Stopping media playback')
+            xbmc.Player().stop()
+
+    def onScreensaverActivated(self):
+        DEBUG_LOG("Monitor: OnScreensaverActivated")
+        self.stopPlayback()
+
+    def onDPMSActivated(self):
+        DEBUG_LOG("Monitor: OnDPMSActivated")
+        self.stopPlayback()
 
 
 MONITOR = UtilityMonitor()
