@@ -39,7 +39,10 @@ def dialog(msg='LOADING', condition=None):
                 del w
                 util.garbageCollect()
 
-        return condition and condition() and inner or func
+        if condition is not None:
+            return condition() and inner or func
+        return inner
+
     return methodWrap
 
 
