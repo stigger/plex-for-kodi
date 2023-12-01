@@ -127,6 +127,7 @@ class AdvancedSettings(object):
         ("buffer_insufficient_wait", 10),
         ("continue_use_thumb", True),
         ("use_bg_fallback", False),
+        ("dbg_crossfade", True),
     )
 
     def __init__(self):

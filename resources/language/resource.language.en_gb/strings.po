@@ -1569,3 +1569,7 @@ msgstr ""
 msgctxt "#32942"
 msgid "Other seasons"
 msgstr ""
+
+msgctxt "#32943"
+msgid "Crossfade dynamic background art"
+msgstr ""

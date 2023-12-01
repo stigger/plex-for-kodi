@@ -136,7 +136,7 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
         if not self._winID:
             self._winID = xbmcgui.getCurrentWindowId()
 
-        if util.advancedSettings.dynamicBackgrounds and key == "background":
+        if util.advancedSettings.dynamicBackgrounds and util.advancedSettings.dbgCrossfade and key == "background":
             # new background?
             try:
                 cur = self.getProperty('background')

@@ -1866,3 +1866,7 @@ msgstr "Erzwungene Untertitel beheben"
 msgctxt "#32942"
 msgid "Other seasons"
 msgstr "Weitere Staffeln"
+
+msgctxt "#32943"
+msgid "Crossfade dynamic background art"
+msgstr "Dynamische Hintergrundbilder überblenden"
