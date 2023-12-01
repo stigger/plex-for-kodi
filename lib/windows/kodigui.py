@@ -103,6 +103,7 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
         self.finishedInit = False
 
     def onInit(self):
+        global LAST_BG_URL
         self._winID = xbmcgui.getCurrentWindowId()
         BaseFunctions.lastWinID = self._winID
         self.setProperty('use_solid_background', util.hasCustomBGColour and '1' or '')
@@ -111,7 +112,12 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
                 else "ff000000"
             self.setProperty('background_colour', "0x%s" % bgColour.lower())
         else:
-            self.setProperty('background_colour', "0xff111111")
+            # set background color to 0 to avoid kodi UI BG clearing, improves performance
+            # reset to solid BG to avoid flickering on reinit
+            if util.advancedSettings.dbgCrossfade:
+                self.setProperty('background_colour', "0x00000000")
+            else:
+                self.setProperty('background_colour', "0xff111111")
 
         self.setBoolProperty('use_bg_fallback', util.advancedSettings.useBgFallback)
 
@@ -119,6 +125,8 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
             self.onReInit()
         else:
             self.started = True
+            if LAST_BG_URL:
+                self.windowSetBackground(LAST_BG_URL)
             self.onFirstInit()
             self.finishedInit = True
 
@@ -129,33 +137,36 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
         pass
 
     def setProperty(self, key, value):
-        global LAST_BG_URL
-        if self._closing:
-            return
-
-        if not self._winID:
-            self._winID = xbmcgui.getCurrentWindowId()
-
-        if util.advancedSettings.dynamicBackgrounds and util.advancedSettings.dbgCrossfade and key == "background":
-            # new background?
-            try:
-                cur = self.getProperty('background')
-                isNew = ((cur and cur != value) or LAST_BG_URL != value)
-                xbmcgui.Window(self._winID).setProperty('background.is.new', isNew and '1' or '')
-                xbmcgui.WindowXML.setProperty(self, 'background.is.new', isNew and '1' or '')
-
-                if isNew:
-                    xbmcgui.Window(self._winID).setProperty('background.old', cur and cur or LAST_BG_URL)
-                    xbmcgui.WindowXML.setProperty(self, 'background.old', cur and cur or LAST_BG_URL)
-                LAST_BG_URL = value
-            except RuntimeError:
-                pass
-
         try:
             xbmcgui.Window(self._winID).setProperty(key, value)
             xbmcgui.WindowXML.setProperty(self, key, value)
         except RuntimeError:
             xbmc.log('kodigui.BaseWindow.setProperty: Missing window', xbmc.LOGDEBUG)
+
+    def updateBackgroundFrom(self, ds):
+        if util.advancedSettings.dynamicBackgrounds:
+            self.windowSetBackground(util.backgroundFromArt(ds.art, width=self.width, height=self.height))
+
+    def windowSetBackground(self, value):
+        if not util.advancedSettings.dbgCrossfade:
+            self.setProperty("background", value)
+            return
+
+        if not value:
+            return
+
+        global LAST_BG_URL
+
+        cur1 = self.getProperty('background')
+        if not cur1:
+            self.setProperty("background", value)
+            self.setProperty("background_static", value)
+
+        elif LAST_BG_URL != value:
+            self.setProperty("background_static", LAST_BG_URL)
+            self.setProperty("background", value)
+
+        LAST_BG_URL = value
 
     def doClose(self):
         if not self.isOpen:

@@ -539,10 +539,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                 if util.advancedSettings.dynamicBackgrounds:
                     mli = self.showPanelControl.getSelectedItem()
                     if mli and mli.dataSource:
-                        self.setProperty(
-                            'background', util.backgroundFromArt(mli.dataSource.art, width=self.width,
-                                                                 height=self.height)
-                        )
+                        self.updateBackgroundFrom(mli.dataSource)
 
                 controlID = self.getFocusId()
                 if controlID == self.POSTERS_PANEL_ID or controlID == self.SCROLLBAR_ID:
@@ -1349,14 +1346,13 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
 
         if randomize:
             item = random.choice(items)
-            self.setProperty('background', util.backgroundFromArt(item.art, width=self.width, height=self.height))
+            self.updateBackgroundFrom(item)
         else:
             # we want the first item of the first chunk
             if position != 0:
                 return
 
-            self.setProperty('background', util.backgroundFromArt(items[0].art,
-                                                                  width=self.width, height=self.height))
+            self.updateBackgroundFrom(items[0])
         self.backgroundSet = True
 
     def fill(self):
@@ -1570,7 +1566,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             return
 
         photo = random.choice(photos)
-        self.setProperty('background', util.backgroundFromArt(photo.art, width=self.width, height=self.height))
+        self.updateBackgroundFrom(photo)
         thumbDim = TYPE_KEYS.get(self.section.type, TYPE_KEYS['movie'])['thumb_dim']
         fallback = 'script.plex/thumb_fallbacks/{0}.png'.format(TYPE_KEYS.get(self.section.type, TYPE_KEYS['movie'])['fallback'])
 

@@ -148,12 +148,15 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 self.setFocusId(300)
                 self.prev()
 
+            elif action == xbmcgui.ACTION_MOVE_UP and controlID >= self.PLAY_BUTTON_ID <= self.MEDIA_BUTTON_ID:
+                self.updateBackgroundFrom(self.video)
+
             if controlID == self.RELATED_LIST_ID:
                 if self.relatedPaginator.boundaryHit:
                     self.relatedPaginator.paginate()
                     return
                 elif action in (xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_MOVE_RIGHT):
-                    self.updateBackgroundFrom(self.relatedListControl)
+                    self.updateBackgroundFrom(self.relatedListControl.getSelectedItem().dataSource)
         except:
             util.ERROR()
 
@@ -192,7 +195,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.setProperty('hub.focus', str(controlID - 400))
 
             if controlID == self.RELATED_LIST_ID:
-                self.updateBackgroundFrom(self.relatedListControl)
+                self.updateBackgroundFrom(self.relatedListControl.getSelectedItem().dataSource)
 
         if xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + ControlGroup(300).HasFocus(0)'):
             self.setProperty('on.extras', '')
@@ -495,12 +498,13 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                                                  parent_window=self)
 
         self.setInfo()
+        self.setBoolProperty("initialized", True)
         self.fillExtras()
         hasPrev = self.fillRelated()
         self.fillRoles(hasPrev)
 
     def setInfo(self):
-        self.setProperty('background', util.backgroundFromArt(self.video.art, width=self.width, height=self.height))
+        self.updateBackgroundFrom(self.video)
         self.setProperty('title', self.video.title)
         self.setProperty('duration', util.durationToText(self.video.duration.asInt()))
         self.setProperty('summary', self.video.summary.strip().replace('\t', ' '))

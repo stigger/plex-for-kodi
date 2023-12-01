@@ -355,9 +355,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if util.advancedSettings.dynamicBackgrounds:
             bgUrl = util.getSetting("last_bg_url")
             if bgUrl:
-                self.setProperty(
-                    'background', bgUrl
-                )
+                # self.setProperty(
+                #     'background', bgUrl
+                # )
+                self.windowSetBackground(bgUrl)
 
         self.sectionList = kodigui.ManagedControlList(self, self.SECTION_LIST_ID, 7)
         self.serverList = kodigui.ManagedControlList(self, self.SERVER_LIST_ID, 10)
@@ -407,8 +408,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 hubControlIndex = self.lastFocusID - 400
 
                 if hubControlIndex in self.hubFocusIndexes and self.hubControls[hubControlIndex]:
-                    util.DEBUG_LOG("Re-focusing {}".format(self.lastFocusID))
-                    self.setFocusId(self.lastFocusID)
+                    # this is basically just used for setting the background upon reinit
+                    # fixme: declutter, separation of concerns
                     self.checkHubItem(self.lastFocusID)
                 else:
                     util.DEBUG_LOG("Focus requested on {}, which can't focus. Trying next hub".format(self.lastFocusID))
@@ -742,17 +743,13 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.lastSection = item.dataSource
             self.sectionChanged(force)
 
-    def setBackground(self, item):
-        bgUrl = util.backgroundFromArt(item.art, width=self.width, height=self.height)
-        self.setProperty('background', bgUrl)
-
     def checkHubItem(self, controlID):
         control = self.hubControls[controlID - 400]
         mli = control.getSelectedItem()
         is_valid_mli = mli and mli.getProperty('is.end') != '1'
 
         if util.advancedSettings.dynamicBackgrounds and is_valid_mli:
-            self.setBackground(mli.dataSource)
+            self.updateBackgroundFrom(mli.dataSource)
 
         if not mli or not mli.getProperty('is.end') or mli.getProperty('is.updating') == '1':
             return
@@ -1137,7 +1134,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         for obj in hubitems or hub.items:
             if not self.backgroundSet:
                 self.backgroundSet = True
-                self.setBackground(obj)
+                self.updateBackgroundFrom(obj)
             mli = self.createListItem(obj, wide=with_art)
             if mli:
                 items.append(mli)

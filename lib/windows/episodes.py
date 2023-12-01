@@ -299,7 +299,6 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
         self.reloadItems(items=reloadItems, with_progress=True)
         self.episodesPaginator.setEpisode(self._reloadVideos and self._reloadVideos[-1] or mli)
-        kodigui.LAST_BG_URL = self.episodesPaginator._currentEpisode.getProperty('background')
         self._reloadVideos = []
         self.fillRelated()
 
@@ -325,6 +324,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                                                      parent_window=self)
 
         self.updateProperties()
+        self.setBoolProperty("initialized", True)
         self.fillEpisodes()
         hasSeasons = self.fillSeasons(self.show_, seasonsFilter=lambda x: len(x) > 1, selectSeason=self.season)
         hasPrev = self.fillExtras(hasSeasons)
@@ -367,6 +367,9 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             elif action == xbmcgui.ACTION_PREV_ITEM:
                 self.prev()
 
+            if action == xbmcgui.ACTION_MOVE_UP and controlID in (self.EPISODE_LIST_ID, self.SEASONS_LIST_ID):
+                self.updateBackgroundFrom((self.show_ or self.season.show()))
+
             if controlID == self.EPISODE_LIST_ID:
                 if self.checkForHeaderFocus(action):
                     return
@@ -376,7 +379,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                     self.relatedPaginator.paginate()
                     return
                 elif action in (xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_MOVE_RIGHT):
-                    self.updateBackgroundFrom(self.relatedListControl)
+                    self.updateBackgroundFrom(self.relatedListControl.getSelectedItem().dataSource)
 
             if controlID == self.LIST_OPTIONS_BUTTON_ID and self.checkOptionsAction(action):
                 return
@@ -484,7 +487,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         if 399 < controlID < 500:
             self.setProperty('hub.focus', str(controlID - 400))
             if controlID == self.RELATED_LIST_ID:
-                self.updateBackgroundFrom(self.relatedListControl)
+                self.updateBackgroundFrom(self.relatedListControl.getSelectedItem().dataSource)
         if xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + ControlGroup(300).HasFocus(0)'):
             self.setProperty('on.extras', '')
         elif xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + !ControlGroup(300).HasFocus(0)'):
@@ -910,10 +913,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def updateProperties(self):
         showTitle = self.show_ and self.show_.title or ''
 
-        self.setProperty(
-            'background',
-            util.backgroundFromArt((self.show_ or self.season.show()).art, width=self.width, height=self.height)
-        )
+        self.updateBackgroundFrom(self.show_ or self.season.show())
         self.setProperty('season.thumb', (self.season or self.show_).thumb.asTranscodedImageURL(*self.POSTER_DIM))
         self.setProperty('show.title', showTitle)
         self.setProperty('season.title', (self.season or self.show_).title)
