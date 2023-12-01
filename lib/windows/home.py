@@ -407,10 +407,11 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 hubControlIndex = self.lastFocusID - 400
 
                 if hubControlIndex in self.hubFocusIndexes and self.hubControls[hubControlIndex]:
-                    util.DEBUG_LOG("Re-focusing %i" % self.lastFocusID)
+                    util.DEBUG_LOG("Re-focusing {}".format(self.lastFocusID))
                     self.setFocusId(self.lastFocusID)
+                    self.checkHubItem(self.lastFocusID)
                 else:
-                    util.DEBUG_LOG("Focus requested on %i, which can't focus. Trying next hub" % self.lastFocusID)
+                    util.DEBUG_LOG("Focus requested on {}, which can't focus. Trying next hub".format(self.lastFocusID))
                     self.focusFirstValidHub(hubControlIndex)
 
             else:
@@ -429,6 +430,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             if self.hubControls[index]:
                 util.DEBUG_LOG("Focusing hub: %i" % (400 + index))
                 self.setFocusId(400+index)
+                self.checkHubItem(400+index)
                 return
 
         if startIndex is not None:
@@ -480,9 +482,19 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.serverList.reset()
         self.unhookSignals()
 
-        if util.advancedSettings.dynamicBackgrounds and util.LAST_BG_URL:
-            # store last BG url
-            util.setSetting("last_bg_url", util.LAST_BG_URL)
+        if util.advancedSettings.dynamicBackgrounds:
+            # store BG url of first hub, first item, as this is most likely to be the one we're focusing on the
+            # next start
+            try:
+                indices = self.hubFocusIndexes
+                for index in indices:
+                    if self.hubControls[index]:
+                        ds = self.hubControls[index][0].dataSource
+                        util.setSetting("last_bg_url",
+                                        util.backgroundFromArt(ds.art, width=self.width, height=self.height))
+                        return
+            except:
+                util.LOG("Couldn't store last background")
 
     def onAction(self, action):
         controlID = self.getFocusId()
@@ -730,15 +742,17 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.lastSection = item.dataSource
             self.sectionChanged(force)
 
+    def setBackground(self, item):
+        bgUrl = util.backgroundFromArt(item.art, width=self.width, height=self.height)
+        self.setProperty('background', bgUrl)
+
     def checkHubItem(self, controlID):
         control = self.hubControls[controlID - 400]
         mli = control.getSelectedItem()
         is_valid_mli = mli and mli.getProperty('is.end') != '1'
 
         if util.advancedSettings.dynamicBackgrounds and is_valid_mli:
-            self.setProperty(
-                'background', util.backgroundFromArt(mli.dataSource.art, width=self.width, height=self.height)
-            )
+            self.setBackground(mli.dataSource)
 
         if not mli or not mli.getProperty('is.end') or mli.getProperty('is.updating') == '1':
             return
@@ -1123,9 +1137,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         for obj in hubitems or hub.items:
             if not self.backgroundSet:
                 self.backgroundSet = True
-                self.setProperty(
-                    'background', util.backgroundFromArt(obj.art, width=self.width, height=self.height)
-                )
+                self.setBackground(obj)
             mli = self.createListItem(obj, wide=with_art)
             if mli:
                 items.append(mli)

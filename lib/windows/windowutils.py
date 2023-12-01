@@ -39,6 +39,14 @@ class UtilMixin():
         from . import musicplayer
         self.processCommand(opener.handleOpen(musicplayer.MusicPlayerWindow, **kwargs))
 
+    def updateBackgroundFrom(self, listControl):
+        if util.advancedSettings.dynamicBackgrounds:
+            self.setProperty(
+                'background',
+                util.backgroundFromArt(listControl.getSelectedItem().dataSource.art, width=self.width,
+                                       height=self.height)
+            )
+
     def getPlaylistResume(self, pl, items, title):
         resume = False
         watched = False

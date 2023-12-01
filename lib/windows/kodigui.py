@@ -5,10 +5,9 @@ from kodi_six import xbmcgui
 import time
 import threading
 import traceback
-import six
 from six.moves import range
 from six.moves import zip
-from .. util import hasCustomBGColour, advancedSettings
+from .. import util
 
 MONITOR = None
 
@@ -92,6 +91,9 @@ class BaseFunctions:
         self.setProperty(key, boolean and '1' or '')
 
 
+LAST_BG_URL = None
+
+
 class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
     def __init__(self, *args, **kwargs):
         BaseFunctions.__init__(self)
@@ -103,14 +105,15 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
     def onInit(self):
         self._winID = xbmcgui.getCurrentWindowId()
         BaseFunctions.lastWinID = self._winID
-        self.setProperty('use_solid_background', hasCustomBGColour and '1' or '')
-        if hasCustomBGColour:
-            bgColour = advancedSettings.backgroundColour if advancedSettings.backgroundColour != "-" else "ff000000"
+        self.setProperty('use_solid_background', util.hasCustomBGColour and '1' or '')
+        if util.hasCustomBGColour:
+            bgColour = util.advancedSettings.backgroundColour if util.advancedSettings.backgroundColour != "-" \
+                else "ff000000"
             self.setProperty('background_colour', "0x%s" % bgColour.lower())
         else:
             self.setProperty('background_colour', "0xff111111")
 
-        self.setBoolProperty('use_bg_fallback', advancedSettings.useBgFallback)
+        self.setBoolProperty('use_bg_fallback', util.advancedSettings.useBgFallback)
 
         if self.started:
             self.onReInit()
@@ -126,24 +129,31 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
         pass
 
     def setProperty(self, key, value):
+        global LAST_BG_URL
         if self._closing:
             return
 
         if not self._winID:
             self._winID = xbmcgui.getCurrentWindowId()
 
-        curBg = None
-        if key == "background":
+        if util.advancedSettings.dynamicBackgrounds and key == "background":
             # new background?
-            curBg = self.getProperty(key)
+            try:
+                cur = self.getProperty('background')
+                isNew = ((cur and cur != value) or LAST_BG_URL != value)
+                xbmcgui.Window(self._winID).setProperty('background.is.new', isNew and '1' or '')
+                xbmcgui.WindowXML.setProperty(self, 'background.is.new', isNew and '1' or '')
+
+                if isNew:
+                    xbmcgui.Window(self._winID).setProperty('background.old', cur and cur or LAST_BG_URL)
+                    xbmcgui.WindowXML.setProperty(self, 'background.old', cur and cur or LAST_BG_URL)
+                LAST_BG_URL = value
+            except RuntimeError:
+                pass
 
         try:
             xbmcgui.Window(self._winID).setProperty(key, value)
             xbmcgui.WindowXML.setProperty(self, key, value)
-            if key == "background":
-                nv = curBg and curBg != value and '1' or ''
-                xbmcgui.Window(self._winID).setProperty('background.is.new', nv)
-                xbmcgui.WindowXML.setProperty(self, 'background.is.new', nv)
         except RuntimeError:
             xbmc.log('kodigui.BaseWindow.setProperty: Missing window', xbmc.LOGDEBUG)
 

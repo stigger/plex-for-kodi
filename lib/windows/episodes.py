@@ -299,6 +299,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
         self.reloadItems(items=reloadItems, with_progress=True)
         self.episodesPaginator.setEpisode(self._reloadVideos and self._reloadVideos[-1] or mli)
+        kodigui.LAST_BG_URL = self.episodesPaginator._currentEpisode.getProperty('background')
         self._reloadVideos = []
         self.fillRelated()
 
@@ -374,6 +375,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 if self.relatedPaginator.boundaryHit:
                     self.relatedPaginator.paginate()
                     return
+                elif action in (xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_MOVE_RIGHT):
+                    self.updateBackgroundFrom(self.relatedListControl)
 
             if controlID == self.LIST_OPTIONS_BUTTON_ID and self.checkOptionsAction(action):
                 return
@@ -480,6 +483,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
         if 399 < controlID < 500:
             self.setProperty('hub.focus', str(controlID - 400))
+            if controlID == self.RELATED_LIST_ID:
+                self.updateBackgroundFrom(self.relatedListControl)
         if xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + ControlGroup(300).HasFocus(0)'):
             self.setProperty('on.extras', '')
         elif xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + !ControlGroup(300).HasFocus(0)'):

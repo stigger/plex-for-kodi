@@ -152,6 +152,8 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 if self.relatedPaginator.boundaryHit:
                     self.relatedPaginator.paginate()
                     return
+                elif action in (xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_MOVE_RIGHT):
+                    self.updateBackgroundFrom(self.relatedListControl)
         except:
             util.ERROR()
 
@@ -188,6 +190,9 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         if 399 < controlID < 500:
             self.setProperty('hub.focus', str(controlID - 400))
+
+            if controlID == self.RELATED_LIST_ID:
+                self.updateBackgroundFrom(self.relatedListControl)
 
         if xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + ControlGroup(300).HasFocus(0)'):
             self.setProperty('on.extras', '')

@@ -854,18 +854,13 @@ def getProgressImage(obj):
     return 'script.plex/progress/{0}.png'.format(pct)
 
 
-LAST_BG_URL = None
-
-
 def backgroundFromArt(art, width=1920, height=1080, background=colors.noAlpha.Background):
-    global LAST_BG_URL
-    LAST_BG_URL = art.asTranscodedImageURL(
+    return art.asTranscodedImageURL(
         width, height,
         blur=advancedSettings.backgroundArtBlurAmount,
         opacity=advancedSettings.backgroundArtOpacityAmount,
         background=background
     )
-    return LAST_BG_URL
 
 
 def trackIsPlaying(track):

@@ -8,8 +8,9 @@
     <backgroundcolor>$INFO[Window.Property(background_colour)]</backgroundcolor>
     <controls>
         <control type="group">
+            <visible>String.IsEmpty(Window.Property(use_solid_background))</visible>
             <control type="image">
-                <visible>String.IsEmpty(Window.Property(use_solid_background)) + !String.IsEmpty(Window.Property(use_bg_fallback))</visible>
+                <visible>!String.IsEmpty(Window.Property(use_bg_fallback))</visible>
                 <posx>0</posx>
                 <posy>0</posy>
                 <width>1920</width>
@@ -17,7 +18,7 @@
                 <texture>script.plex/home/background-fallback.png</texture>
             </control>
             <control type="image">
-                <visible>String.IsEmpty(Window.Property(use_solid_background)) + !String.IsEmpty(Window.Property(background.is.new))</visible>
+                <visible>!String.IsEmpty(Window.Property(background.is.new))</visible>
                 <posx>0</posx>
                 <posy>0</posy>
                 <width>1920</width>
@@ -26,7 +27,7 @@
                 <texture  background="true">$INFO[Window.Property(background)]</texture>
             </control>
             <control type="image">
-                <visible>String.IsEmpty(Window.Property(use_solid_background)) + String.IsEmpty(Window.Property(background.is.new))</visible>
+                <visible>String.IsEmpty(Window.Property(background.is.new))</visible>
                 <posx>0</posx>
                 <posy>0</posy>
                 <width>1920</width>
