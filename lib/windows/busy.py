@@ -50,9 +50,10 @@ def widthDialog(method, msg, *args, **kwargs):
 class BusyMsgContext(object):
     w = None
     shouldClose = False
+    window_cls = BusyClosableMsgWindow
 
     def __enter__(self):
-        self.w = BusyClosableMsgWindow.create()
+        self.w = self.window_cls.create()
         self.w.ctx = self
         return self
 
@@ -68,3 +69,43 @@ class BusyMsgContext(object):
         self.w = None
         util.garbageCollect()
         return True
+
+
+class BusySignalContext(BusyMsgContext):
+    """
+    Duplicates functionality of plex.CallbackEvent to a certain degree
+    """
+    window_cls = BusyWindow
+
+    def __init__(self, context, signal, wait_max=10):
+        self.wfSignal = signal
+        self.signalEmitter = context
+        self.waitMax = wait_max
+        self.ignoreSignal = False
+        self.signalReceived = False
+
+        super(BusySignalContext, self).__init__()
+
+        context.on(signal, self.onSignal)
+
+    def onSignal(self, *args, **kwargs):
+        self.signalReceived = True
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            util.ERROR()
+
+        try:
+            if not self.ignoreSignal:
+                waited = 0
+                while not self.signalReceived and waited < self.waitMax:
+                    util.MONITOR.waitForAbort(0.1)
+                    waited += 0.1
+        finally:
+            self.signalEmitter.off(self.wfSignal, self.onSignal)
+
+        return super(BusySignalContext, self).__exit__(exc_type, exc_val, exc_tb)
+
+
+class BusyClosableMsgContext(BusyMsgContext):
+    window_cls = BusyWindow

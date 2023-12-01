@@ -1561,7 +1561,7 @@ class SeekDialog(kodigui.BaseDialog):
                 waitExceeded = False
                 self.waitingForBuffer = True
                 self.showOSD(focusButton=False)
-                with busy.BusyMsgContext() as bc:
+                with busy.BusyClosableMsgContext() as bc:
                     # check for the buffer fill-state every 200ms
                     # this may be canceled by the usual actions;
                     # depending on who receives the cancel action, _abortBufferWait might be set by our onAction
@@ -1617,7 +1617,7 @@ class SeekDialog(kodigui.BaseDialog):
                 self.player.pause()
                 wasPlaying = True
 
-            with busy.BusyMsgContext() as bc:
+            with busy.BusyClosableMsgContext() as bc:
                 bc.setMessage("Buffering")
                 util.MONITOR.waitForAbort(wait)
                 self.waitingForBuffer = False

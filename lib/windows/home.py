@@ -343,6 +343,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.lastNonOptionsFocusID = None
         self.sectionHubs = {}
         self.updateHubs = {}
+        self.changingServer = False
         windowutils.HOME = self
 
         self.lock = threading.Lock()
@@ -606,7 +607,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if 399 < controlID < 500:
             self.setProperty('hub.focus', str(self.hubFocusIndexes[controlID - 400]))
 
-        if controlID == self.SECTION_LIST_ID:
+        if controlID == self.SECTION_LIST_ID and not self.changingServer:
             self.checkSectionItem()
 
         if xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + ControlGroup(100).HasFocus(0)'):
@@ -1244,18 +1245,30 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if not mli:
             return
 
-        server = mli.dataSource
+        self.changingServer = True
+        try:
+            with busy.BusySignalContext(plexapp.util.APP, "change:selectedServer") as bc:
+                self.setFocusId(self.SECTION_LIST_ID)
 
-        if not server.isReachable():
-            if server.pendingReachabilityRequests > 0:
-                util.messageDialog(T(32339, 'Server is not accessible'), T(32340, 'Connection tests are in progress. Please wait.'))
-            else:
-                util.messageDialog(
-                    T(32339, 'Server is not accessible'), T(32341, 'Server is not accessible. Please sign into your server and check your connection.')
-                )
-            return
+                server = mli.dataSource
 
-        plexapp.SERVERMANAGER.setSelectedServer(server, force=True)
+                if not server.isReachable():
+                    if server.pendingReachabilityRequests > 0:
+                        util.messageDialog(T(32339, 'Server is not accessible'), T(32340, 'Connection tests are in '
+                                                                                          'progress. Please wait.'))
+                    else:
+                        util.messageDialog(
+                            T(32339, 'Server is not accessible'), T(32341, 'Server is not accessible. Please sign into '
+                                                                           'your server and check your connection.')
+                        )
+                    bc.ignoreSignal = True
+                    return
+
+                changed = plexapp.SERVERMANAGER.setSelectedServer(server, force=True)
+                if not changed:
+                    bc.ignoreSignal = True
+        finally:
+            self.changingServer = False
 
     def showUserMenu(self, mouse=False):
         items = []
