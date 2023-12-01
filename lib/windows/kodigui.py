@@ -132,9 +132,18 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
         if not self._winID:
             self._winID = xbmcgui.getCurrentWindowId()
 
+        curBg = None
+        if key == "background":
+            # new background?
+            curBg = self.getProperty(key)
+
         try:
             xbmcgui.Window(self._winID).setProperty(key, value)
             xbmcgui.WindowXML.setProperty(self, key, value)
+            if key == "background":
+                nv = curBg and curBg != value and '1' or ''
+                xbmcgui.Window(self._winID).setProperty('background.is.new', nv)
+                xbmcgui.WindowXML.setProperty(self, 'background.is.new', nv)
         except RuntimeError:
             xbmc.log('kodigui.BaseWindow.setProperty: Missing window', xbmc.LOGDEBUG)
 
