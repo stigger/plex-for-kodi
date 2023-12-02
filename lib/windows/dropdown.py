@@ -107,6 +107,13 @@ class DropdownDialog(kodigui.BaseDialog):
     def playbackSessionEnded(self, **kwargs):
         self.doClose()
 
+    def doClose(self):
+        if self.closeOnPlaybackEnded:
+            from lib import player
+            player.PLAYER.off('session.ended', self.playbackSessionEnded)
+
+        super(DropdownDialog, self).doClose()
+
     def setChoice(self):
         mli = self.optionsList.getSelectedItem()
         if not mli:
@@ -127,10 +134,13 @@ class DropdownDialog(kodigui.BaseDialog):
                 choice['sub'] = sub
 
         self.choice = choice
-        if not self.closeOnlyWithBack:
-            self.doClose()
         if self.optionsCallback:
             self.optionsCallback(self.optionsList, mli)
+
+        del mli
+
+        if not self.closeOnlyWithBack:
+            self.doClose()
 
     def showOptions(self):
         items = []
