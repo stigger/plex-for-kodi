@@ -222,6 +222,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.lastNonOptionsFocusID = None
         self.episodesPaginator = None
         self.relatedPaginator = None
+        self.cameFrom = kwargs.get('came_from')
         self.tasks = backgroundthread.Tasks()
         self.initialized = False
         self._reloadVideos = []
@@ -268,7 +269,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def onFirstInit(self):
         self._onFirstInit()
 
-        if self.show_ and self.show_.theme and not util.getSetting("slow_connection", False):
+        if self.show_ and self.show_.theme and not util.getSetting("slow_connection", False) and \
+                (not self.cameFrom or self.cameFrom != self.mediaItem.ratingKey):
             volume = self.show_.settings.getThemeMusicValue()
             if volume > 0:
                 player.PLAYER.playBackgroundMusic(self.show_.theme.asURL(True), volume,
@@ -471,7 +473,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 return
             item = mli.dataSource
             if item != self.season:
-                self.openItem(self.seasonsListControl)
+                self.openItem(self.seasonsListControl, came_from=self.season.parentRatingKey)
             else:
                 self.setFocusId(self.EPISODE_LIST_ID)
         elif controlID == self.EXTRA_LIST_ID:
@@ -496,14 +498,14 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         if player.PLAYER.bgmPlaying and player.PLAYER.handler.currentlyPlaying != self.season.show().ratingKey:
             player.PLAYER.stopAndWait()
 
-    def openItem(self, control=None, item=None):
+    def openItem(self, control=None, item=None, came_from=None):
         if not item:
             mli = control.getSelectedItem()
             if not mli:
                 return
             item = mli.dataSource
 
-        self.processCommand(opener.open(item))
+        self.processCommand(opener.open(item, came_from=came_from))
 
     def roleClicked(self):
         mli = self.rolesListControl.getSelectedItem()
