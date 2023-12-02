@@ -212,8 +212,8 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
                 self.setFocusId(300)
                 self.prev()
 
-            if action == xbmcgui.ACTION_MOVE_UP and (controlID == self.SUB_ITEM_LIST_ID or (
-                    controlID >= self.INFO_BUTTON_ID and self.OPTIONS_BUTTON_ID)):
+            if action == xbmcgui.ACTION_MOVE_UP and (controlID == self.SUB_ITEM_LIST_ID or
+                    self.INFO_BUTTON_ID <= controlID <= self.OPTIONS_BUTTON_ID):
                 self.updateBackgroundFrom(self.mediaItem)
 
             if controlID == self.RELATED_LIST_ID:

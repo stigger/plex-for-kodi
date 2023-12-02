@@ -148,7 +148,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 self.setFocusId(300)
                 self.prev()
 
-            elif action == xbmcgui.ACTION_MOVE_UP and controlID >= self.PLAY_BUTTON_ID <= self.MEDIA_BUTTON_ID:
+            elif action == xbmcgui.ACTION_MOVE_UP and self.PLAY_BUTTON_ID <= controlID <= self.MEDIA_BUTTON_ID:
                 self.updateBackgroundFrom(self.video)
 
             if controlID == self.RELATED_LIST_ID:
