@@ -152,7 +152,7 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
 
     def windowSetBackground(self, value):
         if not util.advancedSettings.dbgCrossfade:
-            self.setProperty("background", value)
+            self.setProperty("background_static", value)
             return
 
         if not value:
