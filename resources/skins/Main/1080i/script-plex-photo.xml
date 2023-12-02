@@ -44,7 +44,7 @@
             </control>
             <control type="group">
                 <visible>!String.IsEmpty(Window.Property(is.updating))</visible>
-                <animation effect="fade" time="500">VisibleChange</animation>
+                <animation effect="fade" time="500" delay="500">VisibleChange</animation>
                 <control type="image">
                     <posx>840</posx>
                     <posy>465</posy>
