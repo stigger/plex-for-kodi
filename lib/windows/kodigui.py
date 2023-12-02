@@ -148,17 +148,23 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
 
     def updateBackgroundFrom(self, ds):
         if util.advancedSettings.dynamicBackgrounds:
-            self.windowSetBackground(util.backgroundFromArt(ds.art, width=self.width, height=self.height))
+            return self.windowSetBackground(util.backgroundFromArt(ds.art, width=self.width,
+                                                                   height=self.height))
 
     def windowSetBackground(self, value):
         if not util.advancedSettings.dbgCrossfade:
+            if not value:
+                return
             self.setProperty("background_static", value)
-            return
-
-        if not value:
-            return
+            return value
 
         global LAST_BG_URL
+
+        if not value:
+            if LAST_BG_URL:
+                self.setProperty("background_static", LAST_BG_URL)
+                return LAST_BG_URL
+            return
 
         cur1 = self.getProperty('background')
         if not cur1:
@@ -170,6 +176,7 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
             self.setProperty("background", value)
 
         LAST_BG_URL = value
+        return value
 
     def doClose(self):
         if not self.isOpen:

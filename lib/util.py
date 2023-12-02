@@ -870,6 +870,8 @@ def getProgressImage(obj):
 
 
 def backgroundFromArt(art, width=1920, height=1080, background=colors.noAlpha.Background):
+    if not art:
+        return
     return art.asTranscodedImageURL(
         width, height,
         blur=advancedSettings.backgroundArtBlurAmount,

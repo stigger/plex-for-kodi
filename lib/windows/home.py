@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 import time
 import threading
-import re
 
 from kodi_six import xbmc
 from kodi_six import xbmcgui
@@ -9,7 +8,6 @@ from kodi_six import xbmcgui
 from . import kodigui
 from lib import util
 from lib import backgroundthread
-from lib import colors
 from lib import player
 
 import plexnet
@@ -338,7 +336,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.hubControls = None
         self.backgroundSet = False
         self.sectionChangeThread = None
-        self.sectionChangeTimeout = 0
         self.lastFocusID = None
         self.lastNonOptionsFocusID = None
         self.sectionHubs = {}
@@ -590,6 +587,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
     def onClick(self, controlID):
         if controlID == self.SECTION_LIST_ID:
+            if self.sectionChangeThread and self.sectionChangeThread.is_alive():
+                self.sectionChangeThread.cancel()
+                self._sectionChanged()
+                return
             self.sectionClicked()
         # elif controlID == self.SERVER_BUTTON_ID:
         #     self.showServers()
@@ -783,16 +784,21 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.tasks = [t for t in self.tasks if t.isValid()]
 
     def sectionChanged(self, force=False):
-        self.sectionChangeTimeout = time.time() + 0.3
+        """
+        fixme: force is probably invalid or never used; check
+        """
+        if self.sectionChangeThread and self.sectionChangeThread.is_alive():
+            self.sectionChangeThread.cancel()
+            self.sectionChangeThread.join()
+
         if not self.sectionChangeThread or not self.sectionChangeThread.is_alive() or force:
-            self.sectionChangeThread = threading.Thread(target=self._sectionChanged, name="sectionchanged")
-            self.sectionChangeThread.start()
+            if not force:
+                self.sectionChangeThread = threading.Timer(0.5, self._sectionChanged)
+                self.sectionChangeThread.start()
+            else:
+                self._sectionReallyChanged()
 
     def _sectionChanged(self):
-        while not util.MONITOR.waitForAbort(0.1):
-            if time.time() >= self.sectionChangeTimeout:
-                break
-
         self._sectionReallyChanged()
 
     def _sectionReallyChanged(self):
@@ -1112,7 +1118,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         for control in self.hubControls:
             control.reset()
 
-    def _showHub(self, hub, hubitems=None, index=None, with_progress=False, with_art=False, ar16x9=False, text2lines=False, **kwargs):
+    def _showHub(self, hub, hubitems=None, index=None, with_progress=False, with_art=False, ar16x9=False,
+                 text2lines=False, **kwargs):
         control = self.hubControls[index]
         control.dataSource = hub
 
@@ -1130,8 +1137,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         for obj in hubitems or hub.items:
             if not self.backgroundSet:
-                self.backgroundSet = True
-                self.updateBackgroundFrom(obj)
+                if self.updateBackgroundFrom(obj):
+                    self.backgroundSet = True
             mli = self.createListItem(obj, wide=with_art)
             if mli:
                 items.append(mli)
