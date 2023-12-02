@@ -45,6 +45,10 @@ class BaseFunctions:
         window = cls(cls.xmlFile, cls.path, cls.theme, cls.res, **kwargs)
         if show:
             window.show()
+            if xbmcgui.getCurrentWindowId() < 13000:
+                window.isOpen = False
+            return window
+
         window.isOpen = True
         return window
 

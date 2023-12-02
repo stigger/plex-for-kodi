@@ -61,8 +61,20 @@ def main():
     try:
         with util.Cron(1):
             BACKGROUND = background.BackgroundWindow.create(function=_main)
-            BACKGROUND.modal()
-            del BACKGROUND
+
+            tries = 0
+            while not BACKGROUND.isOpen and not util.MONITOR.waitForAbort(1) and tries < 120:
+                if tries == 0:
+                    util.LOG("Couldn't start main loop, other dialog open? Retrying for 120s.")
+                BACKGROUND.show()
+                tries += 1
+
+            if BACKGROUND.isOpen:
+                util.setGlobalProperty('running', '1')
+                BACKGROUND.modal()
+                del BACKGROUND
+
+            util.LOG("Couldn't start main loop, exiting.")
     finally:
         util.setGlobalProperty('running', '')
 
@@ -70,7 +82,6 @@ def main():
 def _main():
     util.DEBUG_LOG('[ STARTED: {0} -------------------------------------------------------------------- ]'.format(util.ADDON.getAddonInfo('version')))
     util.DEBUG_LOG('USER-AGENT: {0}'.format(plex.defaultUserAgent()))
-    util.setGlobalProperty('running', '1')
     background.setSplash()
 
     try:
