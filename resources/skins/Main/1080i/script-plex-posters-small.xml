@@ -45,7 +45,7 @@
 
             <control type="grouplist" id="300">
                 <animation effect="fade" start="0" end="100" time="200" reversible="true">VisibleChange</animation>
-                <visible>!Integer.IsGreater(Container(101).ListItem.Property(index),9) + String.IsEmpty(Window.Property(no.content)) + String.IsEmpty(Window.Property(no.content.filtered))</visible>
+                <visible>!Integer.IsGreater(Container(101).ListItem.Property(index),9) + String.IsEmpty(Window.Property(no.content)) + String.IsEmpty(Window.Property(no.content.filtered)) + !String.IsEmpty(Window.Property(initialized))</visible>
                 <defaultcontrol>301</defaultcontrol>
                 <posx>30</posx>
                 <posy>-25</posy>
@@ -509,6 +509,7 @@
 
         <control type="group" id="200">
             <animation effect="slide" end="0,-135" time="200" tween="quadratic" easing="out" condition="Integer.IsGreater(Container(101).ListItem.Property(index),9) + !ControlGroup(200).HasFocus(0)">Conditional</animation>
+            <visible>!String.IsEmpty(Window.Property(initialized))</visible>
             <defaultcontrol always="true">201</defaultcontrol>
             <posx>0</posx>
             <posy>0</posy>

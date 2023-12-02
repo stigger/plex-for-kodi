@@ -500,6 +500,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             self.keyListControl.newControl(self)
             self.showPanelControl.selectItem(0)
             self.setFocusId(self.VIEWTYPE_BUTTON_ID)
+            self.setBoolProperty("initialized", True)
         else:
             if self.chunkMode:
                 self.showPanelControl = ChunkedWrapList(self, self.POSTERS_PANEL_ID, 5)
@@ -521,6 +522,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             self.setProperty('hide.filteroptions', hideFilterOptions and '1' or '')
 
             self.setTitle()
+            self.setBoolProperty("initialized", True)
             self.fill()
             self.refill = False
             if self.getProperty('no.content') or self.getProperty('no.content.filtered'):
