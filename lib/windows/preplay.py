@@ -102,14 +102,15 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.progressImageControl.setWidth(1)
             self.setProperty('remainingTime', T(32914, "Loading"))
         self.video.reload(checkFiles=1, fromMediaChoice=self.video.mediaChoice is not None, **VIDEO_RELOAD_KW)
-        self.refreshInfo()
+        self.refreshInfo(from_reinit=True)
         self.initialized = True
 
-    def refreshInfo(self):
+    def refreshInfo(self, from_reinit=False):
         oldFocusId = self.getFocusId()
 
         util.setGlobalProperty('hide.resume', '' if self.video.viewOffset.asInt() else '1')
-        self.setInfo()
+        # skip setting background when coming from reinit (other window) if we've focused something other than main
+        self.setInfo(skip_bg=from_reinit and not (self.PLAY_BUTTON_ID <= oldFocusId <= self.MEDIA_BUTTON_ID))
         self.fillRelated()
         xbmc.sleep(100)
 
@@ -503,8 +504,9 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         hasPrev = self.fillRelated()
         self.fillRoles(hasPrev)
 
-    def setInfo(self):
-        self.updateBackgroundFrom(self.video)
+    def setInfo(self, skip_bg=False):
+        if not skip_bg:
+            self.updateBackgroundFrom(self.video)
         self.setProperty('title', self.video.title)
         self.setProperty('duration', util.durationToText(self.video.duration.asInt()))
         self.setProperty('summary', self.video.summary.strip().replace('\t', ' '))
