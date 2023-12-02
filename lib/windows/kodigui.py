@@ -162,8 +162,8 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
 
         cur1 = self.getProperty('background')
         if not cur1:
-            self.setProperty("background", value)
             self.setProperty("background_static", value)
+            self.setProperty("background", value)
 
         elif LAST_BG_URL != value:
             self.setProperty("background_static", LAST_BG_URL)
