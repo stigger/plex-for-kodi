@@ -811,6 +811,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             self.updateItems()
             util.MONITOR.watchStatusChanged()
         elif choice['key'] == 'to_show':
+            xbmc.sleep(100)
             self.processCommand(opener.open(
                 self.season.parentRatingKey,
                 came_from=self.season.parentRatingKey)
