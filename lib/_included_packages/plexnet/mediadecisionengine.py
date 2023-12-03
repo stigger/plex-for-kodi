@@ -231,14 +231,19 @@ class MediaDecisionEngine(object):
                 choice.isDirectPlayable = False
             elif choice.audioStream.codec not in allowed:
                 if choice.sorts.audioChannels > 2 and forceAC3onMC:
-                    util.LOG("MDE: Multichannel AC3/DTS can't be direct played due to user settings")
+                    util.LOG("MDE: Multichannel {} can't be direct played due to user settings".format(
+                        choice.audioStream.codec))
                     choice.isDirectPlayable = False
                 elif choice.sorts.audioChannels <= 2 and not forceAC3onMC:
                     util.LOG(
                         "MDE: Codec {} can't be direct played due to user settings".format(choice.audioStream.codec))
                     choice.isDirectPlayable = False
+                elif choice.sorts.audioChannels > 2 and not forceAC3onMC:
+                    util.LOG("MDE: Multichannel AC3/DTS can't be direct played due to user settings")
+                    choice.isDirectPlayable = False
 
-        choice.sorts.videoDS = not (choice.sorts.videoDS is None or choice.forceTranscode is True) and choice.sorts.videoDS or 0
+        choice.sorts.videoDS = not (
+                    choice.sorts.videoDS is None or choice.forceTranscode is True) and choice.sorts.videoDS or 0
         choice.sorts.resolution = choice.resolution
 
         # Server properties probably don't need to be associated with each choice

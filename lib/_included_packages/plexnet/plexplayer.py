@@ -350,8 +350,8 @@ class PlexPlayer(object):
 
         streamAudioMC = hasAudioChoice and self.choice.audioStream.channels.asInt(8) > 2
 
-        # only force AC3 for multi channel audio
-        if hasAudioChoice and forceAC3onMC and not streamAudioMC:
+        # don't force AC3 if user only wants AC3 for multi channel audio
+        if hasAudioChoice and forceAC3 and forceAC3onMC and not streamAudioMC:
             forceAC3 = False
 
         # fixme: still necessary?
