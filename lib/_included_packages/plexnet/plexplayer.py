@@ -342,7 +342,7 @@ class PlexPlayer(object):
 
         clampToOrig = self.item.settings.getPreference("audio_clamp_to_orig", True)
         useKodiAudio = self.item.settings.getPreference("audio_channels_kodi", False)
-        forceAC3 = self.item.settings.getPreference("audio_force_ac3", False)
+        forceAC3 = self.item.settings.getPreference("audio_force_transcode_ac3", False)
         dtsIsAC3 = self.item.settings.getPreference("audio_ac3dts", True)
         hasAudioChoice = self.choice.audioStream is not None
 

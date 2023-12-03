@@ -219,7 +219,7 @@ class MediaDecisionEngine(object):
         else:
             choice.sorts.audioChannels = 0
 
-        if item.settings.getPreference("audio_force_ac3", False):
+        if item.settings.getPreference("audio_force_to_ac3", False):
             allowed = ["ac3"]
             if item.settings.getPreference("audio_ac3dts", False):
                 allowed.append("dca")

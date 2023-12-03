@@ -309,8 +309,13 @@ msgstr "DTS wie AC3 behandeln"
 
 #: 
 msgctxt "#32065"
-msgid "When the above is enabled, treat DTS the same as AC3 (useful for Optical passthrough)"
-msgstr "Wenn die obige Option aktiviert ist, wird DTS wie AC3 behandelt (nützlich für Optical Passthrough)"
+msgid "When any of the force AC3 settings are enabled, treat DTS the same as AC3 (useful for Optical passthrough)"
+msgstr "Wenn einer der AC3 Optionen aktiviert ist, wird DTS wie AC3 behandelt (nützlich für Optical Passthrough)"
+
+
+msgctxt "#32066"
+msgid "Force audio to AC3"
+msgstr "Audio immer als AC3 erzwingen"
 
 #: 
 msgctxt "#32100"
