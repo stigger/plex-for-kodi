@@ -342,18 +342,19 @@ class PlexPlayer(object):
 
         clampToOrig = self.item.settings.getPreference("audio_clamp_to_orig", True)
         useKodiAudio = self.item.settings.getPreference("audio_channels_kodi", False)
-        forceAC3 = self.item.settings.getPreference("audio_force_transcode_ac3", False)
+        forceAC3 = self.item.settings.getPreference("audio_force_transcoded_ac3", False)
+        forceAC3onMC = self.item.settings.getPreference("audio_force_ac3_mc", False)
         dtsIsAC3 = self.item.settings.getPreference("audio_ac3dts", True)
         hasAudioChoice = self.choice.audioStream is not None
 
         streamAudioMC = hasAudioChoice and self.choice.audioStream.channels.asInt(8) > 2
 
         # only force AC3 for multi channel audio
-        if hasAudioChoice and not streamAudioMC:
+        if hasAudioChoice and forceAC3onMC and not streamAudioMC:
             forceAC3 = False
 
         # fixme: still necessary?
-        if True:  # if self.choice.subtitleDecision == self.choice.SUBTITLES_BURN:  # Must burn transcoded because we can't set offset
+        if True: # if self.choice.subtitleDecision == self.choice.SUBTITLES_BURN:  # Must burn transcoded because we can't set offset
             builder.addParam("subtitles", "burn")
             captionSize = captions.CAPTIONS.getBurnedSize()
             if captionSize is not None:

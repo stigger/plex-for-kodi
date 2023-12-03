@@ -305,6 +305,7 @@ class Settings(object):
                              'encode to AC3 (useful for Optical passthrough)')
                 ),
                 BoolSetting('audio_force_to_ac3', T(32066, 'Force audio to AC3'), False),
+                BoolSetting('audio_force_ac3_mc', T(32067, 'Only force multichannel audio to AC3'), False),
                 BoolSetting('audio_ac3dts', T(32064, 'Treat DTS like AC3'),
                             True).description(
                     T(32065, 'When any of the force AC3 settings are enabled, treat DTS the same as AC3 '

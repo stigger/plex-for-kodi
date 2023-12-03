@@ -261,6 +261,10 @@ msgctxt "#32066"
 msgid "Force audio to AC3"
 msgstr ""
 
+msgctxt "#32067"
+msgid "Only force multichannel audio to AC3"
+msgstr ""
+
 msgctxt "#32100"
 msgid "Skip user selection and pin entry on startup."
 msgstr ""
