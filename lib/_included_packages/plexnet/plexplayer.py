@@ -265,7 +265,8 @@ class PlexPlayer(object):
 
             # Global variables for all decisions
             # Kodi default is 20971520 (20MB)
-            decisionPath = http.addUrlParam(decisionPath, "mediaBufferSize={}".format(str(CACHE_SIZE)[:-3]))
+            decisionPath = http.addUrlParam(decisionPath,
+                                            "mediaBufferSize={}".format(str(CACHE_SIZE * 1024 * 1024)[:-3]))
             decisionPath = http.addUrlParam(decisionPath, "hasMDE=1")
 
             if not advancedSettings.oldprofile:
@@ -385,6 +386,9 @@ class PlexPlayer(object):
             else:
                 audioCodecs = "ac3"
 
+        subtitleCodecs = "srt,ssa,ass,webvtt,mov_text,tx3g,ttxt,text,pgs,vobsub,smi,subrip,eia_608_embedded," \
+                         "dvb_subtitle"
+
         util.LOG('MDE-prep: enabling codecs: {}'.format(audioCodecs))
 
         # Allow virtually anything in Kodi playback.
@@ -398,7 +402,7 @@ class PlexPlayer(object):
         builder.extras.append(
             "add-transcode-target(type=videoProfile&videoCodec="
             "h264,mpeg1video,mpeg2video,mpeg4,msmpeg4v2,msmpeg4v3,vc1,wmv3&container=mkv&"
-            "audioCodec="+audioCodecs+"&protocol=http&context=streaming)")
+            "audioCodec={}&subtitleCodec={}&protocol=http&context=streaming)".format(audioCodecs, subtitleCodecs))
 
         # builder.extras.append(
         #     "append-transcode-target-audio-codec(type=videoProfile&context=streaming&protocol=http&audioCodec=" +
