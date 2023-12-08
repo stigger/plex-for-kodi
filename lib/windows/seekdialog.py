@@ -294,7 +294,7 @@ class SeekDialog(kodigui.BaseDialog):
     @property
     def markers(self):
         # fixme: fix transcoded marker skip
-        if not self._enableMarkerSkip or self.isTranscoded:
+        if not self._enableMarkerSkip:
             return None
 
         if not self._markers and hasattr(self.handler.player.video, "markers"):
@@ -377,15 +377,14 @@ class SeekDialog(kodigui.BaseDialog):
         self.videoSettingsHaveChanged()
         self.updateProgress()
 
-    def setup(self, duration, meta, offset=0, bif_url=None, title='', title2='', chapters=None):
+    def setup(self, duration, meta, offset=0, bif_url=None, title='', title2='', chapters=None, keepMarkerDef=False):
         """
         this is called by our handler and occurs earlier than onFirstInit.
         """
-        util.DEBUG_LOG("SeekDialog: setup")
+        util.DEBUG_LOG("SeekDialog: setup, keepMarkerDef={}".format(keepMarkerDef))
         self.title = title
         self.title2 = title2
         self.chapters = chapters or []
-        self.markers = None
         self.isDirectPlay = not meta.isTranscoded
         self.isTranscoded = not self.isDirectPlay
         self.showChapters = util.getUserSetting('show_chapters', True) and (
@@ -411,7 +410,9 @@ class SeekDialog(kodigui.BaseDialog):
         if not self.getProperty('nav.prevnext'):
             self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE
 
-        self.applyMarkerProps()
+        # in transcoded scenarios, when seeking, keep previous marker states, as the video restarts
+        if not keepMarkerDef:
+            self.applyMarkerProps()
         self.baseOffset = offset
         self.offset = 0
         self.idleTime = None
@@ -1462,13 +1463,15 @@ class SeekDialog(kodigui.BaseDialog):
             self.updateProgress(set_to_current=False)
             self.setProperty('button.seek', '1')
 
-    def getCurrentMarkerDef(self):
+    def getCurrentMarkerDef(self, offset=None):
         """
         Show intro/credits skip button at current time
         """
 
         if not self.markers:
             return
+
+        off = offset if offset is not None else self.trueOffset()
 
         for markerDef in self.markers:
             marker = markerDef["marker"]
@@ -1483,8 +1486,7 @@ class SeekDialog(kodigui.BaseDialog):
 
                 markerEndNegoff = FINAL_MARKER_NEGOFF if getattr(markerDef["marker"], "final", False) else 0
 
-                if startTimeOffset - MARKER_SHOW_NEGOFF <= self.offset < \
-                        int(marker.endTimeOffset) - markerEndNegoff:
+                if startTimeOffset - MARKER_SHOW_NEGOFF <= off < int(marker.endTimeOffset) - markerEndNegoff:
 
                     return markerDef
 
@@ -1737,9 +1739,10 @@ class SeekDialog(kodigui.BaseDialog):
         self.updateCurrent(
             update_position_control=not self._seeking and not self._applyingSeek, atOffset=self.timeKeeperTime)
 
-    def displayMarkers(self, cancelTimer=False, immediate=False, onlyReturnIntroMD=False):
+    def displayMarkers(self, cancelTimer=False, immediate=False, onlyReturnIntroMD=False, setSkipped=False,
+                       offset=None):
         # intro/credits marker display logic
-        markerDef = self.getCurrentMarkerDef()
+        markerDef = self.getCurrentMarkerDef(offset=offset)
 
         if not markerDef:
             # no marker to display, hide it
@@ -1763,7 +1766,9 @@ class SeekDialog(kodigui.BaseDialog):
 
         # we just want to return an early marker if we want to autoSkip it, so we can tell the handler to seekOnStart
         if onlyReturnIntroMD and markerDef["marker_type"] == "intro" and markerAutoSkip:
-            if startTimeOff == 0:
+            if startTimeOff == 0 and not markerDef["markerAutoSkipped"]:
+                if setSkipped:
+                    markerDef["markerAutoSkipped"] = True
                 return int(markerDef["marker"].endTimeOffset) + 1000
             return False
 
@@ -1853,7 +1858,7 @@ class SeekDialog(kodigui.BaseDialog):
                 # reset countdown on new marker
                 if not self._currentMarker or self._currentMarker != markerDef or markerDef["countdown"] is None:
                     # fixme: round might not be right here, but who cares
-                    markerDef["countdown"] = int(max(round((sTOffWThres - self.offset) / 1000.0) + 1, 1))
+                    markerDef["countdown"] = int(max(round((sTOffWThres - self.trueOffset()) / 1000.0) + 1, 1))
 
             if self.player.playState == self.player.STATE_PLAYING:
                 markerDef["countdown"] -= 1

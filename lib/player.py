@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import base64
 import threading
 import six
+import re
 
 from kodi_six import xbmc
 from kodi_six import xbmcgui
@@ -85,7 +86,7 @@ class BasePlayerHandler(object):
     def setSubtitles(self, *args, **kwargs):
         pass
 
-    def getIntroOffset(self):
+    def getIntroOffset(self, offset=None, setSkipped=False):
         pass
 
     def setup(self, duration, meta, offset, bif_url, **kwargs):
@@ -199,7 +200,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.prePlayWitnessed = False
         self.getDialog(setup=True)
         self.dialog.setup(self.duration, meta, int(self.baseOffset * 1000), self.bifURL, self.title, self.title2,
-                          chapters=self.chapters)
+                          chapters=self.chapters, keepMarkerDef=seeking == self.SEEK_IN_PROGRESS)
 
     def getDialog(self, setup=False):
         if not self.dialog:
@@ -252,8 +253,8 @@ class SeekPlayerHandler(BasePlayerHandler):
 
         return True
 
-    def getIntroOffset(self):
-        return self.getDialog().displayMarkers(onlyReturnIntroMD=True)
+    def getIntroOffset(self, offset=None, setSkipped=False):
+        return self.getDialog().displayMarkers(onlyReturnIntroMD=True, offset=offset, setSkipped=setSkipped)
 
     def next(self, on_end=False):
         if self.playlist and next(self.playlist):
@@ -825,6 +826,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
     STATE_PAUSED = "paused"
     STATE_BUFFERING = "buffering"
 
+    OFFSET_RE = re.compile(r'(offset=)\d+')
+
     def __init__(self, *args, **kwargs):
         xbmc.Player.__init__(self, *args, **kwargs)
         signalsmixin.SignalsMixin.__init__(self)
@@ -990,16 +993,32 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler.setup(self.video.duration.asInt(), meta, offset, bifURL, title=self.video.grandparentTitle,
                            title2=self.video.title, seeking=seeking, chapters=self.video.chapters)
 
+        # try to get an early intro offset so we can skip it if necessary
+        introOffset = None
+        if not offset:
+            # in case we're transcoded, instruct the marker handler to set the marker a skipped, so we don't re-skip it
+            # after seeking
+            probOff = self.handler.getIntroOffset(offset, setSkipped=meta.isTranscoded)
+            if probOff:
+                introOffset = probOff
+
         if meta.isTranscoded:
             self.handler.mode = self.handler.MODE_RELATIVE
+
+            if introOffset:
+                # cheat our way into an early intro skip by modifying the offset in the stream URL
+                util.DEBUG_LOG("Immediately seeking behind intro: {}".format(introOffset))
+                url = self.OFFSET_RE.sub(r"\g<1>{}".format(introOffset // 1000), url)
+                self.handler.dialog.baseOffset = introOffset
+
+                # probably not necessary
+                meta.playStart = introOffset // 1000
         else:
             if offset:
                 self.handler.seekOnStart = meta.playStart * 1000
-            else:
-                probOff = self.handler.getIntroOffset()
-                if probOff:
-                    util.DEBUG_LOG("Seeking behind intro: {}".format(probOff))
-                    self.handler.seekOnStart = probOff
+            elif introOffset:
+                util.DEBUG_LOG("Seeking behind intro after playstart: {}".format(introOffset))
+                self.handler.seekOnStart = introOffset
 
             self.handler.mode = self.handler.MODE_ABSOLUTE
 
