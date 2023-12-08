@@ -369,7 +369,8 @@ class PlexPlayer(object):
 
             # Allow text conversion of subtitles if we only burn image formats
             #if self.item.settings.getPreference("burn_subtitles") == "image":
-            builder.addParam("advancedSubtitles", "text")
+            if not self.item.settings.getPreference("burn_ssa", True):
+                builder.addParam("advancedSubtitles", "text")
 
             builder.addParam("subtitles", "auto")
 

@@ -318,10 +318,16 @@ class Settings(object):
                 ),
                 OptionsSetting(
                     'burn_subtitles',
-                    T(32031, 'Burn Subtitles (Direct Play Only)'),
+                    T(32031, 'Burn-in Subtitles'),
                     'auto',
                     (('auto', T(32030, 'Auto')), ('image', T(32029, 'Only Image Formats')),
                      ('always', T(32028, 'Always')))
+                ),
+                BoolSetting('burn_ssa', T(32944, 'Burn-in SSA subtitles'),
+                            True).description(
+                    T(32945, 'When Direct Streaming instruct the Plex Server to burn in SSA/ASS subtitles (thus '
+                             'transcoding the video stream). If disabled it will not touch the video stream, but '
+                             'will convert the subtitle to unstyled text.')
                 ),
                 BoolSetting('forced_subtitles_override', T(32941, 'Forced subtitles fix'),
                             False).description(

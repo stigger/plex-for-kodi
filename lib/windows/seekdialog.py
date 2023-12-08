@@ -1292,7 +1292,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.positionControl.setWidth(w)
 
         # update cache/buffer bar
-        if util.advancedSettings.playerShowBuffer and util.KODI_VERSION_MAJOR > 18:
+        if util.advancedSettings.playerShowBuffer and self.isDirectPlay and util.KODI_VERSION_MAJOR > 18:
             cache_w = int(xbmc.getInfoLabel("Player.ProgressCache")) * self.SEEK_IMAGE_WIDTH // 100
             self.cacheControl.setWidth(cache_w)
 
@@ -1422,7 +1422,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('has.playlist', self.handler.playlist and '1' or '')
         self.setProperty('shuffled', (self.handler.playlist and self.handler.playlist.isShuffled) and '1' or '')
         self.setProperty('has.chapters', self.showChapters and '1' or '')
-        self.setProperty('show.buffer', util.advancedSettings.playerShowBuffer and '1' or '')
+        self.setProperty('show.buffer', (util.advancedSettings.playerShowBuffer and self.isDirectPlay) and '1' or '')
 
         navPlaylist = util.getSetting('video_show_playlist', 'eponly')
         self.setBoolProperty('nav.playlist', (navPlaylist == "eponly" and self.player.video.type == 'episode') or

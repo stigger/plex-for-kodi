@@ -118,7 +118,7 @@ msgid "Auto"
 msgstr ""
 
 msgctxt "#32031"
-msgid "Burn Subtitles (Direct Play Only)"
+msgid "Burn-in Subtitles"
 msgstr ""
 
 msgctxt "#32032"
@@ -1580,4 +1580,12 @@ msgstr ""
 
 msgctxt "#32943"
 msgid "Crossfade dynamic background art"
+msgstr ""
+
+msgctxt "#32944"
+msgid "Burn-in SSA subtitles (DirectStream)"
+msgstr ""
+
+msgctxt "#32945"
+msgid "When Direct Streaming instruct the Plex Server to burn in SSA/ASS subtitles (thus transcoding the video stream). If disabled it will not touch the video stream, but will convert the subtitle to unstyled text."
 msgstr ""

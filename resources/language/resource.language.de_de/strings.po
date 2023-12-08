@@ -139,8 +139,8 @@ msgstr "Automatisch"
 
 #: 
 msgctxt "#32031"
-msgid "Burn Subtitles (Direct Play Only)"
-msgstr "Untertitel einbrennen (bei direkter Wiedergabe)"
+msgid "Burn-in Subtitles"
+msgstr "Untertitel einbrennen"
 
 #: 
 msgctxt "#32032"
@@ -1880,3 +1880,11 @@ msgstr "Weitere Staffeln"
 msgctxt "#32943"
 msgid "Crossfade dynamic background art"
 msgstr "Dynamische Hintergrundbilder überblenden"
+
+msgctxt "#32944"
+msgid "Burn-in SSA subtitles (DirectStream)"
+msgstr "SSA-Untertitel einbrennen (DirectStream)"
+
+msgctxt "#32945"
+msgid "When Direct Streaming instruct the Plex Server to burn in SSA/ASS subtitles (thus transcoding the video stream). If disabled it will not touch the video stream, but will convert the subtitle to unstyled text."
+msgstr "Wird Direct Streaming verwendet, den Plex Server dazu bringen, SSA/ASS-Untertitel einzubrennen (also den Video Stream zu transcoden). Wenn deaktiviert, wird dieser den Video Stream nicht anfassen, jedoch den Untertitel als reinen Text anzeigen."
