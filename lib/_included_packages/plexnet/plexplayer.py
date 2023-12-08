@@ -266,7 +266,7 @@ class PlexPlayer(object):
             # Global variables for all decisions
             # Kodi default is 20971520 (20MB)
             decisionPath = http.addUrlParam(decisionPath,
-                                            "mediaBufferSize={}".format(str(CACHE_SIZE * 1024 * 1024)[:-3]))
+                                            "mediaBufferSize={}".format(str(CACHE_SIZE * 1024)))
             decisionPath = http.addUrlParam(decisionPath, "hasMDE=1")
 
             if not advancedSettings.oldprofile:
