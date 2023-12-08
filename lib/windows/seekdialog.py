@@ -142,7 +142,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.offset = 0
         self.selectedOffset = 0
         self.bigSeekOffset = 0
-        self.bigSeekChanged = False
+        self.bigSeekChanged = False  # attention, with chapters this can become an integer for the True state
         self.title = ''
         self.title2 = ''
         self.fromSeek = 0
@@ -559,7 +559,9 @@ class SeekDialog(kodigui.BaseDialog):
                 if self._currentMarker and self._currentMarker["countdown"] is not None \
                         and (self.getProperty('show.markerSkip') or self.getProperty('show.markerSkip_OSDOnly')):
 
-                    if util.advancedSettings.skipMarkerTimerCancel or util.advancedSettings.skipMarkerTimerImmediate:
+                    if controlID != self.BIG_SEEK_LIST_ID and \
+                            (util.advancedSettings.skipMarkerTimerCancel
+                             or util.advancedSettings.skipMarkerTimerImmediate):
                         if util.advancedSettings.skipMarkerTimerCancel and \
                                 action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
                             self.displayMarkers(cancelTimer=True)
@@ -629,12 +631,14 @@ class SeekDialog(kodigui.BaseDialog):
 
             if lastFocusID == self.BIG_SEEK_LIST_ID and self.bigSeekChanged:
                 self.updateBigSeek(changed=True)
-                self.updateProgress(set_to_current=False)
+
+                # in case of chapter mode, bigSeekChanged holds our chapter's offset
+                offset = self.bigSeekChanged if self.showChapters else self.selectedOffset
+                self.updateProgress(set_to_current=False, offset=offset)
 
                 # immediately seek bigSeek after click
-                self._performSeek()
-                self._osdHideFast = True
-                self.tick()
+                self._performSeek(offset=offset)
+                self.hideOSD(skipMarkerFocus=True)
 
             else:
                 self.setBigSeekShift()
@@ -914,10 +918,10 @@ class SeekDialog(kodigui.BaseDialog):
         except:
             util.ERROR()
 
-    def _performSeek(self):
+    def _performSeek(self, offset=None):
         self._lastSkipDirection = None
         self._forcedLastSkipAmount = None
-        self.doSeek()
+        self.doSeek(offset=offset)
 
     def handleDialog(self, func):
         self.hasDialog = True
@@ -1147,6 +1151,9 @@ class SeekDialog(kodigui.BaseDialog):
                 self.selectedOffset = sel.dataSource - FINAL_MARKER_NEGOFF
             else:
                 self.selectedOffset = sel.dataSource + MARKER_OFF
+
+            # the onFocus action might take a couple of ms and might be overridden by onAction, store separately
+            self.bigSeekChanged = self.selectedOffset
 
         self.setFocusId(self.MAIN_BUTTON_ID)
 
