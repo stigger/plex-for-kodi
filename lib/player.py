@@ -88,7 +88,7 @@ class BasePlayerHandler(object):
     def getIntroOffset(self):
         pass
 
-    def setup(self, duration, offset, bif_url, **kwargs):
+    def setup(self, duration, meta, offset, bif_url, **kwargs):
         pass
 
     @property
@@ -182,7 +182,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.stoppedInBingeMode = False
         self.prePlayWitnessed = False
 
-    def setup(self, duration, offset, bif_url, title='', title2='', seeking=NO_SEEK, chapters=None):
+    def setup(self, duration, meta, offset, bif_url, title='', title2='', seeking=NO_SEEK, chapters=None):
         self.ended = False
         self.baseOffset = offset / 1000.0
         self.seeking = seeking
@@ -198,7 +198,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.inBingeMode = False
         self.prePlayWitnessed = False
         self.getDialog(setup=True)
-        self.dialog.setup(self.duration, int(self.baseOffset * 1000), self.bifURL, self.title, self.title2,
+        self.dialog.setup(self.duration, meta, int(self.baseOffset * 1000), self.bifURL, self.title, self.title2,
                           chapters=self.chapters)
 
     def getDialog(self, setup=False):
@@ -483,6 +483,7 @@ class SeekPlayerHandler(BasePlayerHandler):
                     # u_til.TEST(self.player.video.mediaChoice.__dict__)
                     util.DEBUG_LOG('Enabling embedded subtitles at: {0}'.format(subs.typeIndex))
                     self.player.setSubtitleStream(subs.typeIndex)
+                    self.player.showSubtitles(True)
 
         else:
             self.player.showSubtitles(False)
@@ -986,7 +987,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
         self.stopAndWait()  # Stop before setting up the handler to prevent player events from causing havoc
 
-        self.handler.setup(self.video.duration.asInt(), offset, bifURL, title=self.video.grandparentTitle,
+        self.handler.setup(self.video.duration.asInt(), meta, offset, bifURL, title=self.video.grandparentTitle,
                            title2=self.video.title, seeking=seeking, chapters=self.video.chapters)
 
         if meta.isTranscoded:

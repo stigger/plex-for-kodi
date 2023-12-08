@@ -543,11 +543,13 @@ def simpleSize(size):
         return '0B'
 
 
-def timeDisplay(ms):
+def timeDisplay(ms, cutHour=False):
     h = ms / 3600000
     m = (ms % 3600000) / 60000
     s = (ms % 60000) / 1000
-    return '{0:0>2}:{1:0>2}:{2:0>2}'.format(int(h), int(m), int(s))
+    if h >= 1 or not cutHour:
+        return '{0:0>2}:{1:0>2}:{2:0>2}'.format(int(h), int(m), int(s))
+    return '{0:0>2}:{1:0>2}'.format(int(m), int(s))
 
 
 def simplifiedTimeDisplay(ms):

@@ -177,6 +177,11 @@ class SeekDialog(kodigui.BaseDialog):
         self.waitingForBuffer = False
         self.lastSubtitleNavAction = "forward"
         self.subtitleButtonLeft = 0
+        self.ldTimer = True #util.advancedSettings.lowDriftTimer
+        self.timeKeeper = None
+        self.timeKeeperTime = None
+        self.isDirectPlay = True
+        self.isTranscoded = False
 
         # optimize
         self._enableMarkerSkip = plexapp.ACCOUNT.hasPlexPass()
@@ -273,7 +278,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.markers = None
 
     def trueOffset(self):
-        if self.handler.isDirectPlay:
+        if self.isDirectPlay:
             return (self.handler.player.playerObject.startOffset * 1000) + self.offset
         else:
             return self.baseOffset + self.offset
@@ -281,7 +286,7 @@ class SeekDialog(kodigui.BaseDialog):
     @property
     def markers(self):
         # fixme: fix transcoded marker skip
-        if not self._enableMarkerSkip or self.handler.isTranscoded:
+        if not self._enableMarkerSkip or self.isTranscoded:
             return None
 
         if not self._markers and hasattr(self.handler.player.video, "markers"):
@@ -713,6 +718,10 @@ class SeekDialog(kodigui.BaseDialog):
                     self.playlistDialog = None
                     util.garbageCollect()
 
+            if self.timeKeeper:
+                self.timeKeeper.cancel()
+                del self.timeKeeper
+                self.timeKeeper = None
         finally:
             kodigui.BaseDialog.doClose(self)
 
@@ -932,7 +941,7 @@ class SeekDialog(kodigui.BaseDialog):
         sss = self.player.video.selectedSubtitleStream()
         if sss != self.initialSubtitleStream:
             self.initialSubtitleStream = sss
-            if changed or self.handler.isTranscoded:
+            if changed or self.isTranscoded:
                 return True
             else:
                 return 'SUBTITLE'
@@ -1154,7 +1163,13 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('video.title2', self.title2)
         self.setProperty('is.show', (self.player.video.type == 'episode') and '1' or '')
         self.setProperty('media.show_ends', self.showItemEndsInfo and '1' or '')
-        self.setProperty('time.ends_label', self.showItemEndsLabel and (util.T(32543, 'Ends at')+' ') or '')
+        self.setProperty('time.ends_label', self.showItemEndsLabel and (util.T(32543, 'Ends at')) or '')
+
+        if self.isDirectPlay:
+            self.setProperty('time.fmt', util.timeFormatKN)
+            self.setProperty('time.fmt.ends', util.timeFormatKN.replace(":ss", ""))
+
+        self.setBoolProperty('direct.play', self.isDirectPlay)
 
         if not self.getProperty('nav.playlist') and self.getProperty('nav.quick_subtitles'):
             # offset the subtitle button
@@ -1281,17 +1296,18 @@ class SeekDialog(kodigui.BaseDialog):
             cache_w = int(xbmc.getInfoLabel("Player.ProgressCache")) * self.SEEK_IMAGE_WIDTH // 100
             self.cacheControl.setWidth(cache_w)
 
-        # to = atOffset if atOffset is not None else self.trueOffset()
-        # self.setProperty('time.current', util.timeDisplay(to))
-        # self.setProperty('time.left', util.timeDisplay(self.duration - to))
-        #
-        # _fmt = util.timeFormat.replace(":%S", "")
-        #
-        # val = time.strftime(_fmt, time.localtime(time.time() + ((self.duration - to) / 1000)))
-        # if not util.padHour and val[0] == "0" and val[1] != ":":
-        #     val = val[1:]
-        #
-        # self.setProperty('time.end', val)
+        if self.isTranscoded:
+            to = atOffset if atOffset is not None else self.trueOffset()
+            self.setProperty('time.current', util.timeDisplay(to, cutHour=True))
+            self.setProperty('time.left', util.timeDisplay(self.duration - to, cutHour=True))
+
+            _fmt = util.timeFormat.replace(":%S", "")
+
+            val = time.strftime(_fmt, time.localtime(time.time() + ((self.duration - to) / 1000)))
+            if not util.padHour and val[0] == "0" and val[1] != ":":
+                val = val[1:]
+
+            self.setProperty('time.end', val)
 
     def doSeek(self, offset=None, settings_changed=False):
         self._applyingSeek = True
@@ -1388,7 +1404,7 @@ class SeekDialog(kodigui.BaseDialog):
 
                     return markerDef
 
-    def setup(self, duration, offset=0, bif_url=None, title='', title2='', chapters=None):
+    def setup(self, duration, meta, offset=0, bif_url=None, title='', title2='', chapters=None):
         """
         this is called by our handler and occurs earlier than onFirstInit.
         """
@@ -1397,6 +1413,8 @@ class SeekDialog(kodigui.BaseDialog):
         self.title2 = title2
         self.chapters = chapters or []
         self.markers = None
+        self.isDirectPlay = not meta.isTranscoded
+        self.isTranscoded = not self.isDirectPlay
         self.showChapters = util.getUserSetting('show_chapters', True) and (
                 bool(chapters) or (util.getUserSetting('virtual_chapters', True) and bool(self.markers)))
         self.setProperty('video.title', title)
@@ -1405,8 +1423,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('shuffled', (self.handler.playlist and self.handler.playlist.isShuffled) and '1' or '')
         self.setProperty('has.chapters', self.showChapters and '1' or '')
         self.setProperty('show.buffer', util.advancedSettings.playerShowBuffer and '1' or '')
-        self.setProperty('time.fmt', util.timeFormatKN)
-        self.setProperty('time.fmt.ends', util.timeFormatKN.replace(":ss", ""))
+
         navPlaylist = util.getSetting('video_show_playlist', 'eponly')
         self.setBoolProperty('nav.playlist', (navPlaylist == "eponly" and self.player.video.type == 'episode') or
                              navPlaylist == "always")
@@ -1630,6 +1647,7 @@ class SeekDialog(kodigui.BaseDialog):
     def onPlaybackResumed(self):
         util.DEBUG_LOG("SeekDialog: OnPlaybackResumed")
         self._osdHideFast = True
+        self.ldTimer and self.syncTimeKeeper()
         self.tick()
 
     def onAVChange(self):
@@ -1647,13 +1665,44 @@ class SeekDialog(kodigui.BaseDialog):
         util.DEBUG_LOG("SeekDialog: OnPlaybackStarted")
         if self._ignoreInput:
             self._ignoreInput = False
+        self.ldTimer and self.syncTimeKeeper()
+        self.tick()
 
     def onPlaybackPaused(self):
         util.DEBUG_LOG("SeekDialog: OnPlaybackPaused")
         self._osdHideFast = False
 
     def onPlaybackSeek(self, stime, offset):
-        util.DEBUG_LOG("SeekDialog: OnPlaybackSeek: {} {}, {}".format(stime, offset, self.handler.seekOnStart))
+        util.DEBUG_LOG("SeekDialog: OnPlaybackSeek")
+        self.ldTimer and self.syncTimeKeeper()
+
+    def syncTimeKeeper(self):
+        """
+        The whole timeKeeper/time.end logic is only used when not in DirectPlay mode.
+        Otherwise the Kodi time functions will be used by the skin.
+        """
+        if self.isDirectPlay:
+            return
+
+        self.timeKeeperTime = self.trueOffset()#int(self.handler.player.getTime() * 1000)
+        if not self.timeKeeper:
+            self.timeKeeper = plexapp.util.RepeatingCounterTimer(1.0, self.onTimeKeeperCallback)
+        self.onTimeKeeperCallback(tick=False)
+        self.timeKeeper.reset()
+
+    def onTimeKeeperCallback(self, tick=True):
+        """
+        called by playbackTimer periodically, sets playback time/ends in UI
+        """
+        # we might be a little early on slower systems
+        if not self.started:
+            return
+
+        if tick and xbmc.getCondVisibility('Player.Playing'):
+            self.timeKeeperTime += 1000
+
+        self.updateCurrent(
+            update_position_control=not self._seeking and not self._applyingSeek, atOffset=self.timeKeeperTime)
 
     def displayMarkers(self, cancelTimer=False, immediate=False, onlyReturnIntroMD=False):
         # intro/credits marker display logic
@@ -1806,6 +1855,10 @@ class SeekDialog(kodigui.BaseDialog):
 
         if not self.initialized or self._ignoreTick:
             return
+
+        # invisibly sync low-drift timer to current playback every X seconds, as Player.getTime() can be wildly off
+        if self.ldTimer and not self.osdVisible() and self.timeKeeper and self.timeKeeper.ticks >= 10:
+            self.syncTimeKeeper()
 
         cancelTick = False
         # don't auto skip while we're initializing and waiting for the handler to seek on start
