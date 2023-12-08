@@ -274,8 +274,10 @@ class SeekDialog(kodigui.BaseDialog):
             # don't auto skip intro when on binge mode on the first episode of a season
             firstEp = self.player.video.index == '1'
 
-            self.autoSkipIntro = (self.bingeMode and not firstEp) or pbs.auto_skip_intro
-            self.autoSkipCredits = self.bingeMode or pbs.auto_skip_credits
+            if self.isDirectPlay or util.getUserSetting('auto_skip_in_transcode', True):
+                self.autoSkipIntro = (self.bingeMode and not firstEp) or pbs.auto_skip_intro
+                self.autoSkipCredits = self.bingeMode or pbs.auto_skip_credits
+
             self.showIntroSkipEarly = self.bingeMode or pbs.show_intro_skip_early
 
         self._introSkipShownStarted = None

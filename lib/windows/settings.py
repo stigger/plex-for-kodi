@@ -398,6 +398,11 @@ class Settings(object):
                              'ing setting applies. Doesn\'t override enabled binge mode.')
                 ),
                 BoolUserSetting(
+                    'auto_skip_in_transcode', T(32948, 'Allow auto-skip when transcoding'), True
+                ).description(
+                    T(32949, 'When transcoding/DirectStreaming, allow auto-skip functionality.')
+                ),
+                BoolUserSetting(
                     'show_chapters', T(33601, 'Show video chapters'), True
                 ).description(
                     T(33602, 'If available, show video chapters from the video-file instead of the '

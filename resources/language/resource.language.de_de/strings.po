@@ -1896,3 +1896,11 @@ msgstr "Bei Inaktivität Video stoppen nach"
 msgctxt "#32947"
 msgid "Stop video playback on screensaver"
 msgstr "Video stoppen bei Bildschirmschoner"
+
+msgctxt "#32948"
+msgid "Allow auto-skip when transcoding"
+msgstr "Überspringen beim Transkodieren erlauben"
+
+msgctxt "#32949"
+msgid "When transcoding/DirectStreaming, allow auto-skip functionality."
+msgstr "Beim Transkodieren/DirectStream die automatische Überspringen-Funktionalität erlauben."
