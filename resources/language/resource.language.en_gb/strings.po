@@ -1589,3 +1589,11 @@ msgstr ""
 msgctxt "#32945"
 msgid "When Direct Streaming instruct the Plex Server to burn in SSA/ASS subtitles (thus transcoding the video stream). If disabled it will not touch the video stream, but will convert the subtitle to unstyled text."
 msgstr ""
+
+msgctxt "#32946"
+msgid "Stop video playback on idle after"
+msgstr ""
+
+msgctxt "#32947"
+msgid "Stop video playback on screensaver"
+msgstr ""

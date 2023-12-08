@@ -1888,3 +1888,11 @@ msgstr "SSA-Untertitel einbrennen (DirectStream)"
 msgctxt "#32945"
 msgid "When Direct Streaming instruct the Plex Server to burn in SSA/ASS subtitles (thus transcoding the video stream). If disabled it will not touch the video stream, but will convert the subtitle to unstyled text."
 msgstr "Wird Direct Streaming verwendet, den Plex Server dazu bringen, SSA/ASS-Untertitel einzubrennen (also den Video Stream zu transcoden). Wenn deaktiviert, wird dieser den Video Stream nicht anfassen, jedoch den Untertitel als reinen Text anzeigen."
+
+msgctxt "#32946"
+msgid "Stop video playback on idle after"
+msgstr "Bei Inaktivität Video stoppen nach"
+
+msgctxt "#32947"
+msgid "Stop video playback on screensaver"
+msgstr "Video stoppen bei Bildschirmschoner"

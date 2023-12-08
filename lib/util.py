@@ -238,11 +238,12 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
 
     def onScreensaverActivated(self):
         DEBUG_LOG("Monitor: OnScreensaverActivated")
-        self.stopPlayback()
+        if getSetting('player_stop_on_screensaver', True):
+            self.stopPlayback()
 
     def onDPMSActivated(self):
         DEBUG_LOG("Monitor: OnDPMSActivated")
-        self.stopPlayback()
+        #self.stopPlayback()
 
 
 MONITOR = UtilityMonitor()

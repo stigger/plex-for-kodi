@@ -481,6 +481,16 @@ class Settings(object):
                      ('hibernate', T(32425, 'Hibernate')), ('suspend', T(32424, 'Suspend')),
                      ('cecstandby', T(32705, 'CEC Standby')), ('logoff', T(32421, 'Sign Out')))
                 ).description(T(32701, 'When Kodi receives a sleep event from the system, run the following action.')),
+                OptionsSetting(
+                    'player_stop_on_idle',
+                    T(32946, 'Stop video playback on idle after'),
+                    0,
+                    ((0, T(32033, 'Never')), (30, '30s'), (60, '1m'), (120, '2m'), (300, '5m'), (600, '10m'),
+                     (900, '15m'), (1200, '20m'), (1800, '30m'), (2700, '45m'), (3600, '1h'),)
+                ),
+                BoolSetting(
+                    'player_stop_on_screensaver', T(32947, 'Stop video playback on screensaver'), True
+                ),
                 BoolSetting('debug', T(32024, 'Debug Logging'), False),
             )
         ),

@@ -180,6 +180,8 @@ class SeekDialog(kodigui.BaseDialog):
         self.ldTimer = True #util.advancedSettings.lowDriftTimer
         self.timeKeeper = None
         self.timeKeeperTime = None
+        self.idleTime = None
+        self.stopPlaybackOnIdle = util.getSetting('player_stop_on_idle', 0)
         self.isDirectPlay = True
         self.isTranscoded = False
 
@@ -369,6 +371,68 @@ class SeekDialog(kodigui.BaseDialog):
         self.videoSettingsHaveChanged()
         self.updateProgress()
 
+    def setup(self, duration, meta, offset=0, bif_url=None, title='', title2='', chapters=None):
+        """
+        this is called by our handler and occurs earlier than onFirstInit.
+        """
+        util.DEBUG_LOG("SeekDialog: setup")
+        self.title = title
+        self.title2 = title2
+        self.chapters = chapters or []
+        self.markers = None
+        self.isDirectPlay = not meta.isTranscoded
+        self.isTranscoded = not self.isDirectPlay
+        self.showChapters = util.getUserSetting('show_chapters', True) and (
+                bool(chapters) or (util.getUserSetting('virtual_chapters', True) and bool(self.markers)))
+        self.setProperty('video.title', title)
+        self.setProperty('is.show', (self.player.video.type == 'episode') and '1' or '')
+        self.setProperty('has.playlist', self.handler.playlist and '1' or '')
+        self.setProperty('shuffled', (self.handler.playlist and self.handler.playlist.isShuffled) and '1' or '')
+        self.setProperty('has.chapters', self.showChapters and '1' or '')
+        self.setProperty('show.buffer', (util.advancedSettings.playerShowBuffer and self.isDirectPlay) and '1' or '')
+
+        navPlaylist = util.getSetting('video_show_playlist', 'eponly')
+        self.setBoolProperty('nav.playlist', (navPlaylist == "eponly" and self.player.video.type == 'episode') or
+                             navPlaylist == "always")
+
+        if not self.getProperty('nav.playlist'):
+            self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE
+
+        navPrevNext = util.getSetting('video_show_prevnext', 'eponly')
+        self.setBoolProperty('nav.prevnext', (navPrevNext == "eponly" and self.player.video.type == 'episode') or
+                             navPrevNext == "always")
+
+        if not self.getProperty('nav.prevnext'):
+            self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE
+
+        self.applyMarkerProps()
+        self.baseOffset = offset
+        self.offset = 0
+        self.idleTime = None
+        self.lastSubtitleNavAction = "forward"
+        self._duration = duration
+        self._ignoreTick = False
+        if not self.showChapters:
+            self.bifURL = bif_url
+            self.hasBif = bool(self.bifURL)
+
+        if self.hasBif:
+            self.baseURL = re.sub('/\d+\?', '/{0}?', self.bifURL)
+        self.update()
+
+    def update(self, offset=None, from_seek=False):
+        if from_seek:
+            self.fromSeek = time.time()
+        else:
+            if time.time() - self.fromSeek > 0.5:
+                self.fromSeek = 0
+
+        if offset is not None:
+            self.offset = offset
+            self.selectedOffset = self.trueOffset()
+
+        self.updateProgress()
+
     def onAction(self, action):
         if xbmc.getCondVisibility('Window.IsActive(selectdialog)'):
             if self.doKodiSelectDialogHack(action):
@@ -378,6 +442,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.resetTimeout()
 
             controlID = self.getFocusId()
+            self.idleTime = None
 
             lastAction = self._lastAction
             self._lastAction = currentAction = (action.getId(), controlID)
@@ -1411,66 +1476,6 @@ class SeekDialog(kodigui.BaseDialog):
 
                     return markerDef
 
-    def setup(self, duration, meta, offset=0, bif_url=None, title='', title2='', chapters=None):
-        """
-        this is called by our handler and occurs earlier than onFirstInit.
-        """
-        util.DEBUG_LOG("SeekDialog: setup")
-        self.title = title
-        self.title2 = title2
-        self.chapters = chapters or []
-        self.markers = None
-        self.isDirectPlay = not meta.isTranscoded
-        self.isTranscoded = not self.isDirectPlay
-        self.showChapters = util.getUserSetting('show_chapters', True) and (
-                bool(chapters) or (util.getUserSetting('virtual_chapters', True) and bool(self.markers)))
-        self.setProperty('video.title', title)
-        self.setProperty('is.show', (self.player.video.type == 'episode') and '1' or '')
-        self.setProperty('has.playlist', self.handler.playlist and '1' or '')
-        self.setProperty('shuffled', (self.handler.playlist and self.handler.playlist.isShuffled) and '1' or '')
-        self.setProperty('has.chapters', self.showChapters and '1' or '')
-        self.setProperty('show.buffer', (util.advancedSettings.playerShowBuffer and self.isDirectPlay) and '1' or '')
-
-        navPlaylist = util.getSetting('video_show_playlist', 'eponly')
-        self.setBoolProperty('nav.playlist', (navPlaylist == "eponly" and self.player.video.type == 'episode') or
-                             navPlaylist == "always")
-
-        if not self.getProperty('nav.playlist'):
-            self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE
-
-        navPrevNext = util.getSetting('video_show_prevnext', 'eponly')
-        self.setBoolProperty('nav.prevnext', (navPrevNext == "eponly" and self.player.video.type == 'episode') or
-                             navPrevNext == "always")
-
-        if not self.getProperty('nav.prevnext'):
-            self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE
-
-        self.applyMarkerProps()
-        self.baseOffset = offset
-        self.offset = 0
-        self.lastSubtitleNavAction = "forward"
-        self._duration = duration
-        self._ignoreTick = False
-        if not self.showChapters:
-            self.bifURL = bif_url
-            self.hasBif = bool(self.bifURL)
-
-        if self.hasBif:
-            self.baseURL = re.sub('/\d+\?', '/{0}?', self.bifURL)
-        self.update()
-
-    def update(self, offset=None, from_seek=False):
-        if from_seek:
-            self.fromSeek = time.time()
-        else:
-            if time.time() - self.fromSeek > 0.5:
-                self.fromSeek = 0
-
-        if offset is not None:
-            self.offset = offset
-            self.selectedOffset = self.trueOffset()
-
-        self.updateProgress()
 
     @property
     def duration(self):
@@ -1654,6 +1659,7 @@ class SeekDialog(kodigui.BaseDialog):
     def onPlaybackResumed(self):
         util.DEBUG_LOG("SeekDialog: OnPlaybackResumed")
         self._osdHideFast = True
+        self.idleTime = None
         self.ldTimer and self.syncTimeKeeper()
         self.tick()
 
@@ -1678,19 +1684,14 @@ class SeekDialog(kodigui.BaseDialog):
     def onPlaybackPaused(self):
         util.DEBUG_LOG("SeekDialog: OnPlaybackPaused")
         self._osdHideFast = False
+        self.idleTime = time.time()
 
     def onPlaybackSeek(self, stime, offset):
         util.DEBUG_LOG("SeekDialog: OnPlaybackSeek")
+        self.idleTime = None
         self.ldTimer and self.syncTimeKeeper()
 
     def syncTimeKeeper(self):
-        """
-        The whole timeKeeper/time.end logic is only used when not in DirectPlay mode.
-        Otherwise the Kodi time functions will be used by the skin.
-        """
-        if self.isDirectPlay:
-            return
-
         self.timeKeeperTime = self.trueOffset()#int(self.handler.player.getTime() * 1000)
         if not self.timeKeeper:
             self.timeKeeper = plexapp.util.RepeatingCounterTimer(1.0, self.onTimeKeeperCallback)
@@ -1705,8 +1706,21 @@ class SeekDialog(kodigui.BaseDialog):
         if not self.started:
             return
 
+        if self.stopPlaybackOnIdle:
+            if self.idleTime and time.time() - self.idleTime >= self.stopPlaybackOnIdle:
+                util.LOG("Player has been idle for {}s, stopping.".format(int(time.time() - self.idleTime)))
+                self.handler.player.stopAndWait()
+                return
+
+            if not self.idleTime and xbmc.getCondVisibility('Player.Paused'):
+                self.idleTime = time.time()
+
         if tick and xbmc.getCondVisibility('Player.Playing'):
             self.timeKeeperTime += 1000
+
+        # Only updateCurrent when not in DirectPlay mode. Otherwise the Kodi time functions will be used by the skin.
+        if self.isDirectPlay:
+            return
 
         self.updateCurrent(
             update_position_control=not self._seeking and not self._applyingSeek, atOffset=self.timeKeeperTime)
@@ -1864,7 +1878,7 @@ class SeekDialog(kodigui.BaseDialog):
             return
 
         # invisibly sync low-drift timer to current playback every X seconds, as Player.getTime() can be wildly off
-        if self.ldTimer and not self.osdVisible() and self.timeKeeper and self.timeKeeper.ticks >= 10:
+        if self.ldTimer and not self.osdVisible() and self.timeKeeper and self.timeKeeper.ticks >= 60:
             self.syncTimeKeeper()
 
         cancelTick = False
@@ -1905,7 +1919,8 @@ class SeekDialog(kodigui.BaseDialog):
             self.doSeek()
             return True
 
-        self.updateCurrent(update_position_control=not self._seeking and not self._applyingSeek)
+        if self.isDirectPlay or not self.ldTimer:
+            self.updateCurrent(update_position_control=not self._seeking and not self._applyingSeek)
 
     @property
     def playlistDialogVisible(self):
