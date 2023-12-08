@@ -49,7 +49,7 @@
                 <width>1920</width>
                 <height>1080</height>
                 <fadetime>1000</fadetime>
-                <texture fallback="script.plex/thumb_fallbacks/broken-photo.png" background="true">$INFO[Window.Property(photo)]</texture>
+                <texture background="true">$INFO[Window.Property(photo)]</texture>
                 <aspectratio>keep</aspectratio>
             </control>
             <control type="group">
