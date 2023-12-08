@@ -280,7 +280,8 @@ class SeekDialog(kodigui.BaseDialog):
 
     @property
     def markers(self):
-        if not self._enableMarkerSkip:
+        # fixme: fix transcoded marker skip
+        if not self._enableMarkerSkip or self.handler.isTranscoded:
             return None
 
         if not self._markers and hasattr(self.handler.player.video, "markers"):

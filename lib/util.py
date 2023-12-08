@@ -218,7 +218,7 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
         xbmc.executebuiltin('System.LogOff')
 
     def onNotification(self, sender, method, data):
-        DEBUG_LOG("Notification: {} {} {}".format(sender, method, data))
+        LOG("Notification: {} {} {}".format(sender, method, data))
         if sender == 'script.plexmod' and method.endswith('RESTORE'):
             from .windows import kodigui
             if not kodigui.BaseFunctions.lastWinID:
