@@ -276,10 +276,10 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
     def setBackground(self):
         video = self.video if self.video else self.playQueue.current()
-        self.setProperty('background', video.defaultArt.asTranscodedImageURL(1920, 1080, opacity=60, background=colors.noAlpha.Background))
+        self.setProperty('background_static', video.defaultArt.asTranscodedImageURL(1920, 1080, opacity=60, background=colors.noAlpha.Background))
 
     def changeBackground(self, url, **kwargs):
-        self.setProperty('background', url)
+        self.setProperty('background_static', url)
 
     def sessionEnded(self, session_id=None, **kwargs):
         if session_id != id(self):
