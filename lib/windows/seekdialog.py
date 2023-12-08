@@ -130,6 +130,8 @@ class SeekDialog(kodigui.BaseDialog):
 
     def __init__(self, *args, **kwargs):
         kodigui.BaseDialog.__init__(self, *args, **kwargs)
+
+        # fixme: heyo, there's a lot of disorder in here.
         self.handler = kwargs.get('handler')
         self.initialVideoSettings = {}
         self.initialAudioStream = None
@@ -174,6 +176,10 @@ class SeekDialog(kodigui.BaseDialog):
         self._ignoreInput = False
         self._ignoreTick = False
         self._abortBufferWait = False
+
+        # there are platforms (android, SHIELD) where kodi cuts the hour part dynamically if it's (going to be)? zero
+        self._kodiTFmtCutsHour = len(xbmc.getInfoLabel("Player.Time(hh:mm:ss)")) < 8
+        self._videoBelowOneHour = False
         self.waitingForBuffer = False
         self.lastSubtitleNavAction = "forward"
         self.subtitleButtonLeft = 0
@@ -411,6 +417,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.idleTime = None
         self.lastSubtitleNavAction = "forward"
         self._duration = duration
+        self._videoBelowOneHour = duration / 3600000 < 1
         self._ignoreTick = False
         if not self.showChapters:
             self.bifURL = bif_url
@@ -1370,8 +1377,13 @@ class SeekDialog(kodigui.BaseDialog):
 
         if self.isTranscoded:
             to = atOffset if atOffset is not None else self.trueOffset()
-            self.setProperty('time.current', util.timeDisplay(to, cutHour=True))
-            self.setProperty('time.left', util.timeDisplay(self.duration - to, cutHour=True))
+            self.setProperty('time.current', util.timeDisplay(to, cutHour=self._kodiTFmtCutsHour))
+            self.setProperty('time.left',
+                             util.timeDisplay(self.duration - to,
+                                              # if kodi cuts the hour off of time displays in directPlay mode, it will
+                                              # only do so for Player.Time, not Player.TimeRemaining (logically),
+                                              # if it's above 1 hour (hopefully true for all platforms)
+                                              cutHour=self._kodiTFmtCutsHour and self._videoBelowOneHour))
 
             _fmt = util.timeFormat.replace(":%S", "")
 
