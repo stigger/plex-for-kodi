@@ -256,6 +256,7 @@ class SeekDialog(kodigui.BaseDialog):
             util.DEBUG_LOG("Playback settings for {}: {}".format(self.player.video.ratingKey, pbs))
 
             self.bingeMode = pbs.binge_mode
+            self.handler.inBingeMode = self.bingeMode
 
             # don't auto skip intro when on binge mode on the first episode of a season
             firstEp = self.player.video.index == '1'

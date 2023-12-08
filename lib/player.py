@@ -164,6 +164,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.title2 = ''
         self.chapters = None
         self.stoppedInBingeMode = False
+        self.inBingeMode = False
         self.prePlayWitnessed = False
         self.reset()
 
@@ -191,6 +192,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.ignoreTimelines = False
         self.ignorePlaybackEnded = False
         self.stoppedInBingeMode = False
+        self.inBingeMode = False
         self.prePlayWitnessed = False
         self.getDialog(setup=True)
         self.dialog.setup(self.duration, int(self.baseOffset * 1000), self.bifURL, self.title, self.title2,
@@ -216,7 +218,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.playlist and self.playlist.TYPE == 'playlist':
             return False
 
-        if self.player.video.bingeMode and not self.stoppedInBingeMode:
+        if self.inBingeMode and not self.stoppedInBingeMode:
             return False
 
         if (not util.advancedSettings.postplayAlways and self.player.video.duration.asInt() <= FIVE_MINUTES_MILLIS)\
@@ -408,6 +410,9 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.ignorePlaybackEnded:
             util.DEBUG_LOG('SeekHandler: onPlayBackEnded - event ignored')
             return
+
+        if self.inBingeMode:
+            self.stoppedInBingeMode = False
 
         if self.next(on_end=True):
             return
