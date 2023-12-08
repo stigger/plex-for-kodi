@@ -296,19 +296,24 @@ class Settings(object):
                 ),
                 BoolSetting('audio_channels_kodi', T(32060, 'Use Kodi audio channels'),
                             False).description(
-                    T(32061, 'When transcoding audio, target the audio channels set in Kodi. Not recommended '
-                             'for SPDIF (AC3/DTS 2.1).')
+                    T(32061, 'When transcoding audio, target the audio channels set in Kodi.')
                 ),
-                BoolSetting('audio_force_transcoded_ac3', T(32062, 'Force transcoded audio to AC3'),
-                            False).description(
-                    T(32063, 'When transcoding multi-channel audio, always instruct PMS '
-                             'encode to AC3 (useful for Optical passthrough)')
+                OptionsSetting(
+                    'audio_force_ac3_cond',
+                    T(32062, 'Transcode audio to AC3'),
+                    'never',
+                    (
+                        ('never', T(32033, 'Never')),
+                        ('always', T(32028, 'Always')),
+                        ('2', '2.1+'),
+                        ('5', '5.1+'),
+                    )
+                ).description(
+                    T(32063, 'Transcode audio to AC3 in certain conditions (useful for passthrough).')
                 ),
-                BoolSetting('audio_force_to_ac3', T(32066, 'Force audio to AC3'), False),
-                BoolSetting('audio_force_ac3_mc', T(32067, 'Only force multichannel audio to AC3'), False),
                 BoolSetting('audio_ac3dts', T(32064, 'Treat DTS like AC3'),
                             True).description(
-                    T(32065, 'When any of the force AC3 settings are enabled, treat DTS the same as AC3 '
+                    T(32065, 'When force AC3 settings are enabled, treat DTS the same as AC3 '
                              '(useful for Optical passthrough)')
                 ),
                 OptionsSetting(

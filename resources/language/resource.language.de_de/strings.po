@@ -289,18 +289,18 @@ msgstr "Kodi-Audiokanäle verwenden"
 
 #: 
 msgctxt "#32061"
-msgid "When transcoding audio, target the audio channels set in Kodi. Not recommended for non-HDMI/SPDIF"
-msgstr "Beim Transkodieren von Audio werden die in Kodi eingestellten Audiokanäle verwendet. Nicht empfohlen für nicht-HDMI/SPDIF"
+msgid "When transcoding audio, target the audio channels set in Kodi."
+msgstr "Beim Transkodieren von Audio werden die in Kodi eingestellten Audiokanäle verwendet."
 
 #: 
 msgctxt "#32062"
-msgid "Force transcoded audio to AC3"
-msgstr "Erzwingen der Transcodierung von Audio in AC3"
+msgid "Transcode audio to AC3"
+msgstr "Transkodiere Ton zu AC3"
 
 #: 
 msgctxt "#32063"
-msgid "When transcoding multi-channel audio, always instruct PMS encode to AC3 (useful for Optical passthrough)"
-msgstr "Bei der Transkodierung von Mehrkanalton sollte die PMS-Kodierung immer in AC3 erfolgen (nützlich für Optical Passthrough)"
+msgid "Transcode audio to AC3 in certain conditions (useful for passthrough)."
+msgstr "Transkodiere Ton zu AC3 in bestimmten Umständen (nützlich für Passthrough)"
 
 #: 
 msgctxt "#32064"

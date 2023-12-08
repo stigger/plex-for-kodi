@@ -219,27 +219,30 @@ class MediaDecisionEngine(object):
         else:
             choice.sorts.audioChannels = 0
 
-        forceAC3onMC = item.settings.getPreference("audio_force_ac3_mc", False)
+        AC3Cond = item.settings.getPreference("audio_force_ac3_cond", 'never')
 
-        if item.settings.getPreference("audio_force_to_ac3", False):
+        if AC3Cond != 'never':
             allowed = ["ac3"]
             if item.settings.getPreference("audio_ac3dts", False):
                 allowed.append("dca")
 
-            if choice.audioStream.codec in allowed and choice.sorts.audioChannels > 2:
-                util.LOG("MDE: Multichannel AC3/DTS can't be direct played due to user settings")
+            if AC3Cond == 'always' and choice.audioStream.codec not in allowed:
+                util.LOG("MDE: Codec {} can't be direct played due to user settings".format(choice.audioStream.codec))
                 choice.isDirectPlayable = False
-            elif choice.audioStream.codec not in allowed:
-                if choice.sorts.audioChannels > 2 and forceAC3onMC:
-                    util.LOG("MDE: Multichannel {} can't be direct played due to user settings".format(
-                        choice.audioStream.codec))
+
+            elif AC3Cond in ('2', '5'):
+                ch = int(AC3Cond)
+                ach = choice.sorts.audioChannels
+
+                # got AC3/DTS but channels don't match
+                if choice.audioStream.codec in allowed and ach > ch:
+                    util.LOG("MDE: {}-channel AC3/DTS can't be direct played due "
+                             "to user settings ({} ch)".format(ach, ch))
                     choice.isDirectPlayable = False
-                elif choice.sorts.audioChannels <= 2 and not forceAC3onMC:
-                    util.LOG(
-                        "MDE: Codec {} can't be direct played due to user settings".format(choice.audioStream.codec))
-                    choice.isDirectPlayable = False
-                elif choice.sorts.audioChannels > 2 and not forceAC3onMC:
-                    util.LOG("MDE: Multichannel AC3/DTS can't be direct played due to user settings")
+                # other codec and channels don't match
+                elif ach > ch:
+                    util.LOG("MDE: {}-channel {} can't be direct played due to "
+                             "user settings ({} ch)".format(ach, choice.audioStream.codec, ch))
                     choice.isDirectPlayable = False
 
         choice.sorts.videoDS = not (

@@ -343,16 +343,14 @@ class PlexPlayer(object):
 
         clampToOrig = self.item.settings.getPreference("audio_clamp_to_orig", True)
         useKodiAudio = self.item.settings.getPreference("audio_channels_kodi", False)
-        forceAC3 = self.item.settings.getPreference("audio_force_transcoded_ac3", False)
-        forceAC3onMC = self.item.settings.getPreference("audio_force_ac3_mc", False)
+        AC3Cond = self.item.settings.getPreference("audio_force_ac3_cond", 'never')
         dtsIsAC3 = self.item.settings.getPreference("audio_ac3dts", True)
         hasAudioChoice = self.choice.audioStream is not None
+        forceAC3 = AC3Cond != 'never'
 
-        streamAudioMC = hasAudioChoice and self.choice.audioStream.channels.asInt(8) > 2
-
-        # don't force AC3 if user only wants AC3 for multi channel audio
-        if hasAudioChoice and forceAC3 and forceAC3onMC and not streamAudioMC:
-            forceAC3 = False
+        ach = None
+        if AC3Cond in ('2', '5'):
+            ach = int(AC3Cond)
 
         # fixme: still necessary?
         if True: # if self.choice.subtitleDecision == self.choice.SUBTITLES_BURN:  # Must burn transcoded because we can't set offset
@@ -447,6 +445,9 @@ class PlexPlayer(object):
 
         # limit max audio channels to audio stream or kodi (whichever is lower)
         maxAudioChannels = numChannels if not useKodiAudio else min(numChannels, self.audioChannels)
+
+        # if we've got a channel limit for AC3/DTS, apply it
+        maxAudioChannels = maxAudioChannels if not ach else min(maxAudioChannels, ach)
 
         if forceAC3 and hasAudioChoice:
             # limit max audio channels to the above or 6 for AC3 (whichever is lower)

@@ -238,15 +238,15 @@ msgid "Use Kodi audio channels"
 msgstr ""
 
 msgctxt "#32061"
-msgid "When transcoding audio, target the audio channels set in Kodi. Not recommended for non-HDMI/SPDIF"
+msgid "When transcoding audio, target the audio channels set in Kodi."
 msgstr ""
 
 msgctxt "#32062"
-msgid "Force transcoded audio to AC3"
+msgid "Transcode audio to AC3"
 msgstr ""
 
 msgctxt "#32063"
-msgid "When transcoding multi-channel audio, always instruct PMS encode to AC3 (useful for Optical passthrough)"
+msgid "Transcode audio to AC3 in certain conditions (useful for passthrough)."
 msgstr ""
 
 msgctxt "#32064"
