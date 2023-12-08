@@ -177,9 +177,8 @@ class SeekDialog(kodigui.BaseDialog):
         self._ignoreTick = False
         self._abortBufferWait = False
 
-        # there are platforms (android, SHIELD) where kodi cuts the hour part dynamically if it's (going to be)? zero
-        self._kodiTFmtCutsHour = len(xbmc.getInfoLabel("Player.Time(hh:mm:ss)")) < 8
         self._videoBelowOneHour = False
+        self.timeFmtKodi = util.timeFormatKN
         self.waitingForBuffer = False
         self.lastSubtitleNavAction = "forward"
         self.subtitleButtonLeft = 0
@@ -421,6 +420,8 @@ class SeekDialog(kodigui.BaseDialog):
         self.lastSubtitleNavAction = "forward"
         self._duration = duration
         self._videoBelowOneHour = duration / 3600000 < 1
+        if self._videoBelowOneHour:
+            self.timeFmtKodi = self.timeFmtKodi.replace("hh:", "")
         self._ignoreTick = False
         if not self.showChapters:
             self.bifURL = bif_url
@@ -1248,7 +1249,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('time.ends_label', self.showItemEndsLabel and (util.T(32543, 'Ends at')) or '')
 
         if self.isDirectPlay:
-            self.setProperty('time.fmt', util.timeFormatKN)
+            self.setProperty('time.fmt', self.timeFmtKodi)
             self.setProperty('time.fmt.ends', util.timeFormatKN.replace(":ss", ""))
 
         self.setBoolProperty('direct.play', self.isDirectPlay)
@@ -1380,13 +1381,9 @@ class SeekDialog(kodigui.BaseDialog):
 
         if self.isTranscoded:
             to = atOffset if atOffset is not None else self.trueOffset()
-            self.setProperty('time.current', util.timeDisplay(to, cutHour=self._kodiTFmtCutsHour))
+            self.setProperty('time.current', util.timeDisplay(to, cutHour=self._videoBelowOneHour))
             self.setProperty('time.left',
-                             util.timeDisplay(self.duration - to,
-                                              # if kodi cuts the hour off of time displays in directPlay mode, it will
-                                              # only do so for Player.Time, not Player.TimeRemaining (logically),
-                                              # if it's above 1 hour (hopefully true for all platforms)
-                                              cutHour=self._kodiTFmtCutsHour and self._videoBelowOneHour))
+                             util.timeDisplay(self.duration - to, cutHour=self._videoBelowOneHour))
 
             _fmt = util.timeFormat.replace(":%S", "")
 
@@ -1694,6 +1691,7 @@ class SeekDialog(kodigui.BaseDialog):
         util.DEBUG_LOG("SeekDialog: OnPlaybackStarted")
         if self._ignoreInput:
             self._ignoreInput = False
+        util.DEBUG_LOG("JAPPEL: %s %s %s" % (xbmc.getInfoLabel("Player.TimeRemaining(hh:mm:ss)"), util.timeFormatKN, util.timeFormat))
         self.ldTimer and self.syncTimeKeeper()
         self.tick()
 
