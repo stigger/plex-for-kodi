@@ -336,7 +336,7 @@
                 <control type="grouplist">
                     <visible>!String.IsEmpty(Window.Property(rating))</visible>
                     <posx>1560</posx>
-                    <posy>70</posy>
+                    <posy>0</posy>
                     <width>300</width>
                     <height>32</height>
                     <align>right</align>
