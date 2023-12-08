@@ -273,7 +273,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.markers = None
 
     def trueOffset(self):
-        if self.handler.mode == self.handler.MODE_ABSOLUTE:
+        if self.handler.isDirectPlay:
             return (self.handler.player.playerObject.startOffset * 1000) + self.offset
         else:
             return self.baseOffset + self.offset
@@ -931,7 +931,7 @@ class SeekDialog(kodigui.BaseDialog):
         sss = self.player.video.selectedSubtitleStream()
         if sss != self.initialSubtitleStream:
             self.initialSubtitleStream = sss
-            if changed or self.handler.mode == self.handler.MODE_RELATIVE:
+            if changed or self.handler.isTranscoded:
                 return True
             else:
                 return 'SUBTITLE'

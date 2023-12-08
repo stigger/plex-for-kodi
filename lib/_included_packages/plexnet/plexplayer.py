@@ -6,7 +6,7 @@ from . import http
 from . import plexrequest
 from . import mediadecisionengine
 from . import serverdecision
-from lib.util import CACHE_SIZE, advancedSettings
+from lib.util import CACHE_SIZE, advancedSettings, KODI_VERSION_MAJOR
 
 from six.moves import range
 
@@ -353,7 +353,7 @@ class PlexPlayer(object):
             ach = int(AC3Cond)
 
         # fixme: still necessary?
-        if True: # if self.choice.subtitleDecision == self.choice.SUBTITLES_BURN:  # Must burn transcoded because we can't set offset
+        if self.choice.subtitleDecision == self.choice.SUBTITLES_BURN:
             builder.addParam("subtitles", "burn")
             captionSize = captions.CAPTIONS.getBurnedSize()
             if captionSize is not None:
@@ -365,11 +365,11 @@ class PlexPlayer(object):
             # video playback starts via roCaptionRenderer: GetSubtitleTracks() and
             # ChangeSubtitleTrack()
 
-            obj.subtitleConfig = {'TrackName': "mkv/3"}
+            obj.subtitleConfig = {'TrackName': "mkv/3" if hasAudioChoice else "mkv/2"}
 
             # Allow text conversion of subtitles if we only burn image formats
-            if self.item.settings.getPreference("burn_subtitles") == "image":
-                builder.addParam("advancedSubtitles", "text")
+            #if self.item.settings.getPreference("burn_subtitles") == "image":
+            builder.addParam("advancedSubtitles", "text")
 
             builder.addParam("subtitles", "auto")
 
@@ -384,8 +384,9 @@ class PlexPlayer(object):
             else:
                 audioCodecs = "ac3"
 
-        subtitleCodecs = "srt,ssa,ass,webvtt,mov_text,tx3g,ttxt,text,pgs,vobsub,smi,subrip,eia_608_embedded," \
-                         "dvb_subtitle"
+        subtitleCodecs = "srt,ssa,ass,mov_text,tx3g,ttxt,text,pgs,vobsub,smi,subrip,eia_608_embedded," \
+                         "eia_708_embedded,dvb_subtitle" + ",webvtt" if KODI_VERSION_MAJOR > 19 else ''
+
 
         util.LOG('MDE-prep: enabling codecs: {}'.format(audioCodecs))
 

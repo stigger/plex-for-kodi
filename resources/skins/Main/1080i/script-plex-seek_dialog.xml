@@ -202,6 +202,7 @@
             <onclick condition="String.IsEmpty(Window.Property(button.seek)) + String.IsEmpty(Window.Property(marker.countdown))">SetProperty(show.OSD,1)</onclick>
         </control>
 
+        <!-- PPI -->
         <control type="group" id="803">
             <bottom>0</bottom>
             <height>350</height>

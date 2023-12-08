@@ -34,6 +34,9 @@ class BasePlayerHandler(object):
     def onAVChange(self):
         pass
 
+    def onAVStarted(self):
+        pass
+
     def onPrePlayStarted(self):
         pass
 
@@ -205,8 +208,16 @@ class SeekPlayerHandler(BasePlayerHandler):
         return self.dialog
 
     @property
+    def isTranscoded(self):
+        return self.mode == self.MODE_RELATIVE
+
+    @property
+    def isDirectPlay(self):
+        return self.mode == self.MODE_ABSOLUTE
+
+    @property
     def trueTime(self):
-        if self.mode == self.MODE_RELATIVE:
+        if self.isTranscoded:
             return self.baseOffset + self.player.currentTime
         else:
             if self.seekOnStart:
@@ -308,7 +319,7 @@ class SeekPlayerHandler(BasePlayerHandler):
 
         self.offset = offset
 
-        if self.mode == self.MODE_ABSOLUTE and not settings_changed:
+        if self.isDirectPlay and not settings_changed:
             util.DEBUG_LOG('New absolute player offset: {0}'.format(self.offset))
 
             if self.player.playerObject.offsetIsValid(offset / 1000):
@@ -329,7 +340,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         xbmc.executebuiltin('PlayerControl(forward)')
 
     def rewind(self):
-        if self.mode == self.MODE_ABSOLUTE:
+        if self.isDirectPlay:
             xbmc.executebuiltin('PlayerControl(rewind)')
         else:
             self.seek(max(self.trueTime - 30, 0) * 1000, seeking=self.SEEK_REWIND)
@@ -356,19 +367,24 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.dialog:
             self.dialog.onAVChange()
 
+    def onAVStarted(self):
+        util.DEBUG_LOG('SeekHandler: onAVStarted')
+
     def onPrePlayStarted(self):
-        util.DEBUG_LOG('SeekHandler: onPrePlayStarted')
+        util.DEBUG_LOG('SeekHandler: onPrePlayStarted, DP: {}'.format(self.isDirectPlay))
         self.prePlayWitnessed = True
-        self.setSubtitles(do_sleep=False)
+        if self.isDirectPlay:
+            self.setSubtitles(do_sleep=False)
 
     def onPlayBackStarted(self):
-        util.DEBUG_LOG('SeekHandler: onPlayBackStarted - mode={0}'.format(self.mode))
+        util.DEBUG_LOG('SeekHandler: onPlayBackStarted, DP: {}'.format(self.isDirectPlay))
         self.updateNowPlaying(force=True, refreshQueue=True)
 
         if self.dialog:
             self.dialog.onPlaybackStarted()
 
-        if not self.prePlayWitnessed:
+        #if not self.prePlayWitnessed and self.isDirectPlay:
+        if self.isDirectPlay:
             self.setSubtitles(do_sleep=False)
 
     def onPlayBackResumed(self):
@@ -454,28 +470,25 @@ class SeekPlayerHandler(BasePlayerHandler):
             if do_sleep:
                 xbmc.sleep(100)
 
-            self.player.showSubtitles(False)
             path = subs.getSubtitleServerPath()
-            if path:
-                if self.mode == self.MODE_ABSOLUTE:
+            if self.isDirectPlay:
+                self.player.showSubtitles(False)
+                if path:
                     util.DEBUG_LOG('Setting subtitle path: {0}'.format(path))
                     self.player.setSubtitles(path)
                     self.player.showSubtitles(True)
+
                 else:
-                    util.DEBUG_LOG('Transcoded. Skipping subtitle path: {0}'.format(path))
-            else:
-                # u_til.TEST(subs.__dict__)
-                # u_til.TEST(self.player.video.mediaChoice.__dict__)
-                if self.mode == self.MODE_ABSOLUTE:
+                    # u_til.TEST(subs.__dict__)
+                    # u_til.TEST(self.player.video.mediaChoice.__dict__)
                     util.DEBUG_LOG('Enabling embedded subtitles at: {0}'.format(subs.typeIndex))
-                    util.DEBUG_LOG('Kodi reported subtitles: {0}'.format(self.player.getAvailableSubtitleStreams()))
                     self.player.setSubtitleStream(subs.typeIndex)
-                    self.player.showSubtitles(True)
+
         else:
             self.player.showSubtitles(False)
 
     def setAudioTrack(self):
-        if self.mode == self.MODE_ABSOLUTE:
+        if self.isDirectPlay:
             track = self.player.video.selectedAudioStream()
             if track:
                 # only try finding the current audio stream when the BG music isn't playing and wasn't the last
@@ -507,9 +520,12 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.seeking = self.NO_SEEK
 
         #self.setSubtitles()
+        if self.isTranscoded and self.player.getAvailableSubtitleStreams():
+            util.DEBUG_LOG('Enabling first subtitle stream, as we\'re in DirectStream')
+            self.player.showSubtitles(True)
         self.setAudioTrack()
 
-        if self.mode == self.MODE_ABSOLUTE:
+        if self.isDirectPlay:
             self.seekAbsolute()
 
     def onPlayBackFailed(self):
@@ -1146,6 +1162,12 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         if not self.handler:
             return
         self.handler.onAVChange()
+
+    def onAVStarted(self):
+        util.DEBUG_LOG('Player - AVStarted: {}'.format(self.handler))
+        if not self.handler:
+            return
+        self.handler.onAVStarted()
 
     def onPlayBackPaused(self):
         util.DEBUG_LOG('Player - PAUSED')
