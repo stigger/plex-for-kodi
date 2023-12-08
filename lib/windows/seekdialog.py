@@ -749,7 +749,10 @@ class SeekDialog(kodigui.BaseDialog):
                     else:
                         # currently seeking without the OSD, apply the seek
                         self.doSeek()
-
+        elif controlID == self.PLAY_PAUSE_BUTTON_ID \
+                and self.player.playState == self.player.STATE_PLAYING \
+                and self.osdVisible():
+            self.hideOSD()
         elif controlID == self.SETTINGS_BUTTON_ID:
             self.handleDialog(self.showSettings)
         elif controlID == self.REPEAT_BUTTON_ID:
@@ -1671,10 +1674,8 @@ class SeekDialog(kodigui.BaseDialog):
 
     def onPlaybackResumed(self):
         util.DEBUG_LOG("SeekDialog: OnPlaybackResumed")
-        self._osdHideFast = True
         self.idleTime = None
         self.ldTimer and self.syncTimeKeeper()
-        self.tick()
 
     def onAVChange(self):
         util.DEBUG_LOG("SeekDialog: onAVChange")
@@ -1691,13 +1692,10 @@ class SeekDialog(kodigui.BaseDialog):
         util.DEBUG_LOG("SeekDialog: OnPlaybackStarted")
         if self._ignoreInput:
             self._ignoreInput = False
-        util.DEBUG_LOG("JAPPEL: %s %s %s" % (xbmc.getInfoLabel("Player.TimeRemaining(hh:mm:ss)"), util.timeFormatKN, util.timeFormat))
         self.ldTimer and self.syncTimeKeeper()
-        self.tick()
 
     def onPlaybackPaused(self):
         util.DEBUG_LOG("SeekDialog: OnPlaybackPaused")
-        self._osdHideFast = False
         self.idleTime = time.time()
 
     def onPlaybackSeek(self, stime, offset):
