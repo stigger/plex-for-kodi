@@ -147,7 +147,7 @@
                     <posy>0</posy>
                     <width>1360</width>
                     <height>60</height>
-                    <font>font30</font>
+                    <font>font13</font>
                     <align>left</align>
                     <textcolor>FFFFFFFF</textcolor>
                     <label>$INFO[Window.Property(title)]</label>
