@@ -789,7 +789,7 @@
                 <posy>0</posy>
                 <width>1800</width>
                 <height>35</height>
-                <font>font30</font>
+                <font>font13</font>
                 <align>center</align>
                 <textcolor>FFFFFFFF</textcolor>
                 <label>[B]$ADDON[script.zidooplexmod 32452][/B]</label>
@@ -800,7 +800,7 @@
                 <posy>60</posy>
                 <width>1800</width>
                 <height>35</height>
-                <font>font30</font>
+                <font>font13</font>
                 <align>center</align>
                 <textcolor>FFCCCCCC</textcolor>
                 <label>$ADDON[script.zidooplexmod 32453]</label>
@@ -817,7 +817,7 @@
                 <posy>0</posy>
                 <width>1800</width>
                 <height>35</height>
-                <font>font30</font>
+                <font>font13</font>
                 <align>center</align>
                 <textcolor>FFFFFFFF</textcolor>
                 <label>[B]$ADDON[script.zidooplexmod 32454][/B]</label>
@@ -828,7 +828,7 @@
                 <posy>60</posy>
                 <width>1800</width>
                 <height>35</height>
-                <font>font30</font>
+                <font>font13</font>
                 <align>center</align>
                 <textcolor>FFCCCCCC</textcolor>
                 <label>$ADDON[script.zidooplexmod 32455]</label>
