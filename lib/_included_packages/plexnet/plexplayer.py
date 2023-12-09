@@ -386,7 +386,7 @@ class PlexPlayer(object):
                 audioCodecs = "ac3"
 
         subtitleCodecs = "srt,ssa,ass,mov_text,tx3g,ttxt,text,pgs,vobsub,smi,subrip,eia_608_embedded," \
-                         "eia_708_embedded,dvb_subtitle" + ",webvtt" if KODI_VERSION_MAJOR > 19 else ''
+                         "eia_708_embedded,dvb_subtitle" + (",webvtt" if KODI_VERSION_MAJOR > 19 else '')
 
 
         util.LOG('MDE-prep: enabling codecs: {}'.format(audioCodecs))
