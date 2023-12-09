@@ -200,7 +200,7 @@
                     <control type="label">
                         <width>auto</width>
                         <height>60</height>
-                        <font>font16</font>
+                        <font>font13</font>
                         <align>left</align>
                         <aligny>top</aligny>
                         <textcolor>FFFFFFFF</textcolor>
@@ -228,7 +228,7 @@
                     <posy>50</posy>
                     <width>1360</width>
                     <height>60</height>
-                    <font>font16</font>
+                    <font>font13</font>
                     <align>left</align>
                     <aligny>top</aligny>
                     <textcolor>FFFFFFFF</textcolor>
