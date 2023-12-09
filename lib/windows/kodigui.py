@@ -49,7 +49,7 @@ class BaseFunctions:
                 window.isOpen = False
                 return window
 
-        window.isOpen = True
+        window.isOpen = xbmcgui.getCurrentWindowId() >= 13000
         return window
 
     def modal(self):
@@ -193,7 +193,7 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
 
     def show(self):
         self._closing = False
-        self.isOpen = True
+        #self.isOpen = True
         xbmcgui.WindowXML.show(self)
         self.isOpen = xbmcgui.getCurrentWindowId() >= 13000
 

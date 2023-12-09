@@ -474,7 +474,11 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.showHubs(self.lastSection, update=True)
 
     def shutdown(self):
-        self.serverList.reset()
+        try:
+            self.serverList.reset()
+        except AttributeError:
+            pass
+
         self.unhookSignals()
 
         if util.advancedSettings.dynamicBackgrounds:

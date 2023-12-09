@@ -224,9 +224,14 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
             if not kodigui.BaseFunctions.lastWinID:
                 ERROR("Addon never properly started, can't reactivate")
                 return
+            if kodigui.BaseFunctions.lastWinID > 13000:
+                xbmc.executebuiltin('ActivateWindow({0})'.format(kodigui.BaseFunctions.lastWinID))
+            else:
+                ERROR("Addon never properly started, can't reactivate")
+                return
+
             getAdvancedSettings()
             populateTimeFormat()
-            xbmc.executebuiltin('ActivateWindow({0})'.format(kodigui.BaseFunctions.lastWinID))
 
         elif sender == "xbmc" and method == "System.OnSleep" and getSetting('action_on_sleep', "none") != "none":
             getattr(self, "action{}".format(getSetting('action_on_sleep', "none").capitalize()))()
