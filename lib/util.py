@@ -100,8 +100,8 @@ class AdvancedSettings(object):
         ("dynamic_timeline_seek", False),
         ("fast_back", False),
         ("dynamic_backgrounds", True),
-        ("background_art_blur_amount", 0),
-        ("background_art_opacity_amount", 40),
+        ("background_art_blur_amount2", 0),
+        ("background_art_opacity_amount2", 20),
         ("screensaver_quiz", False),
         ("postplay_always", False),
         ("postplay_timeout", 16),
@@ -882,8 +882,8 @@ def backgroundFromArt(art, width=1920, height=1080, background=colors.noAlpha.Ba
         return
     return art.asTranscodedImageURL(
         width, height,
-        blur=advancedSettings.backgroundArtBlurAmount,
-        opacity=advancedSettings.backgroundArtOpacityAmount,
+        blur=advancedSettings.backgroundArtBlurAmount2,
+        opacity=advancedSettings.backgroundArtOpacityAmount2,
         background=background
     )
 
