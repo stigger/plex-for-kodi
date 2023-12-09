@@ -182,6 +182,14 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
+                <setting id="dbg_crossfade" type="boolean" label="32943">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                    <dependencies>
+                      <dependency type="enable" setting="dynamic_backgrounds">true</dependency>
+                  </dependencies>
+                </setting>
                 <setting id="background_colour" type="string" label="33200" help="33201">
                   <level>0</level>
                   <default>-</default> <!-- Black -->
