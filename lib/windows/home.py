@@ -352,7 +352,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if util.advancedSettings.dynamicBackgrounds:
             bgUrl = util.getSetting("last_bg_url")
             if bgUrl:
-                self.setProperty("background_static", bgUrl)
+                self.windowSetBackground(bgUrl)
 
         self.sectionList = kodigui.ManagedControlList(self, self.SECTION_LIST_ID, 7)
         self.serverList = kodigui.ManagedControlList(self, self.SERVER_LIST_ID, 10)
