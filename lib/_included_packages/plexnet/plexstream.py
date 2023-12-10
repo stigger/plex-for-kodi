@@ -38,6 +38,9 @@ class PlexStream(plexobjects.PlexObject):
         pass
 
     def getTitle(self, translate_func=util.dummyTranslate):
+        if util.INTERFACE.getPreference('subtitle_use_extended_title', True) and self.extendedDisplayTitle:
+            return self.extendedDisplayTitle
+
         title = self.getLanguageName(translate_func)
         streamType = self.streamType.asInt()
 

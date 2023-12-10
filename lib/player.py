@@ -145,6 +145,9 @@ class BasePlayerHandler(object):
             self.timelineType, self.player.playerObject, state, time, self.playQueue, duration=self.currentDuration()
         )
 
+    def getVolume(self):
+        return util.rpc.Application.GetProperties(properties=["volume"])["volume"]
+
 
 class SeekPlayerHandler(BasePlayerHandler):
     NO_SEEK = 0
@@ -756,8 +759,8 @@ class BGMPlayerHandler(BasePlayerHandler):
         util.DEBUG_LOG("BGM: playing theme for %s" % self.currentlyPlaying)
         self.player.bgmPlaying = True
 
-    def getVolume(self):
-        return util.rpc.Application.GetProperties(properties=["volume"])["volume"]
+    def _setVolume(self, vlm):
+        xbmc.executebuiltin("SetVolume({})".format(vlm))
 
     def setVolume(self, volume=None, reset=False):
         vlm = self.oldVolume if reset else volume
@@ -765,7 +768,7 @@ class BGMPlayerHandler(BasePlayerHandler):
 
         if curVolume != vlm:
             util.DEBUG_LOG("BGM: {}setting volume to: {}".format("re-" if reset else "", vlm))
-            xbmc.executebuiltin("SetVolume({})".format(vlm))
+            self._setVolume(vlm)
         else:
             util.DEBUG_LOG("BGM: Volume already at {}".format(vlm))
             return
@@ -942,6 +945,11 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
         self.started = False
         self.handler = BGMPlayerHandler(self, rating_key)
+
+        # store current volume if it's different from the BGM volume
+        curVol = self.handler.getVolume()
+        if volume < curVol:
+            util.setSetting('last_good_volume', curVol)
 
         self.lastPlayWasBGM = True
 

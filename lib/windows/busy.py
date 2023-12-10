@@ -34,8 +34,9 @@ def dialog(msg='LOADING', condition=None, delay=True):
         def inner(*args, **kwargs):
             timer = None
             w = BusyWindow.create(show=not delay)
+
             if delay:
-                timer = threading.Timer(0.5, lambda: w.show())
+                timer = threading.Timer(0.5, w.show)
                 timer.start()
 
             try:
@@ -44,8 +45,12 @@ def dialog(msg='LOADING', condition=None, delay=True):
                 if timer and timer.is_alive():
                     timer.cancel()
                     timer.join()
+                del timer
                 w.doClose()
-                del w
+                try:
+                    del w
+                except:
+                    pass
                 util.garbageCollect()
 
         if condition is not None:

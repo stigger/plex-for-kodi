@@ -53,6 +53,25 @@ except:
     CHANNELMAPPING = None
 
 
+def getLanguageCode(add_def=None):
+    data = rpc.Settings.GetSettingValue(setting='locale.language')['value'].replace('resource.language.', '')
+    lang = ""
+    if "_" in data:
+        base, variant = data.split("_")
+        lang += "{}-{},{}".format(base, variant.upper(), base)
+    else:
+        lang = data
+    if add_def and lang not in add_def:
+        lang += ",{}".format(add_def)
+    return lang
+
+
+try:
+    ACCEPT_LANGUAGE_CODE = getLanguageCode(add_def='en-US,en')
+except:
+    ACCEPT_LANGUAGE_CODE = 'en-US,en'
+
+
 def getSetting(key, default=None):
     with SETTINGS_LOCK:
         setting = ADDON.getSetting(key)
@@ -100,8 +119,8 @@ class AdvancedSettings(object):
         ("dynamic_timeline_seek", False),
         ("fast_back", False),
         ("dynamic_backgrounds", True),
-        ("background_art_blur_amount", 0),
-        ("background_art_opacity_amount", 40),
+        ("background_art_blur_amount2", 0),
+        ("background_art_opacity_amount2", 20),
         ("screensaver_quiz", False),
         ("postplay_always", False),
         ("postplay_timeout", 16),
@@ -128,6 +147,7 @@ class AdvancedSettings(object):
         ("continue_use_thumb", True),
         ("use_bg_fallback", False),
         ("dbg_crossfade", True),
+        ("subtitle_use_extended_title", True),
     )
 
     def __init__(self):
@@ -882,8 +902,8 @@ def backgroundFromArt(art, width=1920, height=1080, background=colors.noAlpha.Ba
         return
     return art.asTranscodedImageURL(
         width, height,
-        blur=advancedSettings.backgroundArtBlurAmount,
-        opacity=advancedSettings.backgroundArtOpacityAmount,
+        blur=advancedSettings.backgroundArtBlurAmount2,
+        opacity=advancedSettings.backgroundArtOpacityAmount2,
         background=background
     )
 

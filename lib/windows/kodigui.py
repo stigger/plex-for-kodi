@@ -115,12 +115,14 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
             bgColour = util.advancedSettings.backgroundColour if util.advancedSettings.backgroundColour != "-" \
                 else "ff000000"
             self.setProperty('background_colour', "0x%s" % bgColour.lower())
+            self.setProperty('background_colour_opaque', "0x%s" % bgColour.lower())
         else:
             # set background color to 0 to avoid kodi UI BG clearing, improves performance
             if util.advancedSettings.dbgCrossfade:
                 self.setProperty('background_colour', "0x00000000")
             else:
                 self.setProperty('background_colour', "0xff111111")
+            self.setProperty('background_colour_opaque', "0xff111111")
 
         self.setBoolProperty('use_bg_fallback', util.advancedSettings.useBgFallback)
 

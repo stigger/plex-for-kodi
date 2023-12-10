@@ -1904,3 +1904,11 @@ msgstr "Überspringen beim Transkodieren erlauben"
 msgctxt "#32949"
 msgid "When transcoding/DirectStreaming, allow auto-skip functionality."
 msgstr "Beim Transkodieren/DirectStream die automatische Überspringen-Funktionalität erlauben."
+
+msgctxt "#32950"
+msgid "Use extended title for subtitles"
+msgstr "Erweiterten Titel für Untertitel verwenden"
+
+msgctxt "#32951"
+msgid "When displaying subtitles use the extendedDisplayTitle Plex exposes."
+msgstr "Verwende erweiterte Namen wenn Untertitelnamen angezeigt werden."

@@ -352,7 +352,15 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if util.advancedSettings.dynamicBackgrounds:
             bgUrl = util.getSetting("last_bg_url")
             if bgUrl:
-                self.setProperty("background_static", bgUrl)
+                self.windowSetBackground(bgUrl)
+
+        # set good volume if we've missed re-setting BGM volume before
+        lastGoodVlm = util.getSetting('last_good_volume', 0)
+        BGMVlm = plexapp.util.INTERFACE.getThemeMusicValue()
+        if lastGoodVlm and BGMVlm and util.rpc.Application.GetProperties(properties=["volume"])["volume"] == BGMVlm:
+            util.DEBUG_LOG("Setting volume to {}, we probably missed the "
+                           "re-set on the last BGM encounter".format(lastGoodVlm))
+            xbmc.executebuiltin("SetVolume({})".format(lastGoodVlm))
 
         self.sectionList = kodigui.ManagedControlList(self, self.SECTION_LIST_ID, 7)
         self.serverList = kodigui.ManagedControlList(self, self.SERVER_LIST_ID, 10)
