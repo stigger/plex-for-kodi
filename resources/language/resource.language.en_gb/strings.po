@@ -1605,3 +1605,11 @@ msgstr ""
 msgctxt "#32949"
 msgid "When transcoding/DirectStreaming, allow auto-skip functionality."
 msgstr ""
+
+msgctxt "#32950"
+msgid "Use extended title for subtitles"
+msgstr ""
+
+msgctxt "#32951"
+msgid "When displaying subtitles use the extendedDisplayTitle Plex exposes."
+msgstr ""
