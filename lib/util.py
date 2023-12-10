@@ -53,6 +53,25 @@ except:
     CHANNELMAPPING = None
 
 
+def getLanguageCode(add_def=None):
+    data = rpc.Settings.GetSettingValue(setting='locale.language')['value'].replace('resource.language.', '')
+    lang = ""
+    if "_" in data:
+        base, variant = data.split("_")
+        lang += "{}-{},{}".format(base, variant.upper(), base)
+    else:
+        lang = data
+    if add_def and lang not in add_def:
+        lang += ",{}".format(add_def)
+    return lang
+
+
+try:
+    ACCEPT_LANGUAGE_CODE = getLanguageCode(add_def='en-US,en')
+except:
+    ACCEPT_LANGUAGE_CODE = 'en-US,en'
+
+
 def getSetting(key, default=None):
     with SETTINGS_LOCK:
         setting = ADDON.getSetting(key)
@@ -128,6 +147,7 @@ class AdvancedSettings(object):
         ("continue_use_thumb", True),
         ("use_bg_fallback", False),
         ("dbg_crossfade", True),
+        ("subitle_use_extended_title", True),
     )
 
     def __init__(self):
