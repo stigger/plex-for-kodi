@@ -1232,8 +1232,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             mli = self.serverList.getSelectedItem()
             if mli:
                 selection = mli.dataSource
-        else:
-            plexapp.refreshResources()
 
         servers = sorted(
             plexapp.SERVERMANAGER.getServers(),
@@ -1263,6 +1261,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         if not from_refresh and items and not mouse:
             self.setFocusId(self.SERVER_LIST_ID)
+
+        if not from_refresh:
+            plexapp.refreshResources()
 
     def selectServer(self):
         mli = self.serverList.getSelectedItem()
