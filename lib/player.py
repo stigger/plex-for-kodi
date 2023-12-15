@@ -375,7 +375,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         util.DEBUG_LOG('SeekHandler: onAVStarted')
 
         # check if embedded subtitle was set correctly
-        if self.player.video.current_subtitle_is_embedded:
+        if self.isDirectPlay and self.player.video.current_subtitle_is_embedded:
             try:
                 playerID = kodijsonrpc.rpc.Player.GetActivePlayers()[0]["playerid"]
                 currIdx = kodijsonrpc.rpc.Player.GetProperties(playerid=playerID, properties=['currentsubtitle'])[
