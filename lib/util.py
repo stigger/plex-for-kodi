@@ -299,7 +299,9 @@ class KodiCacheManager(object):
     def __init__(self):
         try:
             self.memorySize = rpc.Settings.GetSettingValue(setting='filecache.memorysize')['value']
-            self.readFactor = rpc.Settings.GetSettingValue(setting='filecache.readfactor')['value'] // 100
+            self.readFactor = rpc.Settings.GetSettingValue(setting='filecache.readfactor')['value'] / 100.0
+            if self.readFactor % 1 == 0:
+                self.readFactor = int(self.readFactor)
             DEBUG_LOG("Not using advancedsettings.xml for cache/buffer management, we're at least Kodi 21 non-alpha")
             self.useModernAPI = True
         except:
@@ -363,7 +365,7 @@ class KodiCacheManager(object):
             # kodi cache settings have moved to Services>Caching
             try:
                 rpc.Settings.SetSettingValue(setting='filecache.memorysize', value=self.memorySize)
-                rpc.Settings.SetSettingValue(setting='filecache.readfactor', value=self.readFactor * 100)
+                rpc.Settings.SetSettingValue(setting='filecache.readfactor', value=int(self.readFactor * 100))
             except:
                 pass
             return
@@ -401,7 +403,7 @@ class KodiCacheManager(object):
 
     @property
     def readFactorOpts(self):
-        return list(sorted(list(set([1, 2, 4, 5, 10, 20] + [self.readFactor]))))
+        return list(sorted(list(set([1.25, 1.5, 1.75, 2, 2.5, 4, 5, 10, 20] + [self.readFactor]))))
 
     @property
     def free(self):
