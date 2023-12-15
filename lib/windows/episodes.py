@@ -270,7 +270,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self._onFirstInit()
 
         if self.show_ and self.show_.theme and not util.getSetting("slow_connection", False) and \
-                (not self.cameFrom or self.cameFrom != self.mediaItem.ratingKey):
+                (not self.cameFrom or self.cameFrom != self.show_.ratingKey):
             volume = self.show_.settings.getThemeMusicValue()
             if volume > 0:
                 player.PLAYER.playBackgroundMusic(self.show_.theme.asURL(True), volume,
