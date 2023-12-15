@@ -854,6 +854,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
     def __init__(self, *args, **kwargs):
         xbmc.Player.__init__(self, *args, **kwargs)
         signalsmixin.SignalsMixin.__init__(self)
+        self.handler = AudioPlayerHandler(self)
 
     def init(self):
         self._closed = False
@@ -890,7 +891,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.bgmPlaying = False
         self.playerObject = None
         self.pauseAfterPlaybackStarted = False
-        self.handler = AudioPlayerHandler(self)
+        #self.handler = AudioPlayerHandler(self)
         self.currentTime = 0
 
     def control(self, cmd):
@@ -982,7 +983,9 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         if self.bgmPlaying:
             self.stopAndWait()
 
-        self.handler = handler or SeekPlayerHandler(self, session_id)
+        self.handler = handler if handler and isinstance(handler, SeekPlayerHandler) \
+            else SeekPlayerHandler(self, session_id)
+
         self.video = video
         self.resume = resume
         self.open()
@@ -1078,7 +1081,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         if self.bgmPlaying:
             self.stopAndWait()
 
-        if handler:
+        if handler and isinstance(handler, SeekPlayerHandler):
             self.handler = handler
         else:
             self.handler = SeekPlayerHandler(self, session_id)
@@ -1194,13 +1197,13 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler.onPrePlayStarted()
 
     def onPlayBackStarted(self):
+        util.DEBUG_LOG('Player - STARTED')
+        self.trigger('playback.started')
         self.started = True
         if self.pauseAfterPlaybackStarted:
             self.control('pause')
             self.pauseAfterPlaybackStarted = False
 
-        util.DEBUG_LOG('Player - STARTED')
-        self.trigger('playback.started')
         if not self.handler:
             return
         self.handler.onPlayBackStarted()
@@ -1213,6 +1216,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
     def onAVStarted(self):
         util.DEBUG_LOG('Player - AVStarted: {}'.format(self.handler))
+        self.trigger('av.started')
         if not self.handler:
             return
         self.handler.onAVStarted()
@@ -1255,12 +1259,14 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler.onPlayBackSeek(time, offset)
 
     def onPlayBackFailed(self):
-        util.DEBUG_LOG('Player - FAILED')
+        util.DEBUG_LOG('Player - FAILED: {}'.format(self.handler))
         if not self.handler:
             return
 
         if self.handler.onPlayBackFailed():
             util.showNotification(util.T(32448, 'Playback Failed!'))
+            self.stopAndWait()
+            self.close()
             # xbmcgui.Dialog().ok('Failed', 'Playback failed')
 
     def onVideoWindowOpened(self):
