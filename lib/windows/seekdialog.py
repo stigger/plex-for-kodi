@@ -826,11 +826,6 @@ class SeekDialog(kodigui.BaseDialog):
             return currentVideo.server.findVideoSession(currentVideo.settings.getGlobal("clientIdentifier"),
                                                         currentVideo.ratingKey)
 
-        try:
-            cache = int(xbmc.getInfoLabel('Player.ProgressCache')) - int(xbmc.getInfoLabel('Player.Progress'))
-            self.setProperty('ppi.Buffered', str(cache))
-        except:
-            pass
 
         while not self.player.started:
             util.MONITOR.waitForAbort(0.1)
