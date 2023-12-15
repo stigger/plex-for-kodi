@@ -903,8 +903,8 @@ class SafeControlEdit(object):
         self._winOnAction(action)
 
     def processAction(self, action_id):
-        oldVal = self._text
         if not self._compatibleMode:
+            oldVal = self._text
             self._text = self._win.getControl(self.controlID).getText()
 
             if self._keyCallback:
@@ -913,6 +913,7 @@ class SafeControlEdit(object):
             self.updateLabel()
 
             return True
+        oldVal = self.getText()
 
         if 61793 <= action_id <= 61818:  # Lowercase
             self.processChar(self.CHARS_LOWER[action_id - 61793])
@@ -928,11 +929,12 @@ class SafeControlEdit(object):
             return False
 
         if self._keyCallback:
-            self._keyCallback(action_id, oldVal, self._text)
+            self._keyCallback(action_id, oldVal, self.getText())
 
         return True
 
     def processOffControlAction(self, action_id):
+        oldVal = self.getText() if self._compatibleMode else self._text
         if 61505 <= action_id <= 61530:  # Lowercase
             self.processChar(self.CHARS_LOWER[action_id - 61505])
         elif 192577 <= action_id <= 192602:  # Uppercase
@@ -947,7 +949,7 @@ class SafeControlEdit(object):
             return False
 
         if self._keyCallback:
-            self._keyCallback()
+            self._keyCallback(action_id, oldVal, self.getText())
 
         return True
 

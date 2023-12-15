@@ -263,6 +263,9 @@ class Settings(object):
                         "only those likely affected. Use this if you find a hub that doesn't update properly."
                     )
                 ),
+                BoolSetting(
+                    'search_use_kodi_kbd', T(32955, 'Use Kodi keyboard for searching'), False
+                ),
                 ThemeMusicSetting('theme_music', T(32480, 'Theme music'), 5),
                 PlayedThresholdSetting('played_threshold', T(33501, 'Video played threshold'), 1).description(
                     T(
