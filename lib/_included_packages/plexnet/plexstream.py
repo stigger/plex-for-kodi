@@ -11,6 +11,10 @@ class PlexStream(plexobjects.PlexObject):
     TYPE_SUBTITLE = 3
     TYPE_LYRICS = 4
 
+    streamTypeNames = (
+        "Unknown", "VideoStream", "AudioStream", "SubtitleStream", "LyricsStream"
+    )
+
     # We have limited font support, so make a very modest effort at using
     # English names for common unsupported languages.
 
@@ -156,6 +160,9 @@ class PlexStream(plexobjects.PlexObject):
 
     def __str__(self):
         return self.getTitle()
+
+    def __repr__(self):
+        return '<{}: {}>'.format(self.streamTypeNames[self.streamType.asInt()], str(self))
 
     def __eq__(self, other):
         if not other:

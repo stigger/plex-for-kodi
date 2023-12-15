@@ -478,14 +478,14 @@ class SeekPlayerHandler(BasePlayerHandler):
             if self.isDirectPlay:
                 self.player.showSubtitles(False)
                 if path:
-                    util.DEBUG_LOG('Setting subtitle path: {0}'.format(path))
+                    util.DEBUG_LOG('Setting subtitle path: {0} ({1})'.format(path, subs))
                     self.player.setSubtitles(path)
                     self.player.showSubtitles(True)
 
                 else:
                     # u_til.TEST(subs.__dict__)
                     # u_til.TEST(self.player.video.mediaChoice.__dict__)
-                    util.DEBUG_LOG('Enabling embedded subtitles at: {0}'.format(subs.typeIndex))
+                    util.DEBUG_LOG('Enabling embedded subtitles at: {0} ({1})'.format(subs.typeIndex, subs))
                     self.player.setSubtitleStream(subs.typeIndex)
                     self.player.showSubtitles(True)
 
