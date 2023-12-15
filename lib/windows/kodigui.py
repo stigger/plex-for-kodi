@@ -495,7 +495,8 @@ class ManagedControlList(object):
                 mli._updateListItem()
                 mli.setProperty('index', str(idx))
         except RuntimeError:
-            xbmc.log('kodigui.ManagedControlList._updateItems: Runtime error', xbmc.LOGINFO)
+            #xbmc.log('kodigui.ManagedControlList._updateItems: Runtime error', xbmc.LOGINFO)
+            util.ERROR('kodigui.ManagedControlList._updateItems: Runtime error')
             return False
 
         return True

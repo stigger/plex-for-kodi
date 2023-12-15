@@ -211,8 +211,8 @@ class ServerListItem(kodigui.ManagedListItem):
 
     def onDestroy(self):
         try:
-            self.dataSource.off('completed:reachability', self.onUpdate)
-            self.dataSource.off('started:reachability', self.onUpdate)
+            self.dataSource.off('completed:reachability', self.onReachability)
+            self.dataSource.off('started:reachability', self.onReachability)
         except AttributeError:
             util.DEBUG_LOG('Destroying invalidated ServerListItem')
 
