@@ -260,13 +260,12 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
             getattr(self, "action{}".format(getSetting('action_on_sleep', "none").capitalize()))()
 
     def stopPlayback(self):
-        if xbmc.Player().isPlaying():
-            LOG('Monitor: Stopping media playback')
-            xbmc.Player().stop()
+        LOG('Monitor: Stopping media playback')
+        xbmc.Player().stop()
 
     def onScreensaverActivated(self):
         DEBUG_LOG("Monitor: OnScreensaverActivated")
-        if getSetting('player_stop_on_screensaver', True):
+        if getSetting('player_stop_on_screensaver', True) and xbmc.Player().isPlayingVideo():
             self.stopPlayback()
 
     def onDPMSActivated(self):
