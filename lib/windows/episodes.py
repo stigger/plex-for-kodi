@@ -286,7 +286,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.selectEpisode()
 
         mli = self.episodeListControl.getSelectedItem()
-        if not mli:
+        if not mli or not self.episodesPaginator:
             return
 
         reloadItems = [mli]
