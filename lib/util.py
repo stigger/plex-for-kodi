@@ -244,11 +244,13 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
             from .windows import kodigui
             if not kodigui.BaseFunctions.lastWinID:
                 ERROR("Addon never properly started, can't reactivate")
+                setGlobalProperty('stop_running', '1')
                 return
             if kodigui.BaseFunctions.lastWinID > 13000:
                 xbmc.executebuiltin('ActivateWindow({0})'.format(kodigui.BaseFunctions.lastWinID))
             else:
                 ERROR("Addon never properly started, can't reactivate")
+                setGlobalProperty('stop_running', '1')
                 return
 
             getAdvancedSettings()

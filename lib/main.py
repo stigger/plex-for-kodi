@@ -84,11 +84,11 @@ def _main():
     background.setSplash()
 
     try:
-        while not util.MONITOR.abortRequested():
+        while not util.MONITOR.abortRequested() and not util.getGlobalProperty('stop_running'):
             if plex.init():
                 background.setSplash(False)
                 fromSwitch = False
-                while not util.MONITOR.abortRequested():
+                while not util.MONITOR.abortRequested() and not util.getGlobalProperty('stop_running'):
                     if (
                         not plexapp.ACCOUNT.isOffline and not
                         plexapp.ACCOUNT.isAuthenticated and
@@ -157,6 +157,7 @@ def _main():
         util.ERROR()
     finally:
         util.DEBUG_LOG('Main: SHUTTING DOWN...')
+        util.setGlobalProperty('stop_running', '')
         background.setShutdown()
         player.shutdown()
         plexapp.util.APP.preShutdown()
