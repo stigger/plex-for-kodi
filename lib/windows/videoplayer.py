@@ -77,7 +77,7 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     PREV_DIM = (462, 259)
     ONDECK_DIM = (329, 185)
     RELATED_DIM = (268, 397)
-    ROLES_DIM = (268, 268)
+    ROLES_DIM = (334, 334)
 
     OPTIONS_GROUP_ID = 200
 

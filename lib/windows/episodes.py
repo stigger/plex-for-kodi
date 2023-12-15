@@ -183,7 +183,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     POSTER_DIM = (420, 630)
     RELATED_DIM = (268, 397)
     EXTRA_DIM = (329, 185)
-    ROLES_DIM = (268, 268)
+    ROLES_DIM = (334, 334)
 
     LIST_OPTIONS_BUTTON_ID = 111
 

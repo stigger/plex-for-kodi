@@ -1916,3 +1916,7 @@ msgstr "Verwende erweiterte Namen wenn Untertitelnamen angezeigt werden."
 msgctxt "#32952"
 msgid "Dialog-Flackern beheben"
 msgstr ""
+
+msgctxt "#32953"
+msgid "Reviews"
+msgstr "Kritik"

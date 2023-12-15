@@ -485,13 +485,18 @@ class Movie(PlayableVideo):
     def _setData(self, data):
         PlayableVideo._setData(self, data)
         if self.isFullObject():
-            self.collections = plexobjects.PlexItemList(data, media.Collection, media.Collection.TYPE, server=self.server)
+            self.collections = plexobjects.PlexItemList(data, media.Collection, media.Collection.TYPE,
+                                                        server=self.server)
             self.countries = plexobjects.PlexItemList(data, media.Country, media.Country.TYPE, server=self.server)
             self.directors = plexobjects.PlexItemList(data, media.Director, media.Director.TYPE, server=self.server)
             self.genres = plexobjects.PlexItemList(data, media.Genre, media.Genre.TYPE, server=self.server)
-            self.media = plexobjects.PlexMediaItemList(data, plexmedia.PlexMedia, media.Media.TYPE, initpath=self.initpath, server=self.server, media=self)
+            self.media = plexobjects.PlexMediaItemList(data, plexmedia.PlexMedia, media.Media.TYPE,
+                                                       initpath=self.initpath, server=self.server, media=self)
             self.producers = plexobjects.PlexItemList(data, media.Producer, media.Producer.TYPE, server=self.server)
-            self.roles = plexobjects.PlexItemList(data, media.Role, media.Role.TYPE, server=self.server, container=self.container)
+            self.roles = plexobjects.PlexItemList(data, media.Role, media.Role.TYPE, server=self.server,
+                                                  container=self.container)
+            self.reviews = plexobjects.PlexItemList(data, media.Review, media.Review.TYPE, server=self.server,
+                                                    container=self.container)
             self.writers = plexobjects.PlexItemList(data, media.Writer, media.Writer.TYPE, server=self.server)
             #self.related = plexobjects.PlexItemList(data.find('Related'), plexlibrary.Hub, plexlibrary.Hub.TYPE, server=self.server, container=self)
         else:
