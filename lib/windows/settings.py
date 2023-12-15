@@ -255,12 +255,12 @@ class Settings(object):
                     T(32100, 'Skip user selection and pin entry on startup.')
                 ),
                 BoolSetting(
-                    'speedy_home_hubs2', T(33503, 'Use alternative home refresh'), False
+                    'speedy_home_hubs2', T(33503, 'Use alternative hubs refresh'), False
                 ).description(
                     T(
                         33504,
-                        "Use an alternative method to speed up watched state updates in the home hub after playing an i"
-                        "tem."
+                        "Refreshes all hubs for all libraries after an item's watch-state has changed, instead of "
+                        "only those likely affected. Use this if you find a hub that doesn't update properly."
                     )
                 ),
                 ThemeMusicSetting('theme_music', T(32480, 'Theme music'), 5),

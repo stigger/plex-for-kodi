@@ -1506,12 +1506,12 @@ msgid "Set this to the same value as your Plex server (Settings>Library>Video pl
 msgstr "Auf dem selben wert wie im Plex server setzen (Einstellungen>Mediathek>Video played threshold) um bestimmte Fehler zu umgehen, Standardwert: 90 %"
 
 msgctxt "#33503"
-msgid "Use alternative home refresh"
+msgid "Use alternative hubs refresh"
 msgstr "Alternative Aktualisierung der Hubs"
 
 msgctxt "#33504"
-msgid "Use an alternative method to speed up watched state updates in the home hub after playing an item."
-msgstr "Eine alternative Methode zum Aktualisieren der Home-Hubs verwenden, nachdem ein Item abgespielt wurde."
+msgid "Refreshes all hubs for all libraries after an item's watch-state has changed, instead of only those likely affected. Use this if you find a hub that doesn't update properly."
+msgstr "Aktualisiert alle Hubs aller Bibliotheken, anstatt nur die, die möglicherweise zutreffend sind, nachdem sich der Abspielstatus eines Items geändert hat. Benutzen, wenn sich ein Hub nicht aktualisiert."
 
 msgctxt "#33505"
 msgid "Show intro skip button early"
