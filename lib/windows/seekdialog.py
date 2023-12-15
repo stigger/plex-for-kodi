@@ -397,6 +397,10 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('has.chapters', self.showChapters and '1' or '')
         self.setProperty('show.buffer', (util.advancedSettings.playerShowBuffer and self.isDirectPlay) and '1' or '')
 
+        if self.timeKeeper:
+            self.timeKeeper.cancel()
+            self.timeKeeper = None
+
         navPlaylist = util.getSetting('video_show_playlist', 'eponly')
         self.setBoolProperty('nav.playlist', (navPlaylist == "eponly" and self.player.video.type == 'episode') or
                              navPlaylist == "always")
@@ -626,53 +630,54 @@ class SeekDialog(kodigui.BaseDialog):
                     self._ignoreTick = True
                     self.handler.prev()
 
-            if action in cancelActions + (xbmcgui.ACTION_SELECT_ITEM,):
-                if self.getProperty('show.PPI') and action in cancelActions:
-                    self.hidePPIDialog()
-                    return
-
-                # immediate marker timer actions
-                if self._currentMarker and self._currentMarker["countdown"] is not None \
-                        and (self.getProperty('show.markerSkip') or self.getProperty('show.markerSkip_OSDOnly')):
-
-                    if controlID != self.BIG_SEEK_LIST_ID and \
-                            (util.advancedSettings.skipMarkerTimerCancel
-                             or util.advancedSettings.skipMarkerTimerImmediate):
-                        if util.advancedSettings.skipMarkerTimerCancel and \
-                                action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
-                            self.displayMarkers(cancelTimer=True)
-
-                        elif util.advancedSettings.skipMarkerTimerImmediate and action == xbmcgui.ACTION_SELECT_ITEM:
-                            self.displayMarkers(immediate=True)
-                            self.hideOSD(skipMarkerFocus=True)
+                if action in cancelActions + (xbmcgui.ACTION_SELECT_ITEM,):
+                    if self.getProperty('show.PPI') and action in cancelActions:
+                        self.hidePPIDialog()
                         return
 
-                if action in cancelActions:
-                    if self.waitingForBuffer:
-                        self._abortBufferWait = True
-                        self.waitingForBuffer = False
-                        return
+                    # immediate marker timer actions
+                    if self.countingDownMarker and \
+                            (self.getProperty('show.markerSkip') or self.getProperty('show.markerSkip_OSDOnly')):
 
-                    if self._seeking and not self._ignoreInput:
-                        self.resetSeeking()
-                        self.updateCurrent()
-                        self.updateProgress()
-                        if self.osdVisible():
-                            self.hideOSD()
-                        return
+                        if controlID != self.BIG_SEEK_LIST_ID and \
+                                (util.advancedSettings.skipMarkerTimerCancel
+                                 or util.advancedSettings.skipMarkerTimerImmediate):
+                            if util.advancedSettings.skipMarkerTimerCancel and \
+                                    action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
+                                self.displayMarkers(cancelTimer=True)
 
-                    if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
-                        if self._osdHideAnimationTimeout:
-                            if self._osdHideAnimationTimeout >= time.time():
-                                return
+                            elif util.advancedSettings.skipMarkerTimerImmediate \
+                                    and action == xbmcgui.ACTION_SELECT_ITEM:
+                                self.displayMarkers(immediate=True)
+                                self.hideOSD(skipMarkerFocus=True)
+                            return
+
+                    if action in cancelActions:
+                        if self.waitingForBuffer:
+                            self._abortBufferWait = True
+                            self.waitingForBuffer = False
+                            return
+
+                        if self._seeking and not self._ignoreInput:
+                            self.resetSeeking()
+                            self.updateCurrent()
+                            self.updateProgress()
+                            if self.osdVisible():
+                                self.hideOSD()
+                            return
+
+                        if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
+                            if self._osdHideAnimationTimeout:
+                                if self._osdHideAnimationTimeout >= time.time():
+                                    return
+                                else:
+                                    self._osdHideAnimationTimeout = None
+
+                            if self.osdVisible():
+                                self.hideOSD()
                             else:
-                                self._osdHideAnimationTimeout = None
-
-                        if self.osdVisible():
-                            self.hideOSD()
-                        else:
-                            self.stop()
-                        return
+                                self.stop()
+                            return
         except:
             util.ERROR()
 
@@ -768,6 +773,7 @@ class SeekDialog(kodigui.BaseDialog):
                 self.handler.ignoreTimelines = True
                 self.handler.queuingNext = True
                 self._ignoreTick = True
+                self._ignoreInput = True
                 next(self.handler)
             return
         elif controlID == self.PLAYLIST_BUTTON_ID:
@@ -805,7 +811,6 @@ class SeekDialog(kodigui.BaseDialog):
 
             if self.timeKeeper:
                 self.timeKeeper.cancel()
-                del self.timeKeeper
                 self.timeKeeper = None
         finally:
             kodigui.BaseDialog.doClose(self)
@@ -970,6 +975,9 @@ class SeekDialog(kodigui.BaseDialog):
         self.skipByOffset(step, without_osd)
 
     def skipByOffset(self, offset, without_osd=False):
+        if self.countingDownMarker:
+            self.displayMarkers(cancelTimer=True)
+
         if offset is not None:
             if not self.seekByOffset(offset, without_osd=without_osd):
                 return
@@ -1408,6 +1416,10 @@ class SeekDialog(kodigui.BaseDialog):
         self._applyingSeek = True
         self._ignoreInput = settings_changed
         offset = self.selectedOffset if offset is None else offset
+
+        if self.countingDownMarker:
+            self.displayMarkers(cancelTimer=True)
+
         self.resetSkipSteps()
         self.updateProgress(offset=offset)
 
@@ -1745,6 +1757,12 @@ class SeekDialog(kodigui.BaseDialog):
         self.updateCurrent(
             update_position_control=not self._seeking and not self._applyingSeek, atOffset=self.timeKeeperTime)
 
+    @property
+    def countingDownMarker(self):
+        return self._currentMarker and \
+               self._currentMarker["countdown"] is not None and \
+               self._currentMarker["countdown"] > 0
+
     def displayMarkers(self, cancelTimer=False, immediate=False, onlyReturnIntroMD=False, setSkipped=False,
                        offset=None):
         # intro/credits marker display logic
@@ -1778,7 +1796,7 @@ class SeekDialog(kodigui.BaseDialog):
                 return int(markerDef["marker"].endTimeOffset) + 1000
             return False
 
-        if cancelTimer and self._currentMarker and self._currentMarker["countdown"] is not None:
+        if cancelTimer and self.countingDownMarker:
             self._currentMarker["countdown"] = None
             markerDef["markerAutoSkipped"] = True
             setattr(self, markerDef["markerAutoSkipShownTimer"], None)
@@ -1825,6 +1843,7 @@ class SeekDialog(kodigui.BaseDialog):
                         self.handler.ignoreTimelines = True
                         self.handler.queuingNext = True
                         self._ignoreTick = True
+                        self._ignoreInput = True
                         if self.player.playState == self.player.STATE_PLAYING:
                             self.player.pause()
                         xbmc.sleep(500)
@@ -1867,7 +1886,7 @@ class SeekDialog(kodigui.BaseDialog):
                     # fixme: round might not be right here, but who cares
                     markerDef["countdown"] = int(max(round((sTOffWThres - self.trueOffset()) / 1000.0) + 1, 1))
 
-            if self.player.playState == self.player.STATE_PLAYING:
+            if self.player.playState == self.player.STATE_PLAYING and not self.osdVisible():
                 markerDef["countdown"] -= 1
 
             self.setProperty('marker.countdown', '1')
