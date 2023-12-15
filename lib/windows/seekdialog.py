@@ -764,10 +764,12 @@ class SeekDialog(kodigui.BaseDialog):
             self._ignoreTick = True
             self.handler.prev()
         elif controlID == self.NEXT_BUTTON_ID:
-            self.handler.ignoreTimelines = True
-            self.handler.ignorePlaybackEnded = True
-            self._ignoreTick = True
-            next(self.handler)
+            if not self.handler.queuingNext:
+                self.handler.ignoreTimelines = True
+                self.handler.queuingNext = True
+                self._ignoreTick = True
+                next(self.handler)
+            return
         elif controlID == self.PLAYLIST_BUTTON_ID:
             self.showPlaylistDialog()
         elif controlID == self.OPTIONS_BUTTON_ID:
@@ -1817,15 +1819,16 @@ class SeekDialog(kodigui.BaseDialog):
 
                 # go to next video immediately if on bingeMode
                 if self.handler.playlist and self.handler.playlist.hasNext() and self.bingeMode:
-                    # skip final marker
-                    util.DEBUG_LOG("MarkerAutoSkip: Skipping final marker, going to next video")
-                    self.handler.ignoreTimelines = True
-                    self.handler.ignorePlaybackEnded = True
-                    self._ignoreTick = True
-                    if self.player.playState == self.player.STATE_PLAYING:
-                        self.player.pause()
-                    xbmc.sleep(500)
-                    next(self.handler)
+                    if not self.handler.queuingNext:
+                        # skip final marker
+                        util.DEBUG_LOG("MarkerAutoSkip: Skipping final marker, going to next video")
+                        self.handler.ignoreTimelines = True
+                        self.handler.queuingNext = True
+                        self._ignoreTick = True
+                        if self.player.playState == self.player.STATE_PLAYING:
+                            self.player.pause()
+                        xbmc.sleep(500)
+                        next(self.handler)
                     return True
                 else:
                     util.DEBUG_LOG("MarkerAutoSkip: Skipping final marker, stopping")

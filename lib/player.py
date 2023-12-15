@@ -28,7 +28,7 @@ class BasePlayerHandler(object):
         self.timelineType = None
         self.lastTimelineState = None
         self.ignoreTimelines = False
-        self.ignorePlaybackEnded = False
+        self.queuingNext = False
         self.playQueue = None
         self.sessionID = session_id
 
@@ -197,7 +197,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.chapters = chapters or []
         self.playedThreshold = plexapp.util.INTERFACE.getPlayedThresholdValue()
         self.ignoreTimelines = False
-        self.ignorePlaybackEnded = False
+        self.queuingNext = False
         self.stoppedInBingeMode = False
         self.inBingeMode = False
         self.prePlayWitnessed = False
@@ -442,15 +442,19 @@ class SeekPlayerHandler(BasePlayerHandler):
 
         self.updateNowPlaying()
 
-        if self.ignorePlaybackEnded:
+        if self.queuingNext:
             util.DEBUG_LOG('SeekHandler: onPlayBackEnded - event ignored')
             return
 
         if self.inBingeMode:
             self.stoppedInBingeMode = False
 
+        if self.playlist and self.playlist.hasNext():
+            self.queuingNext = True
         if self.next(on_end=True):
             return
+        else:
+            self.queuingNext = False
 
         if not self.ended:
             if self.seeking != self.SEEK_PLAYLIST:
