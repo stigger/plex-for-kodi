@@ -1295,7 +1295,7 @@ msgid "Kodi Buffer Size (MB)"
 msgstr ""
 
 msgctxt "#33614"
-msgid "Set the Kodi Cache/Buffer size. Free: {} MB, Recommended max: {} MB, Default: 20 MB. Needs Kodi restart. WARNING: This will overwrite advancedsettings.xml!\n\nTo customize other cache/network-related values, copy \"script.plexmod/pm4k_cache_template.xml\" to profile folder and edit it to your liking. (See About section for the file paths)"
+msgid "Set the Kodi Cache/Buffer size. Free: {} MB, Recommended: ~100 MB, Recommended max: {} MB, Default: 20 MB."
 msgstr ""
 
 msgctxt "#33615"
@@ -1620,4 +1620,8 @@ msgstr ""
 
 msgctxt "#32953"
 msgid "Reviews"
+msgstr ""
+
+msgctxt "#32954"
+msgid "Needs Kodi restart. WARNING: This will overwrite advancedsettings.xml!\n\nTo customize other cache/network-related values, copy \"script.plexmod/pm4k_cache_template.xml\" to profile folder and edit it to your liking. (See About section for the file paths)"
 msgstr ""

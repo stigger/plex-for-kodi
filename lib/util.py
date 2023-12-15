@@ -386,7 +386,7 @@ class KodiCacheManager(object):
 
     @property
     def viableOptions(self):
-        default = list(filter(lambda x: x < self.recMax, [20, 40, 60, 80, 120, 160, 200, 400]))
+        default = list(filter(lambda x: x < self.recMax, [20, 40, 60, 80, 100, 120, 160, 200, 400]))
 
         # add option to overcommit slightly
         overcommit = []
@@ -401,7 +401,7 @@ class KodiCacheManager(object):
 
     @property
     def readFactorOpts(self):
-        return list(sorted(list(set([4, 5, 10, 20] + [self.readFactor]))))
+        return list(sorted(list(set([1, 2, 4, 5, 10, 20] + [self.readFactor]))))
 
     @property
     def free(self):

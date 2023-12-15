@@ -454,13 +454,9 @@ class Settings(object):
                               20,
                               [(mem, '{} MB'.format(mem)) for mem in util.kcm.viableOptions])
                 .description(
-                    T(33614, 'Set the Kodi Cache/Buffer size. Free: {} MB, '
-                             'Recommended max: {} MB, Default: 20 MB. '
-                             'Needs Kodi restart. WARNING: This will overwrite advancedsettings.xml!\n\n'
-                             'To customize other cache/network-related values, '
-                             'copy "script.plexmod/pm4k_cache_template.xml" to profile folder and edit it to '
-                             'your liking. (See About section for the file paths)'
-                      ).format(util.kcm.free, util.kcm.recMax)
+                    '{}{}'.format(T(33614, 'stub1').format(
+                        util.kcm.free, util.kcm.recMax),
+                        '' if util.kcm.useModernAPI else ' '+T(32954, 'stub2'))
                 ),
                 ReadFactorSetting('readfactor',
                                   T(32922, 'Kodi Cache Readfactor'),
