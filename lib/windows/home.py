@@ -141,10 +141,18 @@ class PlaylistsSection(object):
 
 
 class ServerListItem(kodigui.ManagedListItem):
-    def init(self):
+    uuid = None
+
+    def hookSignals(self):
         self.dataSource.on('completed:reachability', self.onReachability)
         self.dataSource.on('started:reachability', self.onReachability)
-        return self
+
+    def unHookSignals(self):
+        try:
+            self.dataSource.off('completed:reachability', self.onReachability)
+            self.dataSource.off('started:reachability', self.onReachability)
+        except:
+            pass
 
     def setRefreshing(self):
         self.safeSetProperty('status', 'refreshing.gif')
@@ -159,11 +167,11 @@ class ServerListItem(kodigui.ManagedListItem):
 
         return False
 
-    def safeSetLabel(self, value):
+    def safeSetLabel(self, value, func="setLabel"):
         if value is None:
             return False
         try:
-            self.setLabel(value)
+            getattr(self, func)(value)
             return True
         except AttributeError:
             pass
@@ -192,6 +200,7 @@ class ServerListItem(kodigui.ManagedListItem):
         isLocal = self.safeGetDSProperty("isLocal")
         name = self.safeGetDSProperty("name")
         pendingReachabilityRequests = self.safeGetDSProperty("pendingReachabilityRequests")
+        owned = not self.safeGetDSProperty("owned") and self.safeGetDSProperty("owner") or ''
         if isReachableFunc:
             isReachable = isReachableFunc()
 
@@ -205,14 +214,16 @@ class ServerListItem(kodigui.ManagedListItem):
             self.safeSetProperty('secure', isSecure and '1' or '')
             self.safeSetProperty('local', isLocal and '1' or '')
 
-        self.safeSetProperty('current', plexapp.SERVERMANAGER.selectedServer == self.dataSource and '1' or '')
+        self.safeSetProperty('current', plexapp.SERVERMANAGER.selectedServer.uuid == self.uuid and '1' or '')
         if name:
             self.safeSetLabel(name)
 
+        if owned:
+            self.safeSetLabel(owned, func="setLabel2")
+
     def onDestroy(self):
         try:
-            self.dataSource.off('completed:reachability', self.onReachability)
-            self.dataSource.off('started:reachability', self.onReachability)
+            self.unHookSignals()
         except AttributeError:
             util.DEBUG_LOG('Destroying invalidated ServerListItem')
 
@@ -1216,7 +1227,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
     def onReachableServer(self, server=None, **kwargs):
         for mli in self.serverList:
-            if mli.dataSource == server:
+            if mli.uuid == server.uuid:
+                mli.unHookSignals()
+                mli.dataSource = server
+                mli.hookSignals()
                 mli.onUpdate()
                 return
         else:
@@ -1227,43 +1241,49 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.setFocusId(self.SECTION_LIST_ID)
 
     def showServers(self, from_refresh=False, mouse=False):
-        selection = None
-        if from_refresh:
-            mli = self.serverList.getSelectedItem()
-            if mli:
-                selection = mli.dataSource
+        with self.lock:
+            selection = None
+            if from_refresh:
+                mli = self.serverList.getSelectedItem()
+                if mli:
+                    selection = mli.uuid
 
-        servers = sorted(
-            plexapp.SERVERMANAGER.getServers(),
-            key=lambda x: (x.owned and '0' or '1') + x.name.lower()
-        )
+            servers = sorted(
+                plexapp.SERVERMANAGER.getServers(),
+                key=lambda x: (x.owned and '0' or '1') + x.name.lower()
+            )
 
-        items = []
-        for s in servers:
-            item = ServerListItem(s.name, not s.owned and s.owner or '', data_source=s).init()
-            item.onUpdate()
-            item.setProperty('current', plexapp.SERVERMANAGER.selectedServer == s and '1' or '')
-            items.append(item)
+            items = []
+            for s in servers:
+                item = ServerListItem(s.name, not s.owned and s.owner or '', data_source=s)
+                item.uuid = s.uuid
+                item.onUpdate()
+                item.setProperty('current', plexapp.SERVERMANAGER.selectedServer.uuid == s.uuid and '1' or '')
+                items.append(item)
 
-        if len(items) > 1:
-            items[0].setProperty('first', '1')
-        elif items:
-            items[0].setProperty('only', '1')
+            if len(items) > 1:
+                items[0].setProperty('first', '1')
+            elif items:
+                items[0].setProperty('only', '1')
 
-        self.serverList.replaceItems(items)
+            self.serverList.replaceItems(items)
 
-        self.getControl(800).setHeight((min(len(items), 9) * 100) + 80)
+            self.getControl(800).setHeight((min(len(items), 9) * 100) + 80)
 
-        if selection:
-            for mli in self.serverList:
-                if mli.dataSource == selection:
-                    self.serverList.selectItem(mli.pos())
+            for item in items:
+                if item.dataSource != kodigui.DUMMY_DATA_SOURCE:
+                    item.hookSignals()
 
-        if not from_refresh and items and not mouse:
-            self.setFocusId(self.SERVER_LIST_ID)
+            if selection:
+                for mli in self.serverList:
+                    if mli.uuid == selection:
+                        self.serverList.selectItem(mli.pos())
 
-        if not from_refresh:
-            plexapp.refreshResources()
+            if not from_refresh and items and not mouse:
+                self.setFocusId(self.SERVER_LIST_ID)
+
+            if not from_refresh:
+                plexapp.refreshResources()
 
     def selectServer(self):
         mli = self.serverList.getSelectedItem()

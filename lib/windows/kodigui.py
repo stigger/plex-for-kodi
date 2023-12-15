@@ -487,7 +487,11 @@ class ManagedControlList(object):
 
         try:
             for idx in range(bottom, top):
-                li = self.control.getListItem(idx)
+                try:
+                    li = self.control.getListItem(idx)
+                except RuntimeError:
+                    continue
+
                 mli = self.items[idx]
                 self._properties.update(mli.properties)
                 mli._manager = self
