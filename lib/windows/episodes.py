@@ -225,6 +225,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.cameFrom = kwargs.get('came_from')
         self.tasks = backgroundthread.Tasks()
         self.initialized = False
+        self.closing = False
         self._reloadVideos = []
 
     def reset(self, episode, season=None, show=None):
@@ -237,6 +238,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         #self.initialized = False
 
     def doClose(self):
+        self.closing = True
         self.episodesPaginator = None
         self.relatedPaginator = None
         kodigui.ControlledWindow.doClose(self)
@@ -1095,6 +1097,9 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def reloadItemCallback(self, task, episode, with_progress=False):
         self.tasks.remove(task)
         del task
+
+        if self.closing:
+            return
 
         selected = self.episodeListControl.getSelectedItem()
 
