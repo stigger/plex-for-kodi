@@ -1613,3 +1613,7 @@ msgstr ""
 msgctxt "#32951"
 msgid "When displaying subtitles use the extendedDisplayTitle Plex exposes."
 msgstr ""
+
+msgctxt "#32952"
+msgid "Dialog flicker fix"
+msgstr ""

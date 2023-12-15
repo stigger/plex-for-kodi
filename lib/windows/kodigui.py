@@ -241,10 +241,12 @@ class BaseDialog(xbmcgui.WindowXMLDialog, BaseFunctions):
     def doClose(self):
         self._closing = True
         self.close()
+        self.isOpen = False
 
     def show(self):
         self._closing = False
         xbmcgui.WindowXMLDialog.show(self)
+        self.isOpen = True
 
     def onClosed(self):
         pass
