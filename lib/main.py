@@ -75,7 +75,11 @@ def main():
             else:
                 util.LOG("Couldn't start main loop, exiting.")
     finally:
-        util.setGlobalProperty('running', '')
+        try:
+            util.setGlobalProperty('running', '')
+            util.setGlobalProperty('stop_running', '')
+        except:
+            pass
 
 
 def _main():
@@ -157,7 +161,6 @@ def _main():
         util.ERROR()
     finally:
         util.DEBUG_LOG('Main: SHUTTING DOWN...')
-        util.setGlobalProperty('stop_running', '')
         background.setShutdown()
         player.shutdown()
         plexapp.util.APP.preShutdown()
