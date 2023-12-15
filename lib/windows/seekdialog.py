@@ -603,6 +603,7 @@ class SeekDialog(kodigui.BaseDialog):
                             self.hidePPIDialog()
                         else:
                             self.showPPIDialog()
+                        return
 
                 elif controlID == self.BIG_SEEK_LIST_ID:
                     if action in (xbmcgui.ACTION_MOVE_RIGHT, xbmcgui.ACTION_BIG_STEP_FORWARD):
@@ -637,6 +638,7 @@ class SeekDialog(kodigui.BaseDialog):
                 if action in cancelActions + (xbmcgui.ACTION_SELECT_ITEM,):
                     if self.getProperty('show.PPI') and action in cancelActions:
                         self.hidePPIDialog()
+                        self.hideOSD()
                         return
 
                     # immediate marker timer actions
