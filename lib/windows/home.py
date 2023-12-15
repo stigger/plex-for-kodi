@@ -222,10 +222,7 @@ class ServerListItem(kodigui.ManagedListItem):
             self.safeSetLabel(owned, func="setLabel2")
 
     def onDestroy(self):
-        try:
-            self.unHookSignals()
-        except AttributeError:
-            util.DEBUG_LOG('Destroying invalidated ServerListItem')
+        self.unHookSignals()
 
 
 class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
