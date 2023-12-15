@@ -30,8 +30,14 @@ ADDON = xbmcaddon.Addon()
 
 SETTINGS_LOCK = threading.Lock()
 
-_splitver = xbmc.getInfoLabel('System.BuildVersion').split()[0].split(".")
+_ver, _build = xbmc.getInfoLabel('System.BuildVersion').split()[:2]
+_splitver = _ver.split(".")
 KODI_VERSION_MAJOR, KODI_VERSION_MINOR = int(_splitver[0].split("-")[0]), int(_splitver[1].split("-")[0])
+
+# calculate a comparable build number
+_bmajor, _bminor, _bpatch = _build[1:-1].split(".")
+KODI_BUILD_NUMBER = int("{0}{1:02d}{2:03d}".format(_bmajor, int(_bminor), int(_bpatch)))
+
 
 if KODI_VERSION_MAJOR > 18:
     translatePath = xbmcvfs.translatePath
@@ -283,11 +289,17 @@ ADV_CACHE_RE = re.compile(r'\s*<cache>.*</cache>', re.S | re.I)
 class KodiCacheManager(object):
     """
     A pretty cheap approach at managing the <cache> section of advancedsettings.xml
+
+    Starting with build 20.90.821 (Kodi 21.0-BETA2) a lot of caching issues have been fixed and
+    readfactor behaves better. We need to adjust for that.
     """
     _cleanData = None
     useModernAPI = False
     memorySize = 20  # in MB
     readFactor = 4
+    defRF = 4
+    defRFSM = 20
+    recRFRange = (4, 10)
     template = None
     orig_tpl_path = os.path.join(ADDON.getAddonInfo('path'), "pm4k_cache_template.xml")
     custom_tpl_path = "special://profile/pm4k_cache_template.xml"
@@ -297,22 +309,22 @@ class KodiCacheManager(object):
     safeFactor = .20 if xbmc.getCondVisibility('System.Platform.Android') else .23
 
     def __init__(self):
-        try:
+        if KODI_BUILD_NUMBER >= 2090821:
             self.memorySize = rpc.Settings.GetSettingValue(setting='filecache.memorysize')['value']
             self.readFactor = rpc.Settings.GetSettingValue(setting='filecache.readfactor')['value'] / 100.0
             if self.readFactor % 1 == 0:
                 self.readFactor = int(self.readFactor)
             DEBUG_LOG("Not using advancedsettings.xml for cache/buffer management, we're at least Kodi 21 non-alpha")
             self.useModernAPI = True
-        except:
-            pass
+            self.defRFSM = 5
+            self.recRFRange = (1.5, 4)
 
-        if not self.useModernAPI:
+        else:
             self.load()
             self.template = self.getTemplate()
 
         plexapp.util.APP.on('change:slow_connection',
-                            lambda value=None, **kwargs: self.write(readFactor=value and 20 or 4))
+                            lambda value=None, **kwargs: self.write(readFactor=value and self.defRFSM or self.defRF))
 
     def getTemplate(self):
         if xbmcvfs.exists(self.custom_tpl_path):

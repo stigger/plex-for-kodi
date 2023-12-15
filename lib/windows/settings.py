@@ -463,10 +463,11 @@ class Settings(object):
                                   4,
                                   [(rf, str(rf)) for rf in util.kcm.readFactorOpts])
                 .description(
-                    T(32923, 'Sets the Kodi cache readfactor value. Default: 4, recommended: 4-10.'
-                             'With "Slow connection" enabled this will be set to 20, as otherwise the cache doesn\'t'
-                             'fill fast/aggressively enough.'
-                      )
+                    T(32923, 'Sets the Kodi cache readfactor value. Default: {0}, recommended: {1}.'
+                             'With "Slow connection" enabled this will be set to {2}, as otherwise the cache doesn\'t'
+                             'fill fast/aggressively enough.').format(util.kcm.defRF,
+                                                                      "{}-{}".format(*util.kcm.recRFRange),
+                                                                      util.kcm.defRFSM)
                 ),
                 BoolSetting(
                     'slow_connection', T(32915, 'Slow connection'), False
