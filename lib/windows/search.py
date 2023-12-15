@@ -2,7 +2,7 @@ from __future__ import absolute_import
 import time
 import threading
 
-from kodi_six import xbmcgui
+from kodi_six import xbmcgui, xbmc
 
 from . import kodigui
 from . import opener
@@ -29,6 +29,8 @@ class SearchDialog(kodigui.BaseDialog, windowutils.UtilMixin):
         904: 'artist',
         905: 'photo'
     }
+
+    EDIT_CONTROL_ID = 650
 
     HUB_POSTER_00 = 2100
     HUB_SQUARE_01 = 2101
@@ -189,9 +191,10 @@ class SearchDialog(kodigui.BaseDialog, windowutils.UtilMixin):
             },
         )
 
-        self.edit = kodigui.SafeControlEdit(650, 651, self, key_callback=self.updateFromEdit, grab_focus=True)
+        self.edit = kodigui.SafeControlEdit(self.EDIT_CONTROL_ID, 651, self, key_callback=self.updateFromEdit,
+                                            grab_focus=True)
         self.edit.setCompatibleMode(rpc.Application.GetProperties(properties=["version"])["version"]["major"] < 17)
-
+        xbmc.executebuiltin('Action(Select,{0})'.format(self._winID))
         self.setProperty('search.section', 'all')
         self.updateQuery()
 
@@ -222,7 +225,7 @@ class SearchDialog(kodigui.BaseDialog, windowutils.UtilMixin):
         if 2099 < controlID < 2200:
             self.setProperty('hub.focus', str(controlID - 2099))
 
-    def updateFromEdit(self, actionID):
+    def updateFromEdit(self, actionID, oldVal, newVal):
         if actionID == xbmcgui.ACTION_PREVIOUS_MENU:
             self.isActive = False
             self.doClose()

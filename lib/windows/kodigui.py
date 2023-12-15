@@ -902,11 +902,12 @@ class SafeControlEdit(object):
         self._winOnAction(action)
 
     def processAction(self, action_id):
+        oldVal = self._text
         if not self._compatibleMode:
             self._text = self._win.getControl(self.controlID).getText()
 
             if self._keyCallback:
-                self._keyCallback(action_id)
+                self._keyCallback(action_id, oldVal, self._text)
 
             self.updateLabel()
 
@@ -926,7 +927,7 @@ class SafeControlEdit(object):
             return False
 
         if self._keyCallback:
-            self._keyCallback(action_id)
+            self._keyCallback(action_id, oldVal, self._text)
 
         return True
 
