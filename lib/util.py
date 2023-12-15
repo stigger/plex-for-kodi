@@ -30,6 +30,7 @@ ADDON = xbmcaddon.Addon()
 
 SETTINGS_LOCK = threading.Lock()
 
+# buildversion looks like: XX.X[-TAG] (a+.b+.c+) (.+)
 _ver, _build = xbmc.getInfoLabel('System.BuildVersion').split()[:2]
 _splitver = _ver.split(".")
 KODI_VERSION_MAJOR, KODI_VERSION_MINOR = int(_splitver[0].split("-")[0]), int(_splitver[1].split("-")[0])
