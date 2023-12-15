@@ -270,31 +270,31 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         # HOME
         'home.continue': {'index': 0, 'with_progress': True, 'with_art': True, 'do_updates': True, 'text2lines': True},
         'home.ondeck': {'index': 1, 'with_progress': True, 'do_updates': True, 'text2lines': True},
-        'home.television.recent': {'index': 2, 'with_progress': True, 'text2lines': True},
-        'home.movies.recent': {'index': 4, 'with_progress': True, 'text2lines': True},
+        'home.television.recent': {'index': 2, 'do_updates': True, 'with_progress': True, 'text2lines': True},
+        'home.movies.recent': {'index': 4, 'do_updates': True, 'with_progress': True, 'text2lines': True},
         'home.music.recent': {'index': 5, 'text2lines': True},
         'home.videos.recent': {'index': 6, 'with_progress': True, 'ar16x9': True},
         #'home.playlists': {'index': 9}, # No other Plex home screen shows playlists so removing it from here
         'home.photos.recent': {'index': 10, 'text2lines': True},
         # SHOW
         'tv.ondeck': {'index': 1, 'with_progress': True, 'do_updates': True, 'text2lines': True},
-        'tv.recentlyaired': {'index': 2, 'with_progress': True, 'text2lines': True},
-        'tv.recentlyadded': {'index': 3, 'with_progress': True, 'text2lines': True},
+        'tv.recentlyaired': {'index': 2, 'do_updates': True, 'with_progress': True, 'text2lines': True},
+        'tv.recentlyadded': {'index': 3, 'do_updates': True, 'with_progress': True, 'text2lines': True},
         'tv.inprogress': {'index': 4, 'with_progress': True, 'do_updates': True, 'text2lines': True},
-        'tv.startwatching': {'index': 7, 'with_progress': True},
-        'tv.rediscover': {'index': 8, 'with_progress': True},
-        'tv.morefromnetwork': {'index': 13, 'with_progress': True},
-        'tv.toprated': {'index': 14, 'with_progress': True},
-        'tv.moreingenre': {'index': 15, 'with_progress': True},
-        'tv.recentlyviewed': {'index': 16, 'with_progress': True, 'text2lines': True},
+        'tv.startwatching': {'index': 7, 'with_progress': True, 'do_updates': True},
+        'tv.rediscover': {'index': 8, 'with_progress': True, 'do_updates': True},
+        'tv.morefromnetwork': {'index': 13, 'with_progress': True, 'do_updates': True},
+        'tv.toprated': {'index': 14, 'with_progress': True, 'do_updates': True},
+        'tv.moreingenre': {'index': 15, 'with_progress': True, 'do_updates': True},
+        'tv.recentlyviewed': {'index': 16, 'with_progress': True, 'text2lines': True, 'do_updates': True},
         # MOVIE
         'movie.inprogress': {'index': 0, 'with_progress': True, 'with_art': True, 'do_updates': True, 'text2lines': True},
-        'movie.recentlyreleased': {'index': 1, 'with_progress': True, 'text2lines': True},
-        'movie.recentlyadded': {'index': 2, 'with_progress': True, 'text2lines': True},
-        'movie.genre': {'index': 3, 'with_progress': True, 'text2lines': True},
-        'movie.by.actor.or.director': {'index': 7, 'with_progress': True, 'text2lines': True},
-        'movie.topunwatched': {'index': 13, 'text2lines': True},
-        'movie.recentlyviewed': {'index': 14, 'with_progress': True, 'text2lines': True},
+        'movie.recentlyreleased': {'index': 1, 'do_updates': True, 'with_progress': True, 'text2lines': True},
+        'movie.recentlyadded': {'index': 2, 'do_updates': True, 'with_progress': True, 'text2lines': True},
+        'movie.genre': {'index': 3, 'with_progress': True, 'text2lines': True, 'do_updates': True},
+        'movie.by.actor.or.director': {'index': 7, 'with_progress': True, 'text2lines': True, 'do_updates': True},
+        'movie.topunwatched': {'index': 13, 'text2lines': True, 'do_updates': True},
+        'movie.recentlyviewed': {'index': 14, 'with_progress': True, 'text2lines': True, 'do_updates': True},
         # ARTIST
         'music.recent.played': {'index': 5, 'do_updates': True},
         'music.recent.added': {'index': 9, 'text2lines': True},
@@ -656,7 +656,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.processCommand(search.dialog(self))
 
     def updateOnDeckHubs(self, **kwargs):
-        if util.getSetting("speedy_home_hubs", True):
+        if util.getSetting("speedy_home_hubs", False):
             util.DEBUG_LOG("Using alternative home hub refresh")
             sections = set()
             for mli in self.sectionList:

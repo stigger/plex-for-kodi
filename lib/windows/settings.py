@@ -255,7 +255,7 @@ class Settings(object):
                     T(32100, 'Skip user selection and pin entry on startup.')
                 ),
                 BoolSetting(
-                    'speedy_home_hubs', T(33503, 'Use alternative home refresh'), True
+                    'speedy_home_hubs', T(33503, 'Use alternative home refresh'), False
                 ).description(
                     T(
                         33504,
