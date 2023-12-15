@@ -316,7 +316,7 @@ class KodiCacheManager(object):
                 self.readFactor = int(self.readFactor)
             DEBUG_LOG("Not using advancedsettings.xml for cache/buffer management, we're at least Kodi 21 non-alpha")
             self.useModernAPI = True
-            self.defRFSM = 5
+            self.defRFSM = 7
             self.recRFRange = (1.5, 4)
 
         else:
@@ -398,24 +398,28 @@ class KodiCacheManager(object):
         except:
             ERROR("Couldn't write advancedsettings.xml")
 
+    def clamp16(self, x):
+        return x - x % 16
+
     @property
     def viableOptions(self):
-        default = list(filter(lambda x: x < self.recMax, [20, 40, 60, 80, 100, 120, 160, 200, 400]))
+        default = list(filter(lambda x: x < self.recMax,
+                              [16, 20, 24, 32, 48, 64, 96, 128, 192, 256, 384, 512, 768, 1024]))
 
         # add option to overcommit slightly
         overcommit = []
         if xbmc.getCondVisibility('System.Platform.Android'):
-            overcommit.append(min(int(self.free * 0.23), 2000))
+            overcommit.append(min(self.clamp16(int(self.free * 0.23)), 2048))
 
-        overcommit.append(min(int(self.free * 0.26), 2000))
-        overcommit.append(min(int(self.free * 0.3), 2000))
+        overcommit.append(min(self.clamp16(int(self.free * 0.26)), 2048))
+        overcommit.append(min(self.clamp16(int(self.free * 0.3)), 2048))
 
         # re-append current memorySize here, as recommended max might have changed
         return list(sorted(list(set(default + [self.memorySize, self.recMax] + overcommit))))
 
     @property
     def readFactorOpts(self):
-        return list(sorted(list(set([1.25, 1.5, 1.75, 2, 2.5, 4, 5, 10, 20] + [self.readFactor]))))
+        return list(sorted(list(set([1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5, 7, 10, 15, 20, 30, 50] + [self.readFactor]))))
 
     @property
     def free(self):
@@ -424,7 +428,7 @@ class KodiCacheManager(object):
     @property
     def recMax(self):
         freeMem = self.free
-        recMem = min(int(freeMem * self.safeFactor), 2000)
+        recMem = min(int(freeMem * self.safeFactor), 2048)
         LOG("Free memory: {} MB, recommended max: {} MB".format(freeMem, recMem))
         return recMem
 
