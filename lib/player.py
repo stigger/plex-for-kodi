@@ -374,6 +374,21 @@ class SeekPlayerHandler(BasePlayerHandler):
     def onAVStarted(self):
         util.DEBUG_LOG('SeekHandler: onAVStarted')
 
+        # check if embedded subtitle was set correctly
+        if self.player.video.current_subtitle_is_embedded:
+            try:
+                playerID = kodijsonrpc.rpc.Player.GetActivePlayers()[0]["playerid"]
+                currIdx = kodijsonrpc.rpc.Player.GetProperties(playerid=playerID, properties=['currentsubtitle'])[
+                    'currentsubtitle']['index']
+                if currIdx != self.player.video._current_subtitle_idx:
+                    util.LOG("Embedded Subtitle index was incorrect ({}), setting to: {}".
+                             format(currIdx, self.player.video._current_subtitle_idx))
+                    self.dialog.setSubtitles()
+                else:
+                    util.DEBUG_LOG("Embedded subtitle was correctly set in Kodi")
+            except:
+                util.ERROR("Exception when trying to check for embedded subtitles")
+
     def onPrePlayStarted(self):
         util.DEBUG_LOG('SeekHandler: onPrePlayStarted, DP: {}'.format(self.isDirectPlay))
         self.prePlayWitnessed = True
@@ -552,6 +567,7 @@ class SeekPlayerHandler(BasePlayerHandler):
     #     self.dialog.activate()
 
     def onVideoWindowOpened(self):
+        util.DEBUG_LOG('SeekHandler: onVideoWindowOpened - Seeking={0}'.format(self.seeking))
         self.getDialog().show()
 
         self.initPlayback()
