@@ -309,7 +309,7 @@ class SeekPlayerHandler(BasePlayerHandler):
     def hideOSD(self, delete=False):
         util.CRON.forceTick()
         if self.dialog:
-            self.dialog.hideOSD()
+            self.dialog.hideOSD(closing=delete)
             if delete:
                 d = self.dialog
                 self.dialog = None

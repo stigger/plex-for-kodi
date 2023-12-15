@@ -485,6 +485,10 @@ class SeekDialog(kodigui.BaseDialog):
                         self.seekMouse(action, without_osd=controlID == self.NO_OSD_BUTTON_ID, preview=True)
                         return
 
+                if action in (xbmcgui.ACTION_PAUSE, xbmcgui.ACTION_PLAYER_PLAY, xbmcgui.ACTION_PLAYER_PLAYPAUSE) and \
+                        self.player.playState == self.player.STATE_PLAYING:
+                    self.hideOSD()
+
                 passThroughMain = False
                 if controlID == self.SKIP_MARKER_BUTTON_ID:
                     if action == xbmcgui.ACTION_SELECT_ITEM:
@@ -1990,8 +1994,11 @@ class SeekDialog(kodigui.BaseDialog):
         if focusButton:
             self.setFocusId(self.PLAY_PAUSE_BUTTON_ID)
 
-    def hideOSD(self, skipMarkerFocus=False):
+    def hideOSD(self, skipMarkerFocus=False, closing=False):
         self.setProperty('show.OSD', '')
+        if closing:
+            return
+
         self.setFocusId(self.NO_OSD_BUTTON_ID)
         if not skipMarkerFocus and self.getCurrentMarkerDef() and not self.getProperty('show.markerSkip_OSDOnly'):
             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
