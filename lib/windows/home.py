@@ -656,7 +656,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.processCommand(search.dialog(self))
 
     def updateOnDeckHubs(self, **kwargs):
-        if util.getSetting("speedy_home_hubs", False):
+        if util.getSetting("speedy_home_hubs2", False):
             util.DEBUG_LOG("Using alternative home hub refresh")
             sections = set()
             for mli in self.sectionList:
