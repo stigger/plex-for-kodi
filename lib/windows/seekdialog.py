@@ -832,6 +832,12 @@ class SeekDialog(kodigui.BaseDialog):
             return currentVideo.server.findVideoSession(currentVideo.settings.getGlobal("clientIdentifier"),
                                                         currentVideo.ratingKey)
 
+        if util.KODI_BUILD_NUMBER < 2090821:
+            try:
+                cache = int(xbmc.getInfoLabel('Player.ProgressCache')) - int(xbmc.getInfoLabel('Player.Progress'))
+                self.setProperty('ppi.Buffered', str(cache))
+            except:
+                pass
 
         while not self.player.started:
             util.MONITOR.waitForAbort(0.1)
@@ -1750,6 +1756,14 @@ class SeekDialog(kodigui.BaseDialog):
 
         if tick and xbmc.getCondVisibility('Player.Playing'):
             self.timeKeeperTime += 1000
+
+        # Update buffer state in PPI if open and old Kodi version
+        if util.KODI_BUILD_NUMBER < 2090821 and self.getProperty('show.PPI'):
+            try:
+                cache = int(xbmc.getInfoLabel('Player.ProgressCache')) - int(xbmc.getInfoLabel('Player.Progress'))
+                self.setProperty('ppi.Buffered', str(cache))
+            except:
+                pass
 
         # Only updateCurrent when not in DirectPlay mode. Otherwise the Kodi time functions will be used by the skin.
         if self.isDirectPlay:
