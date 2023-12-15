@@ -170,11 +170,9 @@ def _main():
         waitForThreads()
         background.setBusy(False)
         background.setSplash(False)
+        background.killMonitor()
 
         util.DEBUG_LOG('FINISHED')
-
-        from .windows import kodigui
-        kodigui.MONITOR = None
         util.shutdown()
 
         gc.collect(2)

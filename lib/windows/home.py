@@ -352,6 +352,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.sectionHubs = {}
         self.updateHubs = {}
         self.changingServer = False
+        self._shuttingDown = False
         windowutils.HOME = self
 
         self.lock = threading.Lock()
@@ -493,6 +494,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.showHubs(self.lastSection, update=True)
 
     def shutdown(self):
+        self._shuttingDown = True
         try:
             self.serverList.reset()
         except AttributeError:
@@ -564,10 +566,14 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                     self.hubItemClicked(controlID, auto_play=True)
                     return
 
-            if action in(xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_CONTEXT_MENU):
+            if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_CONTEXT_MENU):
                 optionsFocused = xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(self.OPTIONS_GROUP_ID))
                 offSections = util.getGlobalProperty('off.sections')
                 if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
+                    # fixme: cheap way of avoiding an early exit after a server change
+                    if self.changingServer:
+                        return
+
                     if self.getFocusId() == self.USER_LIST_ID:
                         self.setFocusId(self.USER_BUTTON_ID)
                         return
@@ -602,6 +608,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                     elif ex == 1:
                         xbmc.executebuiltin('ActivateWindow(10000)')
                         return
+                    elif ex == 0:
+                        self._shuttingDown = True
                     # 0 passes the action to the BaseWindow and exits HOME
         except:
             util.ERROR()
@@ -1239,6 +1247,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
     def onSelectedServerChange(self, **kwargs):
         if self.serverRefresh():
             self.setFocusId(self.SECTION_LIST_ID)
+            self.changingServer = False
 
     def showServers(self, from_refresh=False, mouse=False):
         with self.lock:
@@ -1286,34 +1295,38 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 plexapp.refreshResources()
 
     def selectServer(self):
+        if self._shuttingDown:
+            return
+
         mli = self.serverList.getSelectedItem()
         if not mli:
             return
 
         self.changingServer = True
-        try:
-            with busy.BusySignalContext(plexapp.util.APP, "change:selectedServer") as bc:
-                self.setFocusId(self.SECTION_LIST_ID)
 
-                server = mli.dataSource
+        # this is broken
+        with busy.BusySignalContext(plexapp.util.APP, "change:selectedServer") as bc:
+            self.setFocusId(self.SECTION_LIST_ID)
 
-                if not server.isReachable():
-                    if server.pendingReachabilityRequests > 0:
-                        util.messageDialog(T(32339, 'Server is not accessible'), T(32340, 'Connection tests are in '
-                                                                                          'progress. Please wait.'))
-                    else:
-                        util.messageDialog(
-                            T(32339, 'Server is not accessible'), T(32341, 'Server is not accessible. Please sign into '
-                                                                           'your server and check your connection.')
-                        )
-                    bc.ignoreSignal = True
-                    return
+            server = mli.dataSource
 
-                changed = plexapp.SERVERMANAGER.setSelectedServer(server, force=True)
-                if not changed:
-                    bc.ignoreSignal = True
-        finally:
-            self.changingServer = False
+            # fixme: this might still trigger a dialog, re-triggering the previously opened windows
+            if not self._shuttingDown and not server.isReachable():
+                if server.pendingReachabilityRequests > 0:
+                    util.messageDialog(T(32339, 'Server is not accessible'), T(32340, 'Connection tests are in '
+                                                                                      'progress. Please wait.'))
+                else:
+                    util.messageDialog(
+                        T(32339, 'Server is not accessible'), T(32341, 'Server is not accessible. Please sign into '
+                                                                       'your server and check your connection.')
+                    )
+                bc.ignoreSignal = True
+                return
+
+            changed = plexapp.SERVERMANAGER.setSelectedServer(server, force=True)
+            if not changed:
+                bc.ignoreSignal = True
+                self.changingServer = False
 
     def showUserMenu(self, mouse=False):
         items = []
