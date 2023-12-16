@@ -992,6 +992,20 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.open()
         self._playVideo(resume and video.viewOffset.asInt() or 0, force_update=force_update)
 
+    def getOSSPathHint(self, meta):
+        # only hint the path one folder above for a movie, two folders above for TV
+        try:
+            head1, tail1 = os.path.split(meta.path)
+            head2, tail2 = os.path.split(head1)
+            if self.video.type == "episode":
+                head3, tail3 = os.path.split(head2)
+                cleaned_path = os.path.join(tail3, tail2, tail1)
+            else:
+                cleaned_path = os.path.join(tail2, tail1)
+        except:
+            cleaned_path = ""
+        return cleaned_path
+
     def _playVideo(self, offset=0, seeking=0, force_update=False, playerObject=None):
         self.trigger('new.video', video=self.video)
         self.trigger(
@@ -1061,18 +1075,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         li = xbmcgui.ListItem(self.video.title, path=url)
         vtype = self.video.type if self.video.type in ('movie', 'episode', 'musicvideo') else 'video'
 
-        # only hint the path one folder above for a movie, two folders above for TV
-        try:
-            head1, tail1 = os.path.split(meta.path)
-            head2, tail2 = os.path.split(head1)
-            if vtype == "episode":
-                head3, tail3 = os.path.split(head2)
-                cleaned_path = os.path.join(tail3, tail2, tail1)
-            else:
-                cleaned_path = os.path.join(tail2, tail1)
-        except:
-            cleaned_path = ""
-        util.setGlobalProperty("current_path", cleaned_path, base='videoinfo.{0}')
+        util.setGlobalProperty("current_path", self.getOSSPathHint(meta), base='videoinfo.{0}')
         util.setGlobalProperty("current_size", str(meta.size), base='videoinfo.{0}')
         li.setInfo('video', {
             'mediatype': vtype,
