@@ -115,6 +115,8 @@ class PlexPlayer(object):
             part = self.media.parts[partIndex]
 
             partObj.partDuration = part.duration.asInt()
+            partObj.path = str(part.file)
+            partObj.size = int(part.size)
 
             if part.isIndexed():
                 partObj.sdBifPath = part.getIndexPath("sd")

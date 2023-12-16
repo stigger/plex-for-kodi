@@ -3,6 +3,7 @@ import base64
 import threading
 import six
 import re
+import os
 
 from kodi_six import xbmc
 from kodi_six import xbmcgui
@@ -1059,6 +1060,20 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         })
         li = xbmcgui.ListItem(self.video.title, path=url)
         vtype = self.video.type if self.video.type in ('movie', 'episode', 'musicvideo') else 'video'
+
+        # only hint the path one folder above for a movie, two folders above for TV
+        try:
+            head1, tail1 = os.path.split(meta.path)
+            head2, tail2 = os.path.split(head1)
+            if vtype == "episode":
+                head3, tail3 = os.path.split(head2)
+                cleaned_path = os.path.join(tail3, tail2, tail1)
+            else:
+                cleaned_path = os.path.join(tail2, tail1)
+        except:
+            cleaned_path = ""
+        util.setGlobalProperty("current_path", cleaned_path, base='videoinfo.{0}')
+        util.setGlobalProperty("current_size", str(meta.size), base='videoinfo.{0}')
         li.setInfo('video', {
             'mediatype': vtype,
             'title': self.video.title,
@@ -1067,7 +1082,9 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             'episode': self.video.index.asInt(),
             'season': self.video.parentIndex.asInt(),
             'year': self.video.year.asInt(),
-            'plot': self.video.summary
+            'plot': self.video.summary,
+            'path': meta.path,
+            'size': meta.size,
         })
         li.setArt({
             'poster': self.video.defaultThumb.asTranscodedImageURL(347, 518),
