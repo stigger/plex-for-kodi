@@ -263,6 +263,11 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
+                <setting id="dialog_flicker_fix" type="boolean" label="32952">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
             </group>
         </category>
         <category id="screensaver" label="32488">
