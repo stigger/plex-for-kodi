@@ -469,12 +469,12 @@ def _processSettingForWrite(value):
     return str(value)
 
 
-def setGlobalProperty(key, val):
-    xbmcgui.Window(10000).setProperty('script.plex.{0}'.format(key), val)
+def setGlobalProperty(key, val, base='script.plex.{0}'):
+    xbmcgui.Window(10000).setProperty(base.format(key), val)
 
 
-def setGlobalBoolProperty(key, boolean):
-    xbmcgui.Window(10000).setProperty('script.plex.{0}'.format(key), boolean and '1' or '')
+def setGlobalBoolProperty(key, boolean, base='script.plex.{0}'):
+    xbmcgui.Window(10000).setProperty(base.format(key), boolean and '1' or '')
 
 
 def getGlobalProperty(key):
