@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.plexmod"
        name="Plex"
-       version="0.7.1-rev2"
+       version="0.7.1-rev3"
        provider-name="pannal">
     <requires>
         <import addon="xbmc.python" version="2.26.0"/>
@@ -25,6 +25,9 @@
         <source>https://github.com/pannal/plex-for-kodi</source>
         <platform>all</platform>
         <news>
+- Fix: reset library filters when Role/Cast view opened
+- Fix: Cast display in movies/preplay
+- Fix: apply dialog flicker fix in Role/Cast
 - Fix: dropdowns were broken sometimes (especially library view)
 - Fix: Embedded subtitle could be set to the wrong one (edge case)
 - Fix: Episodes: theme music error when clicking on seasons
