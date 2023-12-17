@@ -144,10 +144,7 @@ class DropdownDialog(kodigui.BaseDialog):
 
                 choice['sub'] = sub
 
-        # only keep non-references in self.choice
-        # fixme: this might be stupid and unnecessary
-        self.choice = dict((key, value) for key, value in choice.items() if
-                           isinstance(value, (str, int, list, set, tuple, float)))
+        self.choice = choice
         if self.optionsCallback:
             self.optionsCallback(self.optionsList, mli)
 
