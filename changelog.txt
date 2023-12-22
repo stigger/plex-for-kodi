@@ -15,7 +15,7 @@
 - Core: Harden against network disconnects in multiple views, home and videoplayer/seekdialog
 - Core: Re-enable backing out of videoplayer (inbetween screen)
 - Core: Player: Alternative implementation of bingeMode auto-next; ignore stop events when triggering non-user-stop
-- Core: Add setting for poster/thumbnail resolution scaling, implement in home
+- Core: Add setting for poster/thumbnail resolution scaling, implement everywhere sensible
 - Core: Thumbnails/Art: use the same parameters as PlexWeb for images
 - SeekDialog: Possible fix for OSD not coming up again in some scenarios
 
