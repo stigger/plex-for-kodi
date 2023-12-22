@@ -1157,7 +1157,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.cycleSubtitles(forward=False)
             self.lastSubtitleNavAction = "backward"
         elif choice['key'] == 'enable':
-            self.toggleSubtitles()
+            enabled = self.toggleSubtitles()
             self.lastSubtitleNavAction = "forward"
 
     def toggleSubtitles(self):
@@ -1166,8 +1166,10 @@ class SeekDialog(kodigui.BaseDialog):
         """
         if xbmc.getCondVisibility('VideoPlayer.SubtitlesEnabled') and self.player.video.hasSubtitle:
             self.disableSubtitles()
+            return False
         else:
             self.cycleSubtitles()
+            return True
 
     def disableSubtitles(self):
         self.player.video.disableSubtitles()
