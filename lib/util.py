@@ -632,7 +632,7 @@ def scaleResolution(w, h, by=advancedSettings.posterResolutionScale):
         px = w * h * by
         wratio = h / float(w)
         hratio = w / float(h)
-        return round((px / wratio) ** .5), round((px / hratio) ** .5)
+        return int(round((px / wratio) ** .5)), int(round((px / hratio) ** .5))
     return w, h
 
 
