@@ -105,6 +105,7 @@ class SeekDialog(kodigui.BaseDialog):
     PREV_BUTTON_ID = 404
     SKIP_BACK_BUTTON_ID = 405
     PLAY_PAUSE_BUTTON_ID = 406
+    STOP_BUTTON_ID = 407
     SKIP_FORWARD_BUTTON_ID = 408
     NEXT_BUTTON_ID = 409
     PLAYLIST_BUTTON_ID = 410
@@ -769,6 +770,8 @@ class SeekDialog(kodigui.BaseDialog):
                 and self.player.playState == self.player.STATE_PLAYING \
                 and self.osdVisible():
             self.hideOSD()
+        elif controlID == self.STOP_BUTTON_ID:
+            self.stop()
         elif controlID == self.SETTINGS_BUTTON_ID:
             self.handleDialog(self.showSettings)
         elif controlID == self.REPEAT_BUTTON_ID:

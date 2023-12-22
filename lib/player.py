@@ -270,7 +270,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             if self.showPostPlay():
                 return True
 
-        if not self.playlist:
+        if not self.playlist or self.stoppedInBingeMode:
             return False
 
         xbmc.sleep(500)
