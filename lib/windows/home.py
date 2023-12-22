@@ -72,6 +72,9 @@ class SectionHubsTask(backgroundthread.Task):
         except plexnet.exceptions.BadRequest:
             util.DEBUG_LOG('404 on section: {0}'.format(repr(self.section.title)))
             self.callback(self.section, False)
+        except TypeError:
+            util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
+            self.cancel()
 
 
 class UpdateHubTask(backgroundthread.Task):
@@ -715,7 +718,13 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if mli.dataSource is None:
             return
 
-        command = opener.open(mli.dataSource, auto_play=auto_play)
+        try:
+            command = opener.open(mli.dataSource, auto_play=auto_play)
+            if command == "NODATA":
+                raise util.NoDataException
+        except util.NoDataException:
+            util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
+            return
 
         self.updateListItem(mli)
 

@@ -510,8 +510,11 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.setProperty('preview.no', '1')
 
         self.video.reload(checkFiles=1, **VIDEO_RELOAD_KW)
-        self.relatedPaginator = RelatedPaginator(self.relatedListControl, leaf_count=int(self.video.relatedCount),
-                                                 parent_window=self)
+        try:
+            self.relatedPaginator = RelatedPaginator(self.relatedListControl, leaf_count=int(self.video.relatedCount),
+                                                     parent_window=self)
+        except ValueError:
+            raise util.NoDataException
 
         self.setInfo()
         self.setBoolProperty("initialized", True)

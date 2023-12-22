@@ -21,6 +21,7 @@ from kodi_six import xbmcaddon
 from kodi_six import xbmcvfs
 
 from . import colors
+from .exceptions import NoDataException
 from plexnet import signalsmixin, plexapp
 
 DEBUG = True
@@ -196,7 +197,7 @@ def DEBUG_LOG(msg):
     LOG(msg)
 
 
-def ERROR(txt='', hide_tb=False, notify=False):
+def ERROR(txt='', hide_tb=False, notify=False, time_ms=3000):
     short = str(sys.exc_info()[1])
     if hide_tb:
         xbmc.log('script.plex: ERROR: {0} - {1}'.format(txt, short), xbmc.LOGERROR)
@@ -211,7 +212,7 @@ def ERROR(txt='', hide_tb=False, notify=False):
     xbmc.log("_________________________________________________________________________________", xbmc.LOGERROR)
     xbmc.log("`", xbmc.LOGERROR)
     if notify:
-        showNotification('ERROR: {0}'.format(short))
+        showNotification('ERROR: {0}'.format(txt or short), time_ms=time_ms)
     return short
 
 

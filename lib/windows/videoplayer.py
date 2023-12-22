@@ -433,7 +433,9 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         try:
             self.hubs = self.prev.postPlay()
         except:
-            util.ERROR()
+            util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
+            self.doClose()
+            return
 
         self.next = None
 
@@ -578,13 +580,17 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
 
 def play(video=None, play_queue=None, resume=False):
-    w = VideoPlayerWindow.open(video=video, play_queue=play_queue, resume=resume)
-    player.PLAYER.off('session.ended', w.sessionEnded)
-    player.PLAYER.off('post.play', w.postPlay)
-    player.PLAYER.off('av.started', w.playerPlaybackStarted)
-    player.PLAYER.off('change.background', w.changeBackground)
-    player.PLAYER.reset()
-    command = w.exitCommand
-    del w
-    util.garbageCollect()
-    return command
+    try:
+        w = VideoPlayerWindow.open(video=video, play_queue=play_queue, resume=resume)
+    except util.NoDataException:
+        raise
+    finally:
+        player.PLAYER.off('session.ended', w.sessionEnded)
+        player.PLAYER.off('post.play', w.postPlay)
+        player.PLAYER.off('av.started', w.playerPlaybackStarted)
+        player.PLAYER.off('change.background', w.changeBackground)
+        player.PLAYER.reset()
+        command = w.exitCommand
+        del w
+        util.garbageCollect()
+        return command

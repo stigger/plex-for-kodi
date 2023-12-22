@@ -54,7 +54,10 @@ class AlbumWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
         self.setup()
         self.setFocusId(self.TRACKS_LIST_ID)
-        self.checkForHeaderFocus(xbmcgui.ACTION_MOVE_DOWN)
+        try:
+            self.checkForHeaderFocus(xbmcgui.ACTION_MOVE_DOWN)
+        except AttributeError:
+            raise util.NoDataException
 
     def setup(self):
         self.updateProperties()

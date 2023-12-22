@@ -415,7 +415,11 @@ class SeekDialog(kodigui.BaseDialog):
 
         # in transcoded scenarios, when seeking, keep previous marker states, as the video restarts
         if not keepMarkerDef:
-            self.applyMarkerProps()
+            try:
+                self.applyMarkerProps()
+            except IndexError:
+                self.doClose(delete=True)
+                raise util.NoDataException
         self.baseOffset = offset
         self.offset = 0
         self.idleTime = None
