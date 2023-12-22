@@ -174,6 +174,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.stoppedInBingeMode = False
         self.inBingeMode = False
         self.prePlayWitnessed = False
+        self.queuingNext = False
         self.reset()
 
     def reset(self):
@@ -186,6 +187,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.ended = False
         self.stoppedInBingeMode = False
         self.prePlayWitnessed = False
+        self.queuingNext = False
 
     def setup(self, duration, meta, offset, bif_url, title='', title2='', seeking=NO_SEEK, chapters=None):
         self.ended = False

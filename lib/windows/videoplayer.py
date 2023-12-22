@@ -181,9 +181,6 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                     if self.onDeckPaginator.boundaryHit:
                         self.onDeckPaginator.paginate()
                         return
-            else:
-                if not self.playBackStarted:
-                    return
         except:
             util.ERROR()
 
