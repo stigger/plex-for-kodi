@@ -1,4 +1,5 @@
 [- 0.7.2 -]
+- Fix: playing next episode when episode played threshold was met when hitting STOP button
 - Fix: Dropdown would roundrobin falsely onup item when initial item wasn't item 0
 - Fix: Movies: pressing back in a scrolled movie view with the header options open wouldn't back out properly
 - Fix: Reset library filters when Role/Cast view opened
