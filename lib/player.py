@@ -375,8 +375,11 @@ class SeekPlayerHandler(BasePlayerHandler):
     def onAVStarted(self):
         util.DEBUG_LOG('SeekHandler: onAVStarted')
 
+        if self.dialog:
+            self.dialog.onAVStarted()
+
         # check if embedded subtitle was set correctly
-        if self.isDirectPlay and self.player.video.current_subtitle_is_embedded:
+        if self.isDirectPlay and self.player.video and self.player.video.current_subtitle_is_embedded:
             try:
                 playerID = kodijsonrpc.rpc.Player.GetActivePlayers()[0]["playerid"]
                 currIdx = kodijsonrpc.rpc.Player.GetProperties(playerid=playerID, properties=['currentsubtitle'])[
@@ -401,7 +404,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.updateNowPlaying(force=True, refreshQueue=True)
 
         if self.dialog:
-            self.dialog.onPlaybackStarted()
+            self.dialog.onPlayBackStarted()
 
         #if not self.prePlayWitnessed and self.isDirectPlay:
         if self.isDirectPlay:
@@ -410,13 +413,16 @@ class SeekPlayerHandler(BasePlayerHandler):
     def onPlayBackResumed(self):
         self.updateNowPlaying()
         if self.dialog:
-            self.dialog.onPlaybackResumed()
+            self.dialog.onPlayBackResumed()
 
             util.CRON.forceTick()
         # self.hideOSD()
 
     def onPlayBackStopped(self):
         util.DEBUG_LOG('SeekHandler: onPlayBackStopped - Seeking={0}'.format(self.seeking))
+
+        if self.dialog:
+            self.dialog.onPlayBackStopped()
 
         if self.seeking not in (self.SEEK_IN_PROGRESS, self.SEEK_REWIND):
             self.updateNowPlaying()
@@ -434,6 +440,9 @@ class SeekPlayerHandler(BasePlayerHandler):
 
     def onPlayBackEnded(self):
         util.DEBUG_LOG('SeekHandler: onPlayBackEnded - Seeking={0}'.format(self.seeking))
+
+        if self.dialog:
+            self.dialog.onPlayBackEnded()
 
         if self.player.playerObject.hasMoreParts():
             self.updateNowPlaying(state=self.player.STATE_PAUSED)  # To for update after seek
@@ -467,11 +476,11 @@ class SeekPlayerHandler(BasePlayerHandler):
     def onPlayBackPaused(self):
         self.updateNowPlaying()
         if self.dialog:
-            self.dialog.onPlaybackPaused()
+            self.dialog.onPlayBackPaused()
 
     def onPlayBackSeek(self, stime, offset):
         if self.dialog:
-            self.dialog.onPlaybackSeek(stime, offset)
+            self.dialog.onPlayBackSeek(stime, offset)
 
         if self.seekOnStart:
             seeked = False
@@ -487,6 +496,10 @@ class SeekPlayerHandler(BasePlayerHandler):
         # self.showOSD(from_seek=True)
 
     def setSubtitles(self, do_sleep=True, honor_forced_subtitles_override=True):
+        if not self.player.video:
+            util.LOG("Warning: SetSubtitles: no player.video object available")
+            return
+
         subs = self.player.video.selectedSubtitleStream(
             forced_subtitles_override=honor_forced_subtitles_override and util.getSetting("forced_subtitles_override",
                                                                                           False))
@@ -556,6 +569,9 @@ class SeekPlayerHandler(BasePlayerHandler):
     def onPlayBackFailed(self):
         if self.ended:
             return False
+
+        if self.dialog:
+            self.dialog.onPlayBackFailed()
 
         util.DEBUG_LOG('SeekHandler: onPlayBackFailed - Seeking={0}'.format(self.seeking))
         if self.seeking not in (self.SEEK_IN_PROGRESS, self.SEEK_PLAYLIST):
