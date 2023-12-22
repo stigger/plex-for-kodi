@@ -126,22 +126,26 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             if not controlID and self.lastFocusID and not action == xbmcgui.ACTION_MOUSE_MOVE:
                 self.setFocusId(self.lastFocusID)
 
-            if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_CONTEXT_MENU):
-                if not xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(
-                        self.OPTIONS_GROUP_ID)) and \
-                        (not util.advancedSettings.fastBack or action == xbmcgui.ACTION_CONTEXT_MENU):
+            if action == xbmcgui.ACTION_CONTEXT_MENU:
+                if not xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(self.OPTIONS_GROUP_ID)):
+                    self.lastNonOptionsFocusID = self.lastFocusID
+                    self.setFocusId(self.OPTIONS_GROUP_ID)
+                    return
+                else:
+                    if self.lastNonOptionsFocusID:
+                        self.setFocusId(self.lastNonOptionsFocusID)
+                        self.lastNonOptionsFocusID = None
+                        return
+
+            elif action == xbmcgui.ACTION_NAV_BACK:
+                if (not xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(
+                        self.OPTIONS_GROUP_ID)) or not controlID) and \
+                        not util.advancedSettings.fastBack:
                     if self.getProperty('on.extras'):
-                        self.lastNonOptionsFocusID = self.lastFocusID
                         self.setFocusId(self.OPTIONS_GROUP_ID)
                         return
-                elif action == xbmcgui.ACTION_CONTEXT_MENU and \
-                        xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(self.OPTIONS_GROUP_ID)) \
-                        and self.getProperty('on.extras') and self.lastNonOptionsFocusID:
-                    self.setFocusId(self.lastNonOptionsFocusID)
-                    self.lastNonOptionsFocusID = None
-                    return
 
-            if action == xbmcgui.ACTION_LAST_PAGE and xbmc.getCondVisibility('ControlGroup(300).HasFocus(0)'):
+            elif action == xbmcgui.ACTION_LAST_PAGE and xbmc.getCondVisibility('ControlGroup(300).HasFocus(0)'):
                 next(self)
             elif action == xbmcgui.ACTION_NEXT_ITEM:
                 self.setFocusId(300)
