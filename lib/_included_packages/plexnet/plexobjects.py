@@ -247,7 +247,7 @@ class PlexObject(Checks):
 
         try:
             self._setData(data[0])
-        except IndexError:
+        except (IndexError, TypeError):
             util.DEBUG_LOG('No data on reload: {0}'.format(self))
             return self
 

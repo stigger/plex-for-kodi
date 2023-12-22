@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from . import http
+
 import time
+import re
+import json
+import urllib3.exceptions
+
+from . import http
 from . import util
 from . import exceptions
 from . import compat
 from . import verlib
-import re
-import json
-from xml.etree import ElementTree
 
+from xml.etree import ElementTree
 from . import signalsmixin
 from . import plexobjects
 from . import plexresource
@@ -221,7 +224,7 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
             util.ERROR()
             util.MANAGER.refreshResources(True)
             return None
-        except http.requests.ConnectionError:
+        except (http.requests.ConnectionError, urllib3.exceptions.ProtocolError):
             util.ERROR()
             return None
         except asyncadapter.CanceledException:
