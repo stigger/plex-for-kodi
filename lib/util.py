@@ -170,6 +170,7 @@ class AdvancedSettings(object):
         ("dbg_crossfade", True),
         ("subtitle_use_extended_title", True),
         ("dialog_flicker_fix", True),
+        ("poster_resolution_scale", 1.0),
     )
 
     def __init__(self):
@@ -624,6 +625,15 @@ def shortenText(text, size):
         return text
 
     return u'{0}\u2026'.format(text[:size - 1])
+
+
+def scaleResolution(w, h, by=advancedSettings.posterResolutionScale):
+    if by != 1.0:
+        px = w * h * by
+        wratio = h / float(w)
+        hratio = w / float(h)
+        return round((px / wratio) ** .5), round((px / hratio) ** .5)
+    return w, h
 
 
 class TextBox:

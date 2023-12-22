@@ -236,7 +236,10 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         if not path:
             return ''
 
-        params = ("&width=%s&height=%s" % (width, height)) + ''.join(["&%s=%s" % (key, extraOpts[key]) for key in extraOpts])
+        eOpts = {"minSize": 1, "upscale": 1}
+        eOpts.update(extraOpts)
+
+        params = ("&width=%s&height=%s" % (width, height)) + ''.join(["&%s=%s" % (key, eOpts[key]) for key in eOpts])
 
         if "://" in path:
             imageUrl = self.convertUrlToLoopBack(path)
