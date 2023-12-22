@@ -628,7 +628,7 @@ def shortenText(text, size):
 
 
 def scaleResolution(w, h, by=advancedSettings.posterResolutionScale):
-    if by != 1.0:
+    if 0 < by != 1.0:
         px = w * h * by
         wratio = h / float(w)
         hratio = w / float(h)

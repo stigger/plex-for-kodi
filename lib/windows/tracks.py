@@ -26,8 +26,8 @@ class AlbumWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     width = 1920
     height = 1080
 
-    THUMB_AR16X9_DIM = (178, 100)
-    THUMB_SQUARE_DIM = (630, 630)
+    THUMB_AR16X9_DIM = util.scaleResolution(178, 100)
+    THUMB_SQUARE_DIM = util.scaleResolution(630, 630)
 
     TRACKS_LIST_ID = 101
     LIST_OPTIONS_BUTTON_ID = 111

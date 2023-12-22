@@ -179,11 +179,11 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     width = 1920
     height = 1080
 
-    THUMB_AR16X9_DIM = (657, 393)
-    POSTER_DIM = (420, 630)
-    RELATED_DIM = (268, 397)
-    EXTRA_DIM = (329, 185)
-    ROLES_DIM = (334, 334)
+    THUMB_AR16X9_DIM = util.scaleResolution(657, 393)
+    POSTER_DIM = util.scaleResolution(420, 630)
+    RELATED_DIM = util.scaleResolution(268, 397)
+    EXTRA_DIM = util.scaleResolution(329, 185)
+    ROLES_DIM = util.scaleResolution(334, 334)
 
     LIST_OPTIONS_BUTTON_ID = 111
 
