@@ -247,7 +247,9 @@ class SeekPlayerHandler(BasePlayerHandler):
 
     def showPostPlay(self):
         if not self.shouldShowPostPlay():
+            util.DEBUG_LOG("SeekHandler: Not showing post-play")
             return
+        util.DEBUG_LOG("SeekHandler: Showing post-play")
 
         self.seeking = self.SEEK_POST_PLAY
         self.hideOSD(delete=True)
@@ -421,7 +423,9 @@ class SeekPlayerHandler(BasePlayerHandler):
         # self.hideOSD()
 
     def onPlayBackStopped(self):
-        util.DEBUG_LOG('SeekHandler: onPlayBackStopped - Seeking={0}'.format(self.seeking))
+        util.DEBUG_LOG('SeekHandler: onPlayBackStopped - '
+                       'Seeking={0}, QueueingNext={1}, BingeMode={2}'.format(self.seeking, self.queuingNext,
+                                                                             self.inBingeMode))
 
         if self.dialog:
             self.dialog.onPlayBackStopped()

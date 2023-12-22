@@ -258,27 +258,11 @@ class SeekDialog(kodigui.BaseDialog):
         self.resetAutoSeekTimer(None)
         self.resetSkipSteps()
 
-    def applyMarkerProps(self):
+    def resetMarkerStates(self):
         self.setProperty('show.markerSkip', '')
         self.setProperty('show.markerSkip_OSDOnly', '')
         self.setProperty('marker.autoSkip', '')
         self.setProperty('skipMarkerName', '')
-
-        if self.player.video.type == 'episode':
-            pbs = self.player.video.playbackSettings
-            util.DEBUG_LOG("Playback settings for {}: {}".format(self.player.video.ratingKey, pbs))
-
-            self.bingeMode = pbs.binge_mode
-            self.handler.inBingeMode = self.bingeMode
-
-            # don't auto skip intro when on binge mode on the first episode of a season
-            firstEp = self.player.video.index == '1'
-
-            if self.isDirectPlay or util.getUserSetting('auto_skip_in_transcode', True):
-                self.autoSkipIntro = (self.bingeMode and not firstEp) or pbs.auto_skip_intro
-                self.autoSkipCredits = self.bingeMode or pbs.auto_skip_credits
-
-            self.showIntroSkipEarly = self.bingeMode or pbs.show_intro_skip_early
 
         self._introSkipShownStarted = None
         self._introAutoSkipped = False
@@ -414,13 +398,29 @@ class SeekDialog(kodigui.BaseDialog):
         if not self.getProperty('nav.prevnext'):
             self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE
 
-        # in transcoded scenarios, when seeking, keep previous marker states, as the video restarts
-        if not keepMarkerDef:
-            try:
-                self.applyMarkerProps()
-            except IndexError:
-                self.doClose(delete=True)
-                raise util.NoDataException
+        try:
+            if self.player.video.type == 'episode':
+                pbs = self.player.video.playbackSettings
+                util.DEBUG_LOG("Playback settings for {}: {}".format(self.player.video.ratingKey, pbs))
+
+                self.bingeMode = pbs.binge_mode
+                self.handler.inBingeMode = self.bingeMode
+
+                # don't auto skip intro when on binge mode on the first episode of a season
+                firstEp = self.player.video.index == '1'
+
+                if self.isDirectPlay or util.getUserSetting('auto_skip_in_transcode', True):
+                    self.autoSkipIntro = (self.bingeMode and not firstEp) or pbs.auto_skip_intro
+                    self.autoSkipCredits = self.bingeMode or pbs.auto_skip_credits
+
+                self.showIntroSkipEarly = self.bingeMode or pbs.show_intro_skip_early
+
+            # in transcoded scenarios, when seeking, keep previous marker states, as the video restarts
+            if not keepMarkerDef:
+                self.resetMarkerStates()
+        except IndexError:
+            self.doClose(delete=True)
+            raise util.NoDataException
         self.baseOffset = offset
         self.offset = 0
         self.idleTime = None
