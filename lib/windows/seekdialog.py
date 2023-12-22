@@ -429,6 +429,7 @@ class SeekDialog(kodigui.BaseDialog):
         if self._videoBelowOneHour:
             self.timeFmtKodi = self.timeFmtKodi.replace("hh:", "")
         self._ignoreTick = False
+        self._ignoreInput = False
         if not self.showChapters:
             self.bifURL = bif_url
             self.hasBif = bool(self.bifURL)
@@ -1706,6 +1707,9 @@ class SeekDialog(kodigui.BaseDialog):
 
     def onPlayBackResumed(self):
         util.DEBUG_LOG("SeekDialog: OnPlaybackResumed")
+        if self._ignoreInput:
+            self._ignoreInput = False
+
         self.idleTime = None
         self.ldTimer and self.syncTimeKeeper()
 
@@ -1722,6 +1726,8 @@ class SeekDialog(kodigui.BaseDialog):
 
     def onAVStarted(self):
         util.DEBUG_LOG("SeekDialog: OnAVStarted")
+        if self._ignoreInput:
+            self._ignoreInput = False
 
         self.ldTimer and self.syncTimeKeeper()
 
@@ -1895,10 +1901,7 @@ class SeekDialog(kodigui.BaseDialog):
                         self._ignoreTick = True
                         self._ignoreInput = True
                         self.killTimeKeeper()
-                        if self.player.playState == self.player.STATE_PLAYING:
-                            self.player.pause()
-                        xbmc.sleep(500)
-                        next(self.handler)
+                        self.player.stop()
                     return True
                 else:
                     util.DEBUG_LOG("MarkerAutoSkip: Skipping final marker, stopping")

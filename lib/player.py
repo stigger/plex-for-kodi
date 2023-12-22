@@ -426,6 +426,10 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.dialog:
             self.dialog.onPlayBackStopped()
 
+        if self.queuingNext and self.inBingeMode:
+            if self.next(on_end=False):
+                return
+
         if self.seeking not in (self.SEEK_IN_PROGRESS, self.SEEK_REWIND):
             self.updateNowPlaying()
 
@@ -890,6 +894,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.playerObject = None
         self.currentTime = 0
         self.thread = None
+        self.ignoreStopEvents = False
         if xbmc.getCondVisibility('Player.HasMedia'):
             self.started = True
         self.resume = False
@@ -910,6 +915,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.bgmPlaying = False
         self.playerObject = None
         self.pauseAfterPlaybackStarted = False
+        self.ignoreStopEvents = False
         #self.handler = AudioPlayerHandler(self)
         self.currentTime = 0
 
@@ -1052,7 +1058,9 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         bifURL = self.playerObject.getBifUrl()
         util.DEBUG_LOG('Playing URL(+{1}ms): {0}{2}'.format(plexnetUtil.cleanToken(url), offset, bifURL and ' - indexed' or ''))
 
+        self.ignoreStopEvents = True
         self.stopAndWait()  # Stop before setting up the handler to prevent player events from causing havoc
+        self.ignoreStopEvents = False
 
         self.handler.setup(self.video.duration.asInt(), meta, offset, bifURL, title=self.video.grandparentTitle,
                            title2=self.video.title, seeking=seeking, chapters=self.video.chapters)
@@ -1273,19 +1281,25 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler.onPlayBackResumed()
 
     def onPlayBackStopped(self):
+        util.DEBUG_LOG('Player - STOPPED' + (not self.started and ': FAILED' or ''))
+        if self.ignoreStopEvents:
+            return
+
         if not self.started:
             self.onPlayBackFailed()
 
-        util.DEBUG_LOG('Player - STOPPED' + (not self.started and ': FAILED' or ''))
         if not self.handler:
             return
         self.handler.onPlayBackStopped()
 
     def onPlayBackEnded(self):
+        util.DEBUG_LOG('Player - ENDED' + (not self.started and ': FAILED' or ''))
+        if self.ignoreStopEvents:
+            return
+
         if not self.started:
             self.onPlayBackFailed()
 
-        util.DEBUG_LOG('Player - ENDED' + (not self.started and ': FAILED' or ''))
         if not self.handler:
             return
         self.handler.onPlayBackEnded()
