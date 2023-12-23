@@ -25,7 +25,7 @@
                 </setting>
                 <setting id="poster_resolution_scale_perc" type="integer" label="32956" help="32957">
                     <level>0</level>
-                    <default>200</default>
+                    <default>100</default>
                     <constraints>
                         <minimum>25</minimum>
                         <step>25</step>
