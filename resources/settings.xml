@@ -29,7 +29,7 @@
                     <constraints>
                         <minimum>25</minimum>
                         <step>25</step>
-                        <maximum>1000</maximum>
+                        <maximum>750</maximum>
                     </constraints>
                     <control type="slider" format="integer">
                         <popup>false</popup>
