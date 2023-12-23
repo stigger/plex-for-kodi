@@ -170,7 +170,7 @@ class AdvancedSettings(object):
         ("dbg_crossfade", True),
         ("subtitle_use_extended_title", True),
         ("dialog_flicker_fix", True),
-        ("poster_resolution_scale_perc", 300),
+        ("poster_resolution_scale_perc", 200),
     )
 
     def __init__(self):
