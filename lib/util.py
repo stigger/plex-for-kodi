@@ -170,7 +170,7 @@ class AdvancedSettings(object):
         ("dbg_crossfade", True),
         ("subtitle_use_extended_title", True),
         ("dialog_flicker_fix", True),
-        ("poster_resolution_scale", 2.5),
+        ("poster_resolution_scale_perc", 300),
     )
 
     def __init__(self):
@@ -627,9 +627,9 @@ def shortenText(text, size):
     return u'{0}\u2026'.format(text[:size - 1])
 
 
-def scaleResolution(w, h, by=advancedSettings.posterResolutionScale):
-    if 0 < by != 1.0:
-        px = w * h * by
+def scaleResolution(w, h, by=advancedSettings.posterResolutionScalePerc):
+    if 0 < by != 100.0:
+        px = w * h * (by / 100.0)
         wratio = h / float(w)
         hratio = w / float(h)
         return int(round((px / wratio) ** .5)), int(round((px / hratio) ** .5))
