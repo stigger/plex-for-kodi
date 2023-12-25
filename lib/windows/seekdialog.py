@@ -1197,7 +1197,9 @@ class SeekDialog(kodigui.BaseDialog):
             # this is an embedded stream, seek back a second after setting the subtitle due to long standing kodi
             # issue: https://github.com/xbmc/xbmc/issues/21086
             util.DEBUG_LOG("Switching embedded subtitle stream, seeking due to Kodi issue #21086")
-            self.doSeek(self.trueOffset() - 100)
+
+            # true offset can be 0, which might lead to an infinite loop, seek to 100ms at least.
+            self.doSeek(max(self.trueOffset() - 100, 100))
 
     def showSettings(self):
         with self.propertyContext('settings.visible'):
