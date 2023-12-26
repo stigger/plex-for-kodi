@@ -172,7 +172,6 @@ class AdvancedSettings(object):
         ("subtitle_use_extended_title", True),
         ("dialog_flicker_fix", True),
         ("poster_resolution_scale_perc", 100),
-        ("calculate_oshash", True),
     )
 
     def __init__(self):
@@ -629,7 +628,10 @@ def shortenText(text, size):
     return u'{0}\u2026'.format(text[:size - 1])
 
 
-def scaleResolution(w, h, by=advancedSettings.posterResolutionScalePerc):
+def scaleResolution(w, h, by=None):
+    if by is None:
+        by = advancedSettings.posterResolutionScalePerc
+
     if 0 < by != 100.0:
         px = w * h * (by / 100.0)
         wratio = h / float(w)
@@ -980,7 +982,10 @@ def getOpenSubtitlesHash(size, url):
 
     buffer = b''
     for _range in ((0, OSS_CHUNK), (filesize-OSS_CHUNK, filesize)):
-        r = requests.get(url, headers={"range": "bytes={0}-{1}".format(*_range)}, stream=True)
+        try:
+            r = requests.get(url, headers={"range": "bytes={0}-{1}".format(*_range)}, stream=True)
+        except:
+            return ''
         buffer += r.raw.read(OSS_CHUNK)
 
     for x in range(int(OSS_CHUNK / byte_size) * 2):

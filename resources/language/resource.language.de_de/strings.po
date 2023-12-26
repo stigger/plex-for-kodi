@@ -1942,5 +1942,5 @@ msgid "Calculate OpenSubtitles.com hash"
 msgstr "OpenSubtitles.com Prüfsumme berechnen"
 
 msgctxt "#32959"
-msgid "When opening the subtitle download feature, automatically calculate the OpenSubtitles.com hash for the given file."
-msgstr "Beim Öffnen der Untertitel-Herunterladen-Funktion die Prüfsumme für die Datei automatisch berechnen."
+msgid "When opening the subtitle download feature, automatically calculate the OpenSubtitles.com hash for the given file. Can improve search results, downloads 2*64 KB of the video file to calculate the hash."
+msgstr "Beim Öffnen der Untertitel-Herunterladen-Funktion die Prüfsumme der Datei für OpenSubtitles.com automatisch berechnen. Kann die Suchergebnisse verbessern, lädt 2*64 KB der Videodatei herunter um die Prüfsumme zu berechnen."

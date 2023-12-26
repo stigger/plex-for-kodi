@@ -1153,7 +1153,7 @@ class SeekDialog(kodigui.BaseDialog):
         if choice['key'] == 'download':
             self.hideOSD()
             if self.handler and self.handler.player and self.handler.player.playerObject \
-                    and util.advancedSettings.calculateOshash:
+                    and util.getSetting('calculate_oshash', False):
                 meta = self.handler.player.playerObject.metadata
                 oss_hash = util.getOpenSubtitlesHash(meta.size, meta.streamUrls[0])
                 if oss_hash:

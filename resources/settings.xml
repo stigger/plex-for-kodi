@@ -35,11 +35,6 @@
                         <popup>false</popup>
                     </control>
                 </setting>
-                <setting id="calculate_oshash" type="boolean" label="32958" help="32959">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle"/>
-                </setting>
             </group>
         </category>
         <!-- Player -->
