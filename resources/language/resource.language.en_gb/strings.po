@@ -1637,3 +1637,11 @@ msgstr ""
 msgctxt "#32957"
 msgid "In percent. Scales the resolution of all posters/thumbnails for better image quality. May impact PMS/PM4K performance, will increase the cache usage accordingly. Recommended: 200-300 % for for big screens if your hardware can handle it. Needs addon restart."
 msgstr ""
+
+msgctxt "#32958"
+msgid "Calculate OpenSubtitles.com hash"
+msgstr ""
+
+msgctxt "#32959"
+msgid "When opening the subtitle download feature, automatically calculate the OpenSubtitles.com hash for the given file."
+msgstr ""

@@ -13,6 +13,8 @@ import contextlib
 import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 import six
 import os
+import struct
+import requests
 
 from .kodijsonrpc import rpc
 from kodi_six import xbmc
@@ -21,7 +23,6 @@ from kodi_six import xbmcaddon
 from kodi_six import xbmcvfs
 
 from . import colors
-from .exceptions import NoDataException
 from plexnet import signalsmixin, plexapp
 
 DEBUG = True
@@ -171,6 +172,7 @@ class AdvancedSettings(object):
         ("subtitle_use_extended_title", True),
         ("dialog_flicker_fix", True),
         ("poster_resolution_scale_perc", 100),
+        ("calculate_oshash", True),
     )
 
     def __init__(self):
@@ -964,6 +966,30 @@ def addURLParams(url, params):
             url += '?'
         url += six.moves.urllib.parse.urlencode(params)
         return url
+
+
+OSS_CHUNK = 65536
+
+
+def getOpenSubtitlesHash(size, url):
+    long_long_format = "q"  # long long
+    byte_size = struct.calcsize(long_long_format)
+    hash_ = filesize = size
+    if filesize < OSS_CHUNK * 2:
+        return
+
+    buffer = b''
+    for _range in ((0, OSS_CHUNK), (filesize-OSS_CHUNK, filesize)):
+        r = requests.get(url, headers={"range": "bytes={0}-{1}".format(*_range)}, stream=True)
+        buffer += r.raw.read(OSS_CHUNK)
+
+    for x in range(int(OSS_CHUNK / byte_size) * 2):
+        size = x * byte_size
+        (l_value,) = struct.unpack(long_long_format, buffer[size:size + byte_size])
+        hash_ += l_value
+        hash_ = hash_ & 0xFFFFFFFFFFFFFFFF
+
+    return format(hash_, "016x")
 
 
 def garbageCollect():
