@@ -1159,6 +1159,8 @@ class SeekDialog(kodigui.BaseDialog):
                 if oss_hash:
                     util.DEBUG_LOG("OpenSubtitles hash: %s" % oss_hash)
                     util.setGlobalProperty("current_oshash", oss_hash, base='videoinfo.{0}')
+            else:
+                util.setGlobalProperty("current_oshash", '', base='videoinfo.{0}')
             self.lastSubtitleNavAction = "download"
             builtin.ActivateWindow('SubtitleSearch')
         elif choice['key'] == 'delay':
