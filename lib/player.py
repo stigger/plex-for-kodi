@@ -170,6 +170,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.bifURL = ''
         self.title = ''
         self.title2 = ''
+        self.seekOnStart = 0
         self.chapters = None
         self.stoppedInBingeMode = False
         self.inBingeMode = False
@@ -323,6 +324,11 @@ class SeekPlayerHandler(BasePlayerHandler):
                 util.garbageCollect()
 
     def seek(self, offset, settings_changed=False, seeking=SEEK_IN_PROGRESS):
+        util.DEBUG_LOG(
+            "SeekHandler: offset={0}, settings_changed={1}, seeking={2}, state={3}".format(offset,
+                                                                                           settings_changed,
+                                                                                           seeking,
+                                                                                           self.player.playState))
         if offset is None:
             return
 
@@ -342,7 +348,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.player.playState == self.player.STATE_PAUSED:
             self.player.pauseAfterPlaybackStarted = True
 
-        util.DEBUG_LOG('New player offset: {0}'.format(self.offset))
+        util.DEBUG_LOG('New player offset: {0}, state: {1}'.format(self.offset, self.player.playState))
         self.player._playVideo(offset, seeking=self.seeking, force_update=settings_changed)
 
     def fastforward(self):
@@ -489,6 +495,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             self.dialog.onPlayBackPaused()
 
     def onPlayBackSeek(self, stime, offset):
+        util.DEBUG_LOG('SeekHandler: onPlayBackSeek - {0}, {1}, {2}'.format(stime, offset, self.seekOnStart))
         if self.dialog:
             self.dialog.onPlayBackSeek(stime, offset)
 
@@ -498,7 +505,7 @@ class SeekPlayerHandler(BasePlayerHandler):
                 seeked = self.dialog.tick(stime)
 
             if seeked:
-                util.DEBUG_LOG("OnPlayBackSeek: Seeked on start")
+                util.DEBUG_LOG("OnPlayBackSeek: Seeked on start to: {0}".format(stime))
                 self.seekOnStart = 0
             return
 
@@ -1091,6 +1098,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
                 meta.playStart = introOffset // 1000
         else:
             if offset:
+                util.DEBUG_LOG("Using as SeekOnStart: {0}; offset: {1}".format(meta.playStart, offset))
                 self.handler.seekOnStart = meta.playStart * 1000
             elif introOffset:
                 util.DEBUG_LOG("Seeking behind intro after playstart: {}".format(introOffset))

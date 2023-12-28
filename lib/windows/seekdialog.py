@@ -271,9 +271,15 @@ class SeekDialog(kodigui.BaseDialog):
         self._creditsAutoSkipped = False
         self.markers = None
 
+    @property
+    def DPPlayerOffset(self):
+        if self.isDirectPlay and self.handler.player and self.handler.player.playerObject:
+            return self.handler.player.playerObject.startOffset * 1000
+        return 0
+
     def trueOffset(self):
         if self.isDirectPlay:
-            return (self.handler.player.playerObject.startOffset * 1000) + self.offset
+            return self.DPPlayerOffset + self.offset
         else:
             return self.baseOffset + self.offset
 
@@ -1728,7 +1734,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.ldTimer and self.syncTimeKeeper()
 
     def onAVChange(self):
-        util.DEBUG_LOG("SeekDialog: onAVChange")
+        util.DEBUG_LOG("SeekDialog: OnAVChange: DPO: {0}, offset: {1}".format(self.DPPlayerOffset, self.offset))
 
         # wait for buffer if we're not expecting a seek
         if not self.handler.seekOnStart and util.getSetting("slow_connection", False) and not self.waitingForBuffer:
@@ -1739,7 +1745,7 @@ class SeekDialog(kodigui.BaseDialog):
             return
 
     def onAVStarted(self):
-        util.DEBUG_LOG("SeekDialog: OnAVStarted")
+        util.DEBUG_LOG("SeekDialog: OnAVStarted: DPO: {0}, offset: {1}".format(self.DPPlayerOffset, self.offset))
         if self._ignoreInput:
             self._ignoreInput = False
 
@@ -1757,7 +1763,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.idleTime = time.time()
 
     def onPlayBackSeek(self, stime, offset):
-        util.DEBUG_LOG("SeekDialog: OnPlaybackSeek")
+        util.DEBUG_LOG("SeekDialog: OnPlaybackSeek: {0}, {1}".format(stime, offset))
         self.idleTime = None
         self.ldTimer and self.syncTimeKeeper()
 
@@ -2027,6 +2033,8 @@ class SeekDialog(kodigui.BaseDialog):
         if offset or (self.autoSeekTimeout and time.time() >= self.autoSeekTimeout and
                       self.offset != self.selectedOffset):
             self.resetAutoSeekTimer(None)
+            #off = offset is not None and offset or None
+            #self.doSeek(off)
             self.doSeek()
             return True
 
