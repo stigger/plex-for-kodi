@@ -964,6 +964,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         if time.time() - hubs.lastUpdated > HUBS_REFRESH_INTERVAL:
             util.DEBUG_LOG('Section is stale: REFRESHING - update: {0}'.format(update))
+            hubs.lastUpdated = time.time()
             self.cleanTasks()
             if not update:
                 if section.key in self.sectionHubs:
