@@ -584,7 +584,7 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         return None
 
     def swizzleUrl(self, url, includeToken=False):
-        m = re.Search("^\w+:\/\/.+?(\/.+)", url)
+        m = re.search(r"^\w+://.+?(/.+)", url)
         newUrl = m and m.group(1) or None
         return self.buildUrl(newUrl or url, includeToken)
 
