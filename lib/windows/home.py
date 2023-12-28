@@ -641,7 +641,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.searchButtonClicked()
 
     def onFocus(self, controlID):
-        if controlID != 204:
+        if controlID != 204 and controlID < 500:
             # don't store focus for mini music player
             self.lastFocusID = controlID
 
