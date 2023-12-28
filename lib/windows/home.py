@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import time
 import threading
+import re
 
 from kodi_six import xbmc
 from kodi_six import xbmcgui
@@ -8,6 +9,7 @@ from kodi_six import xbmcgui
 from . import kodigui
 from lib import util
 from lib import backgroundthread
+from lib import colors
 from lib import player
 
 import plexnet
@@ -347,6 +349,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.hubControls = None
         self.backgroundSet = False
         self.sectionChangeThread = None
+        self.sectionChangeTimeout = 0
         self.lastFocusID = None
         self.lastNonOptionsFocusID = None
         self.sectionHubs = {}
@@ -618,10 +621,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
     def onClick(self, controlID):
         if controlID == self.SECTION_LIST_ID:
-            if self.sectionChangeThread and self.sectionChangeThread.is_alive():
-                self.sectionChangeThread.cancel()
-                self._sectionChanged()
-                return
             self.sectionClicked()
         # elif controlID == self.SERVER_BUTTON_ID:
         #     self.showServers()
@@ -821,21 +820,16 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.tasks = [t for t in self.tasks if t.isValid()]
 
     def sectionChanged(self, force=False):
-        """
-        fixme: force is probably invalid or never used; check
-        """
-        if self.sectionChangeThread and self.sectionChangeThread.is_alive():
-            self.sectionChangeThread.cancel()
-            self.sectionChangeThread.join()
-
+        self.sectionChangeTimeout = time.time() + 0.3
         if not self.sectionChangeThread or not self.sectionChangeThread.is_alive() or force:
-            if not force:
-                self.sectionChangeThread = threading.Timer(0.5, self._sectionChanged)
-                self.sectionChangeThread.start()
-            else:
-                self._sectionReallyChanged()
+            self.sectionChangeThread = threading.Thread(target=self._sectionChanged, name="sectionchanged")
+            self.sectionChangeThread.start()
 
     def _sectionChanged(self):
+        while not util.MONITOR.waitForAbort(0.1):
+            if time.time() >= self.sectionChangeTimeout:
+                break
+
         self._sectionReallyChanged()
 
     def _sectionReallyChanged(self):
