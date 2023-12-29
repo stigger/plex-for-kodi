@@ -94,7 +94,7 @@ class UpdateHubTask(backgroundthread.Task):
             return
 
         try:
-            self.hub.reload()
+            self.hub.reload(limit=HUB_PAGE_SIZE)
             if self.isCanceled():
                 return
             self.callback(self.hub)
