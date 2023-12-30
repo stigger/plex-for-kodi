@@ -129,8 +129,6 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
             if section:
                 params['sectionId'] = section
 
-            if count is not None:
-                params['limit'] = count
         else:
             q = '/hubs'
             if section:
@@ -145,8 +143,8 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
                 else:
                     q = '/hubs/sections/%s' % section
 
-            if count is not None:
-                params['count'] = count
+        if count is not None:
+            params['limit'] = count
 
         data = self.query(q, params=params)
         container = plexobjects.PlexContainer(data, initpath=q, server=self, address=q)
