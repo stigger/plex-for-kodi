@@ -129,6 +129,8 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
             if section:
                 params['sectionId'] = section
 
+            if count is not None:
+                params['limit'] = count
         else:
             q = '/hubs'
             if section:
@@ -143,8 +145,8 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
                 else:
                     q = '/hubs/sections/%s' % section
 
-        if count is not None:
-            params['limit'] = count
+            if count is not None:
+                params['count'] = count
 
         data = self.query(q, params=params)
         container = plexobjects.PlexContainer(data, initpath=q, server=self, address=q)
@@ -192,7 +194,9 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
             path += util.joinArgs(params, '?' not in path)
 
         offset = kwargs.pop("offset", None)
-        limit = kwargs.pop("limit", None)
+        # limit can be a kwarg as well as in params["count"] or params["limit"]
+        # fixme: this should be unified.
+        limit = kwargs.pop("limit", params.get("limit", params.get("count", None)) if params else None)
         if kwargs:
             path += util.joinArgs(kwargs, '?' not in path)
             kwargs.clear()
@@ -206,9 +210,10 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
             return None
 
         # add offset/limit
-        if offset is not None:
-            url = http.addUrlParam(url, "X-Plex-Container-Start=%s" % offset)
+        offset = offset or 0
+
         if limit is not None:
+            url = http.addUrlParam(url, "X-Plex-Container-Start=%s" % offset)
             url = http.addUrlParam(url, "X-Plex-Container-Size=%s" % limit)
 
         util.LOG('{0} {1}'.format(method.__name__.upper(), re.sub('X-Plex-Token=[^&]+', 'X-Plex-Token=****', url)))

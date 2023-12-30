@@ -868,6 +868,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                             return
 
     def extendHubCallback(self, hub, items):
+        util.DEBUG_LOG('ExtendHub called: {0} [{1}]'.format(hub.hubIdentifier, len(hub.items)))
         self.updateHubCallback(hub, items)
 
     def showSections(self):
@@ -1012,7 +1013,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         identifier = hub.getCleanHubIdentifier()
 
         if identifier in self.HUBMAP:
-            util.DEBUG_LOG('HUB: {0} [{1}]({2})'.format(hub.hubIdentifier, identifier, len(hub.items)))
+            util.DEBUG_LOG('HUB: {0} [{1}]({2}, {3})'.format(hub.hubIdentifier,
+                                                             identifier,
+                                                             len(hub.items),
+                                                             len(items) if items else None))
             self._showHub(hub, hubitems=items, **self.HUBMAP[identifier])
             return True
         else:
