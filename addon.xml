@@ -31,7 +31,7 @@
 - Fix: Partially revert "Home: Increase section change timeout from 0.3s to 0.5s; re-jig section change handling to allow using ENTER/SELECT to immediately select a section below 0.5s wait time" due to instability
 - Fix: Fix a couple of SyntaxWarnings for invalid escape sequences
 - Fix: Unfocusable buttons throw focus errors occasionally on shutdown
-- Fix: Laggy UI after playback/5 minutes due to requesting certain hubs without limits applied. Drastically improving UI smoothness even for smaller hubs (<1000 items)
+- Fix: Laggy UI after playback/5 minutes due to requesting certain hubs without limits applied. Drastically improving UI smoothness even for smaller hubs (below 1000 items)
        This also fixes crash and shutdown issues and by proxy should enable everyone to use a poster resolution scale of at least 200%.
 - Fix: Depending on the situation, the home hubs update request could be sent multiple times while waiting for the first one to finish. (thanks @bowlingbeeg)
 - Subtitles: Supply OpenSubtitles.com hash if possible and enabled
