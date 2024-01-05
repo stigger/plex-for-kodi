@@ -228,6 +228,8 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.isTranscoded:
             return self.baseOffset + self.player.currentTime
         else:
+            if not self.player.playerObject:
+                return 0
             if self.seekOnStart:
                 return self.player.playerObject.startOffset + (self.seekOnStart / 1000)
             else:

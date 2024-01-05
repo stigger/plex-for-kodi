@@ -374,6 +374,11 @@ class PlayableVideo(Video, media.RelatedMixin):
         Video._setData(self, data)
         if self.isFullObject():
             self.extras = PlexVideoItemList(data.find('Extras'), initpath=self.initpath, server=self.server, container=self)
+
+            # the PMS Extras API can return protocol=mp4 when it doesn't make sense, mark this as an extra so the MDE
+            # knows what to do
+            for extra in self.extras:
+                extra.isExtra = True
             self.chapters = plexobjects.PlexItemList(data, media.Chapter, media.Chapter.TYPE, server=self.server)
 
         self.resetStreams()
