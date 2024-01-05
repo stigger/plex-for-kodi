@@ -34,8 +34,10 @@ class AudioCodecMixin(object):
             codec = "DTS-HRA"
         elif codec == 'dca':
             codec = "DTS"
-        elif codec == "truehd" and EAC3JOC_STR in title:
-            codec = "TrueHD {}".format(EAC3JOC_STR.capitalize())
+        elif codec == "truehd":
+            codec = "TrueHD"
+            if EAC3JOC_STR in title:
+                codec = "TrueHD {}".format(EAC3JOC_STR.capitalize())
             return codec
         elif codec == "eac3":
             if streamBase and streamBase.bitrate.asInt() >= 768:
