@@ -150,7 +150,7 @@ class PlexMedia(plexobjects.PlexObject):
         return self.height.asInt()
 
     def getVideoResolutionString(self):
-        resNumber = util.validInt(self.videoResolution)
+        resNumber = util.validInt("".join(list(filter(six.text_type.isdigit, self.videoResolution))))
         if resNumber > 0 and str(resNumber) == self.videoResolution:
             return self.videoResolution + "p"
 
