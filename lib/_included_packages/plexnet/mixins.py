@@ -42,6 +42,4 @@ class AudioCodecMixin(object):
                 codec = "DD+ {}".format(EAC3JOC_STR.capitalize())
                 return codec
 
-        codec = codec.upper()
-        return codec
-
+        return codec.upper()
