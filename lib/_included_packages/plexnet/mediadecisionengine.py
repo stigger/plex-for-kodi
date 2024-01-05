@@ -90,7 +90,7 @@ class MediaDecisionEngine(object):
             self.sort(choices, "audioDS")
             self.sort(choices, "resolution")
             self.sort(choices, "videoDS")
-            self.sort(choices, "directPlay")
+            self.sort(choices, "isDirectPlayable")
             self.sort(choices, self.higherResIfCapable)
             self.sort(choices, self.cloudIfRemote)
 
@@ -156,6 +156,9 @@ class MediaDecisionEngine(object):
                     stream.codec == "vp9" and item.settings.getGlobal("vp9Support")
                 ):
                     choice.sorts.videoDS = 1
+            elif streamType == stream.TYPE_AUDIO:
+                # fixme: really?
+                choice.sorts.audioDS = 1
 
         # Special cases to force direct play
         forceDirectPlay = False
