@@ -634,7 +634,7 @@ class ArtistWindow(ShowWindow):
         self.setProperty('artist.genre', genres)
         items = []
         idx = 0
-        for album in sorted(self.mediaItem.albums(), key=lambda x: x.year):
+        for album in sorted(self.mediaItem.albums() + list(self.mediaItem.related), key=lambda x: x.year):
             mli = self.createListItem(album)
             if mli:
                 mli.setProperty('index', str(idx))

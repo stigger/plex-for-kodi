@@ -161,7 +161,7 @@ def joinArgs(args, includeQuestion=True):
     arglist = []
     for key in sorted(args, key=lambda x: x.lower()):
         value = str(args[key])
-        arglist.append('{0}={1}'.format(key, compat.quote(value)))
+        arglist.append('{0}={1}'.format(key, compat.quote(value, safe='')))
 
     return '{0}{1}'.format(includeQuestion and '?' or '&', '&'.join(arglist))
 
