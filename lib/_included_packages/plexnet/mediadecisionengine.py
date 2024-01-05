@@ -183,7 +183,8 @@ class MediaDecisionEngine(object):
             util.LOG("MDE: Need to burn in subtitles")
 
         # allow non-http "protocol" tags for extras (PMS bug?)
-        elif (choice.protocol != "http" and not item.isExtra) or (item.isExtra and choice.protocol != "mp4"):
+        elif (choice.protocol != "http" and not item.isExtra) or \
+                (item.isExtra and choice.protocol not in ("mp4", "http")):
             util.LOG("MDE: Protocol " + choice.protocol + " not supported")
         # elif numVideoStreams > 1:
         #     util.LOG("MDE: Multiple video streams, won't try to direct play")

@@ -861,15 +861,15 @@ class SeekDialog(kodigui.BaseDialog):
             videoSession = None
             elapsed = 0
             while not videoSession:
-                if elapsed > 10:
+                if elapsed >= 2:
                     raise NotFound
 
                 videoSession = getVideoSession(currentVideo)
                 if videoSession:
                     break
 
-                util.MONITOR.waitForAbort(1)
-                elapsed += 1
+                util.MONITOR.waitForAbort(0.5)
+                elapsed += 0.5
 
             # fill attributes
             info = VideoSessionInfo(videoSession, currentVideo)
