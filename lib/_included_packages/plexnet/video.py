@@ -10,6 +10,7 @@ from . import compat
 from . import plexlibrary
 from . import util
 from . import mediachoice
+from .mixins import AudioCodecMixin
 
 
 class PlexVideoItemList(plexobjects.PlexItemList):
@@ -43,7 +44,7 @@ def forceMediaChoice(method):
     return _impl
 
 
-class Video(media.MediaItem):
+class Video(media.MediaItem, AudioCodecMixin):
     TYPE = None
     manually_selected_sub_stream = False
     current_subtitle_is_embedded = False
@@ -52,6 +53,7 @@ class Video(media.MediaItem):
     def __init__(self, *args, **kwargs):
         self._settings = None
         media.MediaItem.__init__(self, *args, **kwargs)
+        AudioCodecMixin.__init__(self)
 
     def __eq__(self, other):
         return other and self.ratingKey == other.ratingKey
@@ -298,12 +300,7 @@ class Video(media.MediaItem):
     def audioCodecString(self):
         codec = (self.mediaChoice.media.audioCodec or '').lower()
 
-        if codec in ('dca', 'dca-ma', 'dts-hd', 'dts-es', 'dts-hra'):
-            codec = "DTS"
-        else:
-            codec = codec.upper()
-
-        return codec
+        return self.translateAudioCodec(codec).upper()
 
     @forceMediaChoice
     def videoCodecString(self):
