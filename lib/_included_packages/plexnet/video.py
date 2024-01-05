@@ -348,33 +348,6 @@ class Video(media.MediaItem, AudioCodecMixin):
         return any(v.isAccessible() for v in self.media())
 
 
-class RelatedMixin(object):
-    _relatedCount = None
-
-    @property
-    def relatedCount(self):
-        if self._relatedCount is None:
-            related = self.getRelated(0, 0)
-            if related is not None:
-                self._relatedCount = related.totalSize
-            else:
-                self._relatedCount = 0
-
-        return self._relatedCount
-
-    @property
-    def related(self):
-        return self.getRelated(0, 8)
-
-    def getRelated(self, offset=None, limit=None, _max=36):
-        path = '/library/metadata/%s/similar' % self.ratingKey
-        try:
-            return plexobjects.listItems(self.server, path, offset=offset, limit=limit, params={"count": _max})
-        except exceptions.BadRequest:
-            util.DEBUG_LOG("Invalid related items response returned for %s" % self)
-            return None
-
-
 class SectionOnDeckMixin(object):
     _sectionOnDeckCount = None
 
@@ -390,7 +363,7 @@ class SectionOnDeckMixin(object):
         return self._sectionOnDeckCount
 
 
-class PlayableVideo(Video, RelatedMixin):
+class PlayableVideo(Video, media.RelatedMixin):
     TYPE = None
     _videoStreams = None
     _audioStreams = None
@@ -556,7 +529,7 @@ class Movie(PlayableVideo):
 
 
 @plexobjects.registerLibType
-class Show(Video, RelatedMixin, SectionOnDeckMixin):
+class Show(Video, media.RelatedMixin, SectionOnDeckMixin):
     TYPE = 'show'
 
     def _setData(self, data):

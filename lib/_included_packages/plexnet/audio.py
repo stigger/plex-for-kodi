@@ -27,23 +27,19 @@ class Audio(media.MediaItem):
 
 
 @plexobjects.registerLibType
-class Artist(Audio):
+class Artist(Audio, media.RelatedMixin):
     TYPE = 'artist'
 
     def _setData(self, data):
         Audio._setData(self, data)
-        self.related = []
+        self.otherAlbums = []
         if self.isFullObject():
             self.countries = plexobjects.PlexItemList(data, media.Country, media.Country.TYPE, server=self.server)
             self.genres = plexobjects.PlexItemList(data, media.Genre, media.Genre.TYPE, server=self.server)
             self.similar = plexobjects.PlexItemList(data, media.Similar, media.Similar.TYPE, server=self.server)
-
-            for elem in data:
-                if elem.tag == "Related":
-                    for hub in elem:
-                        if hub.attrib.get("size", 0) and hub.attrib.get("hubIdentifier", None) in \
-                                ("artist.albums.live", "artist.albums.singles", "artist.albums.compilation"):
-                            self.related += list(plexobjects.PlexItemList(hub, Album, 'Directory', server=self.server))
+            self.otherAlbums = self.relatedHubs(data, Album, ("artist.albums.live",
+                                                              "artist.albums.singles",
+                                                              "artist.albums.compilation"))
 
     def albums(self):
         path = '%s/children' % self.key

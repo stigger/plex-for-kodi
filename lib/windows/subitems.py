@@ -602,18 +602,26 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
 class ArtistWindow(ShowWindow):
     xmlFile = 'script-plex-artist.xml'
 
-    SUB_ITEM_LIST_ID = 101
+    SUB_ITEM_LIST_ID = 400
+    EXTRA_LIST_ID = None
+    ROLES_LIST_ID = None
+    RELATED_LIST_ID = 401
 
     def onFirstInit(self):
         self.subItemListControl = kodigui.ManagedControlList(self, self.SUB_ITEM_LIST_ID, 5)
+        self.relatedListControl = kodigui.ManagedControlList(self, self.RELATED_LIST_ID, 5)
 
         self.setup()
+        self.initialized = True
 
         self.setFocusId(self.PLAY_BUTTON_ID)
 
     def setup(self):
+        self.relatedPaginator = RelatedPaginator(self.relatedListControl, leaf_count=int(self.mediaItem.relatedCount),
+                                                 parent_window=self)
         self.updateProperties()
         self.fill()
+        self.fillRelated()
 
     def playButtonClicked(self, shuffle=False):
         pl = playlist.LocalPlaylist(self.mediaItem.all(), self.mediaItem.getServer(), self.mediaItem)
@@ -624,17 +632,18 @@ class ArtistWindow(ShowWindow):
     def updateProperties(self):
         self.setProperty('summary', self.mediaItem.summary)
         self.setProperty('thumb', self.mediaItem.defaultThumb.asTranscodedImageURL(*self.THUMB_DIMS[self.mediaItem.type]['main.thumb']))
+        self.setProperty('related.header', T(32960, 'Similar Artists'))
         self.updateBackgroundFrom(self.mediaItem)
 
     @busy.dialog()
     def fill(self):
-        self.mediaItem.reload(includeRelated=1, includeRelatedCount=10, includeExtras=1, includeExtrasCount=10)
+        self.mediaItem.reload(includeRelated=1, includeRelatedCount=20)
         self.setProperty('artist.title', self.mediaItem.title)
         genres = u' / '.join([g.tag for g in util.removeDups(self.mediaItem.genres())][:6])
         self.setProperty('artist.genre', genres)
         items = []
         idx = 0
-        for album in sorted(self.mediaItem.albums() + list(self.mediaItem.related), key=lambda x: x.year):
+        for album in sorted(self.mediaItem.albums() + list(self.mediaItem.otherAlbums), key=lambda x: x.year):
             mli = self.createListItem(album)
             if mli:
                 mli.setProperty('index', str(idx))

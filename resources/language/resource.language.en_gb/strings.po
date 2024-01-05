@@ -1645,3 +1645,8 @@ msgstr ""
 msgctxt "#32959"
 msgid "When opening the subtitle download feature, automatically calculate the OpenSubtitles.com hash for the given file. Can improve search results, downloads 2*64 KB of the video file to calculate the hash."
 msgstr ""
+
+msgctxt "#32960"
+msgid "Similar Artists"
+msgstr ""
+
