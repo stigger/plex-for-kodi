@@ -1730,7 +1730,13 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                     if obj:
                         mli.setProperty('index', str(pos))
                         mli.setLabel(obj.defaultTitle or '')
-                        mli.setThumbnailImage(obj.defaultThumb.asTranscodedImageURL(*thumbDim))
+
+                        if obj.TYPE == 'collection':
+                            colArtDim = TYPE_KEYS.get('collection').get('art_dim', (256, 256))
+                            mli.setProperty('art', obj.artCompositeURL(*colArtDim))
+                            mli.setThumbnailImage(obj.artCompositeURL(*thumbDim))
+                        else:
+                            mli.setThumbnailImage(obj.defaultThumb.asTranscodedImageURL(*thumbDim))
                         mli.dataSource = obj
                         mli.setProperty('summary', obj.get('summary'))
 
