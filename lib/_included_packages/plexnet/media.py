@@ -85,7 +85,8 @@ class MediaItem(plexobjects.PlexObject):
         if hubs is not None:
             for hub in hubs:
                 if hub.attrib.get("size", 0) and _f(hub):
-                    results += list(plexobjects.PlexItemList(hub, _itemCls, 'Directory', server=self.server))
+                    results += list(plexobjects.PlexItemList(hub, _itemCls, 'Directory', server=self.server,
+                                                             container=self))
         return results
 
     def fixedDuration(self):
