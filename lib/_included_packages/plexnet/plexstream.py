@@ -143,13 +143,12 @@ class PlexStream(plexobjects.PlexObject, AudioCodecMixin):
     def videoCodecRendering(self):
         render = "sdr"
 
-        if self.colorTrc == "smpte2084":
-            if self.DOVIProfile == "8" and self.DOVIBLCompatID == "1":
-                render = "dv/hdr10"
-            elif self.DOVIProfile:
-                render = "dv"
-            else:
-                render = "hdr"
+        if self.DOVIProfile == "8" and self.DOVIBLCompatID == "1":
+            render = "dv/hdr10"
+        elif self.DOVIProfile:
+            render = "dv"
+        elif self.colorTrc == "smpte2084":
+            render = "hdr"
         elif self.colorTrc == "arib-std-b67":
             render = "hlg"
 
