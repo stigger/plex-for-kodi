@@ -442,7 +442,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.hasBif = bool(self.bifURL)
 
         if self.hasBif:
-            self.baseURL = re.sub('/\d+\?', '/{0}?', self.bifURL)
+            self.baseURL = re.sub(r'/\d+\?', '/{0}?', self.bifURL)
         self.update()
 
     def update(self, offset=None, from_seek=False):

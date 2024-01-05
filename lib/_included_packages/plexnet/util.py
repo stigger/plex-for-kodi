@@ -144,7 +144,7 @@ def hideToken(token):
 
 
 def cleanToken(url):
-    return re.sub('X-Plex-Token=[^&]+', 'X-Plex-Token=****', url)
+    return re.sub(r'X-Plex-Token=[^&]+', 'X-Plex-Token=****', url)
 
 
 def now(local=False):
