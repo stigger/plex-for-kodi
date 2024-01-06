@@ -270,8 +270,11 @@ class SelectDialog(kodigui.BaseDialog, util.CronReceiver):
 
     def showOptions(self):
         items = []
-        for o in self.options:
-            item = kodigui.ManagedListItem(o[1], data_source=o[0])
+        for ds, title1 in self.options:
+            title2 = ''
+            if isinstance(title1, (list, set, tuple)):
+                title1, title2 = title1
+            item = kodigui.ManagedListItem(title1, plexnet.util.trimString(title2, limit=40), data_source=ds)
             items.append(item)
 
         self.optionsList.reset()
@@ -297,7 +300,7 @@ def showAudioDialog(video, non_playback=False):
     for i, s in enumerate(video.audioStreams):
         if s.isSelected():
             idx = i
-        options.append((s, s.getTitle(metadata.apiTranslate)))
+        options.append((s, (s.getTitle(metadata.apiTranslate), s.title)))
     choice = showOptionsDialog(T(32395, 'Audio'), options, non_playback=non_playback, selected_idx=idx)
     if choice is None:
         return
