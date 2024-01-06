@@ -136,6 +136,13 @@ def dummyTranslate(string):
     return string
 
 
+def trimString(s, limit=20, ellipsis='…'):
+    s = s.strip()
+    if len(s) > limit:
+        return s[:limit-1].strip() + ellipsis
+    return s
+
+
 def hideToken(token):
     # return 'X' * len(token)
     if not token:

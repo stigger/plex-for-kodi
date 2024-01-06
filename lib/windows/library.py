@@ -1648,6 +1648,9 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         if self.chunkMode and not self.chunkMode.posIsValid(start):
             return
 
+        if not self.showPanelControl:
+            return
+
         with self.lock:
             if self.chunkMode and not self.chunkMode.posIsValid(start):
                 return
