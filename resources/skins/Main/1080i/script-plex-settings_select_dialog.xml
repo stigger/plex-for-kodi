@@ -70,7 +70,7 @@
                     <control type="label">
                         <visible>!String.IsEmpty(ListItem.Label2)</visible>
                         <posx>20</posx>
-                        <posy>20</posy>
+                        <posy>15</posy>
                         <width>560</width>
                         <height>40</height>
                         <font>font12</font>
@@ -82,7 +82,7 @@
                     <control type="label">
                         <visible>!String.IsEmpty(ListItem.Label2)</visible>
                         <posx>20</posx>
-                        <posy>45</posy>
+                        <posy>40</posy>
                         <width>560</width>
                         <font>font10</font>
                         <align>left</align>
@@ -114,7 +114,7 @@
                     <control type="label">
                         <visible>!String.IsEmpty(ListItem.Label2)</visible>
                         <posx>20</posx>
-                        <posy>20</posy>
+                        <posy>15</posy>
                         <width>560</width>
                         <height>40</height>
                         <font>font12</font>
@@ -126,7 +126,7 @@
                     <control type="label">
                         <visible>!String.IsEmpty(ListItem.Label2)</visible>
                         <posx>20</posx>
-                        <posy>45</posy>
+                        <posy>40</posy>
                         <width>560</width>
                         <font>font10</font>
                         <align>left</align>
