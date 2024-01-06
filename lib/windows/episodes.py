@@ -1044,7 +1044,16 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
     def setItemAudioAndSubtitleInfo(self, video, mli):
         sas = video.selectedAudioStream()
-        mli.setProperty('audio', sas and sas.getTitle(metadata.apiTranslate) or T(32309, 'None'))
+
+        if sas:
+            if len(video.audioStreams) > 1:
+                mli.setProperty(
+                    'audio', sas and u'{0} \u2022 {1} {2}'.format(sas.getTitle(metadata.apiTranslate),
+                                                                  len(video.audioStreams) - 1, T(32307, 'More'))
+                    or T(32309, 'None')
+                )
+            else:
+                mli.setProperty('audio', sas and sas.getTitle(metadata.apiTranslate) or T(32309, 'None'))
 
         sss = video.selectedSubtitleStream(forced_subtitles_override=
                                            util.getSetting("forced_subtitles_override", False))
