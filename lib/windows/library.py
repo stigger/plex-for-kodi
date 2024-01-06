@@ -964,7 +964,16 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         if choice == ITEM_TYPE:
             return
 
-        self.tasks.cancel()
+        if self.tasks:
+            util.DEBUG_LOG("Waiting for tasks to finish")
+            while self.tasks:
+                task = self.tasks.pop()
+                task.cancel()
+                ct = 0
+                while not task.finished and ct < 20:
+                    xbmc.sleep(100)
+                    ct += 1
+                del task
 
         self.showPanelControl = None  # TODO: Need to do some check here I think
 
