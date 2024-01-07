@@ -71,11 +71,16 @@ class BusyContext(object):
     window_cls = BusyWindow
     delay = False
 
+    def __init__(self, delay=False, delay_time=0.5):
+        self.delay = delay
+        self.delayTime = delay_time
+
     def __enter__(self):
         self.w = self.window_cls.create(show=not self.delay)
-        if self.delay:
-            self.timer = threading.Timer(0.5, lambda: self.w.show())
         self.w.ctx = self
+        if self.delay:
+            self.timer = threading.Timer(self.delayTime, lambda: self.w.show())
+            self.timer.start()
         return self
 
     def __exit__(self, exc_type, exc_value, tb):
@@ -107,15 +112,14 @@ class BusySignalContext(BusyMsgContext):
     window_cls = BusyWindow
     delay = True
 
-    def __init__(self, context, signal, wait_max=10, delay=True):
+    def __init__(self, context, signal, wait_max=10, delay=True, delay_time=0.5):
         self.wfSignal = signal
         self.signalEmitter = context
         self.waitMax = wait_max
         self.ignoreSignal = False
         self.signalReceived = False
-        self.delay = delay
 
-        super(BusySignalContext, self).__init__()
+        super(BusySignalContext, self).__init__(delay=delay, delay_time=delay_time)
 
         context.on(signal, self.onSignal)
 
