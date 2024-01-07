@@ -416,8 +416,13 @@ class PlayableVideo(Video, media.RelatedMixin):
             streamIDs = []
             if self.mediaChoice.media.hasStreams():
                 subtitleStream = self.selectedSubtitleStream(fallback=False)
-                streamIDs = [self.selectedVideoStream(fallback=True).id,
-                             self.selectedAudioStream(fallback=True).id]
+                videoStream = self.selectedVideoStream(fallback=True)
+                audioStream = self.selectedAudioStream(fallback=True)
+                streamIDs = []
+                if videoStream:
+                    streamIDs.append(videoStream.id)
+                if audioStream:
+                    streamIDs.append(audioStream.id)
                 if subtitleStream:
                     streamIDs.append(subtitleStream.id)
 
