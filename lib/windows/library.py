@@ -966,14 +966,15 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
 
         if self.tasks:
             util.DEBUG_LOG("Waiting for tasks to finish")
-            while self.tasks:
-                task = self.tasks.pop()
-                task.cancel()
-                ct = 0
-                while not task.finished and ct < 20:
-                    xbmc.sleep(100)
-                    ct += 1
-                del task
+            with busy.BusyContext(delay=True, delay_time=0.2):
+                while self.tasks:
+                    task = self.tasks.pop()
+                    task.cancel()
+                    ct = 0
+                    while not task.finished and ct < 20:
+                        xbmc.sleep(100)
+                        ct += 1
+                    del task
 
         self.showPanelControl = None  # TODO: Need to do some check here I think
 
@@ -1657,7 +1658,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         if self.chunkMode and not self.chunkMode.posIsValid(start):
             return
 
-        if not self.showPanelControl:
+        if not self.showPanelControl or not items:
             return
 
         with self.lock:
@@ -1678,6 +1679,9 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
 
             if ITEM_TYPE == 'episode':
                 for offset, obj in enumerate(items):
+                    if not self.showPanelControl:
+                        return
+
                     mli = self.showPanelControl[pos]
                     if obj:
                         mli.dataSource = obj
@@ -1711,6 +1715,9 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
 
             elif ITEM_TYPE == 'album':
                 for offset, obj in enumerate(items):
+                    if not self.showPanelControl:
+                        return
+
                     mli = self.showPanelControl[pos]
                     if obj:
                         mli.dataSource = obj
@@ -1738,6 +1745,9 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                     pos += 1
             else:
                 for offset, obj in enumerate(items):
+                    if not self.showPanelControl:
+                        return
+
                     mli = self.showPanelControl[pos]
                     if obj:
                         mli.setProperty('index', str(pos))
