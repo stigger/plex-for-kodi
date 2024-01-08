@@ -964,19 +964,25 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         if choice == ITEM_TYPE:
             return
 
-        if self.tasks:
-            util.DEBUG_LOG("Waiting for tasks to finish")
-            with busy.BusyContext(delay=True, delay_time=0.2):
-                while self.tasks:
-                    task = self.tasks.pop()
-                    task.cancel()
-                    ct = 0
-                    while not task.finished and ct < 20:
-                        xbmc.sleep(100)
-                        ct += 1
-                    del task
+        with self.lock:
+            if self.tasks and any(list(filter(lambda x: not x.finished, self.tasks))):
+                util.DEBUG_LOG("Waiting for tasks to finish")
+                with busy.BusyContext(delay=True, delay_time=0.2):
+                    while self.tasks:
+                        task = self.tasks.pop()
+                        if task.isValid():
+                            task.cancel()
+                            ct = 0
+                            while not task.finished and ct < 40:
+                                xbmc.sleep(100)
+                                ct += 1
+                        del task
 
-        self.showPanelControl = None  # TODO: Need to do some check here I think
+            try:
+                self.showPanelControl.reset()
+            except:
+                util.DEBUG_LOG("Couldn't reset showPanelControl on view change")
+            self.showPanelControl = None  # TODO: Need to do some check here I think
 
         self.librarySettings.setItemType(choice)
 
