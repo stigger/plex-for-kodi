@@ -60,6 +60,7 @@
             <defaultcontrol>101</defaultcontrol>
 
             <control type="grouplist" id="300">
+                <visible>String.IsEmpty(Container(400).ListItem.Property(media.multiple))</visible>
                 <animation effect="fade" start="0" end="100" time="200" reversible="true">VisibleChange</animation>
                 <visible>!String.IsEmpty(Window.Property(initialized))</visible>
                 <defaultcontrol always="true">301</defaultcontrol>
@@ -75,8 +76,8 @@
                 <scrolltime tween="quadratic" easing="out">200</scrolltime>
                 <usecontrolcoords>true</usecontrolcoords>
                 <control type="button" id="304">
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">UnFocus</animation>
+                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
+                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -88,8 +89,8 @@
                     <label> </label>
                 </control>
                 <control type="button" id="301">
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">UnFocus</animation>
+                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
+                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -100,23 +101,9 @@
                     <texturenofocus colordiffuse="99FFFFFF">script.plex/buttons/play.png</texturenofocus>
                     <label> </label>
                 </control>
-                <control type="button" id="307">
-                    <visible>!String.IsEmpty(Container(400).ListItem.Property(media.multiple))</visible>
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">UnFocus</animation>
-                    <hitrect x="40" y="40" w="96" h="60" />
-                    <posx>0</posx>
-                    <posy>0</posy>
-                    <width>176</width>
-                    <height>140</height>
-                    <font>font12</font>
-                    <texturefocus colordiffuse="FFE5A00D">script.plex/buttons/media-focus.png</texturefocus>
-                    <texturenofocus colordiffuse="99FFFFFF">script.plex/buttons/media.png</texturenofocus>
-                    <label> </label>
-                </control>
                 <control type="button" id="305">
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">UnFocus</animation>
+                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
+                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -128,8 +115,8 @@
                     <label> </label>
                 </control>
                 <control type="button" id="303">
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">UnFocus</animation>
+                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
+                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -141,13 +128,96 @@
                     <label> </label>
                 </control>
                 <control type="button" id="302">
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false" condition="String.IsEmpty(Container(400).ListItem.Property(media.multiple))">UnFocus</animation>
+                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
+                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
                     <posx>0</posx>
                     <posy>0</posy>
                     <width>176</width>
                     <height>140</height>
+                    <font>font12</font>
+                    <texturefocus colordiffuse="FFE5A00D">script.plex/buttons/shuffle-focus.png</texturefocus>
+                    <texturenofocus colordiffuse="99FFFFFF">script.plex/buttons/shuffle.png</texturenofocus>
+                    <label> </label>
+                </control>
+            </control>
+            <control type="grouplist" id="300">
+                <visible>!String.IsEmpty(Container(400).ListItem.Property(media.multiple))</visible>
+                <animation effect="fade" start="0" end="100" time="200" reversible="true">VisibleChange</animation>
+                <visible>!String.IsEmpty(Window.Property(initialized))</visible>
+                <defaultcontrol always="true">301</defaultcontrol>
+                <posx>30</posx>
+                <posy>405</posy>
+                <width>717</width>
+                <height>200</height>
+                <onup>200</onup>
+                <ondown>400</ondown>
+                <align>center</align>
+                <itemgap>-50</itemgap>
+                <orientation>horizontal</orientation>
+                <scrolltime tween="quadratic" easing="out">200</scrolltime>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="button" id="304">
+                    <hitrect x="40" y="40" w="96" h="60" />
+                    <posx>0</posx>
+                    <posy>0</posy>
+                    <width>161</width>
+                    <height>125</height>
+                    <font>font12</font>
+                    <texturefocus colordiffuse="FFE5A00D">script.plex/buttons/info-focus.png</texturefocus>
+                    <texturenofocus colordiffuse="99FFFFFF">script.plex/buttons/info.png</texturenofocus>
+                    <label> </label>
+                </control>
+                <control type="button" id="301">
+                    <hitrect x="40" y="40" w="96" h="60" />
+                    <posx>0</posx>
+                    <posy>0</posy>
+                    <width>161</width>
+                    <height>125</height>
+                    <font>font12</font>
+                    <texturefocus colordiffuse="FFE5A00D">script.plex/buttons/play-focus.png</texturefocus>
+                    <texturenofocus colordiffuse="99FFFFFF">script.plex/buttons/play.png</texturenofocus>
+                    <label> </label>
+                </control>
+                <control type="button" id="307">
+                    <hitrect x="40" y="40" w="96" h="60" />
+                    <posx>0</posx>
+                    <posy>0</posy>
+                    <width>161</width>
+                    <height>125</height>
+                    <font>font12</font>
+                    <texturefocus colordiffuse="FFE5A00D">script.plex/buttons/media-focus.png</texturefocus>
+                    <texturenofocus colordiffuse="99FFFFFF">script.plex/buttons/media.png</texturenofocus>
+                    <label> </label>
+                </control>
+                <control type="button" id="305">
+                    <hitrect x="40" y="40" w="96" h="60" />
+                    <posx>0</posx>
+                    <posy>0</posy>
+                    <width>161</width>
+                    <height>125</height>
+                    <font>font12</font>
+                    <texturefocus colordiffuse="FFE5A00D">script.plex/buttons/settings-focus.png</texturefocus>
+                    <texturenofocus colordiffuse="99FFFFFF">script.plex/buttons/settings.png</texturenofocus>
+                    <label> </label>
+                </control>
+                <control type="button" id="303">
+                    <hitrect x="40" y="40" w="96" h="60" />
+                    <posx>0</posx>
+                    <posy>0</posy>
+                    <width>161</width>
+                    <height>125</height>
+                    <font>font12</font>
+                    <texturefocus colordiffuse="FFE5A00D">script.plex/buttons/more-focus.png</texturefocus>
+                    <texturenofocus colordiffuse="99FFFFFF">script.plex/buttons/more.png</texturenofocus>
+                    <label> </label>
+                </control>
+                <control type="button" id="302">
+                    <hitrect x="40" y="40" w="96" h="60" />
+                    <posx>0</posx>
+                    <posy>0</posy>
+                    <width>161</width>
+                    <height>125</height>
                     <font>font12</font>
                     <texturefocus colordiffuse="FFE5A00D">script.plex/buttons/shuffle-focus.png</texturefocus>
                     <texturenofocus colordiffuse="99FFFFFF">script.plex/buttons/shuffle.png</texturenofocus>

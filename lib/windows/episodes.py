@@ -1020,27 +1020,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         mli.setProperty('audio.channels', video.audioChannelsString(metadata.apiTranslate))
         mli.setProperty('video.rendering', video.videoCodecRendering)
         mli.setBoolProperty('unavailable', not video.available())
-
-        defW = 176
-        defH = 140
-        ids = [301, 302, 303, 304, 305]
-        if len(list(filter(lambda x: x.isAccessible(), video.media()))) > 1:
-            mli.setBoolProperty('media.multiple', True)
-            # adjust button sizes
-            ids.append(307)
-            for id in ids:
-                ctrl = self.getControl(id)
-                ctrl.setWidth(161)
-                ctrl.setHeight(125)
-                del ctrl
-        else:
-            mli.setBoolProperty('media.multiple', False)
-            # reset button sizes
-            for id in ids:
-                ctrl = self.getControl(id)
-                ctrl.setWidth(defW)
-                ctrl.setHeight(defH)
-                del ctrl
+        mli.setBoolProperty('media.multiple', len(list(filter(lambda x: x.isAccessible(), video.media()))) > 1)
 
     def setItemAudioAndSubtitleInfo(self, video, mli):
         sas = video.selectedAudioStream()
