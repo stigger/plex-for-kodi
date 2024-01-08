@@ -136,7 +136,15 @@ class VideoSettingsDialog(kodigui.BaseDialog, util.CronReceiver):
 
     def getAudioAndSubtitleInfo(self):
         sas = self.video.selectedAudioStream()
-        audio = sas and sas.getTitle(metadata.apiTranslate) or T(32309, 'None')
+        if sas:
+            if len(self.video.audioStreams) > 1:
+                audio = sas and u'{0} \u2022 {1} {2}'.format(sas.getTitle(metadata.apiTranslate),
+                                                             len(self.video.audioStreams) - 1, T(32307, 'More')) \
+                        or T(32309, 'None')
+            else:
+                audio = sas and sas.getTitle(metadata.apiTranslate) or T(32309, 'None')
+        else:
+            audio = T(32309, 'None')
 
         sss = self.video.selectedSubtitleStream(
             forced_subtitles_override=util.getSetting("forced_subtitles_override", False))
