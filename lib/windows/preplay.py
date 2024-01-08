@@ -352,10 +352,6 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         else:
             role = sectionRoles[0]
 
-        if util.advancedSettings.dialogFlickerFix:
-            with busy.BusyContext():
-                xbmc.sleep(100)
-            xbmc.sleep(650)
         self.processCommand(opener.open(role))
 
     def getVideos(self):

@@ -171,7 +171,6 @@ class AdvancedSettings(object):
         ("use_bg_fallback", False),
         ("dbg_crossfade", True),
         ("subtitle_use_extended_title", True),
-        ("dialog_flicker_fix", True),
         ("poster_resolution_scale_perc", 100),
     )
 
