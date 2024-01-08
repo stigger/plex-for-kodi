@@ -464,17 +464,17 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             self.episodeListClicked()
         elif controlID == self.PLAYER_STATUS_BUTTON_ID:
             self.showAudioPlayer()
-        elif controlID == self.PLAY_BUTTON_ID:
+        elif controlID in (self.PLAY_BUTTON_ID, self.PLAY_BUTTON_ID+1000):
             self.playButtonClicked()
-        elif controlID == self.SHUFFLE_BUTTON_ID:
+        elif controlID in (self.SHUFFLE_BUTTON_ID, self.SHUFFLE_BUTTON_ID+1000):
             self.shuffleButtonClicked()
-        elif controlID == self.OPTIONS_BUTTON_ID:
+        elif controlID in (self.OPTIONS_BUTTON_ID, self.OPTIONS_BUTTON_ID+1000):
             self.optionsButtonClicked()
-        elif controlID == self.SETTINGS_BUTTON_ID:
+        elif controlID in (self.SETTINGS_BUTTON_ID, self.SETTINGS_BUTTON_ID+1000):
             self.settingsButtonClicked()
-        elif controlID == self.MEDIA_BUTTON_ID:
+        elif controlID in (self.MEDIA_BUTTON_ID, self.MEDIA_BUTTON_ID+1000):
             self.mediaButtonClicked()
-        elif controlID == self.INFO_BUTTON_ID:
+        elif controlID in (self.INFO_BUTTON_ID, self.INFO_BUTTON_ID+1000):
             self.infoButtonClicked()
         elif controlID == self.SEARCH_BUTTON_ID:
             self.searchButtonClicked()
@@ -497,13 +497,20 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def onFocus(self, controlID):
         self.lastFocusID = controlID
 
+        # we allow hidden focus on the play button when we're in multiple video files mode. in that case focus the
+        # correct play button after the hidden one has been focused
+        if controlID == self.PLAY_BUTTON_ID and xbmc.getCondVisibility(
+                '!String.IsEmpty(Container(400).ListItem.Property(media.multiple))'):
+            self.setFocusId(self.PLAY_BUTTON_ID + 1000)
+            return
+
         if 399 < controlID < 500:
             self.setProperty('hub.focus', str(controlID - 400))
             if controlID == self.RELATED_LIST_ID:
                 self.updateBackgroundFrom(self.relatedListControl.getSelectedItem().dataSource)
-        if xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + ControlGroup(300).HasFocus(0)'):
+        if xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + [ControlGroup(300).HasFocus(0) | ControlGroup(1300).HasFocus(0)]'):
             self.setProperty('on.extras', '')
-        elif xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + !ControlGroup(300).HasFocus(0)'):
+        elif xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + !ControlGroup(300).HasFocus(0) + !ControlGroup(1300).HasFocus(0)'):
             self.setProperty('on.extras', '1')
 
         if player.PLAYER.bgmPlaying and player.PLAYER.handler.currentlyPlaying != self.season.show().ratingKey:
