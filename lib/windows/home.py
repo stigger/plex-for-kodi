@@ -513,8 +513,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 for index in indices:
                     if self.hubControls[index]:
                         ds = self.hubControls[index][0].dataSource
-                        util.setSetting("last_bg_url",
-                                        util.backgroundFromArt(ds.art, width=self.width, height=self.height))
+                        bg = util.backgroundFromArt(ds.art, width=self.width, height=self.height)
+                        if bg:
+                            util.setSetting("last_bg_url", bg)
                         return
             except:
                 util.LOG("Couldn't store last background")
