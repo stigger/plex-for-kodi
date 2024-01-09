@@ -968,12 +968,12 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             if self.tasks and any(list(filter(lambda x: not x.finished, self.tasks))):
                 util.DEBUG_LOG("Waiting for tasks to finish")
                 with busy.BusyContext(delay=True, delay_time=0.2):
-                    while self.tasks:
+                    while self.tasks and not util.MONITOR.abortRequested():
                         task = self.tasks.pop()
                         if task.isValid():
                             task.cancel()
                             ct = 0
-                            while not task.finished and ct < 40:
+                            while not task.finished and not util.MONITOR.abortRequested() and ct < 40:
                                 xbmc.sleep(100)
                                 ct += 1
                         del task
