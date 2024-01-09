@@ -1948,3 +1948,11 @@ msgstr "Beim Öffnen der Untertitel-Herunterladen-Funktion die Prüfsumme der Da
 msgctxt "#32960"
 msgid "Similar Artists"
 msgstr "Ähnliche Künstler"
+
+msgctxt "#32961"
+msgid "Show hub bifurcation lines"
+msgstr "Hub-Trennlinie anzeigen"
+
+msgctxt "#32962"
+msgid "Visually separate hubs horizontally using a thin line."
+msgstr "Trennt Hubs visuell horizontal mit Hilfe einer dünnen Linie."

@@ -352,6 +352,7 @@
                 <width>1920</width>
                 <height>440</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -693,6 +694,7 @@
                 <width>1920</width>
                 <height>515</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -1026,6 +1028,7 @@
                 <width>1920</width>
                 <height>515</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -1359,6 +1362,7 @@
                 <width>1920</width>
                 <height>515</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -1692,6 +1696,7 @@
                 <width>1920</width>
                 <height>515</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -2025,6 +2030,7 @@
                 <width>1920</width>
                 <height>392</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -2281,6 +2287,7 @@
                 <width>1920</width>
                 <height>440</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -2622,6 +2629,7 @@
                 <width>1920</width>
                 <height>515</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -2955,6 +2963,7 @@
                 <width>1920</width>
                 <height>515</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -3288,6 +3297,7 @@
                 <width>1920</width>
                 <height>392</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -3545,6 +3555,7 @@
                 <width>1920</width>
                 <height>392</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -3802,6 +3813,7 @@
                 <width>1920</width>
                 <height>392</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -4059,6 +4071,7 @@
                 <width>1920</width>
                 <height>392</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -4316,6 +4329,7 @@
                 <width>1920</width>
                 <height>392</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -4573,6 +4587,7 @@
                 <width>1920</width>
                 <height>392</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -4830,6 +4845,7 @@
                 <width>1920</width>
                 <height>392</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -5087,6 +5103,7 @@
                 <width>1920</width>
                 <height>515</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -5420,6 +5437,7 @@
                 <width>1920</width>
                 <height>515</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -5753,6 +5771,7 @@
                 <width>1920</width>
                 <height>515</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -6086,6 +6105,7 @@
                 <width>1920</width>
                 <height>515</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -6418,6 +6438,7 @@
                 <width>1920</width>
                 <height>440</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -6758,6 +6779,7 @@
                 <width>1920</width>
                 <height>440</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -7098,6 +7120,7 @@
                 <width>1920</width>
                 <height>440</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>
@@ -7438,6 +7461,7 @@
                 <width>1920</width>
                 <height>440</height>
                 <control type="image">
+					<visible>!String.IsEmpty(Window.Property(bifurcation_lines))</visible>
                     <posx>60</posx>
                     <posy>12</posy>
                     <width>1800</width>

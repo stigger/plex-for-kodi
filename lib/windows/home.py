@@ -416,6 +416,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         self.hookSignals()
         util.CRON.registerReceiver(self)
+        self.updateProperties()
 
     def onReInit(self):
         if self.lastFocusID:
@@ -434,6 +435,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
             else:
                 self.setFocusId(self.lastFocusID)
+
+    def updateProperties(self, *args, **kwargs):
+        self.setBoolProperty('bifurcation_lines', util.getSetting('hubs_bifurcation_lines', False))
 
     def focusFirstValidHub(self, startIndex=None):
         indices = self.hubFocusIndexes
@@ -469,6 +473,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.util.APP.on('change:selectedServer', self.onSelectedServerChange)
         plexapp.util.APP.on('account:response', self.displayServerAndUser)
         plexapp.util.APP.on('sli:reachability:received', self.displayServerAndUser)
+        plexapp.util.APP.on('change:hubs_bifurcation_lines', self.updateProperties)
 
         player.PLAYER.on('session.ended', self.updateOnDeckHubs)
         util.MONITOR.on('changed.watchstatus', self.updateOnDeckHubs)
@@ -481,6 +486,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         plexapp.util.APP.off('change:selectedServer', self.onSelectedServerChange)
         plexapp.util.APP.off('account:response', self.displayServerAndUser)
+        plexapp.util.APP.off('sli:reachability:received', self.displayServerAndUser)
+        plexapp.util.APP.off('change:hubs_bifurcation_lines', self.updateProperties)
 
         player.PLAYER.off('session.ended', self.updateOnDeckHubs)
         util.MONITOR.off('changed.watchstatus', self.updateOnDeckHubs)

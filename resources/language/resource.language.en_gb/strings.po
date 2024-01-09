@@ -1650,3 +1650,10 @@ msgctxt "#32960"
 msgid "Similar Artists"
 msgstr ""
 
+msgctxt "#32961"
+msgid "Show hub bifurcation lines"
+msgstr ""
+
+msgctxt "#32962"
+msgid "Visually separate hubs horizontally using a thin line."
+msgstr ""
