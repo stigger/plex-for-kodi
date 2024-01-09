@@ -29,14 +29,14 @@ class BusyClosableMsgWindow(BusyClosableWindow):
         self.setProperty("message", msg)
 
 
-def dialog(msg='LOADING', condition=None, delay=True):
+def dialog(msg='LOADING', condition=None, delay=True, delay_time=0.5):
     def methodWrap(func):
         def inner(*args, **kwargs):
             timer = None
             w = BusyWindow.create(show=not delay)
 
             if delay:
-                timer = threading.Timer(0.5, w.show)
+                timer = threading.Timer(delay_time, w.show)
                 timer.start()
 
             try:
@@ -61,7 +61,10 @@ def dialog(msg='LOADING', condition=None, delay=True):
 
 
 def widthDialog(method, msg, *args, **kwargs):
-    return dialog(msg or 'LOADING')(method)(*args, **kwargs)
+    condition = kwargs.pop("condition", None)
+    delay = kwargs.pop("delay", False)
+    delay_time = kwargs.pop("delay_time", 0.5)
+    return dialog(msg or 'LOADING', condition=condition, delay=delay, delay_time=delay_time)(method)(*args, **kwargs)
 
 
 class BusyContext(object):
