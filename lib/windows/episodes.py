@@ -472,7 +472,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             self.optionsButtonClicked()
         elif controlID in (self.SETTINGS_BUTTON_ID, self.SETTINGS_BUTTON_ID+1000):
             self.settingsButtonClicked()
-        elif controlID in (self.MEDIA_BUTTON_ID, self.MEDIA_BUTTON_ID+1000):
+        elif controlID == self.MEDIA_BUTTON_ID+1000:
             self.mediaButtonClicked()
         elif controlID in (self.INFO_BUTTON_ID, self.INFO_BUTTON_ID+1000):
             self.infoButtonClicked()
