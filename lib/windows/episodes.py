@@ -568,7 +568,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         if xbmc.getCondVisibility('Integer.IsGreater(Window.Property(hub.focus),1) + Control.IsVisible(502)'):
             y -= 500
 
-        focus = int(xbmc.getInfoLabel('Container(403).Position'))
+        focus = int(xbmc.getInfoLabel('Container(404).Position'))
 
         x = ((focus + 1) * 304) - 100
         return x, y
