@@ -511,19 +511,28 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             pass
 
         self.unhookSignals()
+        self.storeLastBG()
 
+    def storeLastBG(self):
         if util.advancedSettings.dynamicBackgrounds:
             # store BG url of first hub, first item, as this is most likely to be the one we're focusing on the
             # next start
             try:
-                indices = self.hubFocusIndexes
-                for index in indices:
-                    if self.hubControls[index]:
-                        ds = self.hubControls[index][0].dataSource
-                        bg = util.backgroundFromArt(ds.art, width=self.width, height=self.height)
-                        if bg:
-                            util.setSetting("last_bg_url", bg)
-                        return
+                # only store background for home section hubs
+                if self.lastSection and self.lastSection.key is None:
+                    indices = self.hubFocusIndexes
+                    for index in indices:
+                        if self.hubControls[index]:
+                            ds = self.hubControls[index][0].dataSource
+                            if not ds.art:
+                                continue
+
+                            bg = util.backgroundFromArt(ds.art, width=self.width, height=self.height)
+                            if bg:
+                                util.DEBUG_LOG('Storing BG for {0}, "{1}"'.format(self.hubControls[index].dataSource,
+                                                                                  ds.defaultTitle))
+                                util.setSetting("last_bg_url", bg)
+                                return
             except:
                 util.LOG("Couldn't store last background")
 
@@ -1014,6 +1023,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
                 if focus is not None:
                     self.setFocusId(focus)
+            self.storeLastBG()
         finally:
             self.showBusy(False)
 
