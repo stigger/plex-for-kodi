@@ -1657,3 +1657,7 @@ msgstr ""
 msgctxt "#32962"
 msgid "Visually separate hubs horizontally using a thin line."
 msgstr ""
+
+msgctxt "#32963"
+msgid "Seasons"
+msgstr ""

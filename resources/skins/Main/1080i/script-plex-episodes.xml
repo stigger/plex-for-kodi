@@ -536,18 +536,11 @@
                 <onup>300</onup>
                 <itemgap>0</itemgap>
 
+                <!-- EPISODES -->
                 <control type="group" id="500">
                     <visible>Integer.IsGreater(Container(400).NumItems,0) + String.IsEmpty(Window.Property(drawing))</visible>
                     <height>360</height>
                     <width>1920</width>
-                    <control type="image">
-                        <posx>0</posx>
-                        <posy>0</posy>
-                        <width>1920</width>
-                        <height>360</height>
-                        <texture>script.plex/white-square.png</texture>
-                        <colordiffuse>40000000</colordiffuse>
-                    </control>
                     <control type="label">
                         <posx>60</posx>
                         <posy>0</posy>
@@ -563,7 +556,7 @@
                         <posx>0</posx>
                         <posy>18</posy>
                         <width>1920</width>
-                        <height>430</height>
+                        <height>360</height>
                         <onup>300</onup>
                         <ondown>401</ondown>
                         <onleft>false</onleft>
@@ -848,15 +841,16 @@
                         </focusedlayout>
                     </control>
                 </control>
+                <!-- EPISODES -->
 
                 <!-- Seasons -->
                 <control type="group" id="501">
                     <visible>Integer.IsGreater(Container(401).NumItems,0) + String.IsEmpty(Window.Property(drawing))</visible>
-                    <height>400</height>
+                    <height>380</height>
                     <width>1920</width>
                     <control type="label">
                         <posx>60</posx>
-                        <posy>20</posy>
+                        <posy>0</posy>
                         <width>800</width>
                         <height>40</height>
                         <font>font12</font>
@@ -867,9 +861,9 @@
                     </control>
                     <control type="list" id="401">
                         <posx>0</posx>
-                        <posy>50</posy>
+                        <posy>36</posy>
                         <width>1920</width>
-                        <height>360</height>
+                        <height>380</height>
                         <onup>400</onup>
                         <ondown>402</ondown>
                         <scrolltime>200</scrolltime>
@@ -1034,20 +1028,171 @@
                         </focusedlayout>
                     </control>
                 </control>
+                <!-- Seasons -->
 
+                <!-- ROLES -->
                 <control type="group" id="502">
                     <visible>Integer.IsGreater(Container(402).NumItems,0) + String.IsEmpty(Window.Property(drawing))</visible>
+                    <defaultcontrol>402</defaultcontrol>
+                    <width>1920</width>
+                    <height>400</height>
+                    <control type="label">
+                        <posx>60</posx>
+                        <posy>-20</posy>
+                        <width>1000</width>
+                        <height>80</height>
+                        <font>font12</font>
+                        <align>left</align>
+                        <aligny>center</aligny>
+                        <textcolor>FFFFFFFF</textcolor>
+                        <label>[UPPERCASE]$ADDON[script.plexmod 32419][/UPPERCASE]</label>
+                    </control>
+                    <control type="list" id="402">
+                        <posx>0</posx>
+                        <posy>0</posy>
+                        <width>1920</width>
+                        <height>400</height>
+                        <onup>401</onup>
+                        <ondown>403</ondown>
+                        <scrolltime>200</scrolltime>
+                        <orientation>horizontal</orientation>
+                        <preloaditems>4</preloaditems>
+                        <!-- ITEM LAYOUT ########################################## -->
+                        <itemlayout width="304">
+                            <control type="group">
+                                <posx>55</posx>
+                                <posy>61</posy>
+                                <control type="group">
+                                    <posx>5</posx>
+                                    <posy>5</posy>
+                                    <control type="image">
+                                        <posx>0</posx>
+                                        <posy>0</posy>
+                                        <width>244</width>
+                                        <height>244</height>
+                                        <texture diffuse="script.plex/masks/role.png">script.plex/thumb_fallbacks/role.png</texture>
+                                    </control>
+                                    <control type="image">
+                                        <posx>0</posx>
+                                        <posy>0</posy>
+                                        <width>244</width>
+                                        <height>244</height>
+                                        <texture background="true" diffuse="script.plex/masks/role.png">$INFO[ListItem.Thumb]</texture>
+                                        <aspectratio scalediffuse="false" aligny="top">scale</aspectratio>
+                                    </control>
+                                    <control type="group">
+                                        <posx>0</posx>
+                                        <posy>253</posy>
+                                        <control type="label">
+                                            <scroll>false</scroll>
+                                            <posx>0</posx>
+                                            <posy>0</posy>
+                                            <width>244</width>
+                                            <height>60</height>
+                                            <font>font10</font>
+                                            <align>center</align>
+                                            <textcolor>AAFFFFFF</textcolor>
+                                            <label>$INFO[ListItem.Label]</label>
+                                        </control>
+                                        <control type="label">
+                                            <scroll>false</scroll>
+                                            <posx>0</posx>
+                                            <posy>30</posy>
+                                            <width>244</width>
+                                            <height>60</height>
+                                            <font>font10</font>
+                                            <align>center</align>
+                                            <textcolor>AAFFFFFF</textcolor>
+                                            <label>$INFO[ListItem.Label2]</label>
+                                        </control>
+                                    </control>
+                                </control>
+                            </control>
+                        </itemlayout>
+
+                        <!-- FOCUSED LAYOUT ####################################### -->
+                        <focusedlayout width="304">
+                            <control type="group">
+                                <posx>55</posx>
+                                <posy>61</posy>
+                                <control type="group">
+                                    <animation effect="zoom" start="100" end="110" time="100" center="127,127" reversible="false">Focus</animation>
+                                    <animation effect="zoom" start="110" end="100" time="100" center="127,127" reversible="false">UnFocus</animation>
+                                    <posx>0</posx>
+                                    <posy>0</posy>
+                                    <control type="image">
+                                        <visible>Control.HasFocus(402)</visible>
+                                        <posx>-40</posx>
+                                        <posy>-40</posy>
+                                        <width>334</width>
+                                        <height>334</height>
+                                        <texture border="42">script.plex/buttons/role-shadow.png</texture>
+                                    </control>
+                                    <control type="group">
+                                        <posx>5</posx>
+                                        <posy>5</posy>
+                                        <control type="image">
+                                            <posx>0</posx>
+                                            <posy>0</posy>
+                                            <width>244</width>
+                                            <height>244</height>
+                                            <texture diffuse="script.plex/masks/role.png">script.plex/thumb_fallbacks/role.png</texture>
+                                        </control>
+                                        <control type="image">
+                                            <posx>0</posx>
+                                            <posy>0</posy>
+                                            <width>244</width>
+                                            <height>244</height>
+                                            <texture background="true" diffuse="script.plex/masks/role.png">$INFO[ListItem.Thumb]</texture>
+                                            <aspectratio scalediffuse="false" aligny="top">scale</aspectratio>
+                                        </control>
+                                        <control type="group">
+                                            <posx>0</posx>
+                                            <posy>253</posy>
+                                            <control type="label">
+                                                <scroll>Control.HasFocus(402)</scroll>
+                                                <posx>0</posx>
+                                                <posy>0</posy>
+                                                <width>244</width>
+                                                <height>60</height>
+                                                <font>font10</font>
+                                                <align>center</align>
+                                                <textcolor>AAFFFFFF</textcolor>
+                                                <label>$INFO[ListItem.Label]</label>
+                                            </control>
+                                            <control type="label">
+                                                <scroll>Control.HasFocus(402)</scroll>
+                                                <posx>0</posx>
+                                                <posy>30</posy>
+                                                <width>244</width>
+                                                <height>60</height>
+                                                <font>font10</font>
+                                                <align>center</align>
+                                                <textcolor>AAFFFFFF</textcolor>
+                                                <label>$INFO[ListItem.Label2]</label>
+                                            </control>
+                                        </control>
+                                    </control>
+                                    <control type="image">
+                                        <visible>Control.HasFocus(402)</visible>
+                                        <posx>0</posx>
+                                        <posy>0</posy>
+                                        <width>254</width>
+                                        <height>254</height>
+                                        <texture>script.plex/buttons/role-selected.png</texture>
+                                    </control>
+                                </control>
+                            </control>
+                        </focusedlayout>
+                    </control>
+                </control>
+                <!-- ROLES -->
+
+                <!-- EXTRAS -->
+                <control type="group" id="503">
+                    <visible>Integer.IsGreater(Container(403).NumItems,0) + String.IsEmpty(Window.Property(drawing))</visible>
                     <height>360</height>
                     <width>1920</width>
-                    <control type="image">
-                        <visible>!String.IsEmpty(Window.Property(divider.402))</visible>
-                        <posx>60</posx>
-                        <posy>0</posy>
-                        <width>1800</width>
-                        <height>2</height>
-                        <texture>script.plex/white-square.png</texture>
-                        <colordiffuse>A0000000</colordiffuse>
-                    </control>
                     <control type="label">
                         <posx>60</posx>
                         <posy>0</posy>
@@ -1059,13 +1204,13 @@
                         <textcolor>AAFFFFFF</textcolor>
                         <label>[UPPERCASE]$INFO[Window.Property(extras.header)][/UPPERCASE]</label>
                     </control>
-                    <control type="list" id="402">
+                    <control type="list" id="403">
                         <posx>0</posx>
                         <posy>18</posy>
                         <width>1920</width>
                         <height>430</height>
-                        <onup>401</onup>
-                        <ondown>403</ondown>
+                        <onup>402</onup>
+                        <ondown>404</ondown>
                         <scrolltime>200</scrolltime>
                         <orientation>horizontal</orientation>
                         <preloaditems>4</preloaditems>
@@ -1130,7 +1275,7 @@
                                     <posx>0</posx>
                                     <posy>0</posy>
                                     <control type="image">
-                                        <visible>Control.HasFocus(402)</visible>
+                                        <visible>Control.HasFocus(403)</visible>
                                         <posx>-40</posx>
                                         <posy>-40</posy>
                                         <width>389</width>
@@ -1158,7 +1303,7 @@
                                         </control>
                                         <control type="group">
                                             <control type="label">
-                                                <scroll>Control.HasFocus(402)</scroll>
+                                                <scroll>Control.HasFocus(403)</scroll>
                                                 <posx>0</posx>
                                                 <posy>175</posy>
                                                 <width>299</width>
@@ -1169,7 +1314,7 @@
                                                 <label>$INFO[ListItem.Label]</label>
                                             </control>
                                             <control type="label">
-                                                <scroll>Control.HasFocus(402)</scroll>
+                                                <scroll>Control.HasFocus(403)</scroll>
                                                 <posx>0</posx>
                                                 <posy>205</posy>
                                                 <width>299</width>
@@ -1182,7 +1327,7 @@
                                         </control>
                                     </control>
                                     <control type="image">
-                                        <visible>Control.HasFocus(402)</visible>
+                                        <visible>Control.HasFocus(403)</visible>
                                         <posx>0</posx>
                                         <posy>0</posy>
                                         <width>309</width>
@@ -1194,21 +1339,14 @@
                         </focusedlayout>
                     </control>
                 </control>
+                <!-- EXTRAS -->
 
-                <control type="group" id="503">
-                    <visible>Integer.IsGreater(Container(403).NumItems,0) + String.IsEmpty(Window.Property(drawing))</visible>
-                    <defaultcontrol>402</defaultcontrol>
+                <!-- RELATED -->
+                <control type="group" id="504">
+                    <visible>Integer.IsGreater(Container(404).NumItems,0) + String.IsEmpty(Window.Property(drawing))</visible>
+                    <defaultcontrol>404</defaultcontrol>
                     <width>1920</width>
                     <height>520</height>
-                    <control type="image">
-                        <visible>!String.IsEmpty(Window.Property(divider.403))</visible>
-                        <posx>60</posx>
-                        <posy>0</posy>
-                        <width>1800</width>
-                        <height>2</height>
-                        <texture>script.plex/white-square.png</texture>
-                        <colordiffuse>A0000000</colordiffuse>
-                    </control>
                     <control type="label">
                         <posx>60</posx>
                         <posy>0</posy>
@@ -1220,12 +1358,12 @@
                         <textcolor>FFFFFFFF</textcolor>
                         <label>[UPPERCASE]$INFO[Window.Property(related.header)][/UPPERCASE]</label>
                     </control>
-                    <control type="list" id="403">
+                    <control type="list" id="404">
                         <posx>0</posx>
                         <posy>16</posy>
                         <width>1920</width>
                         <height>520</height>
-                        <onup>402</onup>
+                        <onup>403</onup>
                         <ondown>404</ondown>
                         <onleft>false</onleft>
                         <onright>false</onright>
@@ -1408,7 +1546,7 @@
                                         </control>
                                     </control>
                                     <control type="image">
-                                        <visible>Control.HasFocus(403)</visible>
+                                        <visible>Control.HasFocus(404)</visible>
                                         <posx>-40</posx>
                                         <posy>-40</posy>
                                         <width>324</width>
@@ -1493,7 +1631,7 @@
                                             </control>
                                         </control>
                                         <control type="label">
-                                            <scroll>Control.HasFocus(403)</scroll>
+                                            <scroll>Control.HasFocus(404)</scroll>
                                             <posx>0</posx>
                                             <posy>369</posy>
                                             <width>244</width>
@@ -1505,7 +1643,7 @@
                                         </control>
                                     </control>
                                     <control type="image">
-                                        <visible>Control.HasFocus(403)</visible>
+                                        <visible>Control.HasFocus(404)</visible>
                                         <posx>0</posx>
                                         <posy>0</posy>
                                         <width>254</width>
@@ -1517,171 +1655,8 @@
                         </focusedlayout>
                     </control>
                 </control>
+                <!-- RELATED -->
 
-                <control type="group" id="504">
-                    <visible>Integer.IsGreater(Container(404).NumItems,0) + String.IsEmpty(Window.Property(drawing))</visible>
-                    <defaultcontrol>403</defaultcontrol>
-                    <width>1920</width>
-                    <height>410</height>
-                    <control type="image">
-                        <visible>!String.IsEmpty(Window.Property(divider.404))</visible>
-                        <posx>60</posx>
-                        <posy>20</posy>
-                        <width>1800</width>
-                        <height>2</height>
-                        <texture>script.plex/white-square.png</texture>
-                        <colordiffuse>A0000000</colordiffuse>
-                    </control>
-                    <control type="label">
-                        <posx>60</posx>
-                        <posy>20</posy>
-                        <width>1000</width>
-                        <height>80</height>
-                        <font>font12</font>
-                        <align>left</align>
-                        <aligny>center</aligny>
-                        <textcolor>FFFFFFFF</textcolor>
-                        <label>[UPPERCASE]$ADDON[script.plexmod 32419][/UPPERCASE]</label>
-                    </control>
-                    <control type="list" id="404">
-                        <posx>0</posx>
-                        <posy>36</posy>
-                        <width>1920</width>
-                        <height>410</height>
-                        <onup>403</onup>
-                        <ondown>404</ondown>
-                        <scrolltime>200</scrolltime>
-                        <orientation>horizontal</orientation>
-                        <preloaditems>4</preloaditems>
-                        <!-- ITEM LAYOUT ########################################## -->
-                        <itemlayout width="304">
-                            <control type="group">
-                               <posx>55</posx>
-                                <posy>61</posy>
-                                <control type="group">
-                                    <posx>5</posx>
-                                    <posy>5</posy>
-                                    <control type="image">
-                                        <posx>0</posx>
-                                        <posy>0</posy>
-                                        <width>244</width>
-                                        <height>244</height>
-                                        <texture diffuse="script.plex/masks/role.png">script.plex/thumb_fallbacks/role.png</texture>
-                                    </control>
-                                    <control type="image">
-                                        <posx>0</posx>
-                                        <posy>0</posy>
-                                        <width>244</width>
-                                        <height>244</height>
-                                        <texture background="true" diffuse="script.plex/masks/role.png">$INFO[ListItem.Thumb]</texture>
-                                        <aspectratio scalediffuse="false" aligny="top">scale</aspectratio>
-                                    </control>
-                                    <control type="group">
-                                        <posx>0</posx>
-                                        <posy>253</posy>
-                                        <control type="label">
-                                            <scroll>false</scroll>
-                                            <posx>0</posx>
-                                            <posy>0</posy>
-                                            <width>244</width>
-                                            <height>60</height>
-                                            <font>font10</font>
-                                            <align>center</align>
-                                            <textcolor>AAFFFFFF</textcolor>
-                                            <label>$INFO[ListItem.Label]</label>
-                                        </control>
-                                        <control type="label">
-                                            <scroll>false</scroll>
-                                            <posx>0</posx>
-                                            <posy>30</posy>
-                                            <width>244</width>
-                                            <height>60</height>
-                                            <font>font10</font>
-                                            <align>center</align>
-                                            <textcolor>AAFFFFFF</textcolor>
-                                            <label>$INFO[ListItem.Label2]</label>
-                                        </control>
-                                    </control>
-                                </control>
-                            </control>
-                        </itemlayout>
-
-                        <!-- FOCUSED LAYOUT ####################################### -->
-                        <focusedlayout width="304">
-                            <control type="group">
-                                <posx>55</posx>
-                                <posy>61</posy>
-                                <control type="group">
-                                    <animation effect="zoom" start="100" end="110" time="100" center="127,127" reversible="false">Focus</animation>
-                                    <animation effect="zoom" start="110" end="100" time="100" center="127,127" reversible="false">UnFocus</animation>
-                                    <posx>0</posx>
-                                    <posy>0</posy>
-                                    <control type="image">
-                                        <visible>Control.HasFocus(404)</visible>
-                                        <posx>-40</posx>
-                                        <posy>-40</posy>
-                                        <width>334</width>
-                                        <height>334</height>
-                                        <texture border="42">script.plex/buttons/role-shadow.png</texture>
-                                    </control>
-                                    <control type="group">
-                                        <posx>5</posx>
-                                        <posy>5</posy>
-                                        <control type="image">
-                                            <posx>0</posx>
-                                            <posy>0</posy>
-                                            <width>244</width>
-                                            <height>244</height>
-                                            <texture diffuse="script.plex/masks/role.png">script.plex/thumb_fallbacks/role.png</texture>
-                                        </control>
-                                        <control type="image">
-                                            <posx>0</posx>
-                                            <posy>0</posy>
-                                            <width>244</width>
-                                            <height>244</height>
-                                            <texture background="true" diffuse="script.plex/masks/role.png">$INFO[ListItem.Thumb]</texture>
-                                            <aspectratio scalediffuse="false" aligny="top">scale</aspectratio>
-                                        </control>
-                                        <control type="group">
-                                            <posx>0</posx>
-                                            <posy>253</posy>
-                                            <control type="label">
-                                                <scroll>Control.HasFocus(404)</scroll>
-                                                <posx>0</posx>
-                                                <posy>0</posy>
-                                                <width>244</width>
-                                                <height>60</height>
-                                                <font>font10</font>
-                                                <align>center</align>
-                                                <textcolor>AAFFFFFF</textcolor>
-                                                <label>$INFO[ListItem.Label]</label>
-                                            </control>
-                                            <control type="label">
-                                                <scroll>Control.HasFocus(404)</scroll>
-                                                <posx>0</posx>
-                                                <posy>30</posy>
-                                                <width>244</width>
-                                                <height>60</height>
-                                                <font>font10</font>
-                                                <align>center</align>
-                                                <textcolor>AAFFFFFF</textcolor>
-                                                <label>$INFO[ListItem.Label2]</label>
-                                            </control>
-                                        </control>
-                                    </control>
-                                    <control type="image">
-                                        <visible>Control.HasFocus(404)</visible>
-                                        <posx>0</posx>
-                                        <posy>0</posy>
-                                        <width>254</width>
-                                        <height>254</height>
-                                        <texture>script.plex/buttons/role-selected.png</texture>
-                                    </control>
-                                </control>
-                            </control>
-                        </focusedlayout>
-                    </control>
-                </control>
             </control>
         </control>
 
