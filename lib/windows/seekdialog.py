@@ -819,6 +819,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.handler.player.stop()
 
     def doClose(self, delete=False):
+        util.DEBUG_LOG("SeekDialog: Closing")
         if self.handler.playlist:
             self.handler.playlist.off('change', self.updateProperties)
 

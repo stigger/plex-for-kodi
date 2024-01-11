@@ -315,7 +315,7 @@ class SeekPlayerHandler(BasePlayerHandler):
     def hideOSD(self, delete=False):
         util.CRON.forceTick()
         if self.dialog:
-            self.dialog.hideOSD(closing=delete)
+            self.dialog.hideOSD(closing=delete, skipMarkerFocus=True)
             if delete:
                 d = self.dialog
                 self.dialog = None
@@ -440,6 +440,8 @@ class SeekPlayerHandler(BasePlayerHandler):
             self.dialog.onPlayBackStopped()
 
         if self.queuingNext and self.inBingeMode:
+            if self.isDirectPlay and self.playlist and self.playlist.hasNext():
+                self.hideOSD(delete=True)
             if self.next(on_end=False):
                 return
 
@@ -628,7 +630,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.seeking != self.SEEK_IN_PROGRESS:
             self.updateNowPlaying(force=True)
 
-        if self.dialog:
+        if self.dialog and getattr(self.dialog, "_ignoreTick", None) is not True:
             self.dialog.tick()
 
     def close(self):
