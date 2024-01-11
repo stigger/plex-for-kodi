@@ -189,9 +189,9 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
     EPISODE_LIST_ID = 400
     SEASONS_LIST_ID = 401
-    EXTRA_LIST_ID = 402
-    RELATED_LIST_ID = 403
-    ROLES_LIST_ID = 404
+    ROLES_LIST_ID = 402
+    EXTRA_LIST_ID = 403
+    RELATED_LIST_ID = 404
 
     OPTIONS_GROUP_ID = 200
 
@@ -259,10 +259,10 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.episodeListControl = kodigui.ManagedControlList(self, self.EPISODE_LIST_ID, 5)
         self.progressImageControl = self.getControl(self.PROGRESS_IMAGE_ID)
 
+        self.seasonsListControl = kodigui.ManagedControlList(self, self.SEASONS_LIST_ID, 5)
+        self.rolesListControl = kodigui.ManagedControlList(self, self.ROLES_LIST_ID, 5)
         self.extraListControl = kodigui.ManagedControlList(self, self.EXTRA_LIST_ID, 5)
         self.relatedListControl = kodigui.ManagedControlList(self, self.RELATED_LIST_ID, 5)
-        self.rolesListControl = kodigui.ManagedControlList(self, self.ROLES_LIST_ID, 5)
-        self.seasonsListControl = kodigui.ManagedControlList(self, self.SEASONS_LIST_ID, 5)
 
         self._setup()
         self.postSetup()
@@ -487,12 +487,12 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 self.openItem(self.seasonsListControl, came_from=self.season.parentRatingKey)
             else:
                 self.setFocusId(self.EPISODE_LIST_ID)
+        elif controlID == self.ROLES_LIST_ID:
+            self.roleClicked()
         elif controlID == self.EXTRA_LIST_ID:
             self.openItem(self.extraListControl)
         elif controlID == self.RELATED_LIST_ID:
             self.openItem(self.relatedListControl)
-        elif controlID == self.ROLES_LIST_ID:
-            self.roleClicked()
 
     def onFocus(self, controlID):
         self.lastFocusID = controlID
@@ -554,21 +554,17 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def getRoleItemDDPosition(self):
         y = 980
         if xbmc.getCondVisibility('Control.IsVisible(500)'):
-            y += 360
+            y += 380
         if xbmc.getCondVisibility('Control.IsVisible(501)'):
-            y += 520
-        if xbmc.getCondVisibility('Control.IsVisible(502)'):
-            y += 520
+            y += 420
         if xbmc.getCondVisibility('!String.IsEmpty(Window.Property(on.extras))'):
-            y -= 125
+            y -= 80
         if xbmc.getCondVisibility('Integer.IsGreater(Window.Property(hub.focus),0) + Control.IsVisible(500)'):
             y -= 500
         if xbmc.getCondVisibility('Integer.IsGreater(Window.Property(hub.focus),1) + Control.IsVisible(501)'):
             y -= 500
-        if xbmc.getCondVisibility('Integer.IsGreater(Window.Property(hub.focus),1) + Control.IsVisible(502)'):
-            y -= 500
 
-        focus = int(xbmc.getInfoLabel('Container(404).Position'))
+        focus = int(xbmc.getInfoLabel('Container(402).Position'))
 
         x = ((focus + 1) * 304) - 100
         return x, y

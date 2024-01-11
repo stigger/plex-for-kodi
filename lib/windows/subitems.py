@@ -49,9 +49,9 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
 
     SUB_ITEM_LIST_ID = 400
 
-    EXTRA_LIST_ID = 401
-    RELATED_LIST_ID = 402
-    ROLES_LIST_ID = 403
+    ROLES_LIST_ID = 401
+    EXTRA_LIST_ID = 402
+    RELATED_LIST_ID = 403
 
     OPTIONS_GROUP_ID = 200
 
@@ -84,9 +84,10 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
 
     def onFirstInit(self):
         self.subItemListControl = kodigui.ManagedControlList(self, self.SUB_ITEM_LIST_ID, 5)
+        self.rolesListControl = kodigui.ManagedControlList(self, self.ROLES_LIST_ID, 5)
         self.extraListControl = kodigui.ManagedControlList(self, self.EXTRA_LIST_ID, 5)
         self.relatedListControl = kodigui.ManagedControlList(self, self.RELATED_LIST_ID, 5)
-        self.rolesListControl = kodigui.ManagedControlList(self, self.ROLES_LIST_ID, 5)
+
         self.progressImageControl = self.getControl(self.PROGRESS_IMAGE_ID)
 
         self.setup()
@@ -500,21 +501,13 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
     def getRoleItemDDPosition(self):
         y = 980
         if xbmc.getCondVisibility('Control.IsVisible(500)'):
-            y += 360
-        if xbmc.getCondVisibility('Control.IsVisible(501)'):
-            y += 360
-        if xbmc.getCondVisibility('Control.IsVisible(502)'):
-            y += 520
+            y += 380
         if xbmc.getCondVisibility('!String.IsEmpty(Window.Property(on.extras))'):
-            y -= 300
+            y -= 200
         if xbmc.getCondVisibility('Integer.IsGreater(Window.Property(hub.focus),0) + Control.IsVisible(500)'):
             y -= 500
-        if xbmc.getCondVisibility('Integer.IsGreater(Window.Property(hub.focus),1) + Control.IsVisible(501)'):
-            y -= 360
-        if xbmc.getCondVisibility('Integer.IsGreater(Window.Property(hub.focus),1) + Control.IsVisible(502)'):
-            y -= 500
 
-        focus = int(xbmc.getInfoLabel('Container(403).Position'))
+        focus = int(xbmc.getInfoLabel('Container(401).Position'))
 
         x = ((focus + 1) * 304) - 100
         return x, y
