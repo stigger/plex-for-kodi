@@ -550,26 +550,28 @@ def durationToText(seconds):
     return '0 seconds'
 
 
-def durationToShortText(seconds):
+def durationToShortText(ms, shortHourMins=False):
     """
     Converts seconds to a short user friendly string
     Example: 143 -> 2m 23s
     """
-    days = int(seconds / 86400000)
+    days = int(ms / 86400000)
     if days:
         return '{0} d'.format(days)
-    left = seconds % 86400000
+    left = ms % 86400000
     hours = int(left / 3600000)
     if hours:
-        hours = '{0} h '.format(hours)
+        hours_s = '{0} h '.format(hours)
     else:
-        hours = ''
+        hours_s = ''
     left = left % 3600000
     mins = int(left / 60000)
     if mins:
-        return hours + '{0} m'.format(mins)
-    elif hours:
-        return hours.rstrip()
+        if shortHourMins and hours:
+            return '{0}:{1} h'.format(hours, mins)
+        return hours_s + '{0} m'.format(mins)
+    elif hours_s:
+        return hours_s.rstrip()
     secs = int(left % 60000)
     if secs:
         secs /= 1000

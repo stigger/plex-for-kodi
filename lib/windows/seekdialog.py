@@ -1304,6 +1304,21 @@ class SeekDialog(kodigui.BaseDialog):
         if self.isDirectPlay:
             self.setProperty('time.fmt', self.timeFmtKodi)
             self.setProperty('time.fmt.ends', util.timeFormatKN.replace(":ss", ""))
+            # in directPlay we use the timeLeft display directly from Kodi, which only knows about the current part
+            # add the remaining parts' time
+            timeAdd = ''
+            if self.hasMoreParts:
+                plength = 0
+                part = self.player.playerObject.metadata.nextPart
+
+                while part:
+                    plength += part.partDuration
+                    part = part.nextPart
+
+                if plength:
+                    timeAdd = " (+{})".format(util.durationToShortText(plength, shortHourMins=True))
+
+            self.setProperty('time.add', timeAdd)
 
         self.setBoolProperty('direct.play', self.isDirectPlay)
 
@@ -1445,6 +1460,11 @@ class SeekDialog(kodigui.BaseDialog):
                 val = val[1:]
 
             self.setProperty('time.end', val)
+
+
+    @property
+    def hasMoreParts(self):
+        return self.player and self.player.playerObject and self.player.playerObject.hasMoreParts()
 
     def doSeek(self, offset=None, settings_changed=False):
         self._applyingSeek = True
