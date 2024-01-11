@@ -278,8 +278,6 @@ class SeekPlayerHandler(BasePlayerHandler):
         if not self.playlist or self.stoppedInBingeMode:
             return False
 
-        xbmc.sleep(500)
-
         self.player.playVideoPlaylist(self.playlist, handler=self, resume=self.player.resume)
 
         return True
@@ -386,6 +384,9 @@ class SeekPlayerHandler(BasePlayerHandler):
 
     def onAVStarted(self):
         util.DEBUG_LOG('SeekHandler: onAVStarted')
+
+        if self.isDirectPlay and self.seekOnStart:
+            self.seekAbsolute()
 
         if self.dialog:
             self.dialog.onAVStarted()
@@ -581,9 +582,6 @@ class SeekPlayerHandler(BasePlayerHandler):
             util.DEBUG_LOG('Enabling first subtitle stream, as we\'re in DirectStream')
             self.player.showSubtitles(True)
         self.setAudioTrack()
-
-        if self.isDirectPlay:
-            self.seekAbsolute()
 
     def onPlayBackFailed(self):
         if self.ended:
