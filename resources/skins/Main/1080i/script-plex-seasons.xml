@@ -373,17 +373,6 @@
                     <visible>Integer.IsGreater(Container(400).NumItems,0) + String.IsEmpty(Window.Property(drawing))</visible>
                     <height>380</height>
                     <width>1920</width>
-                    <control type="label">
-                        <posx>60</posx>
-                        <posy>0</posy>
-                        <width>800</width>
-                        <height>40</height>
-                        <font>font12</font>
-                        <align>left</align>
-                        <aligny>center</aligny>
-                        <textcolor>FFFFFFFF</textcolor>
-                        <label>[UPPERCASE]$ADDON[script.plexmod 32963][/UPPERCASE]</label>
-                    </control>
                     <control type="list" id="400">
                         <posx>0</posx>
                         <posy>36</posy>
