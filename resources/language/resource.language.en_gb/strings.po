@@ -1659,5 +1659,9 @@ msgid "Visually separate hubs horizontally using a thin line."
 msgstr ""
 
 msgctxt "#32963"
-msgid "Seasons"
+msgid "Wait between videos (s)"
+msgstr ""
+
+msgctxt "#32964"
+msgid "When playing back consecutive videos (e.g. TV shows), wait this long before starting the next one in the queue. Might fix compatibility issues with certain configurations."
 msgstr ""

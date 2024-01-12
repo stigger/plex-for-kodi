@@ -1073,6 +1073,11 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
         self.ignoreStopEvents = True
         self.stopAndWait()  # Stop before setting up the handler to prevent player events from causing havoc
+        if self.handler and self.handler.queuingNext and util.advancedSettings.consecutiveVideoPbWait:
+            util.DEBUG_LOG(
+                "Waiting for {}s until playing back next item".format(util.advancedSettings.consecutiveVideoPbWait))
+            util.MONITOR.waitForAbort(util.advancedSettings.consecutiveVideoPbWait)
+
         self.ignoreStopEvents = False
 
         self.handler.setup(self.video.duration.asInt(), meta, offset, bifURL, title=self.video.grandparentTitle,

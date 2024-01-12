@@ -172,6 +172,7 @@ class AdvancedSettings(object):
         ("dbg_crossfade", True),
         ("subtitle_use_extended_title", True),
         ("poster_resolution_scale_perc", 100),
+        ("consecutive_video_pb_wait", 0.0),
     )
 
     def __init__(self):

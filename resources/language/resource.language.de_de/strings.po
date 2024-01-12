@@ -1956,3 +1956,11 @@ msgstr "Hub-Trennlinie anzeigen"
 msgctxt "#32962"
 msgid "Visually separate hubs horizontally using a thin line."
 msgstr "Trennt Hubs visuell horizontal mit Hilfe einer dünnen Linie."
+
+msgctxt "#32963"
+msgid "Wait between videos (s)"
+msgstr "Zwischen Videos warten (s)"
+
+msgctxt "#32964"
+msgid "When playing back consecutive videos (e.g. TV shows), wait this long before starting the next one in the queue. Might fix compatibility issues with certain configurations."
+msgstr "Werden aufeinanderfolgende Videos abgespielt (z. B. Serien), so lange warten, bis das nächste Video in der Warteschlange abgespielt wird. Könnte Kompatibilitätsprobleme mit gewissen Konfigurationen beheben."
