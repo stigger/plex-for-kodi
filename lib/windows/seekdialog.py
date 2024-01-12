@@ -1860,6 +1860,12 @@ class SeekDialog(kodigui.BaseDialog):
                self._currentMarker["countdown"] is not None and \
                self._currentMarker["countdown"] > 0
 
+    @countingDownMarker.setter
+    def countingDownMarker(self, val):
+        if not val and self._currentMarker:
+            self._currentMarker["countdown"] = None
+            self.setProperty('marker.countdown', '')
+
     def displayMarkers(self, cancelTimer=False, immediate=False, onlyReturnIntroMD=False, setSkipped=False,
                        offset=None):
         # intro/credits marker display logic
@@ -1894,7 +1900,7 @@ class SeekDialog(kodigui.BaseDialog):
             return False
 
         if cancelTimer and self.countingDownMarker:
-            self._currentMarker["countdown"] = None
+            self.countingDownMarker = False
             markerDef["markerAutoSkipped"] = True
             setattr(self, markerDef["markerAutoSkipShownTimer"], None)
             self.setProperty('show.markerSkip', '')
@@ -1916,10 +1922,9 @@ class SeekDialog(kodigui.BaseDialog):
             self.setProperty('show.markerSkip', '')
             self.setProperty('show.markerSkip_OSDOnly', '')
             self.resetAutoSeekTimer(None)
-            final = getattr(markerDef["marker"], "final", False)
-            markerDef["countdown"] = None
+            self.countingDownMarker = False
 
-            if final:
+            if getattr(markerDef["marker"], "final", False):
                 # final marker is _not_ at the end of video, seek and do nothing
                 if int(markerDef["marker"].endTimeOffset) < self.duration - FINAL_MARKER_NEGOFF:
                     target = int(markerDef["marker"].endTimeOffset)
@@ -1936,7 +1941,8 @@ class SeekDialog(kodigui.BaseDialog):
                 if self.handler.playlist and self.handler.playlist.hasNext() and self.bingeMode:
                     if not self.handler.queuingNext:
                         # skip final marker
-                        util.DEBUG_LOG("MarkerAutoSkip: Skipping final marker, going to next video")
+                        util.DEBUG_LOG("MarkerAutoSkip: {} final marker, going to next video".format(
+                            immediate and "Immediately skipping" or "Skipping"))
                         self.handler.ignoreTimelines = True
                         self.handler.queuingNext = True
                         self._ignoreTick = True
