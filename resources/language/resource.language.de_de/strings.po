@@ -1964,3 +1964,11 @@ msgstr "Zwischen Videos warten (s)"
 msgctxt "#32964"
 msgid "When playing back consecutive videos (e.g. TV shows), wait this long before starting the next one in the queue. Might fix compatibility issues with certain configurations."
 msgstr "Werden aufeinanderfolgende Videos abgespielt (z. B. Serien), so lange warten, bis das nächste Video in der Warteschlange abgespielt wird. Könnte Kompatibilitätsprobleme mit gewissen Konfigurationen beheben."
+
+msgctxt "#32965"
+msgid "Quit Kodi on exit by default"
+msgstr "Kodi beenden anstatt PM4K"
+
+msgctxt "#32966"
+msgid "When showing the addon exit confirmation, use \"Quit Kodi\" as default option. Can be dynamically switched using CONTEXT_MENU (often longpress SELECT)"
+msgstr "Wenn die Addon-Beendigungsbestätigung angezeigt wird, \"Kodi beenden\" als Standardoption verwenden. Kann dynamisch mit CONTEXT_MENU (oft lange gedrücktes SELECT) getauscht werden."
