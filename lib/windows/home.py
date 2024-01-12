@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 import time
 import threading
-import re
 
 from kodi_six import xbmc
 from kodi_six import xbmcgui
@@ -9,7 +8,6 @@ from kodi_six import xbmcgui
 from . import kodigui
 from lib import util
 from lib import backgroundthread
-from lib import colors
 from lib import player
 
 import plexnet
@@ -24,7 +22,6 @@ from . import optionsdialog
 
 from lib.util import T
 from six.moves import range
-
 
 HUBS_REFRESH_INTERVAL = 300  # 5 Minutes
 HUB_PAGE_SIZE = 10
@@ -623,13 +620,16 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
                     ex = self.confirmExit()
                     # 0 = exit; 1 = minimize; 2 = cancel
-                    if ex in (2, None):
+                    if ex.button in (2, None):
                         return
-                    elif ex == 1:
+                    elif ex.button == 1:
                         xbmc.executebuiltin('ActivateWindow(10000)')
                         return
-                    elif ex == 0:
+                    elif ex.button == 0:
                         self._shuttingDown = True
+                        if ex.modifier == "quit":
+                            self.closeOption = "quit"
+
                     # 0 passes the action to the BaseWindow and exits HOME
         except:
             util.ERROR()
@@ -677,15 +677,33 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             player.PLAYER.stopAndWait()
 
     def confirmExit(self):
+        lBtnExit = T(32336, 'Exit')
+        lBtnQuit = T(32704, 'Quit Kodi')
+        modifier = util.getSetting('exit_default_is_quit', False) and "quit" or "exit"
+
+        ret = plexnet.util.AttributeDict(button=None, modifier=modifier)
+
+        def actionCallback(dialog, actionID, controlID):
+            if actionID == xbmcgui.ACTION_CONTEXT_MENU and controlID == dialog.BUTTON_IDS[0]:
+                control = dialog.getControl(controlID)
+                if control.getLabel() == lBtnExit:
+                    control.setLabel(lBtnQuit)
+                    ret.modifier = "quit"
+                else:
+                    control.setLabel(lBtnExit)
+                    ret.modifier = "exit"
+
         button = optionsdialog.show(
             T(32334, 'Confirm Exit'),
             T(32335, 'Are you ready to exit Plex?'),
-            T(32336, 'Exit'),
+            modifier == "exit" and lBtnExit or lBtnQuit,
             T(32924, 'Minimize'),
-            T(32337, 'Cancel')
+            T(32337, 'Cancel'),
+            action_callback=actionCallback
         )
+        ret.button = button
 
-        return button
+        return ret
 
     def searchButtonClicked(self):
         self.processCommand(search.dialog(self))
