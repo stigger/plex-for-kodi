@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+
+import requests.exceptions
 from kodi_six import xbmc
 from kodi_six import xbmcgui
 from . import kodigui
@@ -50,6 +52,8 @@ class EpisodeReloadTask(backgroundthread.Task):
             if self.isCanceled():
                 return
             self.callback(self, self.episode, with_progress=self.withProgress)
+        except requests.exceptions.RequestException:
+            raise util.NoDataException
         except:
             util.ERROR()
 
@@ -339,6 +343,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.updateProperties()
         self.setBoolProperty("initialized", True)
         self.fillEpisodes()
+
         hasSeasons = self.fillSeasons(self.show_, seasonsFilter=lambda x: len(x) > 1, selectSeason=self.season)
         hasPrev = self.fillExtras(hasSeasons)
 
@@ -348,7 +353,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.fillRoles(hasPrev)
 
     def selectEpisode(self, from_select_episode=False):
-        if not self.episode:
+        if not self.episode or not self.episodesPaginator:
             return
 
         for mli in self.episodeListControl:
@@ -1110,7 +1115,12 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 if not episode.mediaChoice:
                     episode.setMediaChoice()
 
-                self.setPostReloadItemInfo(episode, mli)
+                try:
+                    self.setPostReloadItemInfo(episode, mli)
+                except:
+                    util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
+                    self.doClose()
+
                 if with_progress:
                     self.episodesPaginator.prepareListItem(None, mli)
                 if mli == selected:
@@ -1154,7 +1164,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         return True
 
     def fillRelated(self, has_prev=False):
-        if not self.relatedPaginator.leafCount:
+        if not self.relatedPaginator or not self.relatedPaginator.leafCount:
             self.relatedListControl.reset()
             return has_prev
 
