@@ -183,3 +183,7 @@ def _main():
         util.shutdown()
 
         gc.collect(2)
+
+        if util.KODI_VERSION_MAJOR == 18 and quitKodi:
+            xbmc.log('Main: script.plex: QUITTING KODI', xbmc.LOGINFO)
+            xbmc.executebuiltin('Quit')
