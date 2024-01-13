@@ -136,6 +136,13 @@ def dummyTranslate(string):
     return string
 
 
+def trimString(s, limit=20, ellipsis='…'):
+    s = s.strip()
+    if len(s) > limit:
+        return s[:limit-1].strip() + ellipsis
+    return s
+
+
 def hideToken(token):
     # return 'X' * len(token)
     if not token:
@@ -144,7 +151,7 @@ def hideToken(token):
 
 
 def cleanToken(url):
-    return re.sub('X-Plex-Token=[^&]+', 'X-Plex-Token=****', url)
+    return re.sub(r'X-Plex-Token=[^&]+', 'X-Plex-Token=****', url)
 
 
 def now(local=False):
@@ -161,7 +168,7 @@ def joinArgs(args, includeQuestion=True):
     arglist = []
     for key in sorted(args, key=lambda x: x.lower()):
         value = str(args[key])
-        arglist.append('{0}={1}'.format(key, compat.quote(value)))
+        arglist.append('{0}={1}'.format(key, compat.quote(value, safe='')))
 
     return '{0}{1}'.format(includeQuestion and '?' or '&', '&'.join(arglist))
 
