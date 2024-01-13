@@ -167,7 +167,7 @@ class SeekDialog(kodigui.BaseDialog):
         self._osdHideAnimationTimeout = 0
         self._osdHideFast = False
         self._hideDelay = self.HIDE_DELAY
-        self._autoSeekDelay = util.advancedSettings.autoSeekDelay
+        self._autoSeekDelay = util.advancedSettings.autoSeek and util.advancedSettings.autoSeekDelay or 0
         self._atSkipStep = -1
         self._lastSkipDirection = None
         self._forcedLastSkipAmount = None
@@ -538,8 +538,6 @@ class SeekDialog(kodigui.BaseDialog):
 
                 if controlID == self.MAIN_BUTTON_ID:
                     # we're seeking from the timeline with the OSD open - do an actual timeline seek
-                    if not self._seeking:
-                        self.selectedOffset = self.trueOffset()
 
                     if action in (xbmcgui.ACTION_MOVE_RIGHT, xbmcgui.ACTION_STEP_FORWARD):
                         if self.useDynamicStepsForTimeline:
@@ -762,6 +760,7 @@ class SeekDialog(kodigui.BaseDialog):
                 if controlID == self.MAIN_BUTTON_ID:
                     self.resetAutoSeekTimer(None)
                     self.doSeek()
+                    self.hideOSD()
                 elif controlID == self.NO_OSD_BUTTON_ID:
                     if not self._seeking:
                         # we might be reacting to an immediate marker skip while showing a marker with timeout;
@@ -806,9 +805,9 @@ class SeekDialog(kodigui.BaseDialog):
         elif controlID == self.BIG_SEEK_LIST_ID:
             self.bigSeekSelected()
         elif controlID == self.SKIP_BACK_BUTTON_ID:
-            self.skipBack()
+            self.skipBack(immediate=not self.useAutoSeek)
         elif controlID == self.SKIP_FORWARD_BUTTON_ID:
-            self.skipForward()
+            self.skipForward(immediate=not self.useAutoSeek)
 
     def stop(self):
         self._ignoreTick = True
@@ -985,17 +984,17 @@ class SeekDialog(kodigui.BaseDialog):
         self.skipByOffset(chapter.startTime() - lastSelectedOffset, without_osd=without_osd)
         return True
 
-    def skipForward(self, without_osd=False):
-        self.skipByStep("positive", without_osd)
+    def skipForward(self, without_osd=False, immediate=False):
+        self.skipByStep("positive", without_osd, immediate=immediate)
 
-    def skipBack(self, without_osd=False):
-        self.skipByStep("negative", without_osd)
+    def skipBack(self, without_osd=False, immediate=False):
+        self.skipByStep("negative", without_osd, immediate=immediate)
 
-    def skipByStep(self, direction="positive", without_osd=False):
+    def skipByStep(self, direction="positive", without_osd=False, immediate=False):
         step = self.determineSkipStep(direction)
-        self.skipByOffset(step, without_osd)
+        self.skipByOffset(step, without_osd, immediate=immediate)
 
-    def skipByOffset(self, offset, without_osd=False):
+    def skipByOffset(self, offset, without_osd=False, immediate=False):
         if self.countingDownMarker:
             self.displayMarkers(cancelTimer=True)
 
@@ -1005,6 +1004,9 @@ class SeekDialog(kodigui.BaseDialog):
 
         if self.useAutoSeek:
             self.delayedSeek()
+        elif immediate:
+            self._performSeek()
+            self.resetSeeking()
         else:
             self.setProperty('button.seek', '1')
 

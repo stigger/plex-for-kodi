@@ -385,7 +385,7 @@ class SeekPlayerHandler(BasePlayerHandler):
     def onAVStarted(self):
         util.DEBUG_LOG('SeekHandler: onAVStarted')
 
-        if self.isDirectPlay and self.seekOnStart:
+        if self.isDirectPlay:
             self.seekAbsolute()
 
         if self.dialog:
