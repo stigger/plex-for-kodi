@@ -35,6 +35,11 @@
                         <popup>false</popup>
                     </control>
                 </setting>
+                <setting id="retrieve_all_media_up_front" type="boolean" label="32967" help="32968">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
             </group>
         </category>
         <!-- Player -->
