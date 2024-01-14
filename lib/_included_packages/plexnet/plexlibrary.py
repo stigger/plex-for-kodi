@@ -154,7 +154,7 @@ class LibrarySection(plexobjects.PlexObject):
 
     def items(self, path, start, size, filter_, sort, unwatched, type_, tag_fallback):
 
-        args = {"includeCollections" : "1"}
+        args = {}
 
         if size is not None:
             args['X-Plex-Container-Start'] = start
@@ -162,6 +162,8 @@ class LibrarySection(plexobjects.PlexObject):
 
         if filter_:
             args[filter_[0]] = filter_[1]
+        else:
+            args['includeCollections'] = 1
 
         if sort:
             args['sort'] = '{0}:{1}'.format(*sort)
@@ -183,10 +185,12 @@ class LibrarySection(plexobjects.PlexObject):
         else:
             path = '/library/sections/{0}/firstCharacter'.format(self.key)
 
-        args = {"includeCollections" : "1"}
+        args = {}
 
         if filter_:
             args[filter_[0]] = filter_[1]
+        else:
+            args['includeCollections'] = 1
 
         if sort:
             args['sort'] = '{0}:{1}'.format(*sort)
