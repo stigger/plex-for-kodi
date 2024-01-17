@@ -49,6 +49,7 @@ MARKERS = OrderedDict([
         "autoSkipName": T(32800, 'Skipping intro'),
         "overrideStartOff": None,
         "countdown": None,
+        "countdown_initial": None,
 
         # attrs
         "markerAutoSkip": "autoSkipIntro",
@@ -62,6 +63,7 @@ MARKERS = OrderedDict([
         "autoSkipName": T(32801, 'Skipping credits'),
         "overrideStartOff": None,
         "countdown": None,
+        "countdown_initial": None,
 
         "markerAutoSkip": "autoSkipCredits",
         "markerAutoSkipped": False,
@@ -662,8 +664,13 @@ class SeekDialog(kodigui.BaseDialog):
                                     action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
                                 self.displayMarkers(cancelTimer=True)
 
+                            # skip the first second of a marker shown with countdown to avoid unexpected OK/SELECT
+                            # behaviour
                             elif util.advancedSettings.skipMarkerTimerImmediate \
-                                    and action == xbmcgui.ACTION_SELECT_ITEM:
+                                    and action == xbmcgui.ACTION_SELECT_ITEM and \
+                                    self._currentMarker["countdown"] is not None and \
+                                    self._currentMarker["countdown_initial"] is not None and \
+                                    self._currentMarker["countdown"] < self._currentMarker["countdown_initial"]:
                                 self.displayMarkers(immediate=True)
                                 self.hideOSD(skipMarkerFocus=True)
                             return
@@ -1983,14 +1990,18 @@ class SeekDialog(kodigui.BaseDialog):
 
         # set marker name, count down
         if markerAutoSkip and not markerAutoSkipped:
+            isNew = False
             if markerDef["countdown"] is None:
                 # reset countdown on new marker
                 if not self._currentMarker or self._currentMarker != markerDef or markerDef["countdown"] is None:
                     # fixme: round might not be right here, but who cares
                     markerDef["countdown"] = int(max(round((sTOffWThres - self.trueOffset()) / 1000.0) + 1, 1))
+                    isNew = True
 
             if self.player.playState == self.player.STATE_PLAYING and not self.osdVisible():
                 markerDef["countdown"] -= 1
+                if isNew:
+                    markerDef["countdown_initial"] = markerDef["countdown"]
 
             self.setProperty('marker.countdown', '1')
 
