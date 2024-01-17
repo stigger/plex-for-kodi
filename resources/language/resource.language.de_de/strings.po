@@ -1972,3 +1972,11 @@ msgstr "Kodi beenden anstatt PM4K"
 msgctxt "#32966"
 msgid "When showing the addon exit confirmation, use \"Quit Kodi\" as default option. Can be dynamically switched using CONTEXT_MENU (often longpress SELECT)"
 msgstr "Wenn die Addon-Beendigungsbestätigung angezeigt wird, \"Kodi beenden\" als Standardoption verwenden. Kann dynamisch mit CONTEXT_MENU (oft lange gedrücktes SELECT) getauscht werden."
+
+msgctxt "#32967"
+msgid "Kodi Colour Management"
+msgstr "Kodi Farbeinstellungen"
+
+msgctxt "#32968"
+msgid "Kodi Resolution Settings"
+msgstr "Kodi Auflösungseinstellungen"
