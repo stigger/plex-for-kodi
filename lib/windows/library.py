@@ -1170,7 +1170,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
 
         options = []
 
-        if self.section.TYPE in ('movie', 'show'):
+        if self.section.TYPE in ('movie', 'show') and not ITEM_TYPE == 'collection':
             options.append({'type': 'unwatched', 'display': T(32368, 'UNPLAYED').upper(), 'indicator': self.filterUnwatched and check or ''})
 
         if self.filter:
@@ -1202,8 +1202,11 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         }
 
         if self.section.TYPE == 'movie':
-            for k in ('year', 'decade', 'genre', 'contentRating', 'collection', 'director', 'actor', 'country', 'studio', 'resolution', 'labels'):
-                options.append(optionsMap[k])
+            if ITEM_TYPE == 'collection':
+                options.append(optionsMap['contentRating'])
+            else:
+                for k in ('year', 'decade', 'genre', 'contentRating', 'collection', 'director', 'actor', 'country', 'studio', 'resolution', 'labels'):
+                    options.append(optionsMap[k])
         elif self.section.TYPE == 'show':
             if ITEM_TYPE == 'episode':
                 for k in ('year', 'collection', 'resolution'):
