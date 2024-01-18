@@ -1695,5 +1695,5 @@ msgid "Library item-request chunk size"
 msgstr ""
 
 msgctxt "#32972"
-msgid "Request this amount of media items per chunk request in library view (less can be less straining for the UI at first, but puts more strain on the server)"
+msgid "Request this amount of media items per chunk request in library view (+6-30 depending on view mode; less can be less straining for the UI at first, but puts more strain on the server)"
 msgstr ""

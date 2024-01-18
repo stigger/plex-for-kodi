@@ -307,6 +307,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
     # Needs to be an even multiple of 6(posters) and 10(small posters) and 12(list)
     # so that we fill an entire row
     CHUNK_SIZE = 240
+    CHUNK_OVERCOMMIT = 12
 
     def __init__(self, *args, **kwargs):
         kodigui.MultiWindow.__init__(self, *args, **kwargs)
@@ -1397,11 +1398,14 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             util.DEBUG_LOG('Requesting chunk {0}'.format(startChunkPosition))
             # Keep track of the chunks we've already fetched by storing the chunk's starting position
             self.alreadyFetchedChunkList.add(startChunkPosition)
-            task = ChunkRequestTask().setup(self.section, startChunkPosition, self.CHUNK_SIZE, self._chunkCallback, filter_=self.getFilterOpts(),
-                                            sort=self.getSortOpts(), unwatched=self.filterUnwatched, subDir=self.subDir)
+            task = ChunkRequestTask().setup(self.section, startChunkPosition - self.CHUNK_OVERCOMMIT,
+                                            self.CHUNK_SIZE + self.CHUNK_OVERCOMMIT,
+                                            self._chunkCallback, filter_=self.getFilterOpts(), sort=self.getSortOpts(),
+                                            unwatched=self.filterUnwatched, subDir=self.subDir)
 
             self.tasks.add(task)
             backgroundthread.BGThreader.addTasksToFront([task])
+
 
 class PostersWindow(kodigui.ControlledWindow):
     xmlFile = 'script-plex-posters.xml'
@@ -1434,17 +1438,21 @@ class PostersWindow(kodigui.ControlledWindow):
     VIEWTYPE = 'panel'
     MULTI_WINDOW_ID = 0
 
+    CHUNK_OVERCOMMIT = 12
+
 
 class PostersSmallWindow(PostersWindow):
     xmlFile = 'script-plex-posters-small.xml'
     VIEWTYPE = 'panel2'
     MULTI_WINDOW_ID = 1
+    CHUNK_OVERCOMMIT = 30
 
 
 class ListView16x9Window(PostersWindow):
     xmlFile = 'script-plex-listview-16x9.xml'
     VIEWTYPE = 'list'
     MULTI_WINDOW_ID = 2
+    CHUNK_OVERCOMMIT = 6
 
 
 class SquaresWindow(PostersWindow):
