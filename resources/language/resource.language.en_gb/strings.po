@@ -1673,3 +1673,11 @@ msgstr ""
 msgctxt "#32966"
 msgid "When exiting the addon, use \"Quit Kodi\" as default option. Can be dynamically switched using CONTEXT_MENU (often longpress SELECT)"
 msgstr ""
+
+msgctxt "#32967"
+msgid "Use old media fetching algorithm"
+msgstr ""
+
+msgctxt "#32968"
+msgid "Retrieve all media in library up front instead of fetching it in chunks as the user navigates through the library"
+msgstr ""
