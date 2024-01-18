@@ -1980,3 +1980,19 @@ msgstr "Kodi Farbeinstellungen"
 msgctxt "#32968"
 msgid "Kodi Resolution Settings"
 msgstr "Kodi Auflösungseinstellungen"
+
+msgctxt "#32969"
+msgid "Always request all library media items at once"
+msgstr "Immer die vollständige Bibliothek laden"
+
+msgctxt "#32970"
+msgid "Retrieve all media in library up front instead of fetching it in chunks as the user navigates through the library"
+msgstr "Alle Medieninhalte einer Bibliothek anfordern, anstatt diese gestückelt nachzuladen"
+
+msgctxt "#32971"
+msgid "Library item-request chunk size"
+msgstr "Bibliothek Anfrage-Blockgröße"
+
+msgctxt "#32972"
+msgid "Request this amount of media items per chunk request in library view (less can be less straining for the UI at first, but puts more strain on the server)"
+msgstr "Diese Anzahl an Medieninhalten pro gestückelter Anfrage in der Bibliothekenansicht laden (weniger kann vorerst geringere UI-Last bedeuten, aber mehr Last beim Server erzeugen)"

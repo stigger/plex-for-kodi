@@ -1681,3 +1681,19 @@ msgstr ""
 msgctxt "#32968"
 msgid "Kodi Resolution Settings"
 msgstr ""
+
+msgctxt "#32969"
+msgid "Always request all library media items at once"
+msgstr ""
+
+msgctxt "#32970"
+msgid "Retrieve all media in library up front instead of fetching it in chunks as the user navigates through the library"
+msgstr ""
+
+msgctxt "#32971"
+msgid "Library item-request chunk size"
+msgstr ""
+
+msgctxt "#32972"
+msgid "Request this amount of media items per chunk request in library view (less can be less straining for the UI at first, but puts more strain on the server)"
+msgstr ""

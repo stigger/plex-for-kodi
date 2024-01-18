@@ -29,10 +29,6 @@ from lib.util import T
 import six
 from six.moves import range
 
-# Needs to be an even multiple of 6(posters) and 10(small posters) and 12(list)
-# so that we fill an entire row
-CHUNK_SIZE = 240
-
 KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 MOVE_SET = frozenset(
@@ -308,6 +304,10 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
     theme = 'Main'
     res = '1080i'
 
+    # Needs to be an even multiple of 6(posters) and 10(small posters) and 12(list)
+    # so that we fill an entire row
+    CHUNK_SIZE = 240
+
     def __init__(self, *args, **kwargs):
         kodigui.MultiWindow.__init__(self, *args, **kwargs)
         windowutils.UtilMixin.__init__(self)
@@ -346,6 +346,8 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
 
         self.alreadyFetchedChunkList = set()
         self.finalChunkPosition = 0
+
+        self.CHUNK_SIZE = util.advancedSettings.libraryChunkSize
 
         key = self.section.key
         if not key.isdigit():
@@ -1133,10 +1135,10 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         self.setFocusId(self.POSTERS_PANEL_ID)
 
         tasks = []
-        for startChunkPosition in range(0, totalSize, CHUNK_SIZE):
+        for startChunkPosition in range(0, totalSize, self.CHUNK_SIZE):
             tasks.append(
                 ChunkRequestTask().setup(
-                    self.section, startChunkPosition, CHUNK_SIZE, self._chunkCallback, filter_=self.getFilterOpts(), sort=self.getSortOpts(), unwatched=self.filterUnwatched, subDir=self.subDir
+                    self.section, startChunkPosition, self.CHUNK_SIZE, self._chunkCallback, filter_=self.getFilterOpts(), sort=self.getSortOpts(), unwatched=self.filterUnwatched, subDir=self.subDir
                 )
             )
 
@@ -1144,7 +1146,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             # chunk of media and stop.  We'll fetch the rest as the user navigates to those items
             if not util.advancedSettings.retrieveAllMediaUpFront:
                 # Calculate the end chunk's starting position based on the totalSize of items
-                self.finalChunkPosition = (totalSize // CHUNK_SIZE) * CHUNK_SIZE
+                self.finalChunkPosition = (totalSize // self.CHUNK_SIZE) * self.CHUNK_SIZE
                 # Keep track of the chunks we've already fetched by storing the chunk's starting position
                 self.alreadyFetchedChunkList.add(startChunkPosition)
                 break
@@ -1385,7 +1387,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             return
 
         # Calculate the correct starting chunk position for the item they passed in
-        startChunkPosition = (start // CHUNK_SIZE) * CHUNK_SIZE
+        startChunkPosition = (start // self.CHUNK_SIZE) * self.CHUNK_SIZE
         # If we calculated a chunk position that's beyond the end chunk then just return
         if startChunkPosition > self.finalChunkPosition:
             return
@@ -1395,7 +1397,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             util.DEBUG_LOG('Requesting chunk {0}'.format(startChunkPosition))
             # Keep track of the chunks we've already fetched by storing the chunk's starting position
             self.alreadyFetchedChunkList.add(startChunkPosition)
-            task = ChunkRequestTask().setup(self.section, startChunkPosition, CHUNK_SIZE, self._chunkCallback, filter_=self.getFilterOpts(),
+            task = ChunkRequestTask().setup(self.section, startChunkPosition, self.CHUNK_SIZE, self._chunkCallback, filter_=self.getFilterOpts(),
                                             sort=self.getSortOpts(), unwatched=self.filterUnwatched, subDir=self.subDir)
 
             self.tasks.add(task)

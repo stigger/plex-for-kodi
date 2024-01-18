@@ -186,7 +186,8 @@ class AdvancedSettings(object):
         ("subtitle_use_extended_title", True),
         ("poster_resolution_scale_perc", 100),
         ("consecutive_video_pb_wait", 0.0),
-        ("retrieve_all_media_up_front", False)
+        ("retrieve_all_media_up_front", False),
+        ("library_chunk_size", 240),
     )
 
     def __init__(self):
