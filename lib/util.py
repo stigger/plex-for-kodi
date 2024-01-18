@@ -285,14 +285,12 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
                 setGlobalProperty('stop_running', '1')
                 return
             if kodigui.BaseFunctions.lastWinID > 13000:
+                reInitAddon()
                 xbmc.executebuiltin('ActivateWindow({0})'.format(kodigui.BaseFunctions.lastWinID))
             else:
                 ERROR("Addon never properly started, can't reactivate")
                 setGlobalProperty('stop_running', '1')
                 return
-
-            getAdvancedSettings()
-            populateTimeFormat()
 
         elif sender == "xbmc" and method == "System.OnSleep" and getSetting('action_on_sleep', "none") != "none":
             getattr(self, "action{}".format(getSetting('action_on_sleep', "none").capitalize()))()
@@ -309,6 +307,10 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
     def onDPMSActivated(self):
         DEBUG_LOG("Monitor: OnDPMSActivated")
         #self.stopPlayback()
+
+    def onSettingsChanged(self):
+        """ unused stub, but works if needed """
+        pass
 
 
 MONITOR = UtilityMonitor()
@@ -484,6 +486,14 @@ def getAdvancedSettings():
     # yes, global, hang me!
     global advancedSettings
     advancedSettings = AdvancedSettings()
+
+
+def reInitAddon():
+    global ADDON
+    # reinit the ADDON reference so we get the updated addon settings
+    ADDON = xbmcaddon.Addon()
+    getAdvancedSettings()
+    populateTimeFormat()
 
 
 def setSetting(key, value):
