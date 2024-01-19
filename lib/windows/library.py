@@ -307,7 +307,6 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
     # Needs to be an even multiple of 6(posters) and 10(small posters) and 12(list)
     # so that we fill an entire row
     CHUNK_SIZE = 240
-    CHUNK_OVERCOMMIT = 12
 
     def __init__(self, *args, **kwargs):
         kodigui.MultiWindow.__init__(self, *args, **kwargs)
@@ -527,10 +526,21 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             return
         pos = mli.pos()
 
+        # This code is a little goofy but what it's trying to do is move the selected item from the
+        # jumplist up to the top of the panel and then it requests the chunk for the current position
+        # and the chunk for the current position + CHUNK_OVERCOMMIT.  The reason we need to potentially
+        # request a different chunk is if the items on the panel are in two different chunks this code
+        # will request both chunks so that we don't have blank items.  The requestChunk will only request
+        # chunks that haven't already been fetched so if the current position and current position
+        # plus the CHUNK_OVERCOMMIT are in the same chunk then the second requestChunk call doesn't
+        # do anything.
+        self.showPanelControl.selectItem(pos+self.CHUNK_OVERCOMMIT)
         self.showPanelControl.selectItem(pos)
+        self.requestChunk(pos)
+        self.requestChunk(pos+self.CHUNK_OVERCOMMIT)
+
         self.setFocusId(self.POSTERS_PANEL_ID)
         util.setGlobalProperty('key', li.dataSource)
-        self.requestChunk(pos)
 
     def playButtonClicked(self, shuffle=False):
         filter_ = self.getFilterOpts()
@@ -1395,11 +1405,10 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
 
         # Check if the chunk has already been requested, if not then go fetch the data
         if startChunkPosition not in self.alreadyFetchedChunkList:
-            util.DEBUG_LOG('Requesting chunk {0}'.format(startChunkPosition))
+            util.DEBUG_LOG('Position {0} so requesting chunk {1}'.format(start, startChunkPosition))
             # Keep track of the chunks we've already fetched by storing the chunk's starting position
             self.alreadyFetchedChunkList.add(startChunkPosition)
-            task = ChunkRequestTask().setup(self.section, startChunkPosition - self.CHUNK_OVERCOMMIT,
-                                            self.CHUNK_SIZE + self.CHUNK_OVERCOMMIT,
+            task = ChunkRequestTask().setup(self.section, startChunkPosition, self.CHUNK_SIZE,
                                             self._chunkCallback, filter_=self.getFilterOpts(), sort=self.getSortOpts(),
                                             unwatched=self.filterUnwatched, subDir=self.subDir)
 
@@ -1438,7 +1447,7 @@ class PostersWindow(kodigui.ControlledWindow):
     VIEWTYPE = 'panel'
     MULTI_WINDOW_ID = 0
 
-    CHUNK_OVERCOMMIT = 12
+    CHUNK_OVERCOMMIT = 6
 
 
 class PostersSmallWindow(PostersWindow):
@@ -1452,7 +1461,7 @@ class ListView16x9Window(PostersWindow):
     xmlFile = 'script-plex-listview-16x9.xml'
     VIEWTYPE = 'list'
     MULTI_WINDOW_ID = 2
-    CHUNK_OVERCOMMIT = 6
+    CHUNK_OVERCOMMIT = 12
 
 
 class SquaresWindow(PostersWindow):
