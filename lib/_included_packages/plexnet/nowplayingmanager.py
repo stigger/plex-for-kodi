@@ -131,7 +131,7 @@ class NowPlayingManager(object):
         for timelineType in self.TIMELINE_TYPES:
             self.timelines[timelineType] = TimelineData(timelineType)
 
-    def updatePlaybackState(self, timelineType, playerObject, state, time, playQueue=None, duration=0):
+    def updatePlaybackState(self, timelineType, playerObject, state, time, playQueue=None, duration=0, force=False):
         timeline = self.timelines[timelineType]
         timeline.state = state
         timeline.item = playerObject.item
@@ -142,9 +142,9 @@ class NowPlayingManager(object):
 
         # self.sendTimelineToAll()
 
-        self.sendTimelineToServer(timelineType, timeline, time)
+        self.sendTimelineToServer(timelineType, timeline, time, force=force)
 
-    def sendTimelineToServer(self, timelineType, timeline, time):
+    def sendTimelineToServer(self, timelineType, timeline, time, force=False):
         if not hasattr(timeline.item, 'getServer') or not timeline.item.getServer():
             return
 
@@ -152,7 +152,7 @@ class NowPlayingManager(object):
 
         # Only send timeline if it's the first, item changes, playstate changes or timer pops
         itemsEqual = timeline.item and serverTimeline.item and timeline.item.ratingKey == serverTimeline.item.ratingKey
-        if itemsEqual and timeline.state == serverTimeline.state and not serverTimeline.isExpired():
+        if itemsEqual and timeline.state == serverTimeline.state and not serverTimeline.isExpired() and not force:
             return
 
         serverTimeline.reset()

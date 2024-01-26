@@ -116,7 +116,7 @@ class BasePlayerHandler(object):
 
         return self._lastDuration
 
-    def updateNowPlaying(self, force=False, refreshQueue=False, state=None, time=None):
+    def updateNowPlaying(self, force=False, refreshQueue=False, state=None, time=None, overrideChecks=False):
         util.DEBUG_LOG("UpdateNowPlaying: force: {0} refreshQueue: {1} state: {2}".format(force, refreshQueue, state))
         if self.ignoreTimelines:
             util.DEBUG_LOG("UpdateNowPlaying: ignoring timeline as requested")
@@ -145,7 +145,8 @@ class BasePlayerHandler(object):
             self.playQueue.refreshOnTimeline = True
 
         plexapp.util.APP.nowplayingmanager.updatePlaybackState(
-            self.timelineType, self.player.playerObject, state, time, self.playQueue, duration=self.currentDuration()
+            self.timelineType, self.player.playerObject, state, time, self.playQueue, duration=self.currentDuration(),
+            force=overrideChecks
         )
 
     def getVolume(self):
