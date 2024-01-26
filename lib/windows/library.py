@@ -307,6 +307,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
     # Needs to be an even multiple of 6(posters) and 10(small posters) and 12(list)
     # so that we fill an entire row
     CHUNK_SIZE = 240
+    CHUNK_OVERCOMMIT = 6
 
     def __init__(self, *args, **kwargs):
         kodigui.MultiWindow.__init__(self, *args, **kwargs)
@@ -534,10 +535,11 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         # chunks that haven't already been fetched so if the current position and current position
         # plus the CHUNK_OVERCOMMIT are in the same chunk then the second requestChunk call doesn't
         # do anything.
-        self.showPanelControl.selectItem(pos+self.CHUNK_OVERCOMMIT)
+        chunkOC = getattr(self._current, "CHUNK_OVERCOMMIT", self.CHUNK_OVERCOMMIT)
+        self.showPanelControl.selectItem(pos+chunkOC)
         self.showPanelControl.selectItem(pos)
         self.requestChunk(pos)
-        self.requestChunk(pos+self.CHUNK_OVERCOMMIT)
+        self.requestChunk(pos+chunkOC)
 
         self.setFocusId(self.POSTERS_PANEL_ID)
         util.setGlobalProperty('key', li.dataSource)
