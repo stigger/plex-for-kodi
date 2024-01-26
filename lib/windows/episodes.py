@@ -391,6 +391,9 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             if controlID == self.EPISODE_LIST_ID:
                 if self.checkForHeaderFocus(action):
                     return
+                elif action == xbmcgui.ACTION_CONTEXT_MENU:
+                    self.optionsButtonClicked(from_item=True)
+                    return
 
             elif controlID == self.RELATED_LIST_ID:
                 if self.relatedPaginator.boundaryHit:
@@ -802,19 +805,14 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
         pos = (500, 620)
         bottom = False
-        setDropdownProp = False
         if from_item:
             viewPos = self.episodeListControl.getViewPosition()
-            if viewPos > 6:
-                pos = (1490, 312 + (viewPos * 100))
-                bottom = True
-            else:
-                pos = (1490, 167 + (viewPos * 100))
-                bottom = False
-            setDropdownProp = True
+            optsLen = len(list(filter(None, options)))
+            # dropDown handles any overlap with the right window boundary so we don't need to care here
+            pos = ((((viewPos + 1) * 359) - 100), 649 if optsLen < 7 else 649 - 66 * (optsLen - 6))
 
         choice = dropdown.showDropdown(options, pos, pos_is_bottom=bottom, close_direction='left',
-                                       set_dropdown_prop=setDropdownProp)
+                                       set_dropdown_prop=False)
         if not choice:
             return
 

@@ -14,6 +14,8 @@ class DropdownDialog(kodigui.BaseDialog):
     res = '1080i'
     width = 1920
     height = 1080
+    dropWidth = 360
+    borderOff = -20
 
     GROUP_ID = 100
     OPTIONS_LIST_ID = 250
@@ -41,7 +43,7 @@ class DropdownDialog(kodigui.BaseDialog):
 
     @property
     def x(self):
-        return min(self.width - 360, self.pos[0])
+        return min(self.width - self.dropWidth - self.borderOff, self.pos[0])
 
     @property
     def y(self):
@@ -188,6 +190,7 @@ class DropdownDialog(kodigui.BaseDialog):
 
 class DropdownHeaderDialog(DropdownDialog):
     xmlFile = 'script-plex-dropdown_header.xml'
+    dropWidth = 660
 
 
 def showDropdown(
