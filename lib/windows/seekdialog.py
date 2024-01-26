@@ -208,6 +208,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.autoSkipIntro = False
         self.autoSkipCredits = False
         self.showIntroSkipEarly = False
+        self.skipPostPlay = False
 
         self.skipIntroButtonTimeout = util.advancedSettings.skipIntroButtonTimeout
         self.skipCreditsButtonTimeout = util.advancedSettings.skipCreditsButtonTimeout
@@ -422,6 +423,7 @@ class SeekDialog(kodigui.BaseDialog):
                     self.autoSkipCredits = self.bingeMode or pbs.auto_skip_credits
 
                 self.showIntroSkipEarly = self.bingeMode or pbs.show_intro_skip_early
+                self.handler.skipPostPlay = self.skipPostPlay = (self.bingeMode or pbs.skip_post_play_tv)
 
             # in transcoded scenarios, when seeking, keep previous marker states, as the video restarts
             if not keepMarkerDef:
@@ -820,8 +822,7 @@ class SeekDialog(kodigui.BaseDialog):
         self._ignoreTick = True
         self.doClose()
         # self.handler.onSeekAborted()
-        if self.bingeMode:
-            self.handler.stoppedInBingeMode = True
+        self.handler.stoppedManually = True
         self.handler.player.stop()
 
     def doClose(self, delete=False):
@@ -1953,7 +1954,7 @@ class SeekDialog(kodigui.BaseDialog):
                 self.handler.updateNowPlaying(True, state=self.player.STATE_STOPPED, time=self.duration - 1000)
 
                 # go to next video immediately if on bingeMode
-                if self.handler.playlist and self.handler.playlist.hasNext() and self.bingeMode:
+                if self.handler.playlist and self.handler.playlist.hasNext():
                     if not self.handler.queuingNext:
                         # skip final marker
                         util.DEBUG_LOG("MarkerAutoSkip: {} final marker, going to next video".format(

@@ -172,8 +172,9 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.title2 = ''
         self.seekOnStart = 0
         self.chapters = None
-        self.stoppedInBingeMode = False
+        self.stoppedManually = False
         self.inBingeMode = False
+        self.skipPostPlay = False
         self.prePlayWitnessed = False
         self.queuingNext = False
         self.reset()
@@ -186,7 +187,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.seekOnStart = 0
         self.mode = self.MODE_RELATIVE
         self.ended = False
-        self.stoppedInBingeMode = False
+        self.stoppedManually = False
         self.prePlayWitnessed = False
         self.queuingNext = False
 
@@ -202,8 +203,9 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.playedThreshold = plexapp.util.INTERFACE.getPlayedThresholdValue()
         self.ignoreTimelines = False
         self.queuingNext = False
-        self.stoppedInBingeMode = False
+        self.stoppedManually = False
         self.inBingeMode = False
+        self.skipPostPlay = False
         self.prePlayWitnessed = False
         self.getDialog(setup=True)
         self.dialog.setup(self.duration, meta, int(self.baseOffset * 1000), self.bifURL, self.title, self.title2,
@@ -239,7 +241,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.playlist and self.playlist.TYPE == 'playlist':
             return False
 
-        if self.inBingeMode and not self.stoppedInBingeMode:
+        if not self.stoppedManually and self.skipPostPlay:
             return False
 
         if (not util.advancedSettings.postplayAlways and self.player.video.duration.asInt() <= FIVE_MINUTES_MILLIS)\
@@ -258,9 +260,9 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.hideOSD(delete=True)
 
         self.player.trigger('post.play', video=self.player.video, playlist=self.playlist, handler=self,
-                            stoppedInBingeMode=self.stoppedInBingeMode)
+                            stoppedManually=self.stoppedManually)
 
-        self.stoppedInBingeMode = False
+        self.stoppedManually = False
 
         return True
 
@@ -275,7 +277,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             if self.showPostPlay():
                 return True
 
-        if not self.playlist or self.stoppedInBingeMode:
+        if not self.playlist or self.stoppedManually:
             return False
 
         self.player.playVideoPlaylist(self.playlist, handler=self, resume=False)
@@ -432,16 +434,18 @@ class SeekPlayerHandler(BasePlayerHandler):
 
     def onPlayBackStopped(self):
         util.DEBUG_LOG('SeekHandler: onPlayBackStopped - '
-                       'Seeking={0}, QueueingNext={1}, BingeMode={2}'.format(self.seeking, self.queuingNext,
-                                                                             self.inBingeMode))
+                       'Seeking={0}, QueueingNext={1}, BingeMode={2}, StoppedManually={3}, SkipPostPlay={4}'
+                       .format(self.seeking, self.queuingNext, self.inBingeMode, self.stoppedManually,
+                               self.skipPostPlay))
 
         if self.dialog:
             self.dialog.onPlayBackStopped()
 
-        if self.queuingNext and self.inBingeMode:
+        if self.queuingNext:
             if self.isDirectPlay and self.playlist and self.playlist.hasNext():
                 self.hideOSD(delete=True)
-            if self.next(on_end=False):
+            # fixme: the on_end value is a hack here, we should rename or use a different parameter
+            if self.next(on_end=not self.skipPostPlay):
                 return
 
         if self.seeking not in (self.SEEK_IN_PROGRESS, self.SEEK_REWIND):
@@ -476,8 +480,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             util.DEBUG_LOG('SeekHandler: onPlayBackEnded - event ignored')
             return
 
-        if self.inBingeMode:
-            self.stoppedInBingeMode = False
+        self.stoppedManually = False
 
         if self.playlist and self.playlist.hasNext():
             self.queuingNext = True

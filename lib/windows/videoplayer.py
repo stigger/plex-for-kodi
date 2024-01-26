@@ -341,7 +341,7 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.rolesListControl.reset()
 
     @busy.dialog()
-    def postPlay(self, video=None, playlist=None, handler=None, stoppedInBingeMode=False, **kwargs):
+    def postPlay(self, video=None, playlist=None, handler=None, stoppedManually=False, **kwargs):
         util.DEBUG_LOG('VideoPlayer: Starting post-play')
         self.showPostPlay()
         self.prev = video
@@ -373,7 +373,7 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         hasPrev = self.fillRelated()
         self.fillRoles(hasPrev)
 
-        if not stoppedInBingeMode:
+        if not stoppedManually:
             self.startTimer()
 
         if self.next:
