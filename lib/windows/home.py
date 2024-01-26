@@ -349,6 +349,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.sectionChangeTimeout = 0
         self.lastFocusID = None
         self.lastNonOptionsFocusID = None
+        self._lastSelectedItem = None
         self.sectionHubs = {}
         self.updateHubs = {}
         self.changingServer = False
@@ -578,7 +579,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 self.setFocusId(self.SERVER_BUTTON_ID)
             elif 399 < controlID < 500:
                 if action.getId() in MOVE_SET:
-                    self.checkHubItem(controlID)
+                    self.checkHubItem(controlID, actionID=action.getId())
+                    return
                 elif action.getId() == xbmcgui.ACTION_PLAYER_PLAY:
                     self.hubItemClicked(controlID, auto_play=True)
                     return
@@ -812,15 +814,26 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.lastSection = item.dataSource
             self.sectionChanged(force)
 
-    def checkHubItem(self, controlID):
+    def checkHubItem(self, controlID, actionID=None):
         control = self.hubControls[controlID - 400]
         mli = control.getSelectedItem()
         is_valid_mli = mli and mli.getProperty('is.end') != '1'
+        is_last_item = is_valid_mli and control.isLastItem(mli)
 
         if util.advancedSettings.dynamicBackgrounds and is_valid_mli:
             self.updateBackgroundFrom(mli.dataSource)
 
         if not mli or not mli.getProperty('is.end') or mli.getProperty('is.updating') == '1':
+            mlipos = control.getManagedItemPosition(mli)
+
+            # in order to not round robin when the next chunk is loading, implement our own cheap round robining
+            # by storing the last selected item of the current control. if we've seen it twice, we need to wrap around
+            if mli and not mli.getProperty('is.end') and is_last_item and actionID == xbmcgui.ACTION_MOVE_RIGHT:
+                if (controlID, mlipos) == self._lastSelectedItem:
+                    control.selectItem(0)
+                    self._lastSelectedItem = None
+                else:
+                    self._lastSelectedItem = (controlID, mlipos)
             return
 
         mli.setBoolProperty('is.updating', True)
