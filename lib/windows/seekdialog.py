@@ -74,7 +74,9 @@ MARKERS = OrderedDict([
     })
 ])
 
+# fixme: this might be unnecessary now
 FINAL_MARKER_NEGOFF = 5000
+
 MARKER_SHOW_NEGOFF = 3000
 MARKER_OFF = 500
 MARKER_CHAPTER_OVERLAP_THRES = 30000  # 30 seconds
