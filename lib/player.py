@@ -26,6 +26,7 @@ class BasePlayerHandler(object):
         self.player = player
         self.media = None
         self.baseOffset = 0
+        self._lastDuration = 0
         self.timelineType = None
         self.lastTimelineState = None
         self.ignoreTimelines = False
@@ -108,11 +109,12 @@ class BasePlayerHandler(object):
     def currentDuration(self):
         if self.player.playerObject and self.player.isPlaying():
             try:
-                return int(self.player.getTotalTime() * 1000)
+                self._lastDuration = int(self.player.getTotalTime() * 1000)
+                return self._lastDuration
             except RuntimeError:
                 pass
 
-        return 0
+        return self._lastDuration
 
     def updateNowPlaying(self, force=False, refreshQueue=False, state=None, time=None):
         util.DEBUG_LOG("UpdateNowPlaying: force: {0} refreshQueue: {1} state: {2}".format(force, refreshQueue, state))
@@ -185,6 +187,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.baseOffset = 0
         self.seeking = self.NO_SEEK
         self.seekOnStart = 0
+        self._lastDuration = 0
         self.mode = self.MODE_RELATIVE
         self.ended = False
         self.stoppedManually = False
