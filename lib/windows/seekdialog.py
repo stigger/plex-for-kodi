@@ -1896,6 +1896,12 @@ class SeekDialog(kodigui.BaseDialog):
             int(markerDef["marker"].startTimeOffset)
 
         markerAutoSkip = getattr(self, markerDef["markerAutoSkip"])
+
+        # don't skip the credits marker on the last available episode
+        if markerDef["marker_type"] == "credits" and self.bingeMode and self.handler.playlist and \
+                not self.handler.playlist.hasNext():
+            markerAutoSkip = False
+
         markerAutoSkipped = markerDef["markerAutoSkipped"]
 
         sTOffWThres = startTimeOff + util.advancedSettings.autoSkipOffset * 1000
