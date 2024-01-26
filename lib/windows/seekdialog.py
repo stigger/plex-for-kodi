@@ -50,6 +50,7 @@ MARKERS = OrderedDict([
         "overrideStartOff": None,
         "countdown": None,
         "countdown_initial": None,
+        "skipped": False,
 
         # attrs
         "markerAutoSkip": "autoSkipIntro",
@@ -64,6 +65,7 @@ MARKERS = OrderedDict([
         "overrideStartOff": None,
         "countdown": None,
         "countdown_initial": None,
+        "skipped": False,
 
         "markerAutoSkip": "autoSkipCredits",
         "markerAutoSkipped": False,
@@ -519,6 +521,7 @@ class SeekDialog(kodigui.BaseDialog):
                             util.DEBUG_LOG('MarkerSkip: Skipping marker {}'.format(markerDef["marker"]))
                             self.setProperty('show.markerSkip', '')
                             self.setProperty('show.markerSkip_OSDOnly', '')
+                            markerDef["skipped"] = True
                             self.doSeek(math.ceil(float(marker.endTimeOffset)) - markerOff)
                             self.hideOSD(skipMarkerFocus=True)
 
@@ -1990,7 +1993,10 @@ class SeekDialog(kodigui.BaseDialog):
 
         # no marker auto skip or not yet auto skipped, normal display
         if not markerAutoSkip or (markerAutoSkip and not markerAutoSkipped):
-            self.setProperty('show.markerSkip', '1')
+            # on final marker, if it's been skipped already, don't show it (we seek those markers with a negative offset
+            # to avoid postplay issues)
+            if not getattr(markerDef["marker"], "final", False) or not markerDef["skipped"]:
+                self.setProperty('show.markerSkip', '1')
         # marker auto skip and already skipped - hide in OSD
         elif markerAutoSkip and markerAutoSkipped:
             self.setProperty('show.markerSkip_OSDOnly', '1')
