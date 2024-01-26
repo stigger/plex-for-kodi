@@ -821,19 +821,19 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         if choice['key'] == 'play_next':
             xbmc.executebuiltin('PlayerControl(Next)')
         elif choice['key'] == 'mark_watched':
-            mli.dataSource.markWatched()
+            mli.dataSource.markWatched(**VIDEO_RELOAD_KW)
             self.updateItems(mli)
             util.MONITOR.watchStatusChanged()
         elif choice['key'] == 'mark_unwatched':
-            mli.dataSource.markUnwatched()
+            mli.dataSource.markUnwatched(**VIDEO_RELOAD_KW)
             self.updateItems(mli)
             util.MONITOR.watchStatusChanged()
         elif choice['key'] == 'mark_season_watched':
-            self.season.markWatched()
+            self.season.markWatched(**VIDEO_RELOAD_KW)
             self.updateItems()
             util.MONITOR.watchStatusChanged()
         elif choice['key'] == 'mark_season_unwatched':
-            self.season.markUnwatched()
+            self.season.markUnwatched(**VIDEO_RELOAD_KW)
             self.updateItems()
             util.MONITOR.watchStatusChanged()
         elif choice['key'] == 'to_show':
