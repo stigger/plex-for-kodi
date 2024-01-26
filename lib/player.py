@@ -278,7 +278,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         if not self.playlist or self.stoppedInBingeMode:
             return False
 
-        self.player.playVideoPlaylist(self.playlist, handler=self, resume=self.player.resume)
+        self.player.playVideoPlaylist(self.playlist, handler=self, resume=False)
 
         return True
 
@@ -288,7 +288,7 @@ class SeekPlayerHandler(BasePlayerHandler):
 
         self.seeking = self.SEEK_PLAYLIST
         xbmc.sleep(500)
-        self.player.playVideoPlaylist(self.playlist, handler=self, resume=self.player.resume)
+        self.player.playVideoPlaylist(self.playlist, handler=self, resume=False)
 
         return True
 
