@@ -74,9 +74,7 @@ MARKERS = OrderedDict([
     })
 ])
 
-# fixme: this might be unnecessary now
-FINAL_MARKER_NEGOFF = 5000
-
+FINAL_MARKER_NEGOFF = 3000
 MARKER_SHOW_NEGOFF = 3000
 MARKER_OFF = 500
 MARKER_CHAPTER_OVERLAP_THRES = 30000  # 30 seconds
@@ -516,10 +514,6 @@ class SeekDialog(kodigui.BaseDialog):
                             final = getattr(marker, "final", False)
 
                             markerOff = 0
-                            if marker.type == "credits" and final:
-                                # offset final marker seek so we can trigger postPlay
-                                markerOff = FINAL_MARKER_NEGOFF
-
                             util.DEBUG_LOG('MarkerSkip: Skipping marker {}'.format(markerDef["marker"]))
                             self.setProperty('show.markerSkip', '')
                             self.setProperty('show.markerSkip_OSDOnly', '')
