@@ -61,6 +61,7 @@ class MediaItem(plexobjects.PlexObject):
         if (self.deleted or self.deletedAt) and not force_full_check:
             return False
 
+        # force_full_check is imperfect, as it doesn't check for existence of its mediaparts
         data = self.server.query('/library/metadata/{0}'.format(self.ratingKey))
         return data is not None and data.attrib.get('size') != '0'
         # req = plexrequest.PlexRequest(self.server, '/library/metadata/{0}'.format(self.ratingKey), method='HEAD')
