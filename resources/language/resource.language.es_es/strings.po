@@ -1691,3 +1691,35 @@ msgstr "Salir de Kodi al salir por defecto"
 msgctxt "#32966"
 msgid "When exiting the addon, use \"Quit Kodi\" as default option. Can be dynamically switched using CONTEXT_MENU (often longpress SELECT)"
 msgstr "Al salir del addon, usa \"Salir de Kodi\" como opción por defecto. Se puede cambiar dinámicamente usando CONTEXT_MENU (a menudo pulsando prolongadamente SELECCIONAR)"
+
+msgctxt "#32967"
+msgid "Kodi Colour Management"
+msgstr "Gestión del color en Kodi"
+
+msgctxt "#32968"
+msgid "Kodi Resolution Settings"
+msgstr "Ajustes de resolución de Kodi"
+
+msgctxt "#32969"
+msgid "Always request all library media items at once"
+msgstr "Solicite siempre todos los materiales de la biblioteca a la vez"
+
+msgctxt "#32970"
+msgid "Retrieve all media in library up front instead of fetching it in chunks as the user navigates through the library"
+msgstr "Recuperar todos los medios de la biblioteca por adelantado en lugar de hacerlo por partes a medida que el usuario navega por la biblioteca."
+
+msgctxt "#32971"
+msgid "Library item-request chunk size"
+msgstr "Tamaño del fragmento de solicitud de ítem de biblioteca"
+
+msgctxt "#32972"
+msgid "Request this amount of media items per chunk request in library view (+6-30 depending on view mode; less can be less straining for the UI at first, but puts more strain on the server)"
+msgstr "Solicita esta cantidad de elementos multimedia por petición de chunk en la vista de biblioteca (+6-30 dependiendo del modo de vista; menos puede ser menos estresante para la interfaz de usuario al principio, pero pone más tensión en el servidor)"
+
+msgctxt "#32973"
+msgid "Episodes: Skip Post Play screen"
+msgstr "Episodios: Saltar pantalla de reproducción"
+
+msgctxt "#32974"
+msgid "When finishing an episode, don\'t show Post Play but go to the next one immediately.\nCan be disabled/enabled per TV show. Doesn\'t override enabled binge mode. Overrides the Post Play setting."
+msgstr "Al terminar un episodio, no muestra Post Play sino que pasa al siguiente inmediatamente.\nPuede desactivarse/activarse por programa de TV. No anula el modo atracón activado. Anula la configuración de Post Play."
