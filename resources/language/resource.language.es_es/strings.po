@@ -527,8 +527,8 @@ msgid "Artists"
 msgstr "Artistas"
 
 msgctxt "#32348"
-msgid "movies"
-msgstr "películas"
+msgid "Movies"
+msgstr "Películas"
 
 msgctxt "#32349"
 msgid "photos"
