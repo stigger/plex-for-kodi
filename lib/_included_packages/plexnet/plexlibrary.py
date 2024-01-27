@@ -448,7 +448,7 @@ class Playlist(playlist.BasePlaylist, signalsmixin.SignalsMixin):
         title = self.title.replace(' ', '.')[0:20]
         return '<{0}:{1}:{2}>'.format(self.__class__.__name__, self.key, title)
 
-    def exists(self):
+    def exists(self, *args, **kwargs):
         try:
             self.server.query('/playlists/{0}'.format(self.ratingKey))
             return True

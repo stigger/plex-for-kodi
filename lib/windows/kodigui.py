@@ -304,7 +304,7 @@ class DummyDataSource(object):
 
     __bool__ = __nonzero__
 
-    def exists(self):
+    def exists(self, *args, **kwargs):
         return False
 
 

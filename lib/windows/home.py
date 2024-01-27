@@ -767,7 +767,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if not mli:
             return
 
-        if not mli.dataSource.exists():
+        # MediaItem.exists checks for the deleted and deletedAt flags. We still want to show the media if it's still
+        # valid, but has deleted files. Do a more thorough check for existence in this case
+        if not mli.dataSource.exists() and not mli.dataSource.exists(force_full_check=True):
             try:
                 control.removeItem(mli.pos())
             except (ValueError, TypeError):

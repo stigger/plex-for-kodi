@@ -187,7 +187,7 @@ class PlexObject(Checks):
 
         return a
 
-    def exists(self):
+    def exists(self, *args, **kwargs):
         # Used for media items - for others we just return True
         return True
 
