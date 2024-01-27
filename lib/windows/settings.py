@@ -431,7 +431,7 @@ class Settings(object):
                 BoolUserSetting(
                     'skip_post_play_tv', T(32973, 'Episodes: Skip Post Play screen'), False
                 ).description(
-                    T(32974, 'When finishing an episode, don\'t show Post Play but go to the next one immediately. '
+                    T(32974, 'When finishing an episode, don\'t show Post Play but go to the next one immediately.'
                              '\nCan be disabled/enabled per TV show. Doesn\'t override enabled binge mode. '
                              'Overrides the Post Play setting.')
                 ),
