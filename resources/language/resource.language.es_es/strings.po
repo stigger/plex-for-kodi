@@ -1727,3 +1727,7 @@ msgid ""
 msgstr ""
 "Al terminar un episodio, no muestra Post Play sino que pasa al siguiente inmediatamente.\n"
 "Puede desactivarse/activarse por programa de TV. No anula el modo atracón activado. Anula la configuración de Post Play."
+
+msgctxt "#32975"
+msgid "Delete Season"
+msgstr "Borrar temporada"
