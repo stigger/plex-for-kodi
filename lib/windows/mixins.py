@@ -3,9 +3,12 @@
 from lib import util
 
 from . import kodigui
+from . import optionsdialog
+from . import busy
+from lib.util import T
 
 
-class SeasonsMixin():
+class SeasonsMixin:
     SEASONS_CONTROL_ATTR = "subItemListControl"
 
     THUMB_DIMS = {
@@ -59,3 +62,28 @@ class SeasonsMixin():
 
         return True
 
+
+class DeleteMediaMixin:
+    def delete(self, item=None):
+        button = optionsdialog.show(
+            T(32326, 'Really delete?'),
+            T(32327, 'Are you sure you really want to delete this media?'),
+            T(32328, 'Yes'),
+            T(32329, 'No')
+        )
+
+        if button != 0:
+            return
+
+        if not self._delete(item=item or self.mediaItem):
+            util.messageDialog(T(32330, 'Message'), T(32331, 'There was a problem while attempting to delete the media.'))
+            return
+        return True
+
+    @busy.dialog()
+    def _delete(self, item):
+        success = item.delete()
+        util.LOG('Media DELETE: {0} - {1}'.format(self.mediaItem, success and 'SUCCESS' or 'FAILED'))
+        if success:
+            self.doClose()
+        return success

@@ -62,11 +62,13 @@ class MediaItem(plexobjects.PlexObject):
             return False
 
         # force_full_check is imperfect, as it doesn't check for existence of its mediaparts
-        data = self.server.query('/library/metadata/{0}'.format(self.ratingKey))
+        try:
+            data = self.server.query('/library/metadata/{0}'.format(self.ratingKey))
+        except exceptions.BadRequest:
+            # item does not exist anymore
+            util.DEBUG_LOG("Item {} doesn't exist.".format(self.ratingKey))
+            return False
         return data is not None and data.attrib.get('size') != '0'
-        # req = plexrequest.PlexRequest(self.server, '/library/metadata/{0}'.format(self.ratingKey), method='HEAD')
-        # req.getToStringWithTimeout(10)
-        # return not req.wasNotFound()
 
     def relatedHubs(self, data, _itemCls, hubIdentifiers=None, _filter=None):
         hubs = data.find("Related")

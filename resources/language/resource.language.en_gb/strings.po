@@ -1705,3 +1705,7 @@ msgstr ""
 msgctxt "#32974"
 msgid "When finishing an episode, don\'t show Post Play but go to the next one immediately.\nCan be disabled/enabled per TV show. Doesn\'t override enabled binge mode. Overrides the Post Play setting."
 msgstr ""
+
+msgctxt "#32975"
+msgid "Delete Season"
+msgstr ""
