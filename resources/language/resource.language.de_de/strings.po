@@ -2002,5 +2002,5 @@ msgid "Episodes: Skip Post Play screen"
 msgstr "Direkt zur nächsten Episode springen"
 
 msgctxt "#32974"
-msgid "When finishing an episode, don\'t show Post Play but go to the next one immediately.\nCan be disabled/enabled per TV show. Doesn\'t override enabled binge mode. Overrides the Post Play setting."
+msgid "When finishing an episode, don't show Post Play but go to the next one immediately.\nCan be disabled/enabled per TV show. Doesn't override enabled binge mode. Overrides the Post Play setting."
 msgstr "Beim Beenden einer Episode nicht in die Post Play Ansicht gehen und stattdessen sofort zur nächsten Episode springen.\nCan be disabled/enabled per TV show. Überschreibt aktivierten Binge-Modus nicht. Überschreibt die \"Automatisch nächsten Titel abspielen\"-Einstellung"

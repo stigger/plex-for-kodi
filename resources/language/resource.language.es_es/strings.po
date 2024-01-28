@@ -1703,7 +1703,7 @@ msgid "Episodes: Skip Post Play screen"
 msgstr "Episodios: Saltar pantalla de reproducción"
 
 msgctxt "#32974"
-msgid "When finishing an episode, don\'t show Post Play but go to the next one immediately.\nCan be disabled/enabled per TV show. Doesn\'t override enabled binge mode. Overrides the Post Play setting."
+msgid "When finishing an episode, don't show Post Play but go to the next one immediately.\nCan be disabled/enabled per TV show. Doesn't override enabled binge mode. Overrides the Post Play setting."
 msgstr "Al terminar un episodio, no muestra Post Play sino que pasa al siguiente inmediatamente.\nPuede desactivarse/activarse por programa de TV. No anula el modo atracón activado. Anula la configuración de Post Play."
 
 msgctxt "#32975"
