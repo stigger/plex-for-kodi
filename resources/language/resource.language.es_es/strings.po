@@ -96,11 +96,11 @@ msgstr "Log Depuración"
 
 msgctxt "#32025"
 msgid "Allow Direct Play"
-msgstr "Permitir Reproducción en Directo"
+msgstr "Permitir reproducción directa"
 
 msgctxt "#32026"
 msgid "Allow Direct Stream"
-msgstr "Permitir Stream en Directo"
+msgstr "Permitir transmisión directa"
 
 msgctxt "#32027"
 msgid "Force"
