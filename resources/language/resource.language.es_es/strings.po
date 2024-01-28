@@ -1384,7 +1384,7 @@ msgstr "Créditos finales"
 
 msgctxt "#32700"
 msgid "Action on Sleep event"
-msgstr "Acción sobre el evento del sueño"
+msgstr "Acción sobre el evento de suspensión"
 
 msgctxt "#32701"
 msgid "When Kodi receives a sleep event from the system, run the following action."
