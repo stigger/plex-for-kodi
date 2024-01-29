@@ -527,20 +527,21 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.setProperty('summary', self.video.summary.strip().replace('\t', ' '))
         self.setProperty('unwatched', not self.video.isWatched and '1' or '')
 
-        directors = u' / '.join([d.tag for d in self.video.directors()][:5])
+        directors = u' / '.join([d.tag for d in self.video.directors()][:3])
         directorsLabel = len(self.video.directors) > 1 and T(32401, u'DIRECTORS').upper() or T(32383, u'DIRECTOR').upper()
         self.setProperty('directors', directors and u'{0}    {1}'.format(directorsLabel, directors) or '')
+        writers = u' / '.join([r.tag for r in self.video.writers()][:3])
+        writersLabel = len(self.video.writers) > 1 and T(32403, u'WRITERS').upper() or T(32402, u'WRITER').upper()
+        self.setProperty('writers',
+                         writers and u'{0}{1}    {2}'.format(directors and '    ' or '', writersLabel, writers) or '')
 
+        # fixme: can this ever happen?
         if self.video.type == 'episode':
             self.setProperty('content.rating', '')
             self.setProperty('thumb', self.video.defaultThumb.asTranscodedImageURL(*self.THUMB_POSTER_DIM))
             self.setProperty('preview', self.video.thumb.asTranscodedImageURL(*self.PREVIEW_DIM))
             self.setProperty('info', u'{0} {1} {2} {3}'.format(T(32303, 'Season'), self.video.parentIndex, T(32304, 'Episode'), self.video.index))
             self.setProperty('date', util.cleanLeadingZeros(self.video.originallyAvailableAt.asDatetime('%B %d, %Y')))
-
-            writers = u' / '.join([w.tag for w in self.video.writers()][:5])
-            writersLabel = len(self.video.writers) > 1 and T(32403, u'WRITERS').upper() or T(32402, u'WRITER').upper()
-            self.setProperty('writers', writers and u'{0}    {1}'.format(writersLabel, writers) or '')
             self.setProperty('related.header', T(32306, 'Related Shows'))
         elif self.video.type == 'movie':
             self.setProperty('title', self.video.defaultTitle)
@@ -553,7 +554,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
             cast = u' / '.join([r.tag for r in self.video.roles()][:5])
             castLabel = 'CAST'
-            self.setProperty('writers', cast and u'{0}    {1}'.format(castLabel, cast) or '')
+            self.setProperty('cast', cast and u'{0}    {1}'.format(castLabel, cast) or '')
             self.setProperty('related.header', T(32404, 'Related Movies'))
 
         self.setProperty('video.res', self.video.resolutionString())
