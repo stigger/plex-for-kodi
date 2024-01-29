@@ -1024,6 +1024,15 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         mli.setBoolProperty('unavailable', not video.available())
         mli.setBoolProperty('media.multiple', len(list(filter(lambda x: x.isAccessible(), video.media()))) > 1)
 
+        directors = u' / '.join([d.tag for d in video.directors()][:3])
+        directorsLabel = len(video.directors) > 1 and T(32401, u'DIRECTORS').upper() or T(32383,
+                                                                                          u'DIRECTOR').upper()
+        mli.setProperty('directors', directors and u'{0}    {1}'.format(directorsLabel, directors) or '')
+        writers = u' / '.join([r.tag for r in video.writers()][:3])
+        writersLabel = len(video.writers) > 1 and T(32403, u'WRITERS').upper() or T(32402, u'WRITER').upper()
+        mli.setProperty('writers',
+                        writers and u'{0}{1}    {2}'.format(directors and '    ' or '', writersLabel, writers) or '')
+
     def setItemAudioAndSubtitleInfo(self, video, mli):
         sas = video.selectedAudioStream()
 

@@ -311,7 +311,7 @@
                 </control>
                 <control type="grouplist">
                     <posx>776</posx>
-                    <posy>140</posy>
+                    <posy>100</posy>
                     <width>1360</width>
                     <height>30</height>
                     <align>left</align>
@@ -342,10 +342,9 @@
                         <label>$ADDON[script.plexmod 32312]</label>
                     </control>
                 </control>
-
                 <control type="grouplist">
                     <posx>776</posx>
-                    <posy>188</posy>
+                    <posy>148</posy>
                     <width>1360</width>
                     <height>34</height>
                     <align>left</align>
@@ -391,6 +390,18 @@
                         <texturenofocus colordiffuse="40000000" border="8">script.plex/white-square-rounded-top-padded.png</texturenofocus>
                         <label>$INFO[Container(400).ListItem.Property(video.res)]$INFO[Container(400).ListItem.Property(video.rendering), &#8226; ]$INFO[Container(400).ListItem.Property(video.codec), &#8226; ]$INFO[Container(400).ListItem.Property(audio.codec), &#8226; ]$INFO[Container(400).ListItem.Property(audio.channels), &#8226; ]</label>
                     </control>
+                </control>
+
+                <control type="label">
+                    <visible>!String.IsEmpty(Container(400).ListItem.Property(directors)) | !String.IsEmpty(Container(400).ListItem.Property(writers))</visible>
+                    <posx>776</posx>
+                    <posy>194</posy>
+                    <width>1360</width>
+                    <height>30</height>
+                    <font>font12</font>
+                    <align>left</align>
+                    <textcolor>99FFFFFF</textcolor>
+                    <label>$INFO[Container(400).ListItem.Property(directors)]$INFO[Container(400).ListItem.Property(writers)]</label>
                 </control>
 
                 <control type="grouplist">
