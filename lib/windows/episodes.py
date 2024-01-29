@@ -206,6 +206,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     PROGRESS_IMAGE_ID = 250
 
     PLAY_BUTTON_ID = 301
+    PLAY_BUTTON_DISABLED_ID = 306
     SHUFFLE_BUTTON_ID = 302
     OPTIONS_BUTTON_ID = 303
     INFO_BUTTON_ID = 304
@@ -229,6 +230,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.cameFrom = kwargs.get('came_from')
         self.tasks = backgroundthread.Tasks()
         self.initialized = False
+        self.currentItemLoaded = False
         self.closing = False
         self._reloadVideos = []
 
@@ -320,7 +322,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def postSetup(self, from_select_episode=False):
         self.selectEpisode(from_select_episode=from_select_episode)
         self.checkForHeaderFocus(xbmcgui.ACTION_MOVE_DOWN)
-        self.setFocusId(self.PLAY_BUTTON_ID)
+        self.setFocusId(self.getPlayButtonID() if self.currentItemLoaded else self.getPlayButtonID(
+            base=self.PLAY_BUTTON_DISABLED_ID))
         self.initialized = True
 
     @busy.dialog()
@@ -521,7 +524,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         elif xbmc.getCondVisibility('ControlGroup(50).HasFocus(0) + !ControlGroup(300).HasFocus(0) + !ControlGroup(1300).HasFocus(0)'):
             self.setProperty('on.extras', '1')
 
-        if player.PLAYER.bgmPlaying and player.PLAYER.handler.currentlyPlaying != self.season.show().ratingKey:
+        if player.PLAYER.bgmPlaying and player.PLAYER.handler.currentlyPlaying != self.show_.ratingKey:
             player.PLAYER.stopAndWait()
 
     def openItem(self, control=None, item=None, came_from=None):
@@ -712,6 +715,9 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         )
 
     def episodeListClicked(self, force_episode=None):
+        if not self.currentItemLoaded:
+            return
+
         if not force_episode:
             mli = self.episodeListControl.getSelectedItem()
             if not mli or mli.getProperty("is.boundary"):
@@ -937,6 +943,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def updateProperties(self):
         showTitle = self.show_ and self.show_.title or ''
 
+        self.setBoolProperty('current_item.loaded', False)
         self.updateBackgroundFrom(self.show_ or self.season.show())
         self.setProperty('season.thumb', (self.season or self.show_).thumb.asTranscodedImageURL(*self.POSTER_DIM))
         self.setProperty('show.title', showTitle)
@@ -1108,6 +1115,10 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
         backgroundthread.BGThreader.addTasks(tasks)
 
+    def getPlayButtonID(self, base=None):
+        return (base and base or self.PLAY_BUTTON_ID) + (xbmc.getCondVisibility(
+            '!String.IsEmpty(Container(400).ListItem.Property(media.multiple))') and 1000 or 0)
+
     def reloadItemCallback(self, task, episode, with_progress=False):
         self.tasks.remove(task)
         del task
@@ -1133,6 +1144,15 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 if mli == selected:
                     self.lastItem = mli
                     self.setProgress(mli)
+                    self.currentItemLoaded = True
+                    self.setBoolProperty('current_item.loaded', True)
+                    PBID = self.getPlayButtonID()
+                    if not self.lastFocusID or self.lastFocusID == self.PLAY_BUTTON_DISABLED_ID:
+                        # wait for visibility of the button
+                        while not xbmc.getCondVisibility('Control.IsVisible({})'.format(PBID)) \
+                                and not util.MONITOR.abortRequested():
+                            util.MONITOR.waitForAbort(0.1)
+                        self.setFocusId(PBID)
                 return
 
     def fillExtras(self, has_prev=False):
