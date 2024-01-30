@@ -143,9 +143,7 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
         genres = self.mediaItem.genres()
         self.setProperty('info', genres and (u' / '.join([g.tag for g in genres][:3])) or '')
 
-        self.setProperties(('rating.stars', 'rating', 'rating.image', 'rating2', 'rating2.image'), '')
-
-        self.populateRatings(self.mediaItem, self.setProperty)
+        self.populateRatings(self.mediaItem, self)
 
         sas = self.mediaItem.selectedAudioStream()
         self.setProperty('audio', sas and sas.getTitle() or 'None')

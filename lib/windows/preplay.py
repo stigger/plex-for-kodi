@@ -565,9 +565,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin, RatingsMixi
         self.setProperty('audio.channels', self.video.audioChannelsString(metadata.apiTranslate))
         self.setBoolProperty('media.multiple', len(list(filter(lambda x: x.isAccessible(), self.video.media()))) > 1)
 
-        self.setProperties(('rating.stars', 'rating', 'rating.image', 'rating2', 'rating2.image'), '')
-
-        self.populateRatings(self.video, self.setProperty)
+        self.populateRatings(self.video, self)
 
         self.setAudioAndSubtitleInfo()
 

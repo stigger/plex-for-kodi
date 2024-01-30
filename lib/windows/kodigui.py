@@ -445,6 +445,15 @@ class ManagedListItem(object):
         self.listItem.setProperty(key, value)
         return self
 
+    def setProperties(self, prop_list, val_list_or_val):
+        if isinstance(val_list_or_val, list) or isinstance(val_list_or_val, tuple):
+            val_list = val_list_or_val
+        else:
+            val_list = [val_list_or_val] * len(prop_list)
+
+        for prop, val in zip(prop_list, val_list):
+            self.setProperty(prop, val)
+
     def setBoolProperty(self, key, boolean):
         return self.setProperty(key, boolean and '1' or '')
 

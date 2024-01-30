@@ -90,9 +90,12 @@ class DeleteMediaMixin:
 
 
 class RatingsMixin:
-    def populateRatings(self, video, setProperty):
+    def populateRatings(self, video, ref):
         def sanitize(src):
             return src.replace("themoviedb", "tmdb").replace('://', '/')
+
+        setProperty = getattr(ref, "setProperty")
+        getattr(ref, "setProperties")(('rating.stars', 'rating', 'rating.image', 'rating2', 'rating2.image'), '')
 
         if video.userRating:
             stars = str(int(round((video.userRating.asFloat() / 10) * 5)))
