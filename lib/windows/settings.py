@@ -148,15 +148,6 @@ class OptionsSetting(BasicSetting):
         return 0
 
 
-class RULinvSetting(BoolSetting):
-    def get(self):
-        return util.REUSE_LANGUAGE_INVOKER
-
-    def set(self, val):
-        util.reuseLanguageInvoker(val)
-        util.REUSE_LANGUAGE_INVOKER = val
-
-
 class BufferSetting(OptionsSetting):
     def get(self):
         return util.kcm.memorySize
@@ -525,8 +516,6 @@ class Settings(object):
                 BoolSetting(
                     'player_stop_on_screensaver', T(32947, 'Stop video playback on screensaver'), True
                 ),
-                RULinvSetting('reuse_language_invoker', T(32976, 'Re-use language invoker'), True).description(
-                    T(32977, 'stub')),
                 BoolSetting('debug', T(32024, 'Debug Logging'), False),
             )
         ),

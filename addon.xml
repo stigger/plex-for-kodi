@@ -31,7 +31,6 @@
         <forum>https://forums.plex.tv/t/plexmod-for-kodi-18-19-20-21/481208</forum>
         <website>https://www.plex.tv</website>
         <source>https://github.com/pannal/plex-for-kodi</source>
-        <reuselanguageinvoker>true</reuselanguageinvoker>
         <platform>all</platform>
         <news>
 - WIP

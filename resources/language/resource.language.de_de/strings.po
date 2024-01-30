@@ -2004,11 +2004,3 @@ msgstr "Direkt zur nächsten Episode springen"
 msgctxt "#32974"
 msgid "When finishing an episode, don't show Post Play but go to the next one immediately.\nCan be disabled/enabled per TV show. Doesn't override enabled binge mode. Overrides the Post Play setting."
 msgstr "Beim Beenden einer Episode nicht in die Post Play Ansicht gehen und stattdessen sofort zur nächsten Episode springen.\nCan be disabled/enabled per TV show. Überschreibt aktivierten Binge-Modus nicht. Überschreibt die \"Automatisch nächsten Titel abspielen\"-Einstellung"
-
-msgctxt "#32976"
-msgid "Re-use language invoker"
-msgstr "'Re-use language invoker' aktivieren"
-
-msgctxt "#32977"
-msgid "Modifies addon.xml. When enabled, this can greatly speed up the addon in certain conditions. If you experience crashes, disable this. Needs addon restart."
-msgstr "Modifiziert die addon.xml. Ist dies aktiviert, kann das die Addon-Geschwindigkeit in bestimmten Szenarien verbessern. Sollte es zu Abstürzen kommen, bitte deaktivieren. Benötigt einen Addon-Neustart."

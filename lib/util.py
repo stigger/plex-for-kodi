@@ -473,41 +473,6 @@ kcm = KodiCacheManager()
 CACHE_SIZE = kcm.memorySize
 
 
-RLINV_RE = re.compile(r'<reuselanguageinvoker>(\w+)</reuselanguageinvoker>')
-
-
-def reuseLanguageInvoker(value=None):
-    f = xbmcvfs.File(os.path.join(ADDON.getAddonInfo('path'), 'addon.xml'))
-    data = f.read()
-    f.close()
-
-    if value is None:
-        try:
-            return RLINV_RE.search(data).group(1) == "true"
-        except:
-            ERROR()
-            return False
-    else:
-        try:
-            f = xbmcvfs.File(os.path.join(ADDON.getAddonInfo('path'), 'addon.xml'), 'w')
-
-            try:
-                if data:
-                    data = data.replace(
-                        "<reuselanguageinvoker>{}</reuselanguageinvoker>".format(value and "false" or "true"),
-                        "<reuselanguageinvoker>{}</reuselanguageinvoker>".format(value and "true" or "false"))
-                    f.write(data)
-            finally:
-                f.close()
-        except:
-            ERROR()
-            return False
-        return value
-
-
-REUSE_LANGUAGE_INVOKER = reuseLanguageInvoker()
-
-
 def T(ID, eng=''):
     return ADDON.getLocalizedString(ID)
 
