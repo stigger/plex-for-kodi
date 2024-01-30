@@ -15,6 +15,7 @@ from . import windowutils
 from . import optionsdialog
 from . import preplayutils
 from . import pagination
+from .mixins import RatingsMixin
 
 from plexnet import plexplayer, media
 
@@ -32,7 +33,7 @@ class RelatedPaginator(pagination.BaseRelatedPaginator):
         return self.parentWindow.video.getRelated(offset=offset, limit=amount)
 
 
-class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
+class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin, RatingsMixin):
     xmlFile = 'script-plex-pre_play.xml'
     path = util.ADDON.getAddonInfo('path')
     theme = 'Main'
@@ -565,28 +566,8 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.setBoolProperty('media.multiple', len(list(filter(lambda x: x.isAccessible(), self.video.media()))) > 1)
 
         self.setProperties(('rating.stars', 'rating', 'rating.image', 'rating2', 'rating2.image'), '')
-        if self.video.userRating:
-            stars = str(int(round((self.video.userRating.asFloat() / 10) * 5)))
-            self.setProperty('rating.stars', stars)
-        # elif self.video.rating:
-        #     stars = str(int(round((self.video.rating.asFloat() / 10) * 5)))
-        #     self.setProperty('rating.stars', stars)
 
-        if self.video.ratingImage:
-            rating = self.video.rating
-            audienceRating = self.video.audienceRating
-            if self.video.ratingImage.startswith('rottentomatoes:'):
-                rating = '{0}%'.format(int(rating.asFloat() * 10))
-                if audienceRating:
-                    audienceRating = '{0}%'.format(int(audienceRating.asFloat() * 10))
-
-            self.setProperty('rating', rating)
-            self.setProperty('rating.image', 'script.plex/ratings/{0}.png'.format(self.video.ratingImage.replace('://', '/')))
-            if self.video.audienceRatingImage:
-                self.setProperty('rating2', audienceRating)
-                self.setProperty('rating2.image', 'script.plex/ratings/{0}.png'.format(self.video.audienceRatingImage.replace('://', '/')))
-        else:
-            self.setProperty('rating', self.video.rating)
+        self.populateRatings(self.video, self.setProperty)
 
         self.setAudioAndSubtitleInfo()
 

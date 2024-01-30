@@ -25,7 +25,7 @@ from . import pagination
 from . import playbacksettings
 
 from lib.util import T
-from .mixins import SeasonsMixin, DeleteMediaMixin
+from .mixins import SeasonsMixin, DeleteMediaMixin, RatingsMixin
 
 
 class RelatedPaginator(pagination.BaseRelatedPaginator):
@@ -33,7 +33,7 @@ class RelatedPaginator(pagination.BaseRelatedPaginator):
         return self.parentWindow.mediaItem.getRelated(offset=offset, limit=amount)
 
 
-class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, DeleteMediaMixin,
+class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, DeleteMediaMixin, RatingsMixin,
                  playbacksettings.PlaybackSettingsMixin):
     xmlFile = 'script-plex-seasons.xml'
     path = util.ADDON.getAddonInfo('path')
@@ -145,25 +145,7 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
 
         self.setProperties(('rating.stars', 'rating', 'rating.image', 'rating2', 'rating2.image'), '')
 
-        if self.mediaItem.userRating:
-            stars = str(int(round((self.mediaItem.userRating.asFloat() / 10) * 5)))
-            self.setProperty('rating.stars', stars)
-
-        if self.mediaItem.ratingImage:
-            rating = self.mediaItem.rating
-            audienceRating = self.mediaItem.audienceRating
-            if self.mediaItem.ratingImage.startswith('rottentomatoes:'):
-                rating = '{0}%'.format(int(rating.asFloat() * 10))
-                if audienceRating:
-                    audienceRating = '{0}%'.format(int(audienceRating.asFloat() * 10))
-
-            self.setProperty('rating', rating)
-            self.setProperty('rating.image', 'script.plex/ratings/{0}.png'.format(self.mediaItem.ratingImage.replace('://', '/')))
-            if self.mediaItem.audienceRatingImage:
-                self.setProperty('rating2', audienceRating)
-                self.setProperty('rating2.image', 'script.plex/ratings/{0}.png'.format(self.mediaItem.audienceRatingImage.replace('://', '/')))
-        else:
-            self.setProperty('rating', self.mediaItem.rating)
+        self.populateRatings(self.mediaItem, self.setProperty)
 
         sas = self.mediaItem.selectedAudioStream()
         self.setProperty('audio', sas and sas.getTitle() or 'None')

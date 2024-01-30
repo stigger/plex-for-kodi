@@ -27,7 +27,7 @@ from . import pagination
 from . import playbacksettings
 
 from lib.util import T
-from .mixins import SeasonsMixin
+from .mixins import SeasonsMixin, RatingsMixin
 
 VIDEO_RELOAD_KW = dict(includeExtras=1, includeExtrasCount=10, includeChapters=1)
 
@@ -174,7 +174,7 @@ class RelatedPaginator(pagination.BaseRelatedPaginator):
         return self.parentWindow.show_.getRelated(offset=offset, limit=amount)
 
 
-class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin,
+class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, RatingsMixin,
                      playbacksettings.PlaybackSettingsMixin):
     xmlFile = 'script-plex-episodes.xml'
     path = util.ADDON.getAddonInfo('path')
@@ -1004,21 +1004,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         #     stars = str(int(round((video.rating.asFloat() / 10) * 5)))
         #     mli.setProperty('rating.stars', stars)
 
-        if video.get('ratingImage'):
-            rating = video.rating
-            audienceRating = video.audienceRating
-            if video.ratingImage.startswith('rottentomatoes:'):
-                rating = '{0}%'.format(int(rating.asFloat() * 10))
-                if audienceRating:
-                    audienceRating = '{0}%'.format(int(audienceRating.asFloat() * 10))
-
-            mli.setProperty('rating', rating)
-            mli.setProperty('rating.image', 'script.plex/ratings/{0}.png'.format(video.ratingImage.replace('://', '/')))
-            if video.get('audienceRatingImage'):
-                mli.setProperty('rating2', audienceRating)
-                mli.setProperty('rating2.image', 'script.plex/ratings/{0}.png'.format(video.audienceRatingImage.replace('://', '/')))
-        else:
-            mli.setProperty('rating', video.rating)
+        self.populateRatings(video, mli.setProperty)
 
     def setPostReloadItemInfo(self, video, mli):
         self.setItemAudioAndSubtitleInfo(video, mli)
