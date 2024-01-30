@@ -1709,3 +1709,11 @@ msgstr ""
 msgctxt "#32975"
 msgid "Delete Season"
 msgstr ""
+
+msgctxt "#32976"
+msgid "Re-use language invoker"
+msgstr ""
+
+msgctxt "#32977"
+msgid "Modifies addon.xml. When enabled, this can greatly speed up the addon in certain conditions. If you experience crashes, disable this. Needs addon restart."
+msgstr ""
