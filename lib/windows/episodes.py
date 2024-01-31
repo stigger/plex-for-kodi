@@ -238,7 +238,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.episode = episode
         self.season = season if season is not None else self.episode.season()
         try:
-            self.show_ = show or (self.episode or self.season).show().reload(includeExtras=1, includeExtrasCount=10)
+            self.show_ = show or (self.episode or self.season).show().reload(includeExtras=1, includeExtrasCount=10,
+                                                                             includeOnDeck=1)
         except IndexError:
             raise util.NoDataException
 

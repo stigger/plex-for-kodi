@@ -34,8 +34,20 @@ class SeasonsMixin:
         )
         return mli
 
-    def fillSeasons(self, mediaItem, update=False, seasonsFilter=None, selectSeason=None):
-        seasons = mediaItem.seasons()
+    def getSeasonProgress(self, show, season):
+        """
+        calculates the season progress based on how many episodes are watched and, optionally, if there's an episode
+        in progress, take that into account as well
+        """
+        watchedPerc = season.viewedLeafCount.asInt() / season.leafCount.asInt() * 100
+        for v in show.onDeck:
+            if v.parentRatingKey == season.ratingKey and v.viewOffset:
+                vPerc = int((v.viewOffset.asInt() / v.duration.asFloat()) * 100)
+                watchedPerc += vPerc / season.leafCount.asFloat()
+        return int(watchedPerc)
+
+    def fillSeasons(self, show, update=False, seasonsFilter=None, selectSeason=None):
+        seasons = show.seasons()
         if not seasons or (seasonsFilter and not seasonsFilter(seasons)):
             return False
 
@@ -45,11 +57,13 @@ class SeasonsMixin:
             if selectSeason and season == selectSeason:
                 continue
 
-            mli = self._createListItem(mediaItem, season)
+            mli = self._createListItem(show, season)
             if mli:
                 mli.setProperty('index', str(idx))
                 mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/show.png')
                 mli.setProperty('unwatched.count', not season.isWatched and str(season.unViewedLeafCount) or '')
+                if not season.isWatched:
+                    mli.setProperty('progress', util.getProgressImage(None, self.getSeasonProgress(show, season)))
                 items.append(mli)
                 idx += 1
 

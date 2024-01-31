@@ -107,7 +107,7 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
                                                   self.mediaItem.ratingKey)
 
     def setup(self):
-        self.mediaItem.reload(includeExtras=1, includeExtrasCount=10)
+        self.mediaItem.reload(includeExtras=1, includeExtrasCount=10, includeOnDeck=1)
 
         self.relatedPaginator = RelatedPaginator(self.relatedListControl, leaf_count=int(self.mediaItem.relatedCount),
                                                  parent_window=self)
@@ -154,7 +154,12 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
 
         leafcount = self.mediaItem.leafCount.asFloat()
         if leafcount:
-            width = (int((self.mediaItem.viewedLeafCount.asInt() / leafcount) * self.width)) or 1
+            wBase = self.mediaItem.viewedLeafCount.asInt() / leafcount
+            for v in self.mediaItem.onDeck:
+                if v.viewOffset:
+                    wBase += v.viewOffset.asInt() / v.duration.asFloat() / leafcount
+
+            width = (int(wBase * self.width)) or 1
             self.progressImageControl.setWidth(width)
 
     def onAction(self, action):

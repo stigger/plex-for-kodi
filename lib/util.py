@@ -965,10 +965,16 @@ def getPlatform():
             return key.rsplit('.', 1)[-1]
 
 
-def getProgressImage(obj):
-    if not obj.get('viewOffset') or not obj.get('duration'):
+def getProgressImage(obj, perc=None):
+    if not obj and not perc:
         return ''
-    pct = int((obj.viewOffset.asInt() / obj.duration.asFloat()) * 100)
+
+    if obj:
+        if not obj.get('viewOffset') or not obj.get('duration'):
+            return ''
+        pct = int((obj.viewOffset.asInt() / obj.duration.asFloat()) * 100)
+    else:
+        pct = perc
     pct = pct - pct % 2  # Round to even number - we have even numbered progress only
     pct = max(pct, 2)
     return 'script.plex/progress/{0}.png'.format(pct)
