@@ -253,6 +253,8 @@
                     <height>60</height>
                     <align>left</align>
                     <itemgap>0</itemgap>
+                    <scroll>true</scroll>
+                    <scrollspeed>5</scrollspeed>
                     <orientation>horizontal</orientation>
                     <usecontrolcoords>true</usecontrolcoords>
                     <control type="label">
