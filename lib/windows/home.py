@@ -870,7 +870,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.tasks = [t for t in self.tasks if t.isValid()]
 
     def sectionChanged(self, force=False):
-        self.sectionChangeTimeout = time.time() + 0.3
+        self.sectionChangeTimeout = time.time() + 0.5
         if not self.sectionChangeThread or not self.sectionChangeThread.is_alive() or force:
             self.sectionChangeThread = threading.Thread(target=self._sectionChanged, name="sectionchanged")
             self.sectionChangeThread.start()
