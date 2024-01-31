@@ -1992,14 +1992,11 @@ class SeekDialog(kodigui.BaseDialog):
             else:
                 self.setProperty('show.markerSkip_OSDOnly', '')
 
-        # no marker auto skip or not yet auto skipped, normal display
-        if not markerAutoSkip or (markerAutoSkip and not markerAutoSkipped):
-            # on final marker, if it's been skipped already, don't show it (we seek those markers with a negative offset
-            # to avoid postplay issues)
-            if not getattr(markerDef["marker"], "final", False) or not markerDef["skipped"]:
-                self.setProperty('show.markerSkip', '1')
-        # marker auto skip and already skipped - hide in OSD
-        elif markerAutoSkip and markerAutoSkipped:
+        # no marker auto skip and not yet skipped or not yet auto skipped, normal display
+        if (markerAutoSkip and not markerAutoSkipped) or (not markerAutoSkip and not markerDef["skipped"]):
+            self.setProperty('show.markerSkip', '1')
+        # marker auto skip and already skipped, or no autoskip and manually skipped - hide in OSD
+        else:
             self.setProperty('show.markerSkip_OSDOnly', '1')
 
         # set marker name, count down
@@ -2131,7 +2128,8 @@ class SeekDialog(kodigui.BaseDialog):
             return
 
         self.setFocusId(self.NO_OSD_BUTTON_ID)
-        if not skipMarkerFocus and self.getCurrentMarkerDef() and not self.getProperty('show.markerSkip_OSDOnly'):
+        if not skipMarkerFocus and not self.getProperty('show.markerSkip_OSDOnly') \
+                and self.getProperty('show.markerSkip'):
             self.setFocusId(self.SKIP_MARKER_BUTTON_ID)
 
         self.resetSeeking()
