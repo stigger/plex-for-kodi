@@ -655,15 +655,14 @@ class SeekDialog(kodigui.BaseDialog):
                         return
 
                     # immediate marker timer actions
-                    if self.countingDownMarker and \
-                            (self.getProperty('show.markerSkip') or self.getProperty('show.markerSkip_OSDOnly')):
-
+                    if self.countingDownMarker:
                         if controlID != self.BIG_SEEK_LIST_ID and \
                                 (util.advancedSettings.skipMarkerTimerCancel
                                  or util.advancedSettings.skipMarkerTimerImmediate):
                             if util.advancedSettings.skipMarkerTimerCancel and \
                                     action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
                                 self.displayMarkers(cancelTimer=True)
+                                return
 
                             # skip the first second of a marker shown with countdown to avoid unexpected OK/SELECT
                             # behaviour
@@ -674,7 +673,7 @@ class SeekDialog(kodigui.BaseDialog):
                                     self._currentMarker["countdown"] < self._currentMarker["countdown_initial"]:
                                 self.displayMarkers(immediate=True)
                                 self.hideOSD(skipMarkerFocus=True)
-                            return
+                                return
 
                     if action in cancelActions:
                         if self.waitingForBuffer:
@@ -1868,7 +1867,8 @@ class SeekDialog(kodigui.BaseDialog):
     def countingDownMarker(self):
         return self._currentMarker and \
                self._currentMarker["countdown"] is not None and \
-               self._currentMarker["countdown"] > 0
+               self._currentMarker["countdown"] > 0 and \
+               self.getProperty('show.markerSkip')
 
     @countingDownMarker.setter
     def countingDownMarker(self, val):
