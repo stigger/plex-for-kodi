@@ -1,5 +1,7 @@
 # coding=utf-8
 
+import math
+
 from lib import util
 
 from . import kodigui
@@ -44,7 +46,7 @@ class SeasonsMixin:
             if v.parentRatingKey == season.ratingKey and v.viewOffset:
                 vPerc = int((v.viewOffset.asInt() / v.duration.asFloat()) * 100)
                 watchedPerc += vPerc / season.leafCount.asFloat()
-        return int(watchedPerc)
+        return watchedPerc > 0 and math.ceil(watchedPerc) or 0
 
     def fillSeasons(self, show, update=False, seasonsFilter=None, selectSeason=None):
         seasons = show.seasons()

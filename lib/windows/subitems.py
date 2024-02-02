@@ -159,6 +159,8 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
                 if v.viewOffset:
                     wBase += v.viewOffset.asInt() / v.duration.asFloat() / leafcount
 
+            # if we have _any_ progress, display it as the smallest step
+            wBase = 0 < wBase < 0.01 and 0.01 or wBase
             width = (int(wBase * self.width)) or 1
             self.progressImageControl.setWidth(width)
 
