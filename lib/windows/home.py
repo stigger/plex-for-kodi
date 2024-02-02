@@ -600,6 +600,11 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                         self.setFocusId(self.SERVER_BUTTON_ID)
                         return
 
+                    if controlID == self.SECTION_LIST_ID and self.sectionList.control.getSelectedPosition() > 0:
+                        self.sectionList.setSelectedItemByPos(0)
+                        self.showHubs(HomeSection)
+                        return
+
                     if util.advancedSettings.fastBack and not optionsFocused and offSections \
                             and self.lastFocusID not in (self.USER_BUTTON_ID, self.SERVER_BUTTON_ID,
                                                          self.SEARCH_BUTTON_ID, self.SECTION_LIST_ID):
@@ -607,7 +612,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                         self.setFocusId(self.SECTION_LIST_ID)
                         return
 
-                if action in(xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_CONTEXT_MENU):
+                if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_CONTEXT_MENU):
                     if not optionsFocused and offSections \
                             and (not util.advancedSettings.fastBack or action == xbmcgui.ACTION_CONTEXT_MENU):
                         self.lastNonOptionsFocusID = self.lastFocusID
