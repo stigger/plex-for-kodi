@@ -96,7 +96,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin, RatingsMixi
     def doAutoPlay(self):
         # First reload the video to get all the other info
         self.video.reload(checkFiles=1, **VIDEO_RELOAD_KW)
-        return self.playVideo()
+        return self.playVideo(from_auto_play=True)
 
     @busy.dialog()
     def onReInit(self):
@@ -453,7 +453,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin, RatingsMixi
         x = ((focus + 1) * 304) - 100
         return x, y
 
-    def playVideo(self):
+    def playVideo(self, from_auto_play=False):
         if not self.video.available():
             util.messageDialog(T(32312, 'Unavailable'), T(32313, 'This item is currently unavailable.'))
             return
@@ -468,7 +468,8 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin, RatingsMixi
                 pos=(660, 441),
                 close_direction='none',
                 set_dropdown_prop=False,
-                header=T(32314, 'In Progress')
+                header=T(32314, 'In Progress'),
+                dialog_props=from_auto_play and self.dialogProps or None
             )
 
             if not choice:

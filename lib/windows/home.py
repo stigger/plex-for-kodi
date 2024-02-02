@@ -759,8 +759,17 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if mli.dataSource is None:
             return
 
+        carryProps = None
+        if auto_play and self.hubControls:
+            # carry over some props to the new window as we might end up showing a resume dialog not rendering the
+            # underlying window. the new window class will invalidate the old one temporarily, though, as it seems
+            # and the properties vanish, resulting in all text2lines enabled hubs to lose their title2 labels
+            carryProps = dict(
+                ('hub.text2lines.4{0:02d}'.format(i), '1') for i, hubCtrl in enumerate(self.hubControls) if
+                hubCtrl.dataSource and self.HUBMAP[hubCtrl.dataSource.getCleanHubIdentifier()].get("text2lines"))
+
         try:
-            command = opener.open(mli.dataSource, auto_play=auto_play)
+            command = opener.open(mli.dataSource, auto_play=auto_play, dialog_props=carryProps)
             if command == "NODATA":
                 raise util.NoDataException
         except util.NoDataException:

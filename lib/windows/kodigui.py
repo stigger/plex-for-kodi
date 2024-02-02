@@ -106,6 +106,11 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
         self._winID = None
         self.started = False
         self.finishedInit = False
+        self.dialogProps = kwargs.get("dialog_props", None)
+
+        carryProps = kwargs.get("window_props", None)
+        if carryProps:
+            self.setProperties(list(carryProps.keys()), list(carryProps.values()))
 
     def onInit(self):
         global LAST_BG_URL
@@ -215,6 +220,10 @@ class BaseDialog(xbmcgui.WindowXMLDialog, BaseFunctions):
         self._closing = False
         self._winID = ''
         self.started = False
+
+        carryProps = kwargs.get("dialog_props", None)
+        if carryProps:
+            self.setProperties(list(carryProps.keys()), list(carryProps.values()))
 
     def onInit(self):
         self._winID = xbmcgui.getCurrentWindowDialogId()

@@ -747,7 +747,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 pos=(660, 441),
                 close_direction='none',
                 set_dropdown_prop=False,
-                header=T(32314, 'In Progress')
+                header=T(32314, 'In Progress'),
+                dialog_props=from_auto_play and self.dialogProps or None
             )
 
             if not choice:
