@@ -277,7 +277,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def doAutoPlay(self):
         # First reload the video to get all the other info
         self.initialEpisode.reload(checkFiles=1, **VIDEO_RELOAD_KW)
-        return self.playButtonClicked(force_episode=self.initialEpisode)
+        return self.playButtonClicked(force_episode=self.initialEpisode, from_auto_play=True)
 
     def onFirstInit(self):
         self._onFirstInit()
@@ -667,7 +667,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         section_id = self.show_.getLibrarySectionId()
         self.processCommand(search.dialog(self, section_id=section_id or None))
 
-    def playButtonClicked(self, shuffle=False, force_episode=None):
+    def playButtonClicked(self, shuffle=False, force_episode=None, from_auto_play=False):
         if shuffle:
             seasonOrShow = self.season or self.show_
             items = seasonOrShow.all()
@@ -678,7 +678,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             return True
 
         else:
-            return self.episodeListClicked(force_episode=force_episode)
+            return self.episodeListClicked(force_episode=force_episode, from_auto_play=from_auto_play)
 
     def shuffleButtonClicked(self):
         self.playButtonClicked(shuffle=True)
@@ -720,8 +720,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             video=episode
         )
 
-    def episodeListClicked(self, force_episode=None):
-        if not self.currentItemLoaded:
+    def episodeListClicked(self, force_episode=None, from_auto_play=False):
+        if not self.currentItemLoaded and not from_auto_play:
             return
 
         if not force_episode:
