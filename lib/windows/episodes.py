@@ -323,8 +323,13 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def postSetup(self, from_select_episode=False):
         self.selectEpisode(from_select_episode=from_select_episode)
         self.checkForHeaderFocus(xbmcgui.ACTION_MOVE_DOWN)
-        self.setFocusId(self.getPlayButtonID() if self.currentItemLoaded else self.getPlayButtonID(
-            base=self.PLAY_BUTTON_DISABLED_ID))
+
+        selected = self.episodeListControl.getSelectedItem()
+        if selected:
+            self.setFocusId(self.getPlayButtonID(selected, base=not self.currentItemLoaded
+                            and self.PLAY_BUTTON_DISABLED_ID or None)
+            )
+
         self.initialized = True
 
     @busy.dialog()
@@ -1095,9 +1100,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
         backgroundthread.BGThreader.addTasks(tasks)
 
-    def getPlayButtonID(self, base=None):
-        return (base and base or self.PLAY_BUTTON_ID) + (xbmc.getCondVisibility(
-            '!String.IsEmpty(Container(400).ListItem.Property(media.multiple))') and 1000 or 0)
+    def getPlayButtonID(self, mli, base=None):
+        return (base and base or self.PLAY_BUTTON_ID) + (mli.getProperty('media.multiple') and 1000 or 0)
 
     def reloadItemCallback(self, task, episode, with_progress=False):
         self.tasks.remove(task)
@@ -1124,15 +1128,22 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 if mli == selected:
                     self.lastItem = mli
                     self.setProgress(mli)
+
+                if not self.currentItemLoaded and (
+                        mli == selected or (self.episode and self.episode == mli.dataSource)):
                     self.currentItemLoaded = True
                     self.setBoolProperty('current_item.loaded', True)
-                    PBID = self.getPlayButtonID()
-                    if not self.lastFocusID or self.lastFocusID == self.PLAY_BUTTON_DISABLED_ID:
+                    if not self.lastFocusID or self.lastFocusID in (
+                            self.PLAY_BUTTON_DISABLED_ID, self.PLAY_BUTTON_DISABLED_ID + 1000):
                         # wait for visibility of the button
+                        tries = 0
+                        PBID = self.getPlayButtonID(mli)
                         while not xbmc.getCondVisibility('Control.IsVisible({})'.format(PBID)) \
-                                and not util.MONITOR.abortRequested():
+                                and not util.MONITOR.abortRequested() and tries < 5:
                             util.MONITOR.waitForAbort(0.1)
-                        self.setFocusId(PBID)
+                            tries += 1
+                        if xbmc.getCondVisibility('Control.IsVisible({})'.format(PBID)):
+                            self.setFocusId(PBID)
                 return
 
     def fillExtras(self, has_prev=False):
