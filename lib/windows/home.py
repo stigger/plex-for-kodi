@@ -923,6 +923,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                     continue
 
                 hubs = self.sectionHubs.get(section.key, ())
+                if not hubs:
+                    util.LOG("Hubs for {} not found/no data".format(section.key))
+                    continue
+
                 for idx, ihub in enumerate(hubs):
                     if ihub == hub:
                         if self.lastSection == section:
