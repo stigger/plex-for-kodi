@@ -1425,10 +1425,11 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         else:
             items[0].setProperty('only', '1')
 
-        self.userList.reset()
-        self.userList.addItems(items)
+        self.userList.replaceItems(items)
 
-        self.getControl(801).setHeight((len(items) * 66) + 80)
+        h = (len(items) * 66)
+        self.getControl(250).setHeight(h)
+        self.getControl(801).setHeight(h + 80)
 
         if not mouse:
             self.setFocusId(self.USER_LIST_ID)
