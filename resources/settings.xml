@@ -368,6 +368,20 @@
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
+                <setting id="offline_token" type="string" label="32978" help="">
+                    <level>0</level>
+                    <default/>
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32978</heading>
+                        <hidden>true</hidden>
+                    </control>
+                    <dependencies>
+                        <dependency type="enable" setting="offline_mode">true</dependency>
+                    </dependencies>
+                </setting>
                 <setting id="allow_insecure" type="string" label="32032" help="32104">
                     <level>0</level>
                     <default>never</default>

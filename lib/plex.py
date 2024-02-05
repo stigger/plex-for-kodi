@@ -351,6 +351,12 @@ def init(offline=False):
     while retry:
         retry = False
         if not plexapp.ACCOUNT.authToken:
+            if offline:
+                token = util.getSetting("offline_token")
+                if token:
+                    plexapp.ACCOUNT.authToken = token
+                    return True
+
             util.DEBUG_LOG("No auth token, authorizing")
             token = authorize()
 
