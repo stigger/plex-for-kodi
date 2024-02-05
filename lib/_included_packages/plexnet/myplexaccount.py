@@ -52,6 +52,14 @@ class MyPlexAccount(object):
     def init(self):
         self.loadState()
 
+    def setOffline(self):
+        self.isOffline = True
+        self.isAuthenticated = False
+        self.isSignedIn = False
+        # consider a single, unprotected user authenticated
+        if not self.isProtected:
+            self.isAuthenticated = True
+
     def saveState(self):
         obj = {
             'ID': self.ID,

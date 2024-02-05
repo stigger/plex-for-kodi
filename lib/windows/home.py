@@ -216,7 +216,8 @@ class ServerListItem(kodigui.ManagedListItem):
             self.safeSetProperty('secure', isSecure and '1' or '')
             self.safeSetProperty('local', isLocal and '1' or '')
 
-        self.safeSetProperty('current', plexapp.SERVERMANAGER.selectedServer.uuid == self.uuid and '1' or '')
+        if plexapp.SERVERMANAGER.selectedServer:
+            self.safeSetProperty('current', plexapp.SERVERMANAGER.selectedServer.uuid == self.uuid and '1' or '')
         if name:
             self.safeSetLabel(name)
 
@@ -1341,7 +1342,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 item = ServerListItem(s.name, not s.owned and s.owner or '', data_source=s)
                 item.uuid = s.uuid
                 item.onUpdate()
-                item.setProperty('current', plexapp.SERVERMANAGER.selectedServer.uuid == s.uuid and '1' or '')
+                if plexapp.SERVERMANAGER.selectedServer:
+                    item.setProperty('current', plexapp.SERVERMANAGER.selectedServer.uuid == s.uuid and '1' or '')
                 items.append(item)
 
             if len(items) > 1:
@@ -1366,7 +1368,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 self.setFocusId(self.SERVER_LIST_ID)
 
             if not from_refresh:
-                plexapp.refreshResources()
+                if not plexapp.ACCOUNT.isOffline:
+                    plexapp.refreshResources()
 
     def selectServer(self):
         if self._shuttingDown:
@@ -1409,9 +1412,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 items.append(kodigui.ManagedListItem(T(32342, 'Switch User'), data_source='switch'))
         items.append(kodigui.ManagedListItem(T(32343, 'Settings'), data_source='settings'))
         if plexapp.ACCOUNT.isSignedIn:
+            items.append(kodigui.ManagedListItem(T(32976, 'Go offline'), data_source='go_offline'))
             items.append(kodigui.ManagedListItem(T(32344, 'Sign Out'), data_source='signout'))
         elif plexapp.ACCOUNT.isOffline:
-            items.append(kodigui.ManagedListItem(T(32459, 'Offline Mode'), data_source='go_online'))
+            items.append(kodigui.ManagedListItem(T(32977, 'Go online'), data_source='go_online'))
         else:
             items.append(kodigui.ManagedListItem(T(32460, 'Sign In'), data_source='signin'))
 
@@ -1442,6 +1446,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             from . import settings
             settings.openWindow()
         elif option == 'go_online':
+            util.setSetting("offline_mode", False)
             plexapp.ACCOUNT.refreshAccount()
         else:
             self.closeOption = option

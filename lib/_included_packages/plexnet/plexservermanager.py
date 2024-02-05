@@ -82,6 +82,8 @@ class PlexServerManager(signalsmixin.SignalsMixin):
         servers = []
         for uuid in list(self.serversByUuid.keys()):
             if uuid != "myplex":
+                if plexapp.ACCOUNT.isOffline and not self.serversByUuid[uuid].isLocal:
+                    continue
                 servers.append(self.serversByUuid[uuid])
 
         return servers
@@ -340,8 +342,12 @@ class PlexServerManager(signalsmixin.SignalsMixin):
 
             for i in range(len(serverObj.get('connections', []))):
                 conn = serverObj['connections'][i]
+                if plexapp.ACCOUNT.isOffline and not conn['isLocal']:
+                    continue
+
                 isFallback = hasSecureConn and conn['address'][:5] != "https" and not util.LOCAL_OVER_SECURE
                 sources = plexconnection.PlexConnection.SOURCE_BY_VAL[conn['sources']]
+
                 connection = plexconnection.PlexConnection(sources, conn['address'], conn['isLocal'], conn['token'], isFallback)
 
                 # Keep the secure connection on top

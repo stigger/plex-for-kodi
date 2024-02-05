@@ -18,16 +18,23 @@ MANAGER = None
 PLATFORM = util.X_PLEX_DEVICE
 
 
-def init():
+def init(offline=False):
     global MANAGER, SERVERMANAGER, ACCOUNT
     from . import myplexaccount
     ACCOUNT = myplexaccount.ACCOUNT
     ACCOUNT.init()
+    if offline:
+        ACCOUNT.setOffline()
+
     from . import plexservermanager
     SERVERMANAGER = plexservermanager.MANAGER
     from . import myplexmanager
     util.MANAGER = MANAGER = myplexmanager.MANAGER
-    ACCOUNT.verifyAccount()
+
+    if not ACCOUNT.isOffline:
+        ACCOUNT.verifyAccount()
+    else:
+        util.APP.clearInitializer("myplex")
 
 
 class App(signalsmixin.SignalsMixin):

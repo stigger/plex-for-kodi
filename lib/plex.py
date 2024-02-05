@@ -337,11 +337,11 @@ class CallbackEvent(plexapp.util.CompatEvent):
         self.context.off(self.signal, self.set)
 
 
-def init():
+def init(offline=False):
     util.DEBUG_LOG('Initializing...')
 
     with CallbackEvent(plexapp.util.APP, 'init'):
-        plexapp.init()
+        plexapp.init(offline=offline)
         util.DEBUG_LOG('Waiting for account initialization...')
 
     util.DEBUG_LOG('Account initialized: {}'.format(plexapp.ACCOUNT.ID))

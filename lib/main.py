@@ -94,7 +94,7 @@ def _main():
 
     try:
         while not util.MONITOR.abortRequested() and not util.getGlobalProperty('stop_running'):
-            if plex.init():
+            if plex.init(offline=util.getSetting("offline_mode", False)):
                 background.setSplash(False)
                 fromSwitch = False
                 while not util.MONITOR.abortRequested() and not util.getGlobalProperty('stop_running'):
@@ -153,6 +153,11 @@ def _main():
 
                         if closeOption == 'signout':
                             signout()
+                            break
+                        elif closeOption == 'go_offline':
+                            plexapp.ACCOUNT.setOffline()
+                            plexapp.SERVERMANAGER.startSelectedServerSearch()
+                            util.setSetting("offline_mode", True)
                             break
                         elif closeOption == 'switch':
                             plexapp.ACCOUNT.isAuthenticated = False
