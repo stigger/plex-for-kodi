@@ -1876,8 +1876,8 @@ class SeekDialog(kodigui.BaseDialog):
             self._currentMarker["countdown"] = None
             self.setProperty('marker.countdown', '')
 
-    def sendTimeline(self, state=None, time=None, force=True, ensureFinalTimelineEvent=True):
-        self.handler.updateNowPlaying(force, state=state, time=time, overrideChecks=True)
+    def sendTimeline(self, state=None, t=None, force=True, ensureFinalTimelineEvent=True):
+        self.handler.updateNowPlaying(force=force, state=state, t=t, overrideChecks=True)
         if ensureFinalTimelineEvent:
             self.handler.ignoreTimelines = True
 
@@ -1956,7 +1956,7 @@ class SeekDialog(kodigui.BaseDialog):
                     return False
 
                 # tell plex we've arrived at the end of the video, playing back
-                self.sendTimeline(state=self.player.STATE_STOPPED, time=self.duration - 1000)
+                self.sendTimeline(state=self.player.STATE_STOPPED, t=self.duration - 1000)
 
                 # go to next video immediately if on bingeMode
                 if self.handler.playlist and self.handler.playlist.hasNext():
