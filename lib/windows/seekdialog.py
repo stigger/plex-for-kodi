@@ -2037,60 +2037,65 @@ class SeekDialog(kodigui.BaseDialog):
         """
         Called ~1/s; can be wildly inaccurate.
         """
-        if waitForBuffer:
-            cont = self.waitForBuffer()
-            if not cont:
+
+        # we might be called with an offset for seekOnStart even before we're initialized (onFirstInit)
+        # in that case, skip all functionality and just seekOnStart
+        if (not offset and not self.initialized) or self._ignoreTick:
+            return
+
+        if self.initialized:
+            if waitForBuffer:
+                cont = self.waitForBuffer()
+                if not cont:
+                    return
+
+            # invisibly sync low-drift timer to current playback every X seconds, as Player.getTime() can be wildly off
+            if self.ldTimer and not self.osdVisible() and self.timeKeeper and self.timeKeeper.ticks >= 60:
+                self.syncTimeKeeper()
+
+            cancelTick = False
+            # don't auto skip while we're initializing and waiting for the handler to seek on start
+            if offset is None and not self.handler.seekOnStart:
+                cancelTick = self.displayMarkers()
+
+            if cancelTick:
                 return
 
-        if not self.initialized or self._ignoreTick:
-            return
+            if xbmc.getCondVisibility('Window.IsActive(busydialog) + !Player.Caching'):
+                util.DEBUG_LOG('SeekDialog: Possible stuck busy dialog - closing')
+                xbmc.executebuiltin('Dialog.Close(busydialog,1)')
 
-        # invisibly sync low-drift timer to current playback every X seconds, as Player.getTime() can be wildly off
-        if self.ldTimer and not self.osdVisible() and self.timeKeeper and self.timeKeeper.ticks >= 60:
-            self.syncTimeKeeper()
+            if not self.hasDialog and not self.playlistDialogVisible and self.osdVisible():
+                if time.time() > self.timeout and not self._osdHideFast:
+                    if not xbmc.getCondVisibility('Window.IsActive(videoosd) | Player.Rewinding | Player.Forwarding'):
+                        self.hideOSD()
 
-        cancelTick = False
-        # don't auto skip while we're initializing and waiting for the handler to seek on start
-        if offset is None and not self.handler.seekOnStart:
-            cancelTick = self.displayMarkers()
+                # try insta-hiding the OSDs when playback was requested
+                elif self._osdHideFast:
+                    xbmc.executebuiltin('Dialog.Close(videoosd,true)')
+                    xbmc.executebuiltin('Dialog.Close(seekbar,true)')
+                    if not xbmc.getCondVisibility('Window.IsActive(videoosd) | Player.Rewinding | Player.Forwarding'):
+                        self.hideOSD()
 
-        if cancelTick:
-            return
+                    self._osdHideFast = False
 
-        if xbmc.getCondVisibility('Window.IsActive(busydialog) + !Player.Caching'):
-            util.DEBUG_LOG('SeekDialog: Possible stuck busy dialog - closing')
-            xbmc.executebuiltin('Dialog.Close(busydialog,1)')
+        if offset or self.initialized:
+            try:
+                self.offset = offset or int(self.handler.player.getTime() * 1000)
+            except RuntimeError:  # Playback has stopped
+                self.resetSeeking()
+                return
 
-        if not self.hasDialog and not self.playlistDialogVisible and self.osdVisible():
-            if time.time() > self.timeout and not self._osdHideFast:
-                if not xbmc.getCondVisibility('Window.IsActive(videoosd) | Player.Rewinding | Player.Forwarding'):
-                    self.hideOSD()
+            if offset or (self.autoSeekTimeout and time.time() >= self.autoSeekTimeout and
+                          self.offset != self.selectedOffset):
+                self.resetAutoSeekTimer(None)
+                #off = offset is not None and offset or None
+                #self.doSeek(off)
+                self.doSeek()
+                return True
 
-            # try insta-hiding the OSDs when playback was requested
-            elif self._osdHideFast:
-                xbmc.executebuiltin('Dialog.Close(videoosd,true)')
-                xbmc.executebuiltin('Dialog.Close(seekbar,true)')
-                if not xbmc.getCondVisibility('Window.IsActive(videoosd) | Player.Rewinding | Player.Forwarding'):
-                    self.hideOSD()
-
-                self._osdHideFast = False
-
-        try:
-            self.offset = offset or int(self.handler.player.getTime() * 1000)
-        except RuntimeError:  # Playback has stopped
-            self.resetSeeking()
-            return
-
-        if offset or (self.autoSeekTimeout and time.time() >= self.autoSeekTimeout and
-                      self.offset != self.selectedOffset):
-            self.resetAutoSeekTimer(None)
-            #off = offset is not None and offset or None
-            #self.doSeek(off)
-            self.doSeek()
-            return True
-
-        if self.isDirectPlay or not self.ldTimer:
-            self.updateCurrent(update_position_control=not self._seeking and not self._applyingSeek)
+            if self.isDirectPlay or not self.ldTimer:
+                self.updateCurrent(update_position_control=not self._seeking and not self._applyingSeek)
 
     @property
     def playlistDialogVisible(self):
