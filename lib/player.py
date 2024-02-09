@@ -202,6 +202,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.baseOffset = offset / 1000.0
         self.seeking = seeking
         self.duration = duration
+        self._lastDuration = duration
         self.bifURL = bif_url
         self.title = title
         self.title2 = title2
@@ -250,7 +251,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         if not self.stoppedManually and self.skipPostPlay:
             return False
 
-        if (not util.advancedSettings.postplayAlways and self.player.video.duration.asInt() <= FIVE_MINUTES_MILLIS)\
+        if (not util.advancedSettings.postplayAlways and self._lastDuration <= FIVE_MINUTES_MILLIS)\
                 or util.advancedSettings.postplayTimeout <= 0:
             return False
 
