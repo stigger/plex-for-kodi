@@ -556,6 +556,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             self.player.showSubtitles(False)
 
     def setAudioTrack(self):
+        self.player.lastPlayWasBGM = False
         if self.isDirectPlay:
             track = self.player.video.selectedAudioStream()
             if track:
@@ -571,8 +572,6 @@ class SeekPlayerHandler(BasePlayerHandler):
                             return
                     except:
                         util.ERROR()
-
-                self.player.lastPlayWasBGM = False
 
                 xbmc.sleep(100)
                 util.DEBUG_LOG('Switching audio track - index: {0}'.format(track.typeIndex))
@@ -815,13 +814,11 @@ class BGMPlayerHandler(BasePlayerHandler):
         self.timelineType = 'music'
         self.currentlyPlaying = rating_key
         util.setGlobalProperty('track.ID', '')
-        util.setGlobalProperty('theme_playing', '1')
 
         self.oldVolume = util.rpc.Application.GetProperties(properties=["volume"])["volume"]
 
     def onPlayBackStarted(self):
         util.DEBUG_LOG("BGM: playing theme for %s" % self.currentlyPlaying)
-        self.player.bgmPlaying = True
 
     def _setVolume(self, vlm):
         xbmc.executebuiltin("SetVolume({})".format(vlm))
@@ -883,6 +880,13 @@ class BGMPlayerTask(backgroundthread.Task):
     def run(self):
         if self.isCanceled():
             return
+
+        self.player.bgmPlaying = True
+        util.setGlobalProperty('theme_playing', '1')
+        ct = 0
+        while ct < 10 and not util.getGlobalProperty('theme_playing') and not util.MONITOR.abortRequested():
+            util.MONITOR.waitForAbort(0.1)
+            ct += 1
 
         self.player.play(self.source, windowed=True)
 
@@ -994,7 +998,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         xbmc.Player.play(self, *args, **kwargs)
 
     def playBackgroundMusic(self, source, volume, rating_key, *args, **kwargs):
-        if self.isPlaying():
+        if self.isPlayingAudio():
             if not self.lastPlayWasBGM:
                 return
 
@@ -1407,8 +1411,14 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
                     util.DEBUG_LOG('Monitoring video...')
                     self._videoMonitor()
                 elif self.isPlayingAudio():
-                    util.DEBUG_LOG('Monitoring audio...')
-                    self._audioMonitor()
+                    if self.bgmPlaying:
+                        util.DEBUG_LOG('Monitoring BGM...')
+                        while self.isPlayingAudio() and self.bgmPlaying and not util.MONITOR.abortRequested() and \
+                                not self._closed:
+                            util.MONITOR.waitForAbort(0.1)
+                    else:
+                        util.DEBUG_LOG('Monitoring audio...')
+                        self._audioMonitor()
                 elif self.isPlaying():
                     util.DEBUG_LOG('Monitoring pre-play...')
 
