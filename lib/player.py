@@ -154,6 +154,9 @@ class BasePlayerHandler(object):
     def getVolume(self):
         return util.rpc.Application.GetProperties(properties=["volume"])["volume"]
 
+    def sessionEnded(self):
+        self.player.sessionID = None
+
 
 class SeekPlayerHandler(BasePlayerHandler):
     NO_SEEK = 0
@@ -645,6 +648,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.hideOSD(delete=True)
 
     def sessionEnded(self):
+        self.player.sessionID = None
         if self.ended:
             return
         self.ended = True
@@ -903,6 +907,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
     def __init__(self, *args, **kwargs):
         xbmc.Player.__init__(self, *args, **kwargs)
         signalsmixin.SignalsMixin.__init__(self)
+        self.sessionID = None
         self.handler = AudioPlayerHandler(self)
 
     def init(self):
@@ -914,6 +919,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.BGMTask = None
         self.pauseAfterPlaybackStarted = False
         self.video = None
+        self.sessionID = None
         self.hasOSD = False
         self.hasSeekOSD = False
         self.handler = AudioPlayerHandler(self)
@@ -999,7 +1005,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         xbmc.Player.play(self, *args, **kwargs)
 
     def playBackgroundMusic(self, source, volume, rating_key, *args, **kwargs):
-        if self.isPlayingAudio():
+        if self.isPlaying():
             if not self.lastPlayWasBGM:
                 return
 
@@ -1011,6 +1017,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
                 # cancel any currently playing theme before starting the new one
                 else:
                     self.stopAndWait()
+        self.sessionID = "BGM{}".format(rating_key)
         curVol = self.handler.getVolume()
         # no current volume, don't play BGM either
         if not curVol:
@@ -1038,12 +1045,12 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             self.stopAndWait()
 
         self.handler = handler if handler and isinstance(handler, SeekPlayerHandler) \
-            else SeekPlayerHandler(self, session_id)
+            else SeekPlayerHandler(self, session_id or self.sessionID)
 
         self.video = video
         self.resume = resume
         self.open()
-        self._playVideo(resume and video.viewOffset.asInt() or 0, force_update=force_update)
+        self._playVideo(resume and video.viewOffset.asInt() or 0, force_update=force_update, session_id=session_id)
 
     def getOSSPathHint(self, meta):
         # only hint the path one folder above for a movie, two folders above for TV
@@ -1059,7 +1066,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             cleaned_path = ""
         return cleaned_path
 
-    def _playVideo(self, offset=0, seeking=0, force_update=False, playerObject=None):
+    def _playVideo(self, offset=0, seeking=0, force_update=False, playerObject=None, session_id=None):
         self.trigger('new.video', video=self.video)
         self.trigger(
             'change.background',
@@ -1095,6 +1102,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             util.MONITOR.waitForAbort(util.advancedSettings.consecutiveVideoPbWait)
 
         self.ignoreStopEvents = False
+        self.sessionID = session_id or self.sessionID
 
         self.handler.setup(self.video.duration.asInt(), meta, offset, bifURL, title=self.video.grandparentTitle,
                            title2=self.video.title, seeking=seeking, chapters=self.video.chapters)
@@ -1165,7 +1173,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         if handler and isinstance(handler, SeekPlayerHandler):
             self.handler = handler
         else:
-            self.handler = SeekPlayerHandler(self, session_id)
+            self.handler = SeekPlayerHandler(self, session_id or self.sessionID)
 
         self.handler.playlist = playlist
         if playlist.isRemote:
@@ -1174,7 +1182,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.video.softReload(includeChapters=1)
         self.resume = resume
         self.open()
-        self._playVideo(resume and self.video.viewOffset.asInt() or 0, seeking=handler and handler.SEEK_PLAYLIST or 0, force_update=True)
+        self._playVideo(resume and self.video.viewOffset.asInt() or 0, seeking=handler and handler.SEEK_PLAYLIST or 0,
+                        force_update=True, session_id=session_id)
 
     # def createVideoListItem(self, video, index=0):
     #     url = 'plugin://script.plex/play?{0}'.format(base64.urlsafe_b64encode(video.serialize()))
@@ -1201,15 +1210,21 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         if self.bgmPlaying:
             self.stopAndWait()
 
+        self.ignoreStopEvents = True
         self.handler = AudioPlayerHandler(self)
         url, li = self.createTrackListItem(track, fanart)
         self.stopAndWait()
+        self.ignoreStopEvents = False
+
+        # maybe fixme: once started, self.sessionID will never be None for Audio
+        self.sessionID = "AUD%s" % track.ratingKey
         self.play(url, li, **kwargs)
 
     def playAlbum(self, album, startpos=-1, fanart=None, **kwargs):
         if self.bgmPlaying:
             self.stopAndWait()
 
+        self.ignoreStopEvents = True
         self.handler = AudioPlayerHandler(self)
         plist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
         plist.clear()
@@ -1220,12 +1235,15 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             index += 1
         xbmc.executebuiltin('PlayerControl(RandomOff)')
         self.stopAndWait()
+        self.ignoreStopEvents = False
+        self.sessionID = "ALB%s" % album.ratingKey
         self.play(plist, startpos=startpos, **kwargs)
 
     def playAudioPlaylist(self, playlist, startpos=-1, fanart=None, **kwargs):
         if self.bgmPlaying:
             self.stopAndWait()
 
+        self.ignoreStopEvents = True
         self.handler = AudioPlayerHandler(self)
         plist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
         plist.clear()
@@ -1244,6 +1262,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             else:
                 xbmc.executebuiltin('PlayerControl(RandomOff)')
         self.stopAndWait()
+        self.ignoreStopEvents = False
+        self.sessionID = "PLS%s" % playlist.ratingKey
         self.play(plist, startpos=startpos, **kwargs)
 
     def createTrackListItem(self, track, fanart=None, index=0):
@@ -1271,6 +1291,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         return (url, li)
 
     def onPrePlayStarted(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player - PRE-PLAY; handler: %r' % self.handler)
         self.trigger('preplay.started')
         if not self.handler:
@@ -1278,6 +1300,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler.onPrePlayStarted()
 
     def onPlayBackStarted(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player - STARTED')
         self.trigger('playback.started')
         self.started = True
@@ -1290,12 +1314,16 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler.onPlayBackStarted()
 
     def onAVChange(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player - AVChange')
         if not self.handler:
             return
         self.handler.onAVChange()
 
     def onAVStarted(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player - AVStarted: {}'.format(self.handler))
         self.trigger('av.started')
         if not self.handler:
@@ -1303,12 +1331,16 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler.onAVStarted()
 
     def onPlayBackPaused(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player - PAUSED')
         if not self.handler:
             return
         self.handler.onPlayBackPaused()
 
     def onPlayBackResumed(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player - RESUMED')
         if not self.handler:
             return
@@ -1316,6 +1348,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler.onPlayBackResumed()
 
     def onPlayBackStopped(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player - STOPPED' + (not self.started and ': FAILED' or ''))
         if self.ignoreStopEvents:
             return
@@ -1328,6 +1362,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler.onPlayBackStopped()
 
     def onPlayBackEnded(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player - ENDED' + (not self.started and ': FAILED' or ''))
         if self.ignoreStopEvents:
             return
@@ -1340,12 +1376,16 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler.onPlayBackEnded()
 
     def onPlayBackSeek(self, time, offset):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player - SEEK: %i' % offset)
         if not self.handler:
             return
         self.handler.onPlayBackSeek(time, offset)
 
     def onPlayBackFailed(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player - FAILED: {}'.format(self.handler))
         if not self.handler:
             return
@@ -1357,6 +1397,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             # xbmcgui.Dialog().ok('Failed', 'Playback failed')
 
     def onVideoWindowOpened(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player: Video window opened')
         try:
             self.handler.onVideoWindowOpened()
@@ -1364,6 +1406,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             util.ERROR()
 
     def onVideoWindowClosed(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player: Video window closed')
         try:
             self.handler.onVideoWindowClosed()
@@ -1372,6 +1416,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             util.ERROR()
 
     def onVideoOSD(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player: Video OSD opened')
         try:
             self.handler.onVideoOSD()
@@ -1379,6 +1425,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             util.ERROR()
 
     def onSeekOSD(self):
+        if not self.sessionID:
+            return
         util.DEBUG_LOG('Player: Seek OSD opened')
         try:
             self.handler.onSeekOSD()
@@ -1405,7 +1453,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
                 if not self.isPlaying():
                     util.DEBUG_LOG('Player: Idling...')
 
-                while not self.isPlaying() and not util.MONITOR.abortRequested() and not self._closed:
+                while not util.MONITOR.abortRequested() and not self._closed and \
+                        (not self.isPlaying() or (self.isPlaying() and not self.sessionID)):
                     util.MONITOR.waitForAbort(0.1)
 
                 if self.isPlayingVideo():
