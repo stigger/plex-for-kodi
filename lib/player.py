@@ -116,8 +116,10 @@ class BasePlayerHandler(object):
 
         return self._lastDuration
 
-    def updateNowPlaying(self, force=False, refreshQueue=False, state=None, time=None, overrideChecks=False):
-        util.DEBUG_LOG("UpdateNowPlaying: force: {0} refreshQueue: {1} state: {2}".format(force, refreshQueue, state))
+    def updateNowPlaying(self, force=False, refreshQueue=False, t=None, state=None, overrideChecks=False):
+        util.DEBUG_LOG("UpdateNowPlaying: force: {0} refreshQueue: "
+                       "{1} state: {2} overrideChecks: {3} time: {4}".format(force, refreshQueue, state, overrideChecks,
+                                                                             t))
         if self.ignoreTimelines:
             util.DEBUG_LOG("UpdateNowPlaying: ignoring timeline as requested")
             return
@@ -137,7 +139,7 @@ class BasePlayerHandler(object):
         self.lastTimelineState = state
         # self.timelineTimer.reset()
 
-        time = time or int(self.trueTime * 1000)
+        _time = t or int(self.trueTime * 1000)
 
         # self.trigger("progress", [m, item, time])
 
@@ -145,7 +147,7 @@ class BasePlayerHandler(object):
             self.playQueue.refreshOnTimeline = True
 
         plexapp.util.APP.nowplayingmanager.updatePlaybackState(
-            self.timelineType, self.player.playerObject, state, time, self.playQueue, duration=self.currentDuration(),
+            self.timelineType, self.player.playerObject, state, _time, self.playQueue, duration=self.currentDuration(),
             force=overrideChecks
         )
 
