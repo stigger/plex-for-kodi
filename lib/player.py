@@ -1006,6 +1006,10 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
                 # cancel any currently playing theme before starting the new one
                 else:
                     self.stopAndWait()
+        curVol = self.handler.getVolume()
+        # no current volume, don't play BGM either
+        if not curVol:
+            return
 
         if self.BGMTask and self.BGMTask.isValid():
             self.BGMTask.cancel()
@@ -1014,7 +1018,6 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         self.handler = BGMPlayerHandler(self, rating_key)
 
         # store current volume if it's different from the BGM volume
-        curVol = self.handler.getVolume()
         if volume < curVol:
             util.setSetting('last_good_volume', curVol)
 
