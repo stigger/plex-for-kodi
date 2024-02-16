@@ -1,3 +1,9 @@
+.pyo
+.pyc
+/script.plexmod
+/script.plexmod.zip
+__pycache__
+/.idea
 /fixRepo.py
 /resources/skins/Main/TexturePacker.exe
 /resources/skins/Main/packtex.bat
