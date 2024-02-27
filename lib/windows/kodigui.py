@@ -317,6 +317,14 @@ class DummyDataSource(object):
         return False
 
 
+class EmptyDataSource(DummyDataSource):
+    def __getattr__(self, item):
+        return None
+
+    def __setattr__(self, key, value):
+        raise NotImplementedError
+
+
 DUMMY_DATA_SOURCE = DummyDataSource()
 
 

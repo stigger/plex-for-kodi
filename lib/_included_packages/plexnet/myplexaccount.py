@@ -155,7 +155,14 @@ class MyPlexAccount(object):
             self.isProtected = bool(self.pin)
 
             # update the list of users in the home
-            self.updateHomeUsers(use_async=bool(self.homeUsers))
+            # Cache home users forever
+            epoch = time.time()
+
+            if self.lastHomeUserUpdate:
+                util.DEBUG_LOG(
+                    "Skipping home user update (updated {0} seconds ago)".format(epoch - self.lastHomeUserUpdate))
+            else:
+                self.updateHomeUsers(use_async=bool(self.homeUsers))
 
             if self.isAdmin and self.isPlexPass:
                 self.adminHasPlexPass = True
@@ -256,13 +263,6 @@ class MyPlexAccount(object):
                 self.homeUsers.append(MyPlexAccount())
 
             self.lastHomeUserUpdate = None
-            return
-
-        # Cache home users for 60 seconds, mainly to stop back to back tests
-        epoch = time.time()
-
-        if self.lastHomeUserUpdate and self.lastHomeUserUpdate + 360 > epoch:
-            util.DEBUG_LOG("Skipping home user update (updated {0} seconds ago)".format(epoch - self.lastHomeUserUpdate))
             return
 
         req = myplexrequest.MyPlexRequest("/api/home/users")
