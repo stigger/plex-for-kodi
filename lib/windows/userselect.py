@@ -68,7 +68,7 @@ class UserSelectWindow(kodigui.BaseWindow):
                     self.setFocusId(self.PIN_ENTRY_GROUP_ID)
                 self.pinEntryClicked(ID + 60)
                 return
-            elif ID in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_BACKSPACE):
+            elif ID in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU,  xbmcgui.ACTION_BACKSPACE):
                 item = self.userList.getSelectedItem()
                 if xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(self.PIN_ENTRY_GROUP_ID)):
                     if item.getProperty('editing.pin'):
