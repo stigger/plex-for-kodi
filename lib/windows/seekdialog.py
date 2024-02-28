@@ -1234,6 +1234,7 @@ class SeekDialog(kodigui.BaseDialog):
         if changed == 'SUBTITLE':
             self.setSubtitles(do_sleep=False)
             self.lastSubtitleNavAction = "forward"
+            return True
 
         elif changed:
             self.doSeek(self.trueOffset(), settings_changed=True)
