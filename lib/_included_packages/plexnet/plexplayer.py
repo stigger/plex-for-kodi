@@ -799,6 +799,7 @@ class PlexPlayer(object):
 
         builder.addParam("session", self.item.settings.getGlobal("clientIdentifier"))
         builder.addParam("directStream", directStream and "1" or "0")
+        #builder.addParam("directStreamAudio", directStream and "1" or "0")
         builder.addParam("directPlay", "0")
 
         qualityIndex = self.item.settings.getQualityIndex(self.item.getQualityType(server))

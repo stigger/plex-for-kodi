@@ -109,7 +109,7 @@ class PlexInterface(plexapp.AppInterface):
             maxVideoRes, maxVideoRes, maxVideoRes, maxVideoRes, maxVideoRes
         ],
         'transcodeVideoBitrates': [
-            "64", "96", "208", "320", "720", "1500", "2000", "3000", "4000", "8000", "10000", "12000", "20000", "400000"
+            "64", "96", "208", "320", "720", "1500", "2000", "3000", "4000", "8000", "10000", "12000", "20000", "0"
         ],
         'deviceInfo': plexapp.DeviceInfo()
     }
