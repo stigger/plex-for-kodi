@@ -287,7 +287,11 @@ class Settings(object):
                 QualitySetting('remote_quality', T(32021, 'Remote Quality'), 13),
                 QualitySetting('online_quality', T(32022, 'Online Quality'), 13),
                 BoolSetting('playback_directplay', T(32025, 'Allow Direct Play'), True),
-                BoolSetting('playback_remux', T(32026, 'Allow Direct Stream'), True),
+                BoolSetting('playback_remux', T(32026, 'Allow Direct Stream'), True).description(
+                    T(32979, 'Allows the server to only transcode streams of a video that need transcoding,'
+                             ' while streaming the others unaltered. If disabled, force the server to transcode '
+                             'everything not direct playable.')
+                ),
                 BoolSetting('allow_4k', T(32036, 'Allow 4K'), True).description(
                     T(32102, 'Enable this if your hardware can handle 4K playback. Disable it to force transcoding.')
                 ),
