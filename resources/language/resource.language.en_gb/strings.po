@@ -1725,3 +1725,7 @@ msgstr ""
 msgctxt "#32979"
 msgid "Allows the server to only transcode streams of a video that need transcoding, while streaming the others unaltered. If disabled, force the server to transcode everything not direct playable."
 msgstr ""
+
+msgctxt "#32980"
+msgid "Refresh Users"
+msgstr ""

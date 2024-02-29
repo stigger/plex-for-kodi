@@ -354,6 +354,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.updateHubs = {}
         self.changingServer = False
         self._shuttingDown = False
+        self._skipNextAction = False
         windowutils.HOME = self
 
         self.lock = threading.Lock()
@@ -544,6 +545,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         controlID = self.getFocusId()
 
         try:
+            if self._skipNextAction:
+                self._skipNextAction = False
+                return
+
             if not controlID and not action == xbmcgui.ACTION_MOUSE_MOVE:
                 if self.lastFocusID:
                     self.setFocusId(self.lastFocusID)
@@ -661,7 +666,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         # elif controlID == self.USER_BUTTON_ID:
         #     self.showUserMenu()
         elif controlID == self.USER_LIST_ID:
-            self.doUserOption()
+            if self.doUserOption():
+                self._skipNextAction = True
             self.setBoolProperty('show.options', False)
             self.setFocusId(self.USER_BUTTON_ID)
         elif controlID == self.PLAYER_STATUS_BUTTON_ID:
@@ -1420,6 +1426,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if plexapp.ACCOUNT.isSignedIn:
             if len(plexapp.ACCOUNT.homeUsers) > 1:
                 items.append(kodigui.ManagedListItem(T(32342, 'Switch User'), data_source='switch'))
+            else:
+                items.append(kodigui.ManagedListItem(T(32980, 'Refresh Users'), data_source='refresh_users'))
         items.append(kodigui.ManagedListItem(T(32343, 'Settings'), data_source='settings'))
         if plexapp.ACCOUNT.isSignedIn:
             items.append(kodigui.ManagedListItem(T(32344, 'Sign Out'), data_source='signout'))
@@ -1456,6 +1464,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             settings.openWindow()
         elif option == 'go_online':
             plexapp.ACCOUNT.refreshAccount()
+        elif option == 'refresh_users':
+            plexapp.ACCOUNT.updateHomeUsers()
+            return True
         else:
             self.closeOption = option
             self.doClose()
