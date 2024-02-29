@@ -296,9 +296,6 @@ class MyPlexAccount(object):
                 homeUser.isProtected = homeUser.protected == "1"
                 self.homeUsers.append(homeUser)
 
-            self.lastHomeUserUpdate = time.time()
-            self.saveState()
-
             # set admin attribute for the user
             self.isAdmin = False
             if self.homeUsers:
@@ -309,6 +306,9 @@ class MyPlexAccount(object):
 
             if oldHU != self.homeUsers:
                 util.LOG("home users: {0}".format(self.homeUsers))
+
+        self.lastHomeUserUpdate = time.time()
+        self.saveState()
 
     def switchHomeUser(self, userId, pin=''):
         if userId == self.ID and self.isAuthenticated:
