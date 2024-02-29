@@ -2012,3 +2012,11 @@ msgstr "Staffel löschen"
 msgctxt "#32976"
 msgid "Adaptive"
 msgstr "Adaptiv"
+
+msgctxt "#32977"
+msgid "Allow VC1"
+msgstr "VC1 zulassen"
+
+msgctxt "#32978"
+msgid "Enable this if your hardware can handle VC1. Disable it to force transcoding."
+msgstr "Diese Option aktivieren, wenn die Hardware VC1 verarbeiten kann. Deaktivieren, um die Transkodierung zu erzwingen."

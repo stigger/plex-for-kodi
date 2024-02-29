@@ -1713,3 +1713,11 @@ msgstr ""
 msgctxt "#32976"
 msgid "Adaptive"
 msgstr ""
+
+msgctxt "#32977"
+msgid "Allow VC1"
+msgstr ""
+
+msgctxt "#32978"
+msgid "Enable this if your hardware can handle VC1. Disable it to force transcoding."
+msgstr ""

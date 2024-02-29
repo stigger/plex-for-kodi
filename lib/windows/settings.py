@@ -293,6 +293,9 @@ class Settings(object):
                 ),
                 BoolSetting('allow_hevc', T(32037, 'Allow HEVC (h265)'), True).description(
                     T(32103, 'Enable this if your hardware can handle HEVC/h265. Disable it to force transcoding.')
+                ),
+                BoolSetting('allow_vc1', T(32977, 'Allow VC1'), True).description(
+                    T(32978, 'Enable this if your hardware can handle VC1. Disable it to force transcoding.')
                 )
             )
         ),
