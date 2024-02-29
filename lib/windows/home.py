@@ -831,11 +831,11 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if not item:
             return
 
-        if not item.getProperty('item'):
-            if action and action == xbmcgui.ACTION_MOVE_RIGHT:
+        if not item.getProperty('item') and action:
+            if action == xbmcgui.ACTION_MOVE_RIGHT:
                 self.sectionList.selectItem(0)
                 item = self.sectionList[0]
-            else:
+            elif action == xbmcgui.ACTION_MOVE_LEFT:
                 self.sectionList.selectItem(self.bottomItem)
                 item = self.sectionList[self.bottomItem]
 
@@ -843,7 +843,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.storeLastBG()
 
         if item.dataSource != self.lastSection:
-            self.lastSection = item.dataSource
             self.sectionChanged(force)
 
     def checkHubItem(self, controlID, actionID=None):
@@ -912,6 +911,12 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         while not util.MONITOR.waitForAbort(0.1):
             if time.time() >= self.sectionChangeTimeout:
                 break
+
+        ds = self.sectionList.getSelectedItem().dataSource
+        if self.lastSection == ds:
+            return
+
+        self.lastSection = ds
 
         self._sectionReallyChanged()
 
