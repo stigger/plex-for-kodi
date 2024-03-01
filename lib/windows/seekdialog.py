@@ -78,6 +78,7 @@ FINAL_MARKER_NEGOFF = 3000
 MARKER_SHOW_NEGOFF = 3000
 MARKER_OFF = 500
 MARKER_CHAPTER_OVERLAP_THRES = 30000  # 30 seconds
+MARKER_END_JUMP_OFF = 1000
 
 
 class SeekDialog(kodigui.BaseDialog):
@@ -513,12 +514,11 @@ class SeekDialog(kodigui.BaseDialog):
                             marker = markerDef["marker"]
                             final = getattr(marker, "final", False)
 
-                            markerOff = 0
                             util.DEBUG_LOG('MarkerSkip: Skipping marker {}'.format(markerDef["marker"]))
                             self.setProperty('show.markerSkip', '')
                             self.setProperty('show.markerSkip_OSDOnly', '')
                             markerDef["skipped"] = True
-                            self.doSeek(math.ceil(float(marker.endTimeOffset)) - markerOff)
+                            self.doSeek(math.ceil(float(marker.endTimeOffset)) + MARKER_END_JUMP_OFF)
                             self.hideOSD(skipMarkerFocus=True)
 
                             if marker.type == "credits" and not final:
@@ -538,6 +538,11 @@ class SeekDialog(kodigui.BaseDialog):
                         self.setProperty('show.chapters', '1')
                         self.setFocusId(self.BIG_SEEK_LIST_ID)
                         return
+                    elif action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
+                        if self.getProperty('show.markerSkip') and not self.getProperty('show.markerSkip_OSDOnly'):
+                            self.setProperty('show.markerSkip', '')
+                            self.setProperty('show.markerSkip_OSDOnly', '1')
+                            return
 
                 if controlID == self.MAIN_BUTTON_ID:
                     # we're seeking from the timeline with the OSD open - do an actual timeline seek
@@ -1917,7 +1922,7 @@ class SeekDialog(kodigui.BaseDialog):
             if startTimeOff == 0 and not markerDef["markerAutoSkipped"]:
                 if setSkipped:
                     markerDef["markerAutoSkipped"] = True
-                return int(markerDef["marker"].endTimeOffset) + 1000
+                return int(markerDef["marker"].endTimeOffset) + MARKER_END_JUMP_OFF
             return False
 
         if cancelTimer and self.countingDownMarker:
@@ -1976,7 +1981,7 @@ class SeekDialog(kodigui.BaseDialog):
                 return False
 
             util.DEBUG_LOG('MarkerAutoSkip: Skipping marker {}'.format(markerDef["marker"]))
-            self.doSeek(int(markerDef["marker"].endTimeOffset) + 1000)
+            self.doSeek(int(markerDef["marker"].endTimeOffset) + MARKER_END_JUMP_OFF)
             return True
 
         # got a marker, display logic
@@ -1987,10 +1992,12 @@ class SeekDialog(kodigui.BaseDialog):
             setattr(self, markerDef["markerAutoSkipShownTimer"], time.time())
 
         else:
-            if timer + getattr(self, markerDef["markerSkipBtnTimeout"]) <= time.time():
-                self.setProperty('show.markerSkip_OSDOnly', '1')
-            else:
-                self.setProperty('show.markerSkip_OSDOnly', '')
+            # if we've not already OSD-hidden the marker manually, check its timeout
+            if not self.getProperty('show.markerSkip_OSDOnly'):
+                if timer + getattr(self, markerDef["markerSkipBtnTimeout"]) <= time.time():
+                    self.setProperty('show.markerSkip_OSDOnly', '1')
+                else:
+                    self.setProperty('show.markerSkip_OSDOnly', '')
 
         # no marker auto skip and not yet skipped or not yet auto skipped, normal display
         if (markerAutoSkip and not markerAutoSkipped) or (not markerAutoSkip and not markerDef["skipped"]):
