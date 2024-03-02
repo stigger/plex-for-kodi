@@ -17,7 +17,6 @@ from . import asyncadapter
 from . import callback
 from . import util
 
-
 codes = requests.codes
 status_codes = requests.status_codes._codes
 
@@ -42,7 +41,7 @@ def pgetaddrinfo(host, port, *args, **kwargs):
             ip = KNOWN_HOSTS[host] = v6 and base.replace("-", ":") or base.replace("-", ".")
             util.DEBUG_LOG("Dynamically resolving {} to {}".format(host, ip))
 
-        fam = v6 and socket.AddressFamily.AF_INET6 or socket.AddressFamily.AF_INET
+        fam = v6 and socket.AF_INET6 or socket.AF_INET
         stype = kwargs.get("type", kwargs.get("socktype", socket.SOCK_STREAM))
         proto = kwargs.get("proto", socket.IPPROTO_TCP)
 
