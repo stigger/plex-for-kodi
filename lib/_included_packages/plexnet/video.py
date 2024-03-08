@@ -331,15 +331,23 @@ class Video(media.MediaItem, AudioCodecMixin):
 
     @property
     def remainingTime(self):
-        if not self.viewOffset.asInt():
+        return self._remainingTime()
+
+    def _remainingTime(self, view_offset=None):
+        view_offset = view_offset if view_offset is not None else self.viewOffset.asInt()
+        if not view_offset:
             return
-        return (self.duration.asInt() - self.viewOffset.asInt()) // 1000
+        return (self.duration.asInt() - view_offset) // 1000
 
     @property
     def remainingTimeString(self):
-        if not self.remainingTime:
+        return self._remainingTimeString()
+
+    def _remainingTimeString(self, view_offset=None):
+        remt = self._remainingTime(view_offset=view_offset)
+        if not remt:
             return ''
-        seconds = self.remainingTime
+        seconds = remt
         hours = seconds // 3600
         minutes = (seconds - hours * 3600) // 60
         return (hours and "{}h ".format(hours) or '') + (minutes and "{}m".format(minutes) or "0m")

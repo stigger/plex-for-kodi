@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.plexmod"
        name="Plex"
-       version="0.7.7-beta2"
+       version="0.7.7-beta4"
        provider-name="pannal">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
@@ -36,7 +36,7 @@
 - WIP
         </news>
         <assets>
-            <icon>icon.png</icon>
+            <icon>icon2.png</icon>
             <fanart>fanart.png</fanart>
         </assets>
     </extension>

@@ -972,14 +972,16 @@ def getPlatform():
             return key.rsplit('.', 1)[-1]
 
 
-def getProgressImage(obj, perc=None):
+def getProgressImage(obj, perc=None, view_offset=None):
     if not obj and not perc:
         return ''
 
     if obj:
-        if not obj.get('viewOffset') or not obj.get('duration'):
+        if not view_offset:
+            view_offset = obj.get('viewOffset') and obj.viewOffset.asInt()
+        if not view_offset or not obj.get('duration'):
             return ''
-        pct = int((obj.viewOffset.asInt() / obj.duration.asFloat()) * 100)
+        pct = int((view_offset / obj.duration.asFloat()) * 100)
     else:
         pct = perc
     pct = pct - pct % 2  # Round to even number - we have even numbered progress only
