@@ -372,7 +372,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             return
 
         for mli in self.episodeListControl:
-            if (mli.dataSource == self.episode) or (not self.episode and not mli.dataSource.isWatched):
+            if (mli.dataSource == self.episode) or (not self.episode and not mli.dataSource.isFullyWatched):
                 if self.episodeListControl.getSelectedPosition() != mli.pos():
                     self.episodeListControl.selectItem(mli.pos())
                     self.episodesPaginator.setEpisode(self.episode or mli.dataSource)
@@ -1160,14 +1160,14 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         if not self.tasks and select_latest_unwatched:
             mli = self.episodeListControl.getListItemByDataSource(select_latest_unwatched)
             nextIdx = mli.pos()
-            if mli.dataSource.isWatched:
+            if mli.dataSource.isFullyWatched:
                 while self.episodeListControl.positionIsValid(nextIdx + 1):
                     nextIdx = nextIdx + 1
                     mli = self.episodeListControl[nextIdx]
-                    if not mli.dataSource.isWatched:
+                    if not mli.dataSource.isFullyWatched:
                         break
 
-                if not mli.dataSource.isWatched:
+                if not mli.dataSource.isFullyWatched:
                     self.episodeListControl.setSelectedItemByPos(nextIdx)
                     self.episodesPaginator.setEpisode(mli.dataSource)
 

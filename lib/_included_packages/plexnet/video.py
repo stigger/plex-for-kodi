@@ -534,6 +534,10 @@ class Movie(PlayableVideo):
     def isWatched(self):
         return self.get('viewCount').asInt() > 0 or self.get('viewOffset').asInt() > 0
 
+    @property
+    def isFullyWatched(self):
+        return self.get('viewCount').asInt() > 0 and not self.get('viewOffset').asInt()
+
     def getStreamURL(self, **params):
         return self._getStreamURL(**params)
 
@@ -693,6 +697,10 @@ class Episode(PlayableVideo, SectionOnDeckMixin):
         return self.get('viewCount').asInt() > 0 or self.get('viewOffset').asInt() > 0
 
     @property
+    def isFullyWatched(self):
+        return self.get('viewCount').asInt() > 0 and not self.get('viewOffset').asInt()
+
+    @property
     def playbackSettings(self):
         return self.show().playbackSettings
 
@@ -741,6 +749,10 @@ class Clip(PlayableVideo):
     @property
     def isWatched(self):
         return self.get('viewCount').asInt() > 0 or self.get('viewOffset').asInt() > 0
+
+    @property
+    def isFullyWatched(self):
+        return self.get('viewCount').asInt() > 0 and not self.get('viewOffset').asInt()
 
     def getStreamURL(self, **params):
         return self._getStreamURL(**params)
