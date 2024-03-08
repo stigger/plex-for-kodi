@@ -368,13 +368,14 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.fillRoles(hasPrev)
 
     def selectEpisode(self, from_select_episode=False):
-        if not self.episode or not self.episodesPaginator:
+        if not self.episodesPaginator:
             return
 
         for mli in self.episodeListControl:
-            if mli.dataSource == self.episode:
-                self.episodeListControl.selectItem(mli.pos())
-                self.episodesPaginator.setEpisode(self.episode)
+            if (mli.dataSource == self.episode) or (not self.episode and not mli.dataSource.isWatched):
+                if self.episodeListControl.getSelectedPosition() != mli.pos():
+                    self.episodeListControl.selectItem(mli.pos())
+                    self.episodesPaginator.setEpisode(self.episode or mli.dataSource)
                 break
         else:
             if not from_select_episode:
@@ -1154,20 +1155,21 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                             self.setFocusId(PBID)
 
                 break
-        # if we're the last task and select_latest_unwatched is given, select the next unwatched episode
-        # if possible
+
+        # if we're the last task and select_latest_unwatched is given, select the next unwatched episode if possible
         if not self.tasks and select_latest_unwatched:
             mli = self.episodeListControl.getListItemByDataSource(select_latest_unwatched)
-            nextIdx = int(mli.getProperty("index"))
-            while self.episodeListControl.positionIsValid(nextIdx + 1):
-                nextIdx = nextIdx + 1
-                mli = self.episodeListControl[nextIdx]
-                if not mli.dataSource.isWatched:
-                    break
+            nextIdx = mli.pos()
+            if mli.dataSource.isWatched:
+                while self.episodeListControl.positionIsValid(nextIdx + 1):
+                    nextIdx = nextIdx + 1
+                    mli = self.episodeListControl[nextIdx]
+                    if not mli.dataSource.isWatched:
+                        break
 
-            if not mli.dataSource.isWatched:
-                self.episodeListControl.setSelectedItemByPos(nextIdx)
-                self.episodesPaginator.setEpisode(mli.dataSource)
+                if not mli.dataSource.isWatched:
+                    self.episodeListControl.setSelectedItemByPos(nextIdx)
+                    self.episodesPaginator.setEpisode(mli.dataSource)
 
     def fillExtras(self, has_prev=False):
         items = []
