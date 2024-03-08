@@ -151,9 +151,11 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
     def onReInit(self):
         pass
 
-    def waitForOpen(self):
+    def waitForOpen(self, base_win_id=None):
         tries = 0
-        while not self.isOpen and not util.MONITOR.waitForAbort(2) and tries < 60:
+        while ((not base_win_id and not self.isOpen) or
+               (base_win_id and xbmcgui.getCurrentWindowId() <= base_win_id)) \
+                and not util.MONITOR.waitForAbort(1) and tries < 120:
             if tries == 0:
                 util.LOG("Couldn't open window {}, other dialog open? Retrying for 120s.".format(self))
             self.show()
