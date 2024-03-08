@@ -297,7 +297,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             self.tasks = backgroundthread.Tasks()
 
         try:
-            self.selectEpisode()
+            self.selectEpisode(skip_select_next=not self._reloadVideos)
         except AttributeError:
             raise util.NoDataException
 
@@ -320,8 +320,9 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             self.progressImageControl.setWidth(1)
             mli.setProperty('remainingTime', T(32914, "Loading"))
 
-        self.reloadItems(items=reloadItems, with_progress=True, select_latest_unwatched=selectEpisode.dataSource)
+        selectNext = self._reloadVideos and selectEpisode.dataSource or None
         self.episodesPaginator.setEpisode(selectEpisode.dataSource)
+        self.reloadItems(items=reloadItems, with_progress=True, select_latest_unwatched=selectNext)
 
         self._reloadVideos = []
         self.fillRelated()
@@ -367,18 +368,23 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         hasPrev = self.fillRelated(hasPrev)
         self.fillRoles(hasPrev)
 
-    def selectEpisode(self, from_select_episode=False):
+    def selectEpisode(self, from_select_episode=False, skip_select_next=False):
         if not self.episodesPaginator:
             return
 
         for mli in self.episodeListControl:
-            if (mli.dataSource == self.episode) or (not self.episode and not mli.dataSource.isFullyWatched):
+            # the second part of this condition selects the next unwatched episode if we don't have self.episode right
+            # now, which happens upon reinit or when being called without an episode (season view, show view).
+            # we don't want to select the next episode unless we've come from the player and watched something
+            # upon reinit. an unwatched but in-progress episode counts as unwatched in this case, as well.
+            if (mli.dataSource == self.episode) or \
+                    (not skip_select_next and not self.episode and not mli.dataSource.isFullyWatched):
                 if self.episodeListControl.getSelectedPosition() != mli.pos():
                     self.episodeListControl.selectItem(mli.pos())
                     self.episodesPaginator.setEpisode(self.episode or mli.dataSource)
                 break
         else:
-            if not from_select_episode:
+            if not from_select_episode and self.episode:
                 self.reset(self.episode)
                 self._setup(from_select_episode=True)
                 self.postSetup(from_select_episode=True)
