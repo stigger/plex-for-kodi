@@ -33,10 +33,11 @@ VIDEO_RELOAD_KW = dict(includeExtras=1, includeExtrasCount=10, includeChapters=1
 
 
 class EpisodeReloadTask(backgroundthread.Task):
-    def setup(self, episode, callback, with_progress=False):
+    def setup(self, episode, callback, with_progress=False, select_latest_unwatched=None):
         self.episode = episode
         self.callback = callback
         self.withProgress = with_progress
+        self.selectLatestUnwatched = select_latest_unwatched
         return self
 
     def run(self):
@@ -51,7 +52,8 @@ class EpisodeReloadTask(backgroundthread.Task):
             self.episode.reload(checkFiles=1, includeChapters=1, fromMediaChoice=self.episode.mediaChoice is not None)
             if self.isCanceled():
                 return
-            self.callback(self, self.episode, with_progress=self.withProgress)
+            self.callback(self, self.episode, with_progress=self.withProgress,
+                          select_latest_unwatched=self.selectLatestUnwatched)
         except requests.exceptions.RequestException:
             raise util.NoDataException
         except:
@@ -310,13 +312,17 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                     reloadItems.append(m)
                     self.episodesPaginator.prepareListItem(v, m)
 
+        reloadItems = list(set(reloadItems))
+        selectEpisode = reloadItems and reloadItems[-1] or mli
+
         # re-set current item's progress to a loading state
         if util.getSetting("slow_connection", False):
             self.progressImageControl.setWidth(1)
             mli.setProperty('remainingTime', T(32914, "Loading"))
 
-        self.reloadItems(items=reloadItems, with_progress=True)
-        self.episodesPaginator.setEpisode(self._reloadVideos and self._reloadVideos[-1] or mli)
+        self.reloadItems(items=reloadItems, with_progress=True, select_latest_unwatched=selectEpisode.dataSource)
+        self.episodesPaginator.setEpisode(selectEpisode.dataSource)
+
         self._reloadVideos = []
         self.fillRelated()
 
@@ -1089,13 +1095,14 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         items = self.episodesPaginator.paginate()
         self.reloadItems(items)
 
-    def reloadItems(self, items, with_progress=False):
+    def reloadItems(self, items, with_progress=False, select_latest_unwatched=None):
         tasks = []
         for mli in items:
             if not mli.dataSource:
                 continue
 
-            task = EpisodeReloadTask().setup(mli.dataSource, self.reloadItemCallback, with_progress=with_progress)
+            task = EpisodeReloadTask().setup(mli.dataSource, self.reloadItemCallback, with_progress=with_progress,
+                                             select_latest_unwatched=select_latest_unwatched)
             self.tasks.add(task)
             tasks.append(task)
 
@@ -1104,7 +1111,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def getPlayButtonID(self, mli, base=None):
         return (base and base or self.PLAY_BUTTON_ID) + (mli.getProperty('media.multiple') and 1000 or 0)
 
-    def reloadItemCallback(self, task, episode, with_progress=False):
+    def reloadItemCallback(self, task, episode, with_progress=False, select_latest_unwatched=None):
         self.tasks.remove(task)
         del task
 
@@ -1145,7 +1152,22 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                             tries += 1
                         if xbmc.getCondVisibility('Control.IsVisible({})'.format(PBID)):
                             self.setFocusId(PBID)
-                return
+
+                break
+        # if we're the last task and select_latest_unwatched is given, select the next unwatched episode
+        # if possible
+        if not self.tasks and select_latest_unwatched:
+            mli = self.episodeListControl.getListItemByDataSource(select_latest_unwatched)
+            nextIdx = int(mli.getProperty("index"))
+            while self.episodeListControl.positionIsValid(nextIdx + 1):
+                nextIdx = nextIdx + 1
+                mli = self.episodeListControl[nextIdx]
+                if not mli.dataSource.isWatched:
+                    break
+
+            if not mli.dataSource.isWatched:
+                self.episodeListControl.setSelectedItemByPos(nextIdx)
+                self.episodesPaginator.setEpisode(mli.dataSource)
 
     def fillExtras(self, has_prev=False):
         items = []
