@@ -318,11 +318,17 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         skip_progress_for = None
         if self._videoProgress:
             skip_progress_for = []
-            for ratingKey in self._videoProgress.keys():
-                for m in self.episodeListControl:
-                    if m.dataSource.ratingKey == ratingKey:
-                        reload_items.append(m)
-                        skip_progress_for.append(ratingKey)
+            for m in self.episodeListControl:
+                # pagination boundary
+                if not m.dataSource:
+                    continue
+
+                if m.dataSource.ratingKey in self._videoProgress:
+                    reload_items.append(m)
+                    skip_progress_for.append(m.dataSource.ratingKey)
+                    del self._videoProgress[m.dataSource.ratingKey]
+                if not self._videoProgress:
+                    break
 
             self._videoProgress = None
 
@@ -387,6 +393,10 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         set_main_progress_to = None
 
         for mli in self.episodeListControl:
+            # pagination boundary
+            if not mli.dataSource:
+                continue
+
             just_fully_watched = False
             if progress_data_left and mli.dataSource:
                 progress = progress_data_left.pop(mli.dataSource.ratingKey, False)
