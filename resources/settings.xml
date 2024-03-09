@@ -362,7 +362,7 @@
                 </setting>
                 <setting id="worker_count" type="number" label="32981" help="32982">
                     <level>0</level>
-                    <default>5</default>
+                    <default>3</default>
                     <constraints>
                         <minimum>2</minimum>
                         <step>1</step>
