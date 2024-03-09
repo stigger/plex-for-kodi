@@ -478,7 +478,7 @@
                             <posy>0</posy>
                             <width>125</width>
                             <height>101</height>
-                            <texture colordiffuse="AAFFFFFF">script.plex/buttons/player/repeat.png</texture>
+                            <texture colordiffuse="88FFFFFF">script.plex/buttons/player/repeat.png</texture>
                         </control>
                         <control type="image">
                             <visible>Playlist.IsRepeat | !String.IsEmpty(Window.Property(pq.repeat))</visible>
@@ -535,7 +535,7 @@
                     <height>101</height>
                     <font>font12</font>
                     <texturefocus>script.plex/buttons/player/shuffle.png</texturefocus>
-                    <texturenofocus colordiffuse="AAFFFFFF">script.plex/buttons/player/shuffle.png</texturenofocus>
+                    <texturenofocus colordiffuse="88FFFFFF">script.plex/buttons/player/shuffle.png</texturenofocus>
                     <usealttexture>!String.IsEmpty(Window.Property(pq.shuffled))</usealttexture>
                     <alttexturefocus colordiffuse="FFCC7B19">script.plex/buttons/player/shuffle.png</alttexturefocus>
                     <alttexturenofocus colordiffuse="FFCC7B19">script.plex/buttons/player/shuffle.png</alttexturenofocus>
@@ -562,7 +562,7 @@
                     <height>101</height>
                     <font>font12</font>
                     <texturefocus>script.plex/buttons/player/settings.png</texturefocus>
-                    <texturenofocus colordiffuse="AAFFFFFF">script.plex/buttons/player/settings.png</texturenofocus>
+                    <texturenofocus colordiffuse="88FFFFFF">script.plex/buttons/player/settings.png</texturenofocus>
                     <label> </label>
                 </control>
 
@@ -576,7 +576,7 @@
                     <height>101</height>
                     <font>font12</font>
                     <texturefocus flipx="true">script.plex/buttons/player/next.png</texturefocus>
-                    <texturenofocus flipx="true" colordiffuse="AAFFFFFF">script.plex/buttons/player/next.png</texturenofocus>
+                    <texturenofocus flipx="true" colordiffuse="88FFFFFF">script.plex/buttons/player/next.png</texturenofocus>
                     <label> </label>
                 </control>
                 <control type="button" id="424">
@@ -600,7 +600,7 @@
                     <height>101</height>
                     <font>font12</font>
                     <texturefocus flipx="true">script.plex/buttons/player/skip-forward.png</texturefocus>
-                    <texturenofocus flipx="true" colordiffuse="AAFFFFFF">script.plex/buttons/player/skip-forward.png</texturenofocus>
+                    <texturenofocus flipx="true" colordiffuse="88FFFFFF">script.plex/buttons/player/skip-forward.png</texturenofocus>
                     <label> </label>
                 </control>
 
@@ -632,7 +632,7 @@
                             <posy>0</posy>
                             <width>125</width>
                             <height>101</height>
-                            <texture colordiffuse="AAFFFFFF">script.plex/buttons/player/pause.png</texture>
+                            <texture colordiffuse="88FFFFFF">script.plex/buttons/player/pause.png</texture>
                         </control>
                         <control type="image">
                             <visible>Player.Paused | Player.Forwarding | Player.Rewinding</visible>
@@ -640,7 +640,7 @@
                             <posy>0</posy>
                             <width>125</width>
                             <height>101</height>
-                            <texture colordiffuse="AAFFFFFF">script.plex/buttons/player/play.png</texture>
+                            <texture colordiffuse="88FFFFFF">script.plex/buttons/player/play.png</texture>
                         </control>
                     </control>
                     <control type="group">
@@ -672,7 +672,7 @@
                     <height>101</height>
                     <font>font12</font>
                     <texturefocus>script.plex/buttons/player/stop.png</texturefocus>
-                    <texturenofocus colordiffuse="AAFFFFFF">script.plex/buttons/player/stop.png</texturenofocus>
+                    <texturenofocus colordiffuse="88FFFFFF">script.plex/buttons/player/stop.png</texturenofocus>
                     <label> </label>
                 </control>
                 <control type="button" id="408">
@@ -684,7 +684,7 @@
                     <height>101</height>
                     <font>font12</font>
                     <texturefocus>script.plex/buttons/player/skip-forward.png</texturefocus>
-                    <texturenofocus colordiffuse="AAFFFFFF">script.plex/buttons/player/skip-forward.png</texturenofocus>
+                    <texturenofocus colordiffuse="88FFFFFF">script.plex/buttons/player/skip-forward.png</texturenofocus>
                     <label> </label>
                 </control>
                 <control type="button" id="409">
@@ -696,7 +696,7 @@
                     <height>101</height>
                     <font>font12</font>
                     <texturefocus>script.plex/buttons/player/next.png</texturefocus>
-                    <texturenofocus colordiffuse="AAFFFFFF">script.plex/buttons/player/next.png</texturenofocus>
+                    <texturenofocus colordiffuse="88FFFFFF">script.plex/buttons/player/next.png</texturenofocus>
                     <label> </label>
                 </control>
                 <control type="button" id="419">
@@ -721,7 +721,7 @@
                     <height>101</height>
                     <font>font12</font>
                     <texturefocus>script.plex/buttons/player/pqueue.png</texturefocus>
-                    <texturenofocus colordiffuse="AAFFFFFF">script.plex/buttons/player/pqueue.png</texturenofocus>
+                    <texturenofocus colordiffuse="88FFFFFF">script.plex/buttons/player/pqueue.png</texturenofocus>
                     <label> </label>
                 </control>
                 <control type="button" id="430">
@@ -746,7 +746,7 @@
                     <height>101</height>
                     <font>font12</font>
                     <texturefocus>script.plex/buttons/player/subtitle.png</texturefocus>
-                    <texturenofocus colordiffuse="AAFFFFFF">script.plex/buttons/player/subtitle.png</texturenofocus>
+                    <texturenofocus colordiffuse="88FFFFFF">script.plex/buttons/player/subtitle.png</texturenofocus>
                     <label> </label>
                 </control>
             </control>
