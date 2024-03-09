@@ -1729,3 +1729,11 @@ msgstr ""
 msgctxt "#32980"
 msgid "Refresh Users"
 msgstr ""
+
+msgctxt "#32981"
+msgid "Background worker count"
+msgstr ""
+
+msgctxt "#32982"
+msgid "Depending on how many cores your CPU has and how much it can handle, increasing this might improve certain situations. If you experience crashes or other annormalities, leave this at its default (3). Needs an addon restart."
+msgstr ""
