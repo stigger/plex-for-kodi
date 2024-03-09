@@ -310,7 +310,7 @@
                     <orientation>horizontal</orientation>
                     <usecontrolcoords>true</usecontrolcoords>
                     <control type="label">
-                        <width min="200" max="880">auto</width>
+                        <width max="880">auto</width>
                         <height>60</height>
                         <font>font13</font>
                         <align>left</align>

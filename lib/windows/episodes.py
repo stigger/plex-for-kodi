@@ -232,6 +232,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.initialized = False
         self.currentItemLoaded = False
         self.closing = False
+        self.manuallySelected = False
         self._videoProgress = None
 
     def reset(self, episode, season=None, show=None):
@@ -245,6 +246,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
         self.parentList = None
         self.seasons = None
+        self.manuallySelected = False
         self._videoProgress = None
         #self.initialized = False
 
@@ -295,6 +297,14 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         if not self.tasks:
             self.tasks = backgroundthread.Tasks()
 
+        if self.manuallySelected and not self._videoProgress:
+            util.DEBUG_LOG("Episodes: ReInit: Not doing anything, as we've previously manually selected "
+                           "this item and don't have progress")
+            return
+
+        self.manuallySelected = False
+        util.DEBUG_LOG("Episodes: {}: Got progress info: {}".format(
+            self.episode and self.episode.ratingKey or None, self._videoProgress))
         try:
             self.selectEpisode(progress_data=self._videoProgress)
         except AttributeError:
@@ -304,29 +314,28 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         if not mli or not self.episodesPaginator:
             return
 
-        reloadItems = [mli]
+        reload_items = [mli]
         skip_progress_for = None
         if self._videoProgress:
             skip_progress_for = []
             for ratingKey in self._videoProgress.keys():
                 for m in self.episodeListControl:
                     if m.dataSource.ratingKey == ratingKey:
-                        reloadItems.append(m)
+                        reload_items.append(m)
                         skip_progress_for.append(ratingKey)
 
             self._videoProgress = None
 
-        reloadItems = list(set(reloadItems))
-        selectEpisode = reloadItems and reloadItems[-1] or mli
+        reload_items = list(set(reload_items))
+        select_episode = reload_items and reload_items[-1] or mli
 
-        self.episodesPaginator.setEpisode(selectEpisode.dataSource)
-        self.reloadItems(items=reloadItems, with_progress=True, skip_progress_for=skip_progress_for)
+        self.episodesPaginator.setEpisode(select_episode.dataSource)
+        self.reloadItems(items=reload_items, with_progress=True, skip_progress_for=skip_progress_for)
 
         self.fillRelated()
 
     def postSetup(self):
-        self.selectEpisode()
-        self.checkForHeaderFocus(xbmcgui.ACTION_MOVE_DOWN)
+        self.checkForHeaderFocus(xbmcgui.ACTION_MOVE_DOWN, initial=True)
 
         selected = self.episodeListControl.getSelectedItem()
         if selected:
@@ -388,7 +397,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                     mli.setProperty('unwatched', '')
                     mli.setProperty('progress', '')
 
-                elif progress:
+                elif progress and progress > 60000:
                     mli.setProperty('progress', util.getProgressImage(mli.dataSource, view_offset=progress))
                     set_main_progress_to = progress
 
@@ -960,10 +969,10 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 (self.season or self.show_).reload()
         return success
 
-    def checkForHeaderFocus(self, action):
+    def checkForHeaderFocus(self, action, initial=False):
         # don't continue if we're still waiting for tasks
         if self.tasks or not self.episodesPaginator:
-            if self.tasks:
+            if self.tasks and not initial:
                 util.DEBUG_LOG("Episodes: Moving too fast through paginator, throttling.")
             return
 
@@ -993,7 +1002,10 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         if action in (xbmcgui.ACTION_MOVE_UP, xbmcgui.ACTION_PAGE_UP):
             if mli.getProperty('is.header'):
                 xbmc.executebuiltin('Action(up)')
-        if action in (xbmcgui.ACTION_MOVE_DOWN, xbmcgui.ACTION_PAGE_DOWN, xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_MOVE_RIGHT):
+        if action in (xbmcgui.ACTION_MOVE_DOWN, xbmcgui.ACTION_PAGE_DOWN, xbmcgui.ACTION_MOVE_LEFT,
+                      xbmcgui.ACTION_MOVE_RIGHT):
+            if not initial and action in (xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_MOVE_RIGHT):
+                self.manuallySelected = True
             if mli.getProperty('is.header'):
                 xbmc.executebuiltin('Action(down)')
 
@@ -1139,6 +1151,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
     def fillEpisodes(self, update=False):
         items = self.episodesPaginator.paginate()
+        if not update:
+            self.selectEpisode()
         self.reloadItems(items, with_progress=True)
 
     def reloadItems(self, items, with_progress=False, skip_progress_for=None):
