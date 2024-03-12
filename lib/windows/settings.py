@@ -359,6 +359,20 @@ class Settings(object):
         ),
         'player': (
             T(32940, 'Player UI'), (
+                OptionsSetting(
+                    'theme',
+                    T(32983, 'Player Theme'),
+                    util.DEF_THEME,
+                    (
+                        ('modern', T(32985, 'Modern')),
+                        ('modern-dotted', T(32986, 'Modern (dotted)')),
+                        ('modern-colored', T(32989, 'Modern (colored)')),
+                        ('classic', T(32987, 'Classic')),
+                        ('custom', T(32988, 'Custom')),
+                    )
+                ).description(
+                    T(32984, 'stub')
+                ),
                 BoolSetting('subtitle_downloads', T(32932, 'Show subtitle quick-actions button'), False).description(
                     T(32939, 'Only applies to video player UI')),
                 BoolSetting('video_show_ffwdrwd', T(32933, 'Show FFWD/RWD buttons'), False).description(

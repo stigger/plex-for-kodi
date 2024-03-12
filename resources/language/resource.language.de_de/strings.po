@@ -2036,3 +2036,31 @@ msgstr "Anzahl Hintergrund-Worker"
 msgctxt "#32982"
 msgid "Depending on how many cores your CPU has and how much it can handle, increasing this might improve certain situations. If you experience crashes or other annormalities, leave this at its default (3). Needs an addon restart."
 msgstr "Je nachdem, wie viele Kerne Deine CPU hat und wie viel sie verarbeiten kann, kann eine höhere Zahl bestimmte Situationen verbessern. Solltest Du Abstürze oder andere Annomalien bemerken, stelle dies auf den Standardwert zurück (3). Benötigt einen Addon-Neustart."
+
+msgctxt "#32983"
+msgid "Player Theme"
+msgstr "Player-Theme"
+
+msgctxt "#32984"
+msgid "Sets the player theme. Currently only customizes the playback control buttons. ATTENTION: [I]Might[/I] need an addon restart.\nIn order to customize this, copy one of the xml's in script.plexmod/resources/skins/Main/1080i/templates to addon_data/script.plexmod/templates/seek_dialog_buttons_custom.xml and adjust it to your liking, then select \"Custom\" as your theme."
+msgstr "Wählt das Theme des Players. Verändert aktuell nur die Abspiel-Knöpfe. ACHTUNG: Ein Addon-Neustart [I]könnte[/I] notwendig sein.\nUm dies individuell anzupassen, kopiere eine der xml's aus script.plexmod/resources/skins/Main/1080i/templates nach addon_data/script.plexmod/templates/seek_dialog_buttons_custom.xml und passe es nach Deinen Ansprüchen an, danach \"Individualisiert\" als Theme wählen."
+
+msgctxt "#32985"
+msgid "Modern"
+msgstr "Modern"
+
+msgctxt "#32986"
+msgid "Modern (dotted)"
+msgstr "Modern (gepunktet)"
+
+msgctxt "#32987"
+msgid "Classic"
+msgstr "Klassisch"
+
+msgctxt "#32988"
+msgid "Custom"
+msgstr "Individualisiert"
+
+msgctxt "#32989"
+msgid "Modern (colored)"
+msgstr "Modern (eingefärbt)"

@@ -951,6 +951,77 @@ def getTimeFormat():
 
 timeFormat, timeFormatKN, padHour = getTimeFormat()
 
+DEF_THEME = "modern-colored"
+THEME_VERSION = 1
+
+
+def applyTheme(theme=None):
+    """
+    Dynamically build script-plex-seek_dialog.xml by combining a player button template with
+    script-plex-seek_dialog_skeleton.xml
+    """
+    theme = theme or getSetting('theme', DEF_THEME)
+    skel = os.path.join(ADDON.getAddonInfo('path'), "resources", "skins", "Main", "1080i",
+                        "script-plex-seek_dialog_skeleton.xml")
+    if theme == "custom":
+        btnTheme = os.path.join(ADDON.getAddonInfo("profile"), "templates",
+                                "seek_dialog_buttons_custom.xml")
+        customSkel = os.path.join(ADDON.getAddonInfo("profile"), "templates",
+                                  "script-plex-seek_dialog_skeleton_custom.xml")
+        if xbmcvfs.exists(customSkel):
+            skel = customSkel
+    else:
+        btnTheme = os.path.join(ADDON.getAddonInfo('path'), "resources", "skins", "Main", "1080i", "templates",
+                                "seek_dialog_buttons_{}.xml".format(theme))
+
+    if not xbmcvfs.exists(btnTheme):
+        LOG("Theme {} doesn't exist, falling back to modern".format(theme))
+        setSetting('theme', DEF_THEME)
+        return applyTheme(DEF_THEME)
+
+    try:
+        # read skeleton
+        f = xbmcvfs.File(skel)
+        skelData = f.read()
+        f.close()
+    except:
+        ERROR("Couldn't find {}".format("script-plex-seek_dialog_skeleton.xml"))
+    else:
+        try:
+            # read button theme
+            f = xbmcvfs.File(btnTheme)
+            btnData = f.read()
+            f.close()
+        except:
+            ERROR("Couldn't find {}".format("seek_dialog_buttons_{}.xml".format(theme)))
+        else:
+            # combine both
+            finalXML = skelData.replace('<!-- BUTTON_INCLUDE -->', btnData)
+            try:
+                # write final file
+                f = xbmcvfs.File(os.path.join(ADDON.getAddonInfo('path'), "resources", "skins", "Main", "1080i",
+                                 "script-plex-seek_dialog.xml"), "w")
+                f.write(finalXML)
+                f.close()
+            except:
+                ERROR("Couldn't write script-plex-seek_dialog.xml")
+            else:
+                LOG('Using theme: {}'.format(theme))
+
+
+# apply theme if version changed
+theme = getSetting('theme', DEF_THEME)
+curThemeVer = getSetting('theme_version', 0)
+if curThemeVer < THEME_VERSION:
+    setSetting('theme_version', THEME_VERSION)
+    # apply seekdialog button theme
+    applyTheme(theme)
+
+# apply theme if seek_dialog xml missing
+if not xbmcvfs.exists(os.path.join(ADDON.getAddonInfo('path'), "resources", "skins", "Main", "1080i",
+                                   "script-plex-seek_dialog.xml")):
+    applyTheme(theme)
+
 
 def populateTimeFormat():
     global timeFormat, timeFormatKN, padHour

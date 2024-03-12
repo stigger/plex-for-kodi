@@ -393,6 +393,8 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('shuffled', (self.handler.playlist and self.handler.playlist.isShuffled) and '1' or '')
         self.setProperty('has.chapters', self.showChapters and '1' or '')
         self.setProperty('show.buffer', (util.advancedSettings.playerShowBuffer and self.isDirectPlay) and '1' or '')
+        self.setProperty('theme', 'modern')
+        self.setProperty('theme.stop', 'script.plex/buttons/player/modern/stop.png')
 
         self.killTimeKeeper()
 
