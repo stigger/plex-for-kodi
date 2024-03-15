@@ -1737,3 +1737,31 @@ msgstr ""
 msgctxt "#32982"
 msgid "Depending on how many cores your CPU has and how much it can handle, increasing this might improve certain situations. If you experience crashes or other annormalities, leave this at its default (3). Needs an addon restart."
 msgstr ""
+
+msgctxt "#32983"
+msgid "Player Theme"
+msgstr ""
+
+msgctxt "#32984"
+msgid "Sets the player theme. Currently only customizes the playback control buttons. ATTENTION: [I]Might[/I] need an addon restart.\nIn order to customize this, copy one of the xml's in script.plexmod/resources/skins/Main/1080i/templates to addon_data/script.plexmod/templates/seek_dialog_buttons_custom.xml and adjust it to your liking, then select \"Custom\" as your theme."
+msgstr ""
+
+msgctxt "#32985"
+msgid "Modern"
+msgstr ""
+
+msgctxt "#32986"
+msgid "Modern (dotted)"
+msgstr ""
+
+msgctxt "#32987"
+msgid "Classic"
+msgstr ""
+
+msgctxt "#32988"
+msgid "Custom"
+msgstr ""
+
+msgctxt "#32989"
+msgid "Modern (colored)"
+msgstr ""

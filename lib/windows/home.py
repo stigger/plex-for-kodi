@@ -439,6 +439,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
     def updateProperties(self, *args, **kwargs):
         self.setBoolProperty('bifurcation_lines', util.getSetting('hubs_bifurcation_lines', False))
 
+    def setTheme(self, *args, **kwargs):
+        util.theme = kwargs["value"]
+        util.applyTheme()
+
     def focusFirstValidHub(self, startIndex=None):
         indices = self.hubFocusIndexes
         if startIndex is not None:
@@ -474,6 +478,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.util.APP.on('account:response', self.displayServerAndUser)
         plexapp.util.APP.on('sli:reachability:received', self.displayServerAndUser)
         plexapp.util.APP.on('change:hubs_bifurcation_lines', self.updateProperties)
+        plexapp.util.APP.on('change:theme', self.setTheme)
 
         player.PLAYER.on('session.ended', self.updateOnDeckHubs)
         util.MONITOR.on('changed.watchstatus', self.updateOnDeckHubs)
@@ -488,6 +493,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.util.APP.off('account:response', self.displayServerAndUser)
         plexapp.util.APP.off('sli:reachability:received', self.displayServerAndUser)
         plexapp.util.APP.off('change:hubs_bifurcation_lines', self.updateProperties)
+        plexapp.util.APP.off('change:theme', self.setTheme)
 
         player.PLAYER.off('session.ended', self.updateOnDeckHubs)
         util.MONITOR.off('changed.watchstatus', self.updateOnDeckHubs)
