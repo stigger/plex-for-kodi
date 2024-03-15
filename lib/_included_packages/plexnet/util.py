@@ -315,9 +315,9 @@ class Timer(object):
     def shouldAbort(self):
         return False
 
-    def join(self):
+    def join(self, timeout=None):
         if self.thread.is_alive():
-            self.thread.join()
+            self.thread.join(timeout=timeout)
 
     def isExpired(self):
         return self.event.isSet()
