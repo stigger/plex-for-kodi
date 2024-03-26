@@ -506,7 +506,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if not hubs:
             return
 
-        if time.time() - hubs.lastUpdated > HUBS_REFRESH_INTERVAL:
+        if time.time() - hubs.lastUpdated > HUBS_REFRESH_INTERVAL and not xbmc.Player().isPlayingVideo():
             self.showHubs(self.lastSection, update=True)
 
     def shutdown(self):
