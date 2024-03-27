@@ -284,11 +284,11 @@ plexapp.util.CHECK_LOCAL = util.getSetting('smart_discover_local', True)
 plexapp.util.LOCAL_OVER_SECURE = util.getSetting('prefer_local', False)
 
 # set requests timeout
-TIMEOUT = float(util.advancedSettings.requestsTimeout)
-CONNCHECK_TIMEOUT = float(util.advancedSettings.connCheckTimeout)
+TIMEOUT = float(util.addonSettings.requestsTimeout)
+CONNCHECK_TIMEOUT = float(util.addonSettings.connCheckTimeout)
 plexapp.util.TIMEOUT = TIMEOUT
 plexapp.util.CONN_CHECK_TIMEOUT = asyncadapter.AsyncTimeout(CONNCHECK_TIMEOUT).setConnectTimeout(CONNCHECK_TIMEOUT)
-plexapp.util.LAN_REACHABILITY_TIMEOUT = util.advancedSettings.localReachTimeout / 1000.0
+plexapp.util.LAN_REACHABILITY_TIMEOUT = util.addonSettings.localReachTimeout / 1000.0
 pnhttp.DEFAULT_TIMEOUT = asyncadapter.AsyncTimeout(TIMEOUT).setConnectTimeout(TIMEOUT)
 asyncadapter.DEFAULT_TIMEOUT = pnhttp.DEFAULT_TIMEOUT
 plexapp.util.ACCEPT_LANGUAGE = util.ACCEPT_LANGUAGE_CODE

@@ -364,7 +364,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
     def onFirstInit(self):
         # set last BG image if possible
-        if util.advancedSettings.dynamicBackgrounds:
+        if util.addonSettings.dynamicBackgrounds:
             bgUrl = util.getSetting("last_bg_url")
             if bgUrl:
                 self.windowSetBackground(bgUrl)
@@ -520,7 +520,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.storeLastBG()
 
     def storeLastBG(self):
-        if util.advancedSettings.dynamicBackgrounds:
+        if util.addonSettings.dynamicBackgrounds:
             oldbg = util.getSetting("last_bg_url", "")
             # store BG url of first hub, first item, as this is most likely to be the one we're focusing on the
             # next start
@@ -623,7 +623,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                         self.showHubs(HomeSection)
                         return
 
-                    if util.advancedSettings.fastBack and not optionsFocused and offSections \
+                    if util.addonSettings.fastBack and not optionsFocused and offSections \
                             and self.lastFocusID not in (self.USER_BUTTON_ID, self.SERVER_BUTTON_ID,
                                                          self.SEARCH_BUTTON_ID, self.SECTION_LIST_ID):
                         self.setProperty('hub.focus', '0')
@@ -632,7 +632,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
                 if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_CONTEXT_MENU):
                     if not optionsFocused and offSections \
-                            and (not util.advancedSettings.fastBack or action == xbmcgui.ACTION_CONTEXT_MENU):
+                            and (not util.addonSettings.fastBack or action == xbmcgui.ACTION_CONTEXT_MENU):
                         self.lastNonOptionsFocusID = self.lastFocusID
                         self.setFocusId(self.OPTIONS_GROUP_ID)
                         return
@@ -858,7 +858,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         is_valid_mli = mli and mli.getProperty('is.end') != '1'
         is_last_item = is_valid_mli and control.isLastItem(mli)
 
-        if util.advancedSettings.dynamicBackgrounds and is_valid_mli:
+        if util.addonSettings.dynamicBackgrounds and is_valid_mli:
             self.updateBackgroundFrom(mli.dataSource)
 
         if not mli or not mli.getProperty('is.end') or mli.getProperty('is.updating') == '1':
@@ -931,7 +931,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         with self.lock:
             section = self.lastSection
             self.setProperty('hub.focus', '')
-            if util.advancedSettings.dynamicBackgrounds:
+            if util.addonSettings.dynamicBackgrounds:
                 self.backgroundSet = False
 
             util.DEBUG_LOG('Section changed ({0}): {1}'.format(section.key, repr(section.title)))
@@ -1283,7 +1283,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 mli.setProperty('progress', util.getProgressImage(mli.dataSource))
         if with_art:
             for mli in items:
-                thumb = (util.advancedSettings.continueUseThumb
+                thumb = (util.addonSettings.continueUseThumb
                          and mli.dataSource.type == 'episode'
                          and mli.dataSource.thumb
                          ) \

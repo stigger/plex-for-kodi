@@ -6,7 +6,7 @@ from . import http
 from . import plexrequest
 from . import mediadecisionengine
 from . import serverdecision
-from lib.util import CACHE_SIZE, advancedSettings, KODI_VERSION_MAJOR
+from lib.util import CACHE_SIZE, addonSettings, KODI_VERSION_MAJOR
 
 from six.moves import range
 
@@ -271,7 +271,7 @@ class PlexPlayer(object):
                                             "mediaBufferSize={}".format(str(CACHE_SIZE * 1024)))
             decisionPath = http.addUrlParam(decisionPath, "hasMDE=1")
 
-            if not advancedSettings.oldprofile:
+            if not addonSettings.oldprofile:
                 decisionPath = http.addUrlParam(decisionPath, 'X-Plex-Client-Profile-Name=Generic')
             else:
                 decisionPath = http.addUrlParam(decisionPath, 'X-Plex-Client-Profile-Name=Chrome')
@@ -303,7 +303,7 @@ class PlexPlayer(object):
         builder.addParam("protocol", "hls")
 
         # TODO: This should be Generic, but will need to re-evaluate the augmentations with that change
-        if not advancedSettings.oldprofile:
+        if not addonSettings.oldprofile:
             builder.addParam("X-Plex-Client-Profile-Name", "Generic")
         else:
             builder.addParam("X-Plex-Client-Profile-Name", "Chrome")
@@ -318,7 +318,7 @@ class PlexPlayer(object):
         # Augment the server's profile for things that depend on the Roku's configuration.
         if self.item.settings.supportsAudioStream("ac3", 6):
             builder.extras.append("append-transcode-target-audio-codec(type=videoProfile&context=streaming&protocol=hls&audioCodec=ac3)")
-            if not advancedSettings.oldprofile:
+            if not addonSettings.oldprofile:
                 builder.extras.append("add-direct-play-profile(type=videoProfile&container=mkv&videoCodec=*&audioCodec=ac3)")
             else:
                 builder.extras.append(
@@ -336,7 +336,7 @@ class PlexPlayer(object):
         builder.extras = []
         builder.addParam("protocol", "http")
         builder.addParam("copyts", "1")
-        if not advancedSettings.oldprofile:
+        if not addonSettings.oldprofile:
             builder.addParam("X-Plex-Client-Profile-Name", "Generic")
         else:
             builder.addParam("X-Plex-Client-Profile-Name", "Chrome")
@@ -748,7 +748,7 @@ class PlexPlayer(object):
 
         # if server.supportsFeature("mkvTranscode") and self.item.settings.getPreference("transcode_format", 'mkv') != "hls":
         if server.supportsFeature("mkvTranscode"):
-            if not advancedSettings.oldprofile:
+            if not addonSettings.oldprofile:
                 builder = self.buildTranscodeMkv(obj, directStream=directStream)
             else:
                 builder = self.buildTranscodeMkvLegacy(obj, directStream=directStream)

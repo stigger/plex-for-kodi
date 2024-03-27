@@ -261,8 +261,8 @@ class SeekPlayerHandler(BasePlayerHandler):
         if not self.stoppedManually and self.skipPostPlay:
             return False
 
-        if (not util.advancedSettings.postplayAlways and self._lastDuration <= FIVE_MINUTES_MILLIS)\
-                or util.advancedSettings.postplayTimeout <= 0:
+        if (not util.addonSettings.postplayAlways and self._lastDuration <= FIVE_MINUTES_MILLIS)\
+                or util.addonSettings.postplayTimeout <= 0:
             return False
 
         return True
@@ -1122,10 +1122,10 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
         self.ignoreStopEvents = True
         self.stopAndWait()  # Stop before setting up the handler to prevent player events from causing havoc
-        if self.handler and self.handler.queuingNext and util.advancedSettings.consecutiveVideoPbWait:
+        if self.handler and self.handler.queuingNext and util.addonSettings.consecutiveVideoPbWait:
             util.DEBUG_LOG(
-                "Waiting for {}s until playing back next item".format(util.advancedSettings.consecutiveVideoPbWait))
-            util.MONITOR.waitForAbort(util.advancedSettings.consecutiveVideoPbWait)
+                "Waiting for {}s until playing back next item".format(util.addonSettings.consecutiveVideoPbWait))
+            util.MONITOR.waitForAbort(util.addonSettings.consecutiveVideoPbWait)
 
         self.ignoreStopEvents = False
         self.sessionID = session_id or self.sessionID

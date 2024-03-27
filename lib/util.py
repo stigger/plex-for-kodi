@@ -142,7 +142,7 @@ def _processSetting(setting, default):
     return setting
 
 
-class AdvancedSettings(object):
+class AddonSettings(object):
     """
     @DynamicAttrs
     """
@@ -198,7 +198,7 @@ class AdvancedSettings(object):
                     getSetting(setting, default))
 
 
-advancedSettings = AdvancedSettings()
+addonSettings = AddonSettings()
 
 
 def LOG(msg, level=xbmc.LOGINFO):
@@ -209,7 +209,7 @@ def DEBUG_LOG(msg):
     if _SHUTDOWN:
         return
 
-    if not advancedSettings.debug and not xbmc.getCondVisibility('System.GetBool(debug.showloginfo)'):
+    if not addonSettings.debug and not xbmc.getCondVisibility('System.GetBool(debug.showloginfo)'):
         return
 
     LOG(msg)
@@ -486,14 +486,14 @@ def T(ID, eng=''):
 
 hasCustomBGColour = False
 if KODI_VERSION_MAJOR > 18:
-    hasCustomBGColour = not advancedSettings.dynamicBackgrounds and advancedSettings.backgroundColour and \
-                        advancedSettings.backgroundColour != "-"
+    hasCustomBGColour = not addonSettings.dynamicBackgrounds and addonSettings.backgroundColour and \
+                        addonSettings.backgroundColour != "-"
 
 
 def getAdvancedSettings():
     # yes, global, hang me!
-    global advancedSettings
-    advancedSettings = AdvancedSettings()
+    global addonSettings
+    addonSettings = AddonSettings()
 
 
 def reInitAddon():
@@ -665,7 +665,7 @@ def shortenText(text, size):
 
 def scaleResolution(w, h, by=None):
     if by is None:
-        by = advancedSettings.posterResolutionScalePerc
+        by = addonSettings.posterResolutionScalePerc
 
     if 0 < by != 100.0:
         px = w * h * (by / 100.0)
@@ -1065,8 +1065,8 @@ def backgroundFromArt(art, width=1920, height=1080, background=colors.noAlpha.Ba
         return
     return art.asTranscodedImageURL(
         width, height,
-        blur=advancedSettings.backgroundArtBlurAmount2,
-        opacity=advancedSettings.backgroundArtOpacityAmount2,
+        blur=addonSettings.backgroundArtBlurAmount2,
+        opacity=addonSettings.backgroundArtOpacityAmount2,
         background=background
     )
 

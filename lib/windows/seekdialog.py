@@ -171,7 +171,7 @@ class SeekDialog(kodigui.BaseDialog):
         self._delayedSeekTimeout = 0
         self._osdHideAnimationTimeout = 0
         self._hideDelay = self.HIDE_DELAY
-        self._autoSeekDelay = util.advancedSettings.autoSeek and util.advancedSettings.autoSeekDelay or 0
+        self._autoSeekDelay = util.addonSettings.autoSeek and util.addonSettings.autoSeekDelay or 0
         self._atSkipStep = -1
         self._lastSkipDirection = None
         self._forcedLastSkipAmount = None
@@ -203,8 +203,8 @@ class SeekDialog(kodigui.BaseDialog):
         self._creditsSkipShownStarted = None
         self._currentMarker = None
         self.skipSteps = self.SKIP_STEPS
-        self.useAutoSeek = util.advancedSettings.autoSeek
-        self.useDynamicStepsForTimeline = util.advancedSettings.dynamicTimelineSeek
+        self.useAutoSeek = util.addonSettings.autoSeek
+        self.useDynamicStepsForTimeline = util.addonSettings.dynamicTimelineSeek
 
         self.bingeMode = False
         self.autoSkipIntro = False
@@ -212,14 +212,14 @@ class SeekDialog(kodigui.BaseDialog):
         self.showIntroSkipEarly = False
         self.skipPostPlay = False
 
-        self.skipIntroButtonTimeout = util.advancedSettings.skipIntroButtonTimeout
-        self.skipCreditsButtonTimeout = util.advancedSettings.skipCreditsButtonTimeout
-        self.showItemEndsInfo = util.advancedSettings.showMediaEndsInfo
-        self.showItemEndsLabel = util.advancedSettings.showMediaEndsLabel
+        self.skipIntroButtonTimeout = util.addonSettings.skipIntroButtonTimeout
+        self.skipCreditsButtonTimeout = util.addonSettings.skipCreditsButtonTimeout
+        self.showItemEndsInfo = util.addonSettings.showMediaEndsInfo
+        self.showItemEndsLabel = util.addonSettings.showMediaEndsLabel
 
         self.player.video.server.on("np:timelineResponse", self.timelineResponseCallback)
 
-        if util.kodiSkipSteps and util.advancedSettings.kodiSkipStepping:
+        if util.kodiSkipSteps and util.addonSettings.kodiSkipStepping:
             self.skipSteps = {"negative": [], "positive": []}
             for step in util.kodiSkipSteps:
                 key = "negative" if step < 0 else "positive"
@@ -392,7 +392,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('has.playlist', self.handler.playlist and '1' or '')
         self.setProperty('shuffled', (self.handler.playlist and self.handler.playlist.isShuffled) and '1' or '')
         self.setProperty('has.chapters', self.showChapters and '1' or '')
-        self.setProperty('show.buffer', (util.advancedSettings.playerShowBuffer and self.isDirectPlay) and '1' or '')
+        self.setProperty('show.buffer', (util.addonSettings.playerShowBuffer and self.isDirectPlay) and '1' or '')
         self.setProperty('theme', 'modern')
         self.setProperty('theme.stop', 'script.plex/buttons/player/modern/stop.png')
 
@@ -665,16 +665,16 @@ class SeekDialog(kodigui.BaseDialog):
                     # immediate marker timer actions
                     if self.countingDownMarker:
                         if controlID != self.BIG_SEEK_LIST_ID and \
-                                (util.advancedSettings.skipMarkerTimerCancel
-                                 or util.advancedSettings.skipMarkerTimerImmediate):
-                            if util.advancedSettings.skipMarkerTimerCancel and \
+                                (util.addonSettings.skipMarkerTimerCancel
+                                 or util.addonSettings.skipMarkerTimerImmediate):
+                            if util.addonSettings.skipMarkerTimerCancel and \
                                     action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
                                 self.displayMarkers(cancelTimer=True)
                                 return
 
                             # skip the first second of a marker shown with countdown to avoid unexpected OK/SELECT
                             # behaviour
-                            elif util.advancedSettings.skipMarkerTimerImmediate \
+                            elif util.addonSettings.skipMarkerTimerImmediate \
                                     and action == xbmcgui.ACTION_SELECT_ITEM and \
                                     self._currentMarker["countdown"] is not None and \
                                     self._currentMarker["countdown_initial"] is not None and \
@@ -781,7 +781,7 @@ class SeekDialog(kodigui.BaseDialog):
                     if not self._seeking:
                         # we might be reacting to an immediate marker skip while showing a marker with timeout;
                         # in that case, don't show the OSD
-                        if not self._currentMarker or not util.advancedSettings.skipMarkerTimerImmediate or \
+                        if not self._currentMarker or not util.addonSettings.skipMarkerTimerImmediate or \
                                 self._currentMarker["countdown"] is None:
                             self.showOSD()
                     else:
@@ -1460,7 +1460,7 @@ class SeekDialog(kodigui.BaseDialog):
             self.positionControl.setWidth(w)
 
         # update cache/buffer bar
-        if util.advancedSettings.playerShowBuffer and self.isDirectPlay and util.KODI_VERSION_MAJOR > 18:
+        if util.addonSettings.playerShowBuffer and self.isDirectPlay and util.KODI_VERSION_MAJOR > 18:
             cache_w = int(xbmc.getInfoLabel("Player.ProgressCache")) * self.SEEK_IMAGE_WIDTH // 100
             self.cacheControl.setWidth(cache_w)
 
@@ -1573,7 +1573,7 @@ class SeekDialog(kodigui.BaseDialog):
 
                 # show intro skip early? (only if intro is during the first X minutes)
                 if self.showIntroSkipEarly and markerDef["marker_type"] == "intro" and \
-                        startTimeOffset <= util.advancedSettings.skipIntroButtonShowEarlyThreshold1 * 1000:
+                        startTimeOffset <= util.addonSettings.skipIntroButtonShowEarlyThreshold1 * 1000:
                     startTimeOffset = 0
                     markerDef["overrideStartOff"] = 0
 
@@ -1695,7 +1695,7 @@ class SeekDialog(kodigui.BaseDialog):
                     wasPlaying = True
 
                 waitedFor = 0
-                waitMax = util.advancedSettings.bufferWaitMax
+                waitMax = util.addonSettings.bufferWaitMax
                 waitExceeded = False
                 self.waitingForBuffer = True
                 self.showOSD(focusButton=False)
@@ -1746,7 +1746,7 @@ class SeekDialog(kodigui.BaseDialog):
                 util.DEBUG_LOG("SeekDialog.buffer: Buffer already filled, not waiting for buffer")
 
         else:
-            wait = util.advancedSettings.bufferInsufficientWait
+            wait = util.addonSettings.bufferInsufficientWait
             util.DEBUG_LOG("SeekDialog.buffer: Buffer is too small for us to see, waiting {} seconds".format(wait))
             self.waitingForBuffer = True
 
@@ -1918,7 +1918,7 @@ class SeekDialog(kodigui.BaseDialog):
 
         markerAutoSkipped = markerDef["markerAutoSkipped"]
 
-        sTOffWThres = startTimeOff + util.advancedSettings.autoSkipOffset * 1000
+        sTOffWThres = startTimeOff + util.addonSettings.autoSkipOffset * 1000
 
         # we just want to return an early marker if we want to autoSkip it, so we can tell the handler to seekOnStart
         if onlyReturnIntroMD and markerDef["marker_type"] == "intro" and markerAutoSkip:
