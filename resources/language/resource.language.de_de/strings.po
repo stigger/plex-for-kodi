@@ -2078,8 +2078,8 @@ msgid "When using servers with a plex.direct connection (most of them), should w
 msgstr "Wenn Server mit einer plex.direct Verbindung verwendet werden (die meisten), sollen wir automatisch die advancedsettings.xml anpassen? Wenn nicht, solltest Du plex.direct in die DNS Rebind Ausschlussliste Deines Routers eintragen."
 
 msgctxt "#32993"
-msgid "Unhandled plex.direct connections found"
-msgstr "Unbehandelte plex.direct Verbindungen gefunden"
+msgid "{} unhandled plex.direct connections found: {}"
+msgstr "{} unbehandelte plex.direct Verbindungen gefunden"
 
 msgctxt "#32994"
 msgid "In order for PM4K to work properly, we need to add special handling for plex.direct connections. We've found {} new unhandled connections. Do you want us to write those to Kodi's advancedsettings.xml automatically? If not, you might want to add plex.direct to your router's DNS rebind exemption list. This can be changed in the settings as well."
