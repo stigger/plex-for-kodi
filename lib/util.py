@@ -23,7 +23,6 @@ from kodi_six import xbmcaddon
 from kodi_six import xbmcvfs
 
 from . import colors
-from .advancedsettings import adv
 # noinspection PyUnresolvedReferences
 from .exceptions import NoDataException
 from plexnet import signalsmixin, plexapp

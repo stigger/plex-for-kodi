@@ -255,6 +255,12 @@ def normalizedVersion(ver):
         return verlib.NormalizedVersion(verlib.suggest_normalized_version('0.0.0'))
 
 
+def parsePlexDirectHost(hostname):
+    v6 = hostname.count("-") > 3
+    base = hostname.split(".", 1)[0]
+    return v6 and base.replace("-", ":") or base.replace("-", ".")
+
+
 class CompatEvent(Event):
     def wait(self, timeout):
         Event.wait(self, timeout)

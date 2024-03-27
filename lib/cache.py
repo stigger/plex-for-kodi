@@ -119,6 +119,8 @@ class KodiCacheManager(object):
             if cachexml_match:
                 cachexml = cachexml_match.group(0)
                 cd = data.replace(cachexml, "")
+            else:
+                cd = data
 
         finalxml = "{}\n</advancedsettings>".format(
             cd.replace("</advancedsettings>", self.template.format(memorysize=memorySize * 1024 * 1024,
