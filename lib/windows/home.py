@@ -440,14 +440,40 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 self.setFocusId(self.lastFocusID)
 
     def checkPlexDirectHosts(self, hosts, source="stored", *args, **kwargs):
+        handlePD = util.getSetting('handle_plexdirect', 'ask')
+        if handlePD == "never":
+            return
+
         knownHosts = pdm.getHosts()
         pdHosts = [host for host in hosts if ".plex.direct:" in host]
 
         newHosts = set(pdHosts) - set(knownHosts)
         if newHosts:
             pdm.newHosts(newHosts, source=source)
-            if ((source == "stored" and plexapp.ACCOUNT.isOffline) or source == "myplex") and pdm.differs:
-                pdm.write()
+
+        if ((source == "stored" and plexapp.ACCOUNT.isOffline) or source == "myplex") and pdm.differs:
+            if handlePD == 'ask':
+                button = optionsdialog.show(
+                    T(32993, ''),
+                    T(32994, '').format(len(pdm.diff)),
+                    T(32328, 'Yes'),
+                    T(32035, 'Always'),
+                    T(32033, 'Never'),
+                )
+                if button not in (0, 1, 2):
+                    return
+
+                if button is 1:
+                    util.setSetting('handle_plexdirect', 'always')
+                elif button is 2:
+                    util.setSetting('handle_plexdirect', 'never')
+                    return
+            pdm.write()
+            optionsdialog.show(
+                T(32995, ''),
+                T(32996, ''),
+                T(32997, 'OK'),
+            )
 
     def updateProperties(self, *args, **kwargs):
         self.setBoolProperty('bifurcation_lines', util.getSetting('hubs_bifurcation_lines', False))
@@ -488,7 +514,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.SERVERMANAGER.on('reachable:server', self.displayServerAndUser)
 
         plexapp.util.APP.on('change:selectedServer', self.onSelectedServerChange)
-        plexapp.util.APP.on('loaded:stored_servers', self.checkPlexDirectHosts)
         plexapp.util.APP.on('loaded:myplex_servers', self.checkPlexDirectHosts)
         plexapp.util.APP.on('account:response', self.displayServerAndUser)
         plexapp.util.APP.on('sli:reachability:received', self.displayServerAndUser)
@@ -505,7 +530,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.SERVERMANAGER.off('reachable:server', self.displayServerAndUser)
 
         plexapp.util.APP.off('change:selectedServer', self.onSelectedServerChange)
-        plexapp.util.APP.off('loaded:stored_servers', self.checkPlexDirectHosts)
         plexapp.util.APP.off('loaded:myplex_servers', self.checkPlexDirectHosts)
         plexapp.util.APP.off('account:response', self.displayServerAndUser)
         plexapp.util.APP.off('sli:reachability:received', self.displayServerAndUser)
