@@ -2,6 +2,8 @@ from __future__ import absolute_import
 from kodi_six import xbmc
 from kodi_six import xbmcgui
 from kodi_six import xbmcvfs
+
+import lib.cache
 from . import kodigui
 from . import windowutils
 
@@ -150,7 +152,7 @@ class OptionsSetting(BasicSetting):
 
 class BufferSetting(OptionsSetting):
     def get(self):
-        return util.kcm.memorySize
+        return lib.cache.kcm.memorySize
 
     def set(self, val):
         old = self.get()
@@ -158,12 +160,12 @@ class BufferSetting(OptionsSetting):
             util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]'.format(self.ID, old, val))
             plexnet.util.APP.trigger('change:{0}'.format(self.ID), value=val)
 
-        util.kcm.write(memorySize=val)
+        lib.cache.kcm.write(memorySize=val)
 
 
 class ReadFactorSetting(OptionsSetting):
     def get(self):
-        return util.kcm.readFactor
+        return lib.cache.kcm.readFactor
 
     def set(self, val):
         old = self.get()
@@ -171,7 +173,7 @@ class ReadFactorSetting(OptionsSetting):
             util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]'.format(self.ID, old, val))
             plexnet.util.APP.trigger('change:{0}'.format(self.ID), value=val)
 
-        util.kcm.write(readFactor=val)
+        lib.cache.kcm.write(readFactor=val)
 
 
 class InfoSetting(BasicSetting):
@@ -496,22 +498,22 @@ class Settings(object):
                 BufferSetting('cache_size',
                               T(33613, 'Kodi Buffer Size (MB)'),
                               20,
-                              [(mem, '{} MB'.format(mem)) for mem in util.kcm.viableOptions])
+                              [(mem, '{} MB'.format(mem)) for mem in lib.cache.kcm.viableOptions])
                 .description(
                     '{}{}'.format(T(33614, 'stub1').format(
-                        util.kcm.free, util.kcm.recMax),
-                        '' if util.kcm.useModernAPI else ' '+T(32954, 'stub2'))
+                        lib.cache.kcm.free, lib.cache.kcm.recMax),
+                        '' if lib.cache.kcm.useModernAPI else ' ' + T(32954, 'stub2'))
                 ),
                 ReadFactorSetting('readfactor',
                                   T(32922, 'Kodi Cache Readfactor'),
                                   4,
-                                  [(rf, str(rf) if rf > 0 else T(32976, 'stub')) for rf in util.kcm.readFactorOpts])
+                                  [(rf, str(rf) if rf > 0 else T(32976, 'stub')) for rf in lib.cache.kcm.readFactorOpts])
                 .description(
                     T(32923, 'Sets the Kodi cache readfactor value. Default: {0}, recommended: {1}.'
                              'With "Slow connection" enabled this will be set to {2}, as otherwise the cache doesn\'t'
-                             'fill fast/aggressively enough.').format(util.kcm.defRF,
-                                                                      util.kcm.recRFRange,
-                                                                      util.kcm.defRFSM)
+                             'fill fast/aggressively enough.').format(lib.cache.kcm.defRF,
+                                                                      lib.cache.kcm.recRFRange,
+                                                                      lib.cache.kcm.defRFSM)
                 ),
                 BoolSetting(
                     'slow_connection', T(32915, 'Slow connection'), False

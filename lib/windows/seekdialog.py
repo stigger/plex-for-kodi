@@ -8,6 +8,7 @@ from kodi_six import xbmc
 from kodi_six import xbmcgui
 from collections import OrderedDict
 
+import lib.cache
 from . import kodigui
 from . import playersettings
 from . import dropdown
@@ -1674,7 +1675,7 @@ class SeekDialog(kodigui.BaseDialog):
         currentBufferPerc = int(xbmc.getInfoLabel("Player.ProgressCache")) - int(xbmc.getInfoLabel("Player.Progress"))
 
         # configured buffer size
-        bufferBytes = util.kcm.memorySize * 1024 * 1024
+        bufferBytes = lib.cache.kcm.memorySize * 1024 * 1024
 
         # wait for the full buffer or for 10% of the file at max
         # a full buffer is typically 30% of the configured cache value

@@ -6,7 +6,8 @@ from . import http
 from . import plexrequest
 from . import mediadecisionengine
 from . import serverdecision
-from lib.util import CACHE_SIZE, addonSettings, KODI_VERSION_MAJOR
+from lib.util import addonSettings, KODI_VERSION_MAJOR
+from lib.cache import CACHE_SIZE
 
 from six.moves import range
 
