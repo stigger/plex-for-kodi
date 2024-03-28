@@ -2,7 +2,6 @@ from __future__ import absolute_import
 import re
 import time
 import threading
-import math
 
 from kodi_six import xbmc
 from kodi_six import xbmcgui
@@ -290,7 +289,6 @@ class SeekDialog(kodigui.BaseDialog):
 
     @property
     def markers(self):
-        # fixme: fix transcoded marker skip
         if not self._enableMarkerSkip:
             return None
 
@@ -300,6 +298,10 @@ class SeekDialog(kodigui.BaseDialog):
             for marker in self.handler.player.video.markers:
                 if marker.type in MARKERS:
                     m = MARKERS[marker.type].copy()
+                    marker.startTimeOffset = marker.startTimeOffset.asInt() \
+                        if not isinstance(marker.startTimeOffset, int) else marker.startTimeOffset
+                    marker.endTimeOffset = marker.endTimeOffset.asInt() \
+                        if not isinstance(marker.endTimeOffset, int) else marker.endTimeOffset
                     m["marker"] = marker
                     m["marker_type"] = marker.type
                     markers.append(m)
@@ -325,8 +327,7 @@ class SeekDialog(kodigui.BaseDialog):
         for markerDef in self.markers:
             marker = markerDef["marker"]
             if marker:
-                startTimeOffset = int(marker.startTimeOffset)
-                endTimeOffset = int(marker.endTimeOffset)
+                startTimeOffset = marker.startTimeOffset
 
                 # show intro skip early? (only if intro is during the first X minutes)
                 if self.showIntroSkipEarly and markerDef["marker_type"] == "intro" and \
@@ -335,17 +336,17 @@ class SeekDialog(kodigui.BaseDialog):
                     markerDef["overrideStartOff"] = 0
 
                 # fix markers with a bad endTimeOffset
-                if endTimeOffset > self.duration:
+                if marker.endTimeOffset > self.duration:
                     marker.endTimeOffset = self.duration
                     util.DEBUG_LOG("Fixing marker endTimeOffset for: {}".format(marker))
 
                 # skip completely bad markers
-                if startTimeOffset > self.duration:
+                if marker.startTimeOffset > self.duration:
                     continue
 
                 markerEndNegoff = FINAL_MARKER_NEGOFF if getattr(markerDef["marker"], "final", False) else 0
 
-                if startTimeOffset - MARKER_SHOW_NEGOFF <= off < int(marker.endTimeOffset) - markerEndNegoff:
+                if startTimeOffset - MARKER_SHOW_NEGOFF <= off < marker.endTimeOffset - markerEndNegoff:
 
                     return markerDef
 
@@ -560,7 +561,7 @@ class SeekDialog(kodigui.BaseDialog):
                             self.setProperty('show.markerSkip', '')
                             self.setProperty('show.markerSkip_OSDOnly', '')
                             markerDef["skipped"] = True
-                            self.doSeek(math.ceil(float(marker.endTimeOffset)) + markerOff)
+                            self.doSeek(marker.endTimeOffset + markerOff)
                             self.hideOSD(skipMarkerFocus=True)
 
                             if marker.type == "credits" and not final:
@@ -1433,8 +1434,8 @@ class SeekDialog(kodigui.BaseDialog):
                     marker = markerDef["marker"]
                     if marker:
                         if markerDef["marker_type"] == "intro":
-                            preparedMarkers.append((int(marker.startTimeOffset), T(33608, "Intro"), False))
-                            preparedMarkers.append((int(marker.endTimeOffset), T(33610, "Main"), False))
+                            preparedMarkers.append((marker.startTimeOffset, T(33608, "Intro"), False))
+                            preparedMarkers.append((marker.endTimeOffset, T(33610, "Main"), False))
 
                         elif markerDef["marker_type"] == "credits":
                             creditsCounter += 1
@@ -1442,7 +1443,7 @@ class SeekDialog(kodigui.BaseDialog):
                                 label = T(33635, "Final Credits")
                             else:
                                 label = T(33609, "Credits") + "{}"
-                            preparedMarkers.append((int(marker.startTimeOffset), label, True))
+                            preparedMarkers.append((marker.startTimeOffset, label, True))
 
                 # add staggered virtual markers
                 preparedMarkers.append((int(self.duration * 0.25), "25 %", False))
@@ -1919,7 +1920,7 @@ class SeekDialog(kodigui.BaseDialog):
 
         # getCurrentMarkerDef might have overridden the startTimeOffset, use that
         startTimeOff = markerDef["overrideStartOff"] if markerDef["overrideStartOff"] is not None else \
-            int(markerDef["marker"].startTimeOffset)
+            markerDef["marker"].startTimeOffset
 
         markerAutoSkip = getattr(self, markerDef["markerAutoSkip"])
 
@@ -1937,7 +1938,7 @@ class SeekDialog(kodigui.BaseDialog):
             if startTimeOff == 0 and not markerDef["markerAutoSkipped"]:
                 if setSkipped:
                     markerDef["markerAutoSkipped"] = True
-                return int(markerDef["marker"].endTimeOffset) + MARKER_END_JUMP_OFF
+                return markerDef["marker"].endTimeOffset + MARKER_END_JUMP_OFF
             return False
 
         if cancelTimer and self.countingDownMarker:
@@ -1967,8 +1968,8 @@ class SeekDialog(kodigui.BaseDialog):
 
             if getattr(markerDef["marker"], "final", False):
                 # final marker is _not_ at the end of video, seek and do nothing
-                if int(markerDef["marker"].endTimeOffset) < self.duration - FINAL_MARKER_NEGOFF:
-                    target = int(markerDef["marker"].endTimeOffset)
+                if markerDef["marker"].endTimeOffset < self.duration - FINAL_MARKER_NEGOFF:
+                    target = markerDef["marker"].endTimeOffset
                     util.DEBUG_LOG(
                         "MarkerAutoSkip: Skipping final marker, its endTime is too early, "
                         "though, seeking and playing back")
@@ -1996,7 +1997,7 @@ class SeekDialog(kodigui.BaseDialog):
                 return False
 
             util.DEBUG_LOG('MarkerAutoSkip: Skipping marker {}'.format(markerDef["marker"]))
-            self.doSeek(int(markerDef["marker"].endTimeOffset) + MARKER_END_JUMP_OFF)
+            self.doSeek(markerDef["marker"].endTimeOffset + MARKER_END_JUMP_OFF)
             return True
 
         # got a marker, display logic
