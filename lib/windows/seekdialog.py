@@ -18,7 +18,6 @@ from plexnet import plexapp
 from lib import util
 from plexnet.videosession import VideoSessionInfo, ATTRIBUTE_TYPES as SESSION_ATTRIBUTE_TYPES
 from plexnet.exceptions import ServerNotOwned, NotFound
-from plexnet.signalsmixin import SignalsMixin
 
 from lib.kodijsonrpc import builtin
 
@@ -313,6 +312,43 @@ class SeekDialog(kodigui.BaseDialog):
     def markers(self, val):
         self._markers = val
 
+    def getCurrentMarkerDef(self, offset=None):
+        """
+        Show intro/credits skip button at current time
+        """
+
+        if not self.markers:
+            return
+
+        off = offset if offset is not None else self.trueOffset()
+
+        for markerDef in self.markers:
+            marker = markerDef["marker"]
+            if marker:
+                startTimeOffset = int(marker.startTimeOffset)
+                endTimeOffset = int(marker.endTimeOffset)
+
+                # show intro skip early? (only if intro is during the first X minutes)
+                if self.showIntroSkipEarly and markerDef["marker_type"] == "intro" and \
+                        startTimeOffset <= util.addonSettings.skipIntroButtonShowEarlyThreshold1 * 1000:
+                    startTimeOffset = 0
+                    markerDef["overrideStartOff"] = 0
+
+                # fix markers with a bad endTimeOffset
+                if endTimeOffset > self.duration:
+                    marker.endTimeOffset = self.duration
+                    util.DEBUG_LOG("Fixing marker endTimeOffset for: {}".format(marker))
+
+                # skip completely bad markers
+                if startTimeOffset > self.duration:
+                    continue
+
+                markerEndNegoff = FINAL_MARKER_NEGOFF if getattr(markerDef["marker"], "final", False) else 0
+
+                if startTimeOffset - MARKER_SHOW_NEGOFF <= off < int(marker.endTimeOffset) - markerEndNegoff:
+
+                    return markerDef
+
     def onFirstInit(self):
         try:
             self._onFirstInit()
@@ -516,9 +552,11 @@ class SeekDialog(kodigui.BaseDialog):
                         if markerDef["marker"]:
                             marker = markerDef["marker"]
                             final = getattr(marker, "final", False)
-                            markerOff = 0 if final else MARKER_END_JUMP_OFF
+                            markerOff = -1500 if final else MARKER_END_JUMP_OFF
 
-                            util.DEBUG_LOG('MarkerSkip: Skipping marker {}'.format(markerDef["marker"]))
+                            util.DEBUG_LOG('MarkerSkip: Skipping marker'
+                                           ' {} (final: {}, to: {}, offset: {})'.format(markerDef["marker"],
+                                                                            final, marker.endTimeOffset, markerOff))
                             self.setProperty('show.markerSkip', '')
                             self.setProperty('show.markerSkip_OSDOnly', '')
                             markerDef["skipped"] = True
@@ -1556,33 +1594,6 @@ class SeekDialog(kodigui.BaseDialog):
         else:
             self.updateProgress(set_to_current=False)
             self.setProperty('button.seek', '1')
-
-    def getCurrentMarkerDef(self, offset=None):
-        """
-        Show intro/credits skip button at current time
-        """
-
-        if not self.markers:
-            return
-
-        off = offset if offset is not None else self.trueOffset()
-
-        for markerDef in self.markers:
-            marker = markerDef["marker"]
-            if marker:
-                startTimeOffset = int(marker.startTimeOffset)
-
-                # show intro skip early? (only if intro is during the first X minutes)
-                if self.showIntroSkipEarly and markerDef["marker_type"] == "intro" and \
-                        startTimeOffset <= util.addonSettings.skipIntroButtonShowEarlyThreshold1 * 1000:
-                    startTimeOffset = 0
-                    markerDef["overrideStartOff"] = 0
-
-                markerEndNegoff = FINAL_MARKER_NEGOFF if getattr(markerDef["marker"], "final", False) else 0
-
-                if startTimeOffset - MARKER_SHOW_NEGOFF <= off < int(marker.endTimeOffset) - markerEndNegoff:
-
-                    return markerDef
 
 
     @property
