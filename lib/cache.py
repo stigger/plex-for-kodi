@@ -9,6 +9,7 @@ from plexnet import plexapp
 
 from lib.kodijsonrpc import rpc
 from lib.util import ADDON, translatePath, KODI_BUILD_NUMBER, DEBUG_LOG, LOG, ERROR
+from lib.advancedsettings import adv
 
 
 ADV_MSIZE_RE = re.compile(r'<memorysize>(\d+)</memorysize>')
@@ -23,7 +24,6 @@ class KodiCacheManager(object):
     Starting with build 20.90.821 (Kodi 21.0-BETA2) a lot of caching issues have been fixed and
     readfactor behaves better. We need to adjust for that.
     """
-    _cleanData = None
     useModernAPI = False
     memorySize = 20  # in MB
     readFactor = 4
@@ -77,30 +77,27 @@ class KodiCacheManager(object):
         return data
 
     def load(self):
-        try:
-            f = xbmcvfs.File("special://profile/advancedsettings.xml")
-            data = f.read()
-            f.close()
-        except:
-            LOG('script.plex: No advancedsettings.xml found')
-        else:
-            cachexml_match = ADV_CACHE_RE.search(data)
-            if cachexml_match:
-                cachexml = cachexml_match.group(0)
+        data = adv.getData()
+        if not data:
+            return
 
-                try:
-                    self.memorySize = int(ADV_MSIZE_RE.search(cachexml).group(1)) // 1024 // 1024
-                except:
-                    DEBUG_LOG("script.plex: invalid or not found memorysize in advancedsettings.xml")
+        cachexml_match = ADV_CACHE_RE.search(data)
+        if cachexml_match:
+            cachexml = cachexml_match.group(0)
 
-                try:
-                    self.readFactor = int(ADV_RFACT_RE.search(cachexml).group(1))
-                except:
-                    DEBUG_LOG("script.plex: invalid or not found readfactor in advancedsettings.xml")
+            try:
+                self.memorySize = int(ADV_MSIZE_RE.search(cachexml).group(1)) // 1024 // 1024
+            except:
+                DEBUG_LOG("script.plex: invalid or not found memorysize in advancedsettings.xml")
 
-                self._cleanData = data.replace(cachexml, "")
-            else:
-                self._cleanData = data
+            try:
+                self.readFactor = int(ADV_RFACT_RE.search(cachexml).group(1))
+            except:
+                DEBUG_LOG("script.plex: invalid or not found readfactor in advancedsettings.xml")
+
+        #    self._cleanData = data.replace(cachexml, "")
+        #else:
+        #    self._cleanData = data
 
     def write(self, memorySize=None, readFactor=None):
         memorySize = self.memorySize = memorySize if memorySize is not None else self.memorySize
@@ -115,21 +112,20 @@ class KodiCacheManager(object):
                 pass
             return
 
-        cd = self._cleanData
-        if not cd:
-            cd = "<advancedsettings>\n</advancedsettings>"
+        data = adv.getData()
+        cd = "<advancedsettings>\n</advancedsettings>"
+        if data:
+            cachexml_match = ADV_CACHE_RE.search(data)
+            if cachexml_match:
+                cachexml = cachexml_match.group(0)
+                cd = data.replace(cachexml, "")
 
         finalxml = "{}\n</advancedsettings>".format(
             cd.replace("</advancedsettings>", self.template.format(memorysize=memorySize * 1024 * 1024,
                                                                    readfactor=readFactor))
         )
 
-        try:
-            f = xbmcvfs.File("special://profile/advancedsettings.xml", "w")
-            f.write(finalxml)
-            f.close()
-        except:
-            ERROR("Couldn't write advancedsettings.xml")
+        adv.write(finalxml)
 
     def clamp16(self, x):
         return x - x % 16
