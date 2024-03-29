@@ -917,8 +917,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 if (controlID, mlipos) == self._lastSelectedItem:
                     control.selectItem(0)
                     self._lastSelectedItem = None
-                else:
-                    self._lastSelectedItem = (controlID, mlipos)
+                    return
+            if mli:
+                self._lastSelectedItem = (controlID, mlipos)
             return
 
         mli.setBoolProperty('is.updating', True)
