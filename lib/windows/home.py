@@ -283,6 +283,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         'home.continue': {'index': 0, 'with_progress': True, 'with_art': True, 'do_updates': True, 'text2lines': True},
         'home.ondeck': {'index': 1, 'with_progress': True, 'do_updates': True, 'text2lines': True},
         'home.television.recent': {'index': 2, 'do_updates': True, 'with_progress': True, 'text2lines': True},
+        # This is a virtual hub and it appears when the library recommendation is customized in Plex and
+        # Recently Released is checked.
+        'home.VIRTUAL.movies.recentlyreleased': {'index': 3, 'do_updates': True, 'with_progress': True, 'text2lines': True},
         'home.movies.recent': {'index': 4, 'do_updates': True, 'with_progress': True, 'text2lines': True},
         'home.music.recent': {'index': 5, 'text2lines': True},
         'home.videos.recent': {'index': 6, 'with_progress': True, 'ar16x9': True},
@@ -1119,16 +1122,18 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         try:
             hasContent = False
             skip = {}
+
             for hub in hubs:
-                identifier = hub.getCleanHubIdentifier()
+                identifier = hub.getCleanHubIdentifier(is_home=not section.key)
 
                 if identifier not in self.HUBMAP:
-                    util.DEBUG_LOG('UNHANDLED - Hub: {0} [{1}]({2})'.format(hub.hubIdentifier, identifier, len(hub.items)))
+                    util.DEBUG_LOG('UNHANDLED - Hub: {0} [{1}]({2})'.format(hub.hubIdentifier, identifier,
+                                                                            len(hub.items)))
                     continue
 
                 skip[self.HUBMAP[identifier]['index']] = 1
 
-                if self.showHub(hub):
+                if self.showHub(hub, is_home=not section.key):
                     if hub.items:
                         hasContent = True
                     if self.HUBMAP[identifier].get('do_updates'):
@@ -1157,8 +1162,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         finally:
             self.showBusy(False)
 
-    def showHub(self, hub, items=None):
-        identifier = hub.getCleanHubIdentifier()
+    def showHub(self, hub, items=None, is_home=False):
+        identifier = hub.getCleanHubIdentifier(is_home=is_home)
 
         if identifier in self.HUBMAP:
             util.DEBUG_LOG('HUB: {0} [{1}]({2}, {3})'.format(hub.hubIdentifier,
@@ -1303,6 +1308,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
     def _showHub(self, hub, hubitems=None, index=None, with_progress=False, with_art=False, ar16x9=False,
                  text2lines=False, **kwargs):
+        util.DEBUG_LOG("Showing hub {} on index {}".format(hub.hubIdentifier, index))
         control = self.hubControls[index]
         control.dataSource = hub
 
