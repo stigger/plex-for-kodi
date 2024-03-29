@@ -483,6 +483,12 @@ class Settings(object):
                       )
                 ),
                 BoolSetting('gdm_discovery', T(32042, 'Server Discovery (GDM)'), False),
+                OptionsSetting(
+                    'handle_plexdirect', T(32990), 'ask',
+                    (('ask', T(32991)), ('always', T(32035)), ('never', T(32033)))
+                ).description(
+                    T(32992, 'stub')
+                ),
                 IPSetting('manual_ip_0', T(32044, 'Connection 1 IP'), ''),
                 IntegerSetting('manual_port_0', T(32045, 'Connection 1 Port'), 32400),
                 IPSetting('manual_ip_1', T(32046, 'Connection 2 IP'), ''),

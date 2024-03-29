@@ -2064,3 +2064,35 @@ msgstr "Individualisiert"
 msgctxt "#32989"
 msgid "Modern (colored)"
 msgstr "Modern (eingefärbt)"
+
+msgctxt "#32990"
+msgid "Handle plex.direct mapping"
+msgstr "plex.direct Zuordnung abwickeln"
+
+msgctxt "#32991"
+msgid "Notify"
+msgstr "Benachrichtigen"
+
+msgctxt "#32992"
+msgid "When using servers with a plex.direct connection (most of them), should we automatically adjust advancedsettings.xml to cope with plex.direct domains? If not, you might want to add plex.direct to your router's DNS rebind exemption list."
+msgstr "Wenn Server mit einer plex.direct Verbindung verwendet werden (die meisten), sollen wir automatisch die advancedsettings.xml anpassen? Wenn nicht, solltest Du plex.direct in die DNS Rebind Ausschlussliste Deines Routers eintragen."
+
+msgctxt "#32993"
+msgid "Unhandled plex.direct connections found"
+msgstr "Unbehandelte plex.direct Verbindungen gefunden"
+
+msgctxt "#32994"
+msgid "In order for PM4K to work properly, we need to add special handling for plex.direct connections. We've found {} new unhandled connections. Do you want us to write those to Kodi's advancedsettings.xml automatically? If not, you might want to add plex.direct to your router's DNS rebind exemption list. This can be changed in the settings as well."
+msgstr "Damit PM4K korrekt funktioniert, müssen wir spezielles Handling für plex.direct Verbindungen einrichten. Es wurden {} neue unbehandelte Verbindungen gefunden. Sollen wir diese in Kodi's advancedsettings.xml eintragen? Wenn nicht, solltest Du plex.direct in die DNS Rebind Ausschlussliste Deines Routers eintragen. Dies kann später in den Einstellungen verändert werden."
+
+msgctxt "#32995"
+msgid "Advancedsettings.xml modified (plex.direct mappings)"
+msgstr "Advancedsettings.xml modifiziert (plex.direct mappings)"
+
+msgctxt "#32996"
+msgid "The advancedsettings.xml file has been modified. Please restart Kodi for them to take effect."
+msgstr "Die advancedsettings.xml-Datei wurde modifiziert. Bitte starte Kodi neu, damit die Änderungen in Effekt treten."
+
+msgctxt "#32997"
+msgid "OK"
+msgstr "OK"

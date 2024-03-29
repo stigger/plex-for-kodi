@@ -50,6 +50,10 @@ class PlexHostsManager(object):
     def differs(self):
         return self._hosts != self._orig_hosts
 
+    @property
+    def diff(self):
+        return set(self._hosts) - set(self._orig_hosts)
+
     def load(self):
         data = adv.getData()
         self._hosts = {}
