@@ -118,19 +118,19 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
         BaseFunctions.lastWinID = self._winID
         self.setProperty('use_solid_background', util.hasCustomBGColour and '1' or '')
         if util.hasCustomBGColour:
-            bgColour = util.advancedSettings.backgroundColour if util.advancedSettings.backgroundColour != "-" \
+            bgColour = util.addonSettings.backgroundColour if util.addonSettings.backgroundColour != "-" \
                 else "ff000000"
             self.setProperty('background_colour', "0x%s" % bgColour.lower())
             self.setProperty('background_colour_opaque', "0x%s" % bgColour.lower())
         else:
             # set background color to 0 to avoid kodi UI BG clearing, improves performance
-            if util.advancedSettings.dbgCrossfade:
+            if util.addonSettings.dbgCrossfade:
                 self.setProperty('background_colour', "0x00000000")
             else:
                 self.setProperty('background_colour', "0xff111111")
             self.setProperty('background_colour_opaque', "0xff111111")
 
-        self.setBoolProperty('use_bg_fallback', util.advancedSettings.useBgFallback)
+        self.setBoolProperty('use_bg_fallback', util.addonSettings.useBgFallback)
 
         try:
             if self.started:
@@ -179,12 +179,12 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
             xbmc.log('kodigui.BaseWindow.setProperty: Missing window', xbmc.LOGDEBUG)
 
     def updateBackgroundFrom(self, ds):
-        if util.advancedSettings.dynamicBackgrounds:
+        if util.addonSettings.dynamicBackgrounds:
             return self.windowSetBackground(util.backgroundFromArt(ds.art, width=self.width,
                                                                    height=self.height))
 
     def windowSetBackground(self, value):
-        if not util.advancedSettings.dbgCrossfade:
+        if not util.addonSettings.dbgCrossfade:
             if not value:
                 return
             self.setProperty("background_static", value)
