@@ -141,7 +141,7 @@ class MyPlexAccount(object):
             self.title = data.attrib.get('title')
             self.username = data.attrib.get('username')
             self.email = data.attrib.get('email')
-            self.thumb = data.attrib.get('thumb')
+            self.thumb = data.attrib.get('thumb').split("?")[0]
             self.authToken = data.attrib.get('authenticationToken')
             self.isPlexPass = (data.find('subscription') is not None and data.find('subscription').attrib.get('active') == '1')
             self.isManaged = data.attrib.get('restricted') == '1'
