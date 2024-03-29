@@ -42,6 +42,10 @@ class PlexServerManager(signalsmixin.SignalsMixin):
     def getSelectedServer(self):
         return self.selectedServer
 
+    @property
+    def allConnections(self):
+        return [c.address for s in list(self.serversByUuid.values()) for c in s.connections if s.connections]
+
     def setSelectedServer(self, server, force=False):
         # Don't do anything if the server is already selected.
         if self.selectedServer and self.selectedServer == server:

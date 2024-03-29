@@ -21,6 +21,7 @@ from . import search
 from . import optionsdialog
 
 from lib.util import T
+from lib.plex_hosts import pdm
 from six.moves import range
 
 HUBS_REFRESH_INTERVAL = 300  # 5 Minutes
@@ -418,6 +419,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         util.CRON.registerReceiver(self)
         self.updateProperties()
 
+        self.checkPlexDirectHosts(plexapp.SERVERMANAGER.allConnections, source="stored")
+
     def onReInit(self):
         if self.lastFocusID:
             # try focusing the last focused ID. if that's a hub and it's empty (=not focusable), try focusing the
@@ -435,6 +438,16 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
             else:
                 self.setFocusId(self.lastFocusID)
+
+    def checkPlexDirectHosts(self, hosts, source="stored", *args, **kwargs):
+        knownHosts = pdm.getHosts()
+        pdHosts = [host for host in hosts if ".plex.direct:" in host]
+
+        newHosts = set(pdHosts) - set(knownHosts)
+        if newHosts:
+            pdm.newHosts(newHosts, source=source)
+            if ((source == "stored" and plexapp.ACCOUNT.isOffline) or source == "myplex") and pdm.differs:
+                pdm.write()
 
     def updateProperties(self, *args, **kwargs):
         self.setBoolProperty('bifurcation_lines', util.getSetting('hubs_bifurcation_lines', False))
@@ -475,6 +488,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.SERVERMANAGER.on('reachable:server', self.displayServerAndUser)
 
         plexapp.util.APP.on('change:selectedServer', self.onSelectedServerChange)
+        plexapp.util.APP.on('loaded:stored_servers', self.checkPlexDirectHosts)
+        plexapp.util.APP.on('loaded:myplex_servers', self.checkPlexDirectHosts)
         plexapp.util.APP.on('account:response', self.displayServerAndUser)
         plexapp.util.APP.on('sli:reachability:received', self.displayServerAndUser)
         plexapp.util.APP.on('change:hubs_bifurcation_lines', self.updateProperties)
@@ -490,6 +505,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.SERVERMANAGER.off('reachable:server', self.displayServerAndUser)
 
         plexapp.util.APP.off('change:selectedServer', self.onSelectedServerChange)
+        plexapp.util.APP.off('loaded:stored_servers', self.checkPlexDirectHosts)
+        plexapp.util.APP.off('loaded:myplex_servers', self.checkPlexDirectHosts)
         plexapp.util.APP.off('account:response', self.displayServerAndUser)
         plexapp.util.APP.off('sli:reachability:received', self.displayServerAndUser)
         plexapp.util.APP.off('change:hubs_bifurcation_lines', self.updateProperties)
