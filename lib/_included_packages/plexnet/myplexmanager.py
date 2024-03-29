@@ -11,6 +11,11 @@ from . import util
 
 
 class MyPlexManager(object):
+    gotResources = False
+
+    def __init__(self):
+        self.gotResources = False
+
     def publish(self):
         util.LOG('MyPlexManager().publish() - NOT IMPLEMENTED')
         return  # TODO: ----------------------------------------------------------------------------------------------------------------------------- IMPLEMENT?
@@ -75,6 +80,7 @@ class MyPlexManager(object):
                     util.DEBUG_LOG('  {0}'.format(server))
                     servers.append(server)
 
+            self.gotResources = True
         plexapp.SERVERMANAGER.updateFromConnectionType(servers, plexconnection.PlexConnection.SOURCE_MYPLEX)
         util.APP.trigger("loaded:myplex_servers", hosts=hosts, source="myplex")
 

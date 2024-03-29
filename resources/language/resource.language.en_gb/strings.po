@@ -1779,7 +1779,7 @@ msgid "When using servers with a plex.direct connection (most of them), should w
 msgstr ""
 
 msgctxt "#32993"
-msgid "Unhandled plex.direct connections found"
+msgid "{} unhandled plex.direct connections found"
 msgstr ""
 
 msgctxt "#32994"
