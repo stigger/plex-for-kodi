@@ -137,6 +137,12 @@ class HomeSection(object):
     title = T(32332, 'Home')
 
 
+class WatchListSection(object):
+    key = 'watchlist'
+    type = 'watchlist'
+    title = T(34000, 'Watchlist')
+
+
 class PlaylistsSection(object):
     key = 'playlists'
     type = 'playlists'
@@ -416,6 +422,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.setFocusId(self.SECTION_LIST_ID)
 
         self.hookSignals()
+        util.DEBUG_LOG("HOOKED SIGNALS")
         util.CRON.registerReceiver(self)
         self.updateProperties()
         self.checkPlexDirectHosts(plexapp.SERVERMANAGER.allConnections, source="stored")
@@ -563,7 +570,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         except AttributeError:
             pass
 
-        self.unhookSignals()
+        try:
+            self.unhookSignals()
+        except:
+            pass
         self.storeLastBG()
 
     def storeLastBG(self):
@@ -881,6 +891,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                     self.sectionChanged()
 
     def checkSectionItem(self, force=False, action=None):
+        util.DEBUG_LOG("CHECK SEC ITEM")
         item = self.sectionList.getSelectedItem()
         if not item:
             return
@@ -929,6 +940,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         backgroundthread.BGThreader.addTask(task)
 
     def displayServerAndUser(self, **kwargs):
+        util.DEBUG_LOG("ELO ACCOUNT RESPONSE")
         title = plexapp.ACCOUNT.title or plexapp.ACCOUNT.username or ' '
         self.setProperty('user.name', title)
         self.setProperty('user.avatar', plexapp.ACCOUNT.thumb)
@@ -1025,6 +1037,14 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         homemli.setProperty('is.home', '1')
         homemli.setProperty('item', '1')
         items.append(homemli)
+
+        # https://discover.provider.plex.tv/library/sections/watchlist/all?includeAdvanced=1&includeMeta=1
+        if not plexapp.ACCOUNT.isOffline:
+            util.DEBUG_LOG("BEBEBEBE")
+            wlli = kodigui.ManagedListItem('Watchlist', thumbnailImage='script.plex/home/type/playlists.png',
+                                           data_source=WatchListSection)
+            wlli.setProperty('item', '1')
+            items.append(wlli)
 
         pl = plexapp.SERVERMANAGER.selectedServer.playlists()
         if pl:

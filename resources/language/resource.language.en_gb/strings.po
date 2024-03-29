@@ -1797,3 +1797,7 @@ msgstr ""
 msgctxt "#32997"
 msgid "OK"
 msgstr ""
+
+msgctxt "#34000"
+msgid "Watchlist"
+msgstr ""
