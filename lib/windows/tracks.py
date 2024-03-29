@@ -3,7 +3,7 @@ from kodi_six import xbmc
 from kodi_six import xbmcgui
 from . import kodigui
 
-from lib import colors
+from lib import player
 from lib import util
 
 from plexnet import playlist
@@ -297,6 +297,8 @@ class AlbumWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if not mli:
             return
 
+        if player.PLAYER.isPlayingAudio():
+            player.PLAYER.stopAndWait()
         self.openWindow(musicplayer.MusicPlayerWindow, track=mli.dataSource, album=self.album)
 
     def updateProperties(self):

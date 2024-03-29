@@ -49,6 +49,7 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
         self.album = kwargs.get('album')
         self.selectedOffset = 0
         self.exitCommand = None
+        self.ignoreStopCommands = False
 
         if self.track:
             self.duration = self.track.duration.asInt()
@@ -61,6 +62,9 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
         self.setupSeekbar()
         self.selectionBoxMax = self.SEEK_IMAGE_WIDTH - (self.selectionBoxHalf - 3)
 
+        player.PLAYER.on('starting.audio', self.onAudioStarting)
+        player.PLAYER.on('started.audio', self.onAudioStarted)
+
         self.updateProperties()
         self.play()
         self.setFocusId(406)
@@ -69,9 +73,24 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
         player.PLAYER.off('playback.started', self.onPlayBackStarted)
         if self.playlist and self.playlist.isRemote:
             self.playlist.off('change', self.updateProperties)
+
+        player.PLAYER.off('starting.audio', self.onAudioStarting)
+        player.PLAYER.off('started.audio', self.onAudioStarted)
         kodigui.ControlledWindow.doClose(self)
 
+    def onAudioStarting(self, *args, **kwargs):
+        util.setGlobalProperty('ignore_spinner', '1')
+        self.ignoreStopCommands = True
+
+    def onAudioStarted(self, *args, **kwargs):
+        util.setGlobalProperty('ignore_spinner', '')
+        self.ignoreStopCommands = False
+
     def onAction(self, action):
+        if self.ignoreStopCommands and action in (xbmcgui.ACTION_PREVIOUS_MENU,
+                                                  xbmcgui.ACTION_NAV_BACK,
+                                                  xbmcgui.ACTION_STOP):
+            return
         try:
             if action == xbmcgui.ACTION_STOP:
                 self.stopButtonClicked()
@@ -79,7 +98,7 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
         except:
             util.ERROR()
 
-        super().onAction(action)
+        super(MusicPlayerWindow, self).onAction(action)
 
     def onClick(self, controlID):
         if controlID == self.PLAYLIST_BUTTON_ID:

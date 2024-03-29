@@ -77,6 +77,7 @@ def main():
         try:
             util.setGlobalProperty('running', '')
             util.setGlobalProperty('stop_running', '')
+            util.setGlobalProperty('ignore_spinner', '')
         except:
             pass
 
