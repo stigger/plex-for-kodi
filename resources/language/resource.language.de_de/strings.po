@@ -2096,3 +2096,11 @@ msgstr "Die advancedsettings.xml-Datei wurde modifiziert. Bitte starte Kodi neu,
 msgctxt "#32997"
 msgid "OK"
 msgstr "OK"
+
+msgctxt "#32998"
+msgid "Use new continue watching hub on Home"
+msgstr "Neuen \"Fortsetzen\" Home-Hub verwenden"
+
+msgctxt "#32999"
+msgid "Instead of separating Continue Watching and On Deck hubs, behave like the modern Plex clients, which combine those two types of hubs into one Continue Watching hub."
+msgstr "Anstatt die separaten Fortsetzen und "

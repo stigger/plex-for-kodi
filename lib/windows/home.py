@@ -281,6 +281,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
     HUBMAP = {
         # HOME
         'home.continue': {'index': 0, 'with_progress': True, 'with_art': True, 'do_updates': True, 'text2lines': True},
+        # This hub can be enabled in the settings so PM4K behaves like any other Plex client.
+        # It overrides home.continue and home.ondeck
+        'continueWatching': {'index': 1, 'with_progress': True, 'do_updates': True, 'text2lines': True},
         'home.ondeck': {'index': 1, 'with_progress': True, 'do_updates': True, 'text2lines': True},
         'home.television.recent': {'index': 2, 'do_updates': True, 'with_progress': True, 'text2lines': True},
         # This is a virtual hub and it appears when the library recommendation is customized in Plex and
@@ -527,6 +530,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.util.APP.on('account:response', self.displayServerAndUser)
         plexapp.util.APP.on('sli:reachability:received', self.displayServerAndUser)
         plexapp.util.APP.on('change:hubs_bifurcation_lines', self.updateProperties)
+        plexapp.util.APP.on('change:hubs_use_new_continue_watching', self.fullyRefreshHome)
         plexapp.util.APP.on('change:theme', self.setTheme)
 
         player.PLAYER.on('session.ended', self.updateOnDeckHubs)
@@ -543,6 +547,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.util.APP.off('account:response', self.displayServerAndUser)
         plexapp.util.APP.off('sli:reachability:received', self.displayServerAndUser)
         plexapp.util.APP.off('change:hubs_bifurcation_lines', self.updateProperties)
+        plexapp.util.APP.off('change:hubs_use_new_continue_watching', self.fullyRefreshHome)
         plexapp.util.APP.off('change:theme', self.setTheme)
 
         player.PLAYER.off('session.ended', self.updateOnDeckHubs)
@@ -801,6 +806,11 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
     def showBusy(self, on=True):
         self.setProperty('busy', on and '1' or '')
 
+    def fullyRefreshHome(self, *args, **kwargs):
+        self.showSections()
+        self.backgroundSet = False
+        self.showHubs(HomeSection)
+
     @busy.dialog()
     def serverRefresh(self):
         backgroundthread.BGThreader.reset()
@@ -815,9 +825,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 self.setFocusId(self.USER_BUTTON_ID)
                 return False
 
-            self.showSections()
-            self.backgroundSet = False
-            self.showHubs(HomeSection)
+            self.fullyRefreshHome()
             return True
 
     def hubItemClicked(self, hubControlID, auto_play=False):
@@ -1308,7 +1316,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
     def _showHub(self, hub, hubitems=None, index=None, with_progress=False, with_art=False, ar16x9=False,
                  text2lines=False, **kwargs):
-        util.DEBUG_LOG("Showing hub {} on index {}".format(hub.hubIdentifier, index))
         control = self.hubControls[index]
         control.dataSource = hub
 

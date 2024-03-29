@@ -266,6 +266,11 @@ class Settings(object):
                     )
                 ),
                 BoolSetting(
+                    'hubs_use_new_continue_watching', T(32998, ''), False
+                ).description(
+                    T(32999, "")
+                ),
+                BoolSetting(
                     'hubs_bifurcation_lines', T(32961, 'Show hub bifurcation lines'), False
                 ).description(
                     T(32962, "Visually separate hubs horizontally using a thin line.")

@@ -1797,3 +1797,11 @@ msgstr ""
 msgctxt "#32997"
 msgid "OK"
 msgstr ""
+
+msgctxt "#32998"
+msgid "Use new continue watching hub on Home"
+msgstr ""
+
+msgctxt "#32999"
+msgid "Instead of separating Continue Watching and On Deck hubs, behave like the modern Plex clients, which combine those two types of hubs into one Continue Watching hub."
+msgstr ""
