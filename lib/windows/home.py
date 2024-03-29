@@ -469,9 +469,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 if button not in (0, 1, 2):
                     return
 
-                if button is 1:
+                if button == 1:
                     util.setSetting('handle_plexdirect', 'always')
-                elif button is 2:
+                elif button == 2:
                     util.setSetting('handle_plexdirect', 'never')
                     return
             pdm.write()
