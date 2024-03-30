@@ -295,10 +295,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         #'home.playlists': {'index': 9}, # No other Plex home screen shows playlists so removing it from here
         'home.photos.recent': {'index': 10, 'text2lines': True},
         # SHOW
-        'tv.ondeck': {'index': 1, 'with_progress': True, 'do_updates': True, 'text2lines': True},
-        'tv.recentlyaired': {'index': 2, 'do_updates': True, 'with_progress': True, 'text2lines': True},
-        'tv.recentlyadded': {'index': 3, 'do_updates': True, 'with_progress': True, 'text2lines': True},
-        'tv.inprogress': {'index': 4, 'with_progress': True, 'do_updates': True, 'text2lines': True},
+        'tv.inprogress': {'index': 1, 'with_progress': True, 'do_updates': True, 'text2lines': True},
+        'tv.ondeck': {'index': 2, 'with_progress': True, 'do_updates': True, 'text2lines': True},
+        'tv.recentlyaired': {'index': 3, 'do_updates': True, 'with_progress': True, 'text2lines': True},
+        'tv.recentlyadded': {'index': 4, 'do_updates': True, 'with_progress': True, 'text2lines': True},
         'tv.startwatching': {'index': 7, 'with_progress': True, 'do_updates': True},
         'tv.rediscover': {'index': 8, 'with_progress': True, 'do_updates': True},
         'tv.morefromnetwork': {'index': 13, 'with_progress': True, 'do_updates': True},
