@@ -1799,7 +1799,7 @@ msgid "OK"
 msgstr ""
 
 msgctxt "#32998"
-msgid "Use new continue watching hub on Home"
+msgid "Use new Continue Watching hub on Home"
 msgstr ""
 
 msgctxt "#32999"
