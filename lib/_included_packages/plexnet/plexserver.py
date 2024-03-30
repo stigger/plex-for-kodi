@@ -150,9 +150,10 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         data = self.query(q, params=params)
         container = plexobjects.PlexContainer(data, initpath=q, server=self, address=q)
 
-        newCW = util.INTERFACE.getPreference('hubs_use_new_continue_watching', False)
+        newCW = util.INTERFACE.getPreference('hubs_use_new_continue_watching', False) and not search_query \
+            and not section
 
-        if newCW and not search_query:
+        if newCW:
             # home, add continueWatching
             cq = '/hubs/continueWatching'
             cdata = self.query(cq, params=params)
@@ -162,7 +163,7 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         for elem in data:
             hubIdent = elem.attrib.get('hubIdentifier')
             # if we've added continueWatching, which combines continue and ondeck, skip those two hubs
-            if newCW and not search_query and hubIdent and \
+            if newCW and hubIdent and \
                     (hubIdent.startswith('home.continue') or hubIdent.startswith('home.ondeck')):
                 continue
 
