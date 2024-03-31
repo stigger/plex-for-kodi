@@ -123,7 +123,8 @@ class CurrentPlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
             self.updateSelectedProgress()
 
     def onPlayBackStarted(self, **kwargs):
-        util.MONITOR.waitForAbort(2)
+        while not player.PLAYER.isPlaying() and not util.MONITOR.abortRequested():
+            util.MONITOR.waitForAbort(0.1)
         self.setDuration()
 
     def repeatButtonClicked(self):
@@ -180,7 +181,8 @@ class CurrentPlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
     def stopButtonClicked(self):
         xbmc.executebuiltin('Action(Back, {})'.format(self.musicPlayerWinID))
-        util.MONITOR.waitForAbort(0.5)
+        while player.PLAYER.isPlaying() and not util.MONITOR.abortRequested():
+            util.MONITOR.waitForAbort(0.1)
         self.doClose()
 
     def selectPlayingItem(self):

@@ -49,7 +49,6 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
         self.album = kwargs.get('album')
         self.selectedOffset = 0
         self.exitCommand = None
-        self.ignoreStopCommands = False
 
         if self.track:
             self.duration = self.track.duration.asInt()
@@ -80,17 +79,11 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
 
     def onAudioStarting(self, *args, **kwargs):
         util.setGlobalProperty('ignore_spinner', '1')
-        self.ignoreStopCommands = True
 
     def onAudioStarted(self, *args, **kwargs):
         util.setGlobalProperty('ignore_spinner', '')
-        self.ignoreStopCommands = False
 
     def onAction(self, action):
-        if self.ignoreStopCommands and action in (xbmcgui.ACTION_PREVIOUS_MENU,
-                                                  xbmcgui.ACTION_NAV_BACK,
-                                                  xbmcgui.ACTION_STOP):
-            return
         try:
             if action == xbmcgui.ACTION_STOP:
                 self.stopButtonClicked()

@@ -297,8 +297,6 @@ class AlbumWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if not mli:
             return
 
-        if player.PLAYER.isPlayingAudio():
-            player.PLAYER.stopAndWait()
         self.openWindow(musicplayer.MusicPlayerWindow, track=mli.dataSource, album=self.album)
 
     def updateProperties(self):
