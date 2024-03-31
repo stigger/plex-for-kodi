@@ -76,6 +76,13 @@ def defaultUserAgent():
                      '%s/%s' % (p_system, p_release)])
 
 
+def getFriendlyName():
+    fn = util.rpc.Settings.GetSettingValue(setting='services.devicename').get('value', 'Kodi')
+    if fn:
+        fn = fn.strip()
+    return fn or 'Kodi'
+
+
 class PlexInterface(plexapp.AppInterface):
     _regs = {
         None: {},
@@ -89,7 +96,7 @@ class PlexInterface(plexapp.AppInterface):
         'provides': 'player',
         'device': util.getPlatform() or plexapp.PLATFORM,
         'model': 'Unknown',
-        'friendlyName': util.rpc.Settings.GetSettingValue(setting='services.devicename').get('value') or 'Kodi',
+        'friendlyName': getFriendlyName(),
         'supports1080p60': True,
         'vp9Support': True,
         'audioChannels': '2.0',
