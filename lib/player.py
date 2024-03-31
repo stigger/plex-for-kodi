@@ -1247,6 +1247,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
         self.ignoreStopEvents = True
         self.handler = AudioPlayerHandler(self)
+        self.playerObject = plexplayer.PlexAudioPlayer(track)
         url, li = self.createTrackListItem(track, fanart)
         self.stopAndWait()
         self.ignoreStopEvents = False
@@ -1262,6 +1263,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
         self.ignoreStopEvents = True
         self.handler = AudioPlayerHandler(self)
+        self.playerObject = plexplayer.PlexAudioPlayer()
         plist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
         plist.clear()
         index = 1
@@ -1282,6 +1284,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
         self.ignoreStopEvents = True
         self.handler = AudioPlayerHandler(self)
+        self.playerObject = plexplayer.PlexAudioPlayer()
         plist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
         plist.clear()
         index = 1
@@ -1306,7 +1309,9 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
     def createTrackListItem(self, track, fanart=None, index=0):
         data = base64.urlsafe_b64encode(track.serialize().encode("utf8")).decode("utf8")
-        url = 'plugin://script.plexmod/play?{0}'.format(data)
+        if not track.isFullObject():
+            track = track.reload()
+        url = self.playerObject.build(track)['url']
         li = xbmcgui.ListItem(track.title, path=url)
         li.setInfo('music', {
             'artist': six.text_type(track.originalTitle or track.grandparentTitle),
@@ -1316,6 +1321,8 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             'tracknumber': track.get('index').asInt(),
             'duration': int(track.duration.asInt() / 1000),
             'playcount': index,
+            # fixme: this is not really necessary, as we don't go the plugin:// route anymore.
+            #        changing the track identification style would mean a bigger rewrite, though, so let's keep it.
             'comment': 'PLEX-{0}:{1}'.format(track.ratingKey, data)
         })
         art = fanart or track.defaultArt
