@@ -294,7 +294,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             if self.showPostPlay():
                 return True
 
-        if not self.playlist or self.stoppedManually:
+        if not self.playlist or self.stoppedManually or (self.playlist and not self.playlist.hasNext()):
             return False
 
         self.triggerProgressEvent()
@@ -461,7 +461,13 @@ class SeekPlayerHandler(BasePlayerHandler):
         return self.videoPlayedFac >= self.playedThreshold
 
     def triggerProgressEvent(self):
+        if not self.player.video:
+            return
+
         rk = str(self.player.video.ratingKey)
+        if rk not in self._progressHld:
+            # progress already consumed
+            return
 
         self.player.trigger('video.progress', data=(rk, self._progressHld[rk] if not self.videoWatched else True))
         self._progressHld = {}
@@ -653,6 +659,10 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.hideOSD()
         util.DEBUG_LOG('SeekHandler: onVideoWindowClosed - Seeking={0}'.format(self.seeking))
         if not self.seeking:
+            # send events as we might not have seen onPlayBackEnded and/or onPlayBackStopped in certain cases,
+            # especially when postplay isn't wanted and we're at the end of a show
+            self.updateNowPlaying()
+            self.triggerProgressEvent()
             if self.player.isPlaying():
                 self.player.stop()
             if not self.playlist or not self.playlist.hasNext():
