@@ -1,10 +1,7 @@
 from __future__ import print_function, absolute_import
-import threading
 import platform
 import uuid
-import sys
 
-from . import callback
 from . import signalsmixin
 from . import simpleobjects
 from . import util

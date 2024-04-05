@@ -300,6 +300,7 @@ pnhttp.DEFAULT_TIMEOUT = asyncadapter.AsyncTimeout(TIMEOUT).setConnectTimeout(TI
 asyncadapter.DEFAULT_TIMEOUT = pnhttp.DEFAULT_TIMEOUT
 plexapp.util.ACCEPT_LANGUAGE = util.ACCEPT_LANGUAGE_CODE
 plexapp.setUserAgent(defaultUserAgent())
+plexnet_util.BASE_HEADERS = plexnet_util.getPlexHeaders()
 
 
 class CallbackEvent(plexapp.util.CompatEvent):

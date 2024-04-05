@@ -78,7 +78,10 @@ except:
         _platform = sys.platform
 
 X_PLEX_DEVICE = _platform                     # Device name and model number, eg iPhone3,2, Motorola XOOM, LG5200TV
-X_PLEX_IDENTIFIER = str(hex(uuid.getnode()))  # UUID, serial number, or other number unique per device
+X_PLEX_IDENTIFIER = ADDON.getSetting('client.ID')
+if not X_PLEX_IDENTIFIER:
+    X_PLEX_IDENTIFIER = str(uuid.uuid4())
+    ADDON.setSetting('client.ID', X_PLEX_IDENTIFIER)
 
 BASE_HEADERS = resetBaseHeaders()
 
@@ -198,17 +201,21 @@ def joinArgs(args, includeQuestion=True):
     return '{0}{1}'.format(includeQuestion and '?' or '&', '&'.join(arglist))
 
 
+def getPlexHeaders():
+    return {"X-Plex-Platform": INTERFACE.getGlobal("platform"),
+            "X-Plex-Version": INTERFACE.getGlobal("appVersionStr"),
+            "X-Plex-Client-Identifier": INTERFACE.getGlobal("clientIdentifier"),
+            "X-Plex-Platform-Version": INTERFACE.getGlobal("platformVersion", "unknown"),
+            "X-Plex-Product": INTERFACE.getGlobal("product"),
+            "X-Plex-Provides": not INTERFACE.getPreference("remotecontrol", False) and 'player' or '',
+            "X-Plex-Device": INTERFACE.getGlobal("device"),
+            "X-Plex-Model": INTERFACE.getGlobal("model"),
+            "X-Plex-Device-Name": INTERFACE.getGlobal("friendlyName"),
+            }
+
+
 def addPlexHeaders(transferObj, token=None):
-    headers = {"X-Plex-Platform": INTERFACE.getGlobal("platform"),
-               "X-Plex-Version": INTERFACE.getGlobal("appVersionStr"),
-               "X-Plex-Client-Identifier": INTERFACE.getGlobal("clientIdentifier"),
-               "X-Plex-Platform-Version": INTERFACE.getGlobal("platformVersion", "unknown"),
-               "X-Plex-Product": INTERFACE.getGlobal("product"),
-               "X-Plex-Provides": not INTERFACE.getPreference("remotecontrol", False) and 'player' or '',
-               "X-Plex-Device": INTERFACE.getGlobal("device"),
-               "X-Plex-Model": INTERFACE.getGlobal("model"),
-               "X-Plex-Device-Name": INTERFACE.getGlobal("friendlyName"),
-               }
+    headers = getPlexHeaders()
 
     transferObj.session.headers.update(headers)
 
