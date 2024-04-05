@@ -1805,3 +1805,11 @@ msgstr ""
 msgctxt "#32999"
 msgid "Instead of separating Continue Watching and On Deck hubs, behave like the modern Plex clients, which combine those two types of hubs into one Continue Watching hub."
 msgstr ""
+
+msgctxt "#33000"
+msgid "Enable path mapping"
+msgstr ""
+
+msgctxt "#33001"
+msgid "Honor path_mapping.json in the addon_data folder when DirectPlaying media. This can be used to stream using other techniques such as SMB/NFS/etc. instead of the default HTTP handler. path_mapping.example.json is included in the addon's main directory."
+msgstr ""

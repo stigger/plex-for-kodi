@@ -1,0 +1,7 @@
+{
+  "servername": {
+    "smb://serverip/mountname": "/library/path/on/server",
+    "smb://serverip/mountname2": "/library2/path/on/server",
+    "/storage/SERVERNAME/this_is_a_SHIELD_mountpoint": "/library3/path/on/server"
+  }
+}

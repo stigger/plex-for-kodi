@@ -6,7 +6,7 @@ from . import http
 from . import plexrequest
 from . import mediadecisionengine
 from . import serverdecision
-from lib.util import addonSettings, KODI_VERSION_MAJOR
+from lib.util import addonSettings, KODI_VERSION_MAJOR, PATH_MAP
 from lib.cache import CACHE_SIZE
 
 from six.moves import range
@@ -14,7 +14,38 @@ from six.moves import range
 DecisionFailure = serverdecision.DecisionFailure
 
 
-class PlexPlayer(object):
+class BasePlayer(object):
+    item = None
+
+    def setupObj(self, obj, part, server, item=None):
+        item = item or self.item
+        # check for path mapping
+        url = None
+        if PATH_MAP and item.settings.getPreference("path_mapping", True):
+            match = ("", "")
+            for key, value in PATH_MAP.get(server.name, {}).items():
+                # the longest matching path wins
+                if part.file.startswith(value) and len(value) > len(match[1]):
+                    match = (key, value)
+
+            if all(match):
+                key, value = match
+                url = part.file.replace(value, key, 1)
+                obj.isRequestToServer = False
+                obj.streamUrls = [url]
+                obj.isMapped = True
+                util.DEBUG_LOG("File {} found in path map, mapping to {}".format(part.file, value))
+
+        if not url:
+            url = server.buildUrl(part.getAbsolutePath("key"))
+            # Check if we should include our token or not for this request
+            obj.isRequestToServer = server.isRequestToServer(url)
+            obj.streamUrls = [server.buildUrl(part.getAbsolutePath("key"), obj.isRequestToServer)]
+            obj.isMapped = False
+        return url
+
+
+class PlexPlayer(BasePlayer):
     DECISION_ENDPOINT = "/video/:/transcode/universal/decision"
 
     def __init__(self, item, seekValue=0, forceUpdate=False):
@@ -685,10 +716,9 @@ class PlexPlayer(object):
 
         server = self.item.getServer()
 
-        # Check if we should include our token or not for this request
-        obj.isRequestToServer = server.isRequestToServer(server.buildUrl(part.getAbsolutePath("key")))
-        obj.streamUrls = [server.buildUrl(part.getAbsolutePath("key"), obj.isRequestToServer)]
+        self.setupObj(obj, part, server)
         obj.token = obj.isRequestToServer and server.getToken() or None
+
         if self.media.protocol == "hls":
             obj.streamFormat = "hls"
             obj.switchingStrategy = "full-adaptation"
@@ -841,7 +871,7 @@ class PlexPlayer(object):
         return obj
 
 
-class PlexAudioPlayer(object):
+class PlexAudioPlayer(BasePlayer):
     def __init__(self, item=None):
         self.item = item
         self.choice = None
@@ -890,7 +920,7 @@ class PlexAudioPlayer(object):
 
     def buildDirectPlay(self, item, choice, obj):
         if choice.part:
-            obj.url = item.getServer().buildUrl(choice.part.getAbsolutePath("key"), True)
+            obj.url = self.setupObj(obj, choice.part, item.getServer(), item=item)
 
             # Set and override the stream format if applicable
             obj.streamFormat = choice.media.get('container', 'mp3')

@@ -506,6 +506,7 @@ class Settings(object):
                 BoolSetting('kiosk.mode', T(32043, 'Start Plex On Kodi Startup'), False),
                 BoolSetting('exit_default_is_quit', T(32965, 'Start Plex On Kodi Startup'), False)
                 .description(T(32966, "stub")),
+                BoolSetting('path_mapping', T(33000, ''), True).description(T(33001, '')),
                 BufferSetting('cache_size',
                               T(33613, 'Kodi Buffer Size (MB)'),
                               20,

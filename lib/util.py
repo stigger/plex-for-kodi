@@ -860,6 +860,20 @@ if not xbmcvfs.exists(os.path.join(ADDON.getAddonInfo('path'), "resources", "ski
     applyTheme(theme)
 
 
+# path mapping
+mapfile = os.path.join(translatePath(ADDON.getAddonInfo("profile")), "path_mapping.json")
+PATH_MAP = None
+if xbmcvfs.exists(mapfile):
+    try:
+        f = xbmcvfs.File(mapfile)
+        PATH_MAP = json.loads(f.read())
+        f.close()
+    except:
+        ERROR("Couldn't read path_mapping.json")
+    else:
+        LOG("Path mapping: {}".format(repr(PATH_MAP)))
+
+
 def populateTimeFormat():
     global timeFormat, timeFormatKN, padHour
     timeFormat, timeFormatKN, padHour = getTimeFormat()
