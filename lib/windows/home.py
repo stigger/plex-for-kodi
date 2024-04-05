@@ -972,18 +972,27 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.tasks = [t for t in self.tasks if t.isValid()]
 
     def sectionChanged(self, force=False):
+        if force:
+            self._sectionChanged(immediate=True)
+            return
+
         self.sectionChangeTimeout = time.time() + 0.5
-        if not self.sectionChangeThread or not self.sectionChangeThread.is_alive() or force:
+
+        if not self.sectionChangeThread or self.sectionChangeThread != threading.currentThread():
             if self.sectionChangeThread and self.sectionChangeThread.is_alive():
                 self.sectionChangeThread.join(timeout=0.5)
+                if self.sectionChangeThread.is_alive():
+                    # timed out
+                    self.sectionChangeTimeout = time.time()
 
             self.sectionChangeThread = threading.Thread(target=self._sectionChanged, name="sectionchanged")
             self.sectionChangeThread.start()
 
-    def _sectionChanged(self):
-        while not util.MONITOR.waitForAbort(0.1):
-            if time.time() >= self.sectionChangeTimeout:
-                break
+    def _sectionChanged(self, immediate=False):
+        if not immediate:
+            while not util.MONITOR.waitForAbort(0.1):
+                if time.time() >= self.sectionChangeTimeout:
+                    break
 
         ds = self.sectionList.getSelectedItem().dataSource
         if self.lastSection == ds:
