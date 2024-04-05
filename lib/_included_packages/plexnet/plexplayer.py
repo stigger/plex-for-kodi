@@ -17,14 +17,14 @@ DecisionFailure = serverdecision.DecisionFailure
 class BasePlayer(object):
     item = None
 
-    def setupObj(self, obj, part, server, item=None):
+    def setupObj(self, obj, part, server, force_request_to_server=False):
         # check for path mapping
         url = part.getPathMappedUrl()
 
         if not url:
             url = server.buildUrl(part.getAbsolutePath("key"))
             # Check if we should include our token or not for this request
-            obj.isRequestToServer = server.isRequestToServer(url)
+            obj.isRequestToServer = force_request_to_server or server.isRequestToServer(url)
             obj.streamUrls = [server.buildUrl(part.getAbsolutePath("key"), obj.isRequestToServer)]
             obj.isMapped = False
         else:
@@ -908,7 +908,7 @@ class PlexAudioPlayer(BasePlayer):
 
     def buildDirectPlay(self, item, choice, obj):
         if choice.part:
-            self.setupObj(obj, choice.part, item.getServer(), item=item)
+            self.setupObj(obj, choice.part, item.getServer(), force_request_to_server=True)
             obj.url = obj.streamUrls[0]
 
             # Set and override the stream format if applicable

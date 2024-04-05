@@ -162,21 +162,21 @@ def cleanToken(url):
     return re.sub(r'X-Plex-Token=[^&]+', 'X-Plex-Token=****', url)
 
 
-def cleanObjTokens(dorig, flistkeys=("streamUrls",), fstrkeys=("url", "token")):
+def cleanObjTokens(dorig, flistkeys=("streamUrls", "streams",), fstrkeys=("url", "token")):
     d = {}
     dcopy = copy(dorig)
 
     # filter lists
     for k in flistkeys:
-        if k not in d:
+        if k not in dcopy:
             continue
-        d[k] = list(map(lambda x: cleanToken(x), d[k][:]))
+        d[k] = list(map(lambda x: cleanObjTokens(x) if isinstance(x, dict) else cleanToken(x), dcopy[k][:]))
 
     # filter strings
     for k in fstrkeys:
-        if k not in d:
+        if k not in dcopy:
             continue
-        d[k] = "****" if k == "token" else cleanToken(d[k])
+        d[k] = "****" if k == "token" else cleanToken(dcopy[k])
 
     dcopy.update(d)
     return dcopy
