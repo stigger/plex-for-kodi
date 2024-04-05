@@ -1165,7 +1165,8 @@ class SeekDialog(kodigui.BaseDialog):
     def subtitleButtonClicked(self):
         options = []
 
-        options.append({'key': 'download', 'display': T(32405, 'Download Subtitles')})
+        if self.isDirectPlay:
+            options.append({'key': 'download', 'display': T(32405, 'Download Subtitles')})
 
         # select "enable" by default
         selectIndex = 1
@@ -1219,10 +1220,14 @@ class SeekDialog(kodigui.BaseDialog):
             if self.handler and self.handler.player and self.handler.player.playerObject \
                     and util.getSetting('calculate_oshash', False):
                 meta = self.handler.player.playerObject.metadata
-                oss_hash = util.getOpenSubtitlesHash(meta.size, meta.streamUrls[0])
-                if oss_hash:
-                    util.DEBUG_LOG("OpenSubtitles hash: %s" % oss_hash)
-                    util.setGlobalProperty("current_oshash", oss_hash, base='videoinfo.{0}')
+                if not meta.size:
+                    util.LOG("Can't calculate OpenSubtitles hash because we're transcoding")
+
+                else:
+                    oss_hash = util.getOpenSubtitlesHash(meta.size, meta.streamUrls[0])
+                    if oss_hash:
+                        util.DEBUG_LOG("OpenSubtitles hash: %s" % oss_hash)
+                        util.setGlobalProperty("current_oshash", oss_hash, base='videoinfo.{0}')
             else:
                 util.setGlobalProperty("current_oshash", '', base='videoinfo.{0}')
             self.lastSubtitleNavAction = "download"
@@ -1255,6 +1260,8 @@ class SeekDialog(kodigui.BaseDialog):
     def disableSubtitles(self):
         self.player.video.disableSubtitles()
         self.setSubtitles()
+        if self.isTranscoded:
+            self.doSeek(self.trueOffset(), settings_changed=True)
 
     def cycleSubtitles(self, forward=True):
         """
@@ -1263,6 +1270,8 @@ class SeekDialog(kodigui.BaseDialog):
         stream = self.player.video.cycleSubtitles(forward=forward)
         self.setSubtitles(honor_forced_subtitles_override=False)
         util.showNotification(str(stream), time_ms=1500, header=util.T(32396, "Subtitles"))
+        if self.isTranscoded:
+            self.doSeek(self.trueOffset(), settings_changed=True)
 
     def setSubtitles(self, do_sleep=False, honor_forced_subtitles_override=False):
         self.handler.setSubtitles(do_sleep=do_sleep, honor_forced_subtitles_override=honor_forced_subtitles_override)
