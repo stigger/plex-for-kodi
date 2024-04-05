@@ -4,6 +4,8 @@ from . import plexstream
 from . import plexrequest
 from . import util
 
+from lib.util import PATH_MAP
+
 
 class PlexPart(plexobjects.PlexObject):
     def reload(self):
@@ -156,6 +158,38 @@ class PlexPart(plexobjects.PlexObject):
 
     def hasStreams(self):
         return bool(self.streams)
+
+    def getPathMappedUrl(self):
+        if PATH_MAP and util.INTERFACE.getPreference("path_mapping", True):
+            match = ("", "")
+
+            for key, value in PATH_MAP.get(self.getServer().name, {}).items():
+                # the longest matching path wins
+                if self.file.startswith(value) and len(value) > len(match[1]):
+                    match = (key, value)
+
+            if all(match):
+                key, value = match
+                url = self.file.replace(value, key, 1)
+
+                util.DEBUG_LOG("File {} found in path map, mapping to {}".format(self.file, value))
+                return url
+        return ""
+
+    @property
+    def isPathMapped(self):
+        return bool(self.getPathMappedUrl())
+
+    def getPathMappedProto(self):
+        url = self.getPathMappedUrl()
+        if url:
+            prot = url.split("://")[0]
+            if prot == url:
+                ret = "mnt://"
+            else:
+                ret = "{}://".format(prot)
+            return ret
+        return ""
 
     def __str__(self):
         return "PlexPart {0} {1}".format(self.id("NaN"), self.key)

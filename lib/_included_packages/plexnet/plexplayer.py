@@ -6,7 +6,7 @@ from . import http
 from . import plexrequest
 from . import mediadecisionengine
 from . import serverdecision
-from lib.util import addonSettings, KODI_VERSION_MAJOR, PATH_MAP
+from lib.util import addonSettings, KODI_VERSION_MAJOR
 from lib.cache import CACHE_SIZE
 
 from six.moves import range
@@ -18,23 +18,8 @@ class BasePlayer(object):
     item = None
 
     def setupObj(self, obj, part, server, item=None):
-        item = item or self.item
         # check for path mapping
-        url = None
-        if PATH_MAP and item.settings.getPreference("path_mapping", True):
-            match = ("", "")
-            for key, value in PATH_MAP.get(server.name, {}).items():
-                # the longest matching path wins
-                if part.file.startswith(value) and len(value) > len(match[1]):
-                    match = (key, value)
-
-            if all(match):
-                key, value = match
-                url = part.file.replace(value, key, 1)
-                obj.isRequestToServer = False
-                obj.streamUrls = [url]
-                obj.isMapped = True
-                util.DEBUG_LOG("File {} found in path map, mapping to {}".format(part.file, value))
+        url = part.getPathMappedUrl()
 
         if not url:
             url = server.buildUrl(part.getAbsolutePath("key"))
@@ -42,7 +27,10 @@ class BasePlayer(object):
             obj.isRequestToServer = server.isRequestToServer(url)
             obj.streamUrls = [server.buildUrl(part.getAbsolutePath("key"), obj.isRequestToServer)]
             obj.isMapped = False
-        return url
+        else:
+            obj.isRequestToServer = False
+            obj.streamUrls = [url]
+            obj.isMapped = True
 
 
 class PlexPlayer(BasePlayer):
@@ -920,7 +908,8 @@ class PlexAudioPlayer(BasePlayer):
 
     def buildDirectPlay(self, item, choice, obj):
         if choice.part:
-            obj.url = self.setupObj(obj, choice.part, item.getServer(), item=item)
+            self.setupObj(obj, choice.part, item.getServer(), item=item)
+            obj.url = obj.streamUrls[0]
 
             # Set and override the stream format if applicable
             obj.streamFormat = choice.media.get('container', 'mp3')

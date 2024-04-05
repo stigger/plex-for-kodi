@@ -2104,3 +2104,15 @@ msgstr "Neuen \"Fortsetzen\" Home-Hub verwenden"
 msgctxt "#32999"
 msgid "Instead of separating Continue Watching and On Deck hubs, behave like the modern Plex clients, which combine those two types of hubs into one Continue Watching hub."
 msgstr "Anstatt die separaten Fortsetzen und "
+
+msgctxt "#33000"
+msgid "Enable path mapping"
+msgstr "Path mapping aktivieren"
+
+msgctxt "#33001"
+msgid "Honor path_mapping.json in the addon_data/script.plexmod folder when DirectPlaying media. This can be used to stream using other techniques such as SMB/NFS/etc. instead of the default HTTP handler. path_mapping.example.json is included in the addon's main directory."
+msgstr "Lese path_mapping.json im addon_data/script.plexmod Ordner wenn etwas DirectPlayed wird. Dies kann verwendet werden, um andere Techniken beim Streamen zu benutzen, wie z. B. SMB/NFS/etc., anstatt des HTTP handlers. path_mapping.example.json liegt im Hauptverzeichnis vom Addon."
+
+msgctxt "#33002"
+msgid "Transport"
+msgstr "Transport"
