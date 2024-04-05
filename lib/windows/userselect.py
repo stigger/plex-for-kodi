@@ -82,7 +82,7 @@ class UserSelectWindow(kodigui.BaseWindow):
                 with self.propertyContext('busy'):
                     self.userList.reset()
                     self.setProperty('initialized', '')
-                    plexapp.ACCOUNT.updateHomeUsers()
+                    plexapp.ACCOUNT.updateHomeUsers(refreshSubscription=True)
                     self.start(with_busy=False)
             else:
                 self.userSelected(item)

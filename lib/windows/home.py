@@ -1556,7 +1556,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         elif option == 'go_online':
             plexapp.ACCOUNT.refreshAccount()
         elif option == 'refresh_users':
-            plexapp.ACCOUNT.updateHomeUsers()
+            plexapp.ACCOUNT.updateHomeUsers(refreshSubscription=True)
             return True
         else:
             self.closeOption = option
