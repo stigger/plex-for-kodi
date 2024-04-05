@@ -424,7 +424,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                (had_progress_data and not progress_data_left and not just_fully_watched
                 and not mli.dataSource.isFullyWatched) or \
                (not had_progress_data and not self.episode and not mli.dataSource.isFullyWatched):
-                if self.episodeListControl.getSelectedPosition() != mli.pos():
+                if self.episodeListControl.getSelectedPosition() < mli.pos():
                     self.episodeListControl.selectItem(mli.pos())
                     self.episodesPaginator.setEpisode(self.episode or mli.dataSource)
                 if just_fully_watched:
