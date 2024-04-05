@@ -480,12 +480,19 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 elif button == 2:
                     util.setSetting('handle_plexdirect', 'never')
                     return
+
+            hadHosts = pdm.hadHosts
             pdm.write()
-            optionsdialog.show(
-                T(32995, ''),
-                T(32996, ''),
-                T(32997, 'OK'),
-            )
+
+            if not hadHosts and handlePD == "ask":
+                optionsdialog.show(
+                    T(32995, ''),
+                    T(32996, ''),
+                    T(32997, 'OK'),
+                )
+            else:
+                # be less intrusive
+                util.showNotification(T(32996, ''), header=T(32995, ''))
 
     def updateProperties(self, *args, **kwargs):
         self.setBoolProperty('bifurcation_lines', util.getSetting('hubs_bifurcation_lines', False))
