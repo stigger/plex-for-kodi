@@ -2114,5 +2114,9 @@ msgid "Honor path_mapping.json in the addon_data/script.plexmod folder when Dire
 msgstr "Lese path_mapping.json im addon_data/script.plexmod Ordner wenn etwas DirectPlayed wird. Dies kann verwendet werden, um andere Techniken beim Streamen zu benutzen, wie z. B. SMB/NFS/etc., anstatt des HTTP handlers. path_mapping.example.json liegt im Hauptverzeichnis vom Addon."
 
 msgctxt "#33002"
-msgid "Transport"
-msgstr "Transport"
+msgid "Verify mapped files exist"
+msgstr "Gemappte Dateien verifizieren"
+
+msgctxt "#33003"
+msgid "When path mapping is enabled and we've successfully mapped a file, verify its existence."
+msgstr "Wenn path mapping aktiviert ist und wir erfolgreich eine Datei gemappt haben, auch ihre Existenz verifizieren."

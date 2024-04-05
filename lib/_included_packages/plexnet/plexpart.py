@@ -1,10 +1,11 @@
 from __future__ import absolute_import
+from kodi_six import xbmcvfs
 from . import plexobjects
 from . import plexstream
 from . import plexrequest
 from . import util
 
-from lib.util import PATH_MAP
+from lib.util import PATH_MAP, addonSettings
 
 
 class PlexPart(plexobjects.PlexObject):
@@ -160,6 +161,7 @@ class PlexPart(plexobjects.PlexObject):
         return bool(self.streams)
 
     def getPathMappedUrl(self):
+        verify = addonSettings.verifyMappedFiles
         if PATH_MAP and util.INTERFACE.getPreference("path_mapping", True):
             match = ("", "")
 
@@ -171,9 +173,10 @@ class PlexPart(plexobjects.PlexObject):
             if all(match):
                 key, value = match
                 url = self.file.replace(value, key, 1)
-
-                util.DEBUG_LOG("File {} found in path map, mapping to {}".format(self.file, value))
-                return url
+                if (verify and xbmcvfs.exists(url)) or not verify:
+                    util.DEBUG_LOG("File {} found in path map, mapping to {}".format(self.file, value))
+                    return url
+                util.DEBUG_LOG("Mapped file {} doesn't exist".format(url))
         return ""
 
     @property

@@ -1815,5 +1815,9 @@ msgid "Honor path_mapping.json in the addon_data/script.plexmod folder when Dire
 msgstr ""
 
 msgctxt "#33002"
-msgid "Transport"
+msgid "Verify mapped files exist"
+msgstr ""
+
+msgctxt "#33003"
+msgid "When path mapping is enabled and we've successfully mapped a file, verify its existence."
 msgstr ""

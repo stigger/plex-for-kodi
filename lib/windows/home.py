@@ -984,6 +984,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 if self.sectionChangeThread.is_alive():
                     # timed out
                     self.sectionChangeTimeout = time.time()
+                # todo: if we really want to stick to the 0.5s timeout, we could subtract the time the join took from
+                #       the remaining timeout
 
             self.sectionChangeThread = threading.Thread(target=self._sectionChanged, name="sectionchanged")
             self.sectionChangeThread.start()

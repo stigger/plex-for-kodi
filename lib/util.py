@@ -188,6 +188,7 @@ class AddonSettings(object):
         ("consecutive_video_pb_wait", 0.0),
         ("retrieve_all_media_up_front", False),
         ("library_chunk_size", 240),
+        ("verify_mapped_files", True)
     )
 
     def __init__(self):
