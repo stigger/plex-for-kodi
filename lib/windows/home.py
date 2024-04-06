@@ -915,7 +915,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.storeLastBG()
 
         if item.dataSource != self.lastSection:
-            self.sectionChanged(force)
+            self.sectionChanged()
 
     def checkHubItem(self, controlID, actionID=None):
         control = self.hubControls[controlID - 400]
@@ -971,15 +971,11 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
     def cleanTasks(self):
         self.tasks = [t for t in self.tasks if t.isValid()]
 
-    def sectionChanged(self, force=False):
-        if force:
-            self.sectionChangeTimeout = None
-            self._sectionChanged(immediate=True)
-            return
-
+    def sectionChanged(self):
         self.sectionChangeTimeout = time.time() + 0.5
 
-        if not self.sectionChangeThread or self.sectionChangeThread != threading.currentThread():
+        if not self.sectionChangeThread or self.sectionChangeThread != threading.currentThread() or \
+                not self.sectionChangeThread.is_alive():
             if self.sectionChangeThread and self.sectionChangeThread.is_alive():
                 self.sectionChangeThread.join(timeout=0.5)
                 if self.sectionChangeThread.is_alive():
@@ -989,13 +985,12 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.sectionChangeThread = threading.Thread(target=self._sectionChanged, name="sectionchanged")
             self.sectionChangeThread.start()
 
-    def _sectionChanged(self, immediate=False):
-        if not immediate:
-            if not self.sectionChangeTimeout:
-                return
-            while not util.MONITOR.waitForAbort(0.1):
-                if time.time() >= self.sectionChangeTimeout:
-                    break
+    def _sectionChanged(self):
+        if not self.sectionChangeTimeout:
+            return
+        while not util.MONITOR.waitForAbort(0.1):
+            if time.time() >= self.sectionChangeTimeout:
+                break
 
         ds = self.sectionList.getSelectedItem().dataSource
         if self.lastSection == ds:
@@ -1012,7 +1007,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             util.DEBUG_LOG('Section changed ({0}): {1}'.format(section.key, repr(section.title)))
             self.showHubs(section)
             self.lastSection = section
-            self.checkSectionItem(force=True)
+            #self.checkSectionItem(force=True)
 
     def sectionHubsCallback(self, section, hubs):
         with self.lock:
