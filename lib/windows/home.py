@@ -973,6 +973,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
     def sectionChanged(self, force=False):
         if force:
+            self.sectionChangeTimeout = None
             self._sectionChanged(immediate=True)
             return
 
@@ -983,15 +984,15 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 self.sectionChangeThread.join(timeout=0.5)
                 if self.sectionChangeThread.is_alive():
                     # timed out
-                    self.sectionChangeTimeout = time.time()
-                # todo: if we really want to stick to the 0.5s timeout, we could subtract the time the join took from
-                #       the remaining timeout
+                    pass
 
             self.sectionChangeThread = threading.Thread(target=self._sectionChanged, name="sectionchanged")
             self.sectionChangeThread.start()
 
     def _sectionChanged(self, immediate=False):
         if not immediate:
+            if not self.sectionChangeTimeout:
+                return
             while not util.MONITOR.waitForAbort(0.1):
                 if time.time() >= self.sectionChangeTimeout:
                     break
@@ -1000,13 +1001,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         if self.lastSection == ds:
             return
 
-        self.lastSection = ds
+        self._sectionReallyChanged(ds)
 
-        self._sectionReallyChanged()
-
-    def _sectionReallyChanged(self):
+    def _sectionReallyChanged(self, section):
         with self.lock:
-            section = self.lastSection
             self.setProperty('hub.focus', '')
             if util.addonSettings.dynamicBackgrounds:
                 self.backgroundSet = False
