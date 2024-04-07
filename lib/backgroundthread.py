@@ -42,6 +42,9 @@ class Task:
     def __gt__(self, other):
         return self._priority > other._priority
 
+    def __bool__(self):
+        return self.isValid()
+
     def start(self):
         BGThreader.addTask(self)
 

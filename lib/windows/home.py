@@ -969,19 +969,21 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
             self.setProperty('server.iconmod2', '')
 
     def cleanTasks(self):
-        self.tasks = [t for t in self.tasks if t.isValid()]
+        self.tasks = [t for t in self.tasks if t]
 
     def sectionChanged(self):
         self.sectionChangeTimeout = time.time() + 0.5
 
-        if not self.sectionChangeThread or self.sectionChangeThread != threading.currentThread() or \
-                not self.sectionChangeThread.is_alive():
-            if self.sectionChangeThread and self.sectionChangeThread.is_alive():
-                self.sectionChangeThread.join(timeout=0.5)
-                if self.sectionChangeThread.is_alive():
-                    # timed out
-                    pass
+        # wait 2s at max if we're currently awaiting any hubs to reload
+        # fixme: this can be done in a better way, probably
+        waited = 0
+        while any(self.tasks) and waited < 20:
+            self.showBusy(True)
+            util.MONITOR.waitForAbort(0.1)
+            waited += 1
+        self.showBusy(False)
 
+        if not self.sectionChangeThread or (self.sectionChangeThread and not self.sectionChangeThread.is_alive()):
             self.sectionChangeThread = threading.Thread(target=self._sectionChanged, name="sectionchanged")
             self.sectionChangeThread.start()
 
