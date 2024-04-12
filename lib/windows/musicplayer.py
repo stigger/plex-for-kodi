@@ -69,7 +69,7 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
         self.setFocusId(406)
 
     def doClose(self, **kwargs):
-        player.PLAYER.off('playback.started', self.onPlayBackStarted)
+        player.PLAYER.off('av.started', self.onPlayBackStarted)
         if self.playlist and self.playlist.isRemote:
             self.playlist.off('change', self.updateProperties)
 
@@ -145,6 +145,7 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
         self.processCommand(opener.handleOpen(currentplaylist.CurrentPlaylistWindow, winID=xbmcgui.getCurrentWindowId()))
 
     def stopButtonClicked(self):
+        player.PLAYER.stopAndWait()
         self.doClose()
 
     def updateProperties(self, **kwargs):

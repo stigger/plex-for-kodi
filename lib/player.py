@@ -827,6 +827,7 @@ class AudioPlayerHandler(BasePlayerHandler):
 
     def onMonitorInit(self):
         self.extractTrackInfo()
+        self.ignoreTimelines = False
         self.updateNowPlaying(state='playing')
 
     def onPlayBackStarted(self):
@@ -834,6 +835,7 @@ class AudioPlayerHandler(BasePlayerHandler):
         self.player.trigger('started.audio')
         self.updatePlayQueue(delay=True)
         self.extractTrackInfo()
+        self.ignoreTimelines = False
         self.updateNowPlaying(state='playing')
 
     def onPlayBackResumed(self):
@@ -845,11 +847,13 @@ class AudioPlayerHandler(BasePlayerHandler):
     def onPlayBackStopped(self):
         self.updatePlayQueue()
         self.updateNowPlaying(state='stopped')
+        self.ignoreTimelines = True
         self.finish()
 
     def onPlayBackEnded(self):
         self.updatePlayQueue()
         self.updateNowPlaying(state='stopped')
+        self.ignoreTimelines = True
         self.finish()
 
     def onPlayBackFailed(self):
