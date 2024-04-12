@@ -1148,11 +1148,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             return
 
         meta = self.playerObject.metadata
-
-        # Kodi 19 will try to look for subtitles in the directory containing the file. '/' and `/file.mkv` both point
-        # to the file, and Kodi will happily try to read the whole file without recognizing it isn't a directory.
-        # To get around that, we omit the filename here since it is unnecessary.
-        url = meta.streamUrls[0].replace("file.mkv", "").replace("file.mp4", "")
+        url = meta.streamUrls[0]
 
         bifURL = self.playerObject.getBifUrl()
         util.DEBUG_LOG('Playing URL(+{1}ms): {0}{2}'.format(plexnetUtil.cleanToken(url), offset, bifURL and ' - indexed' or ''))
@@ -1203,6 +1199,13 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             self.handler.mode = self.handler.MODE_ABSOLUTE
 
         if not meta.isMapped:
+            # Kodi 19 will try to look for subtitles in the directory containing the file. '/' and `/file.mkv` both
+            # point to the file, and Kodi will happily try to read the whole file without recognizing it isn't a
+            # directory. To get around that, we omit the filename here since it is unnecessary.
+            omit, fname = url.rsplit("/", 1)
+            if fname.startswith("file."):
+                url = "{}/{}".format(omit, "?" + fname.split("?")[1] if "?" in fname else "")
+
             url = util.addURLParams(url, {
                 'X-Plex-Client-Profile-Name': 'Generic',
                 'X-Plex-Client-Identifier': plexapp.util.INTERFACE.getGlobal('clientIdentifier')
