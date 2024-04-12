@@ -136,7 +136,7 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
         elif self.mediaItem.studio:
             self.setProperty('directors', u'{0}    {1}'.format(T(32386, 'Studio').upper(), self.mediaItem.studio))
 
-        cast = u' / '.join([r.tag for r in self.mediaItem.roles()][:5])
+        cast = self.mediaItem.roles and u' / '.join([r.tag for r in self.mediaItem.roles()][:5]) or ''
         castLabel = T(32419, 'Cast').upper()
         self.setProperty('writers', cast and u'{0}    {1}'.format(castLabel, cast) or '')
 

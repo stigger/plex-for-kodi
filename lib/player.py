@@ -144,7 +144,7 @@ class BasePlayerHandler(object):
         # self.timelineTimer.reset()
 
         _time = t or int(self.trueTime * 1000)
-        self._progressHld[item.ratingKey] = _time
+        self._progressHld[str(item.ratingKey)] = _time
 
         # self.trigger("progress", [m, item, time])
 
@@ -661,8 +661,9 @@ class SeekPlayerHandler(BasePlayerHandler):
         if not self.seeking:
             # send events as we might not have seen onPlayBackEnded and/or onPlayBackStopped in certain cases,
             # especially when postplay isn't wanted and we're at the end of a show
-            self.updateNowPlaying()
-            self.triggerProgressEvent()
+            #self.updateNowPlaying()
+            if self._progressHld:
+                self.triggerProgressEvent()
             if self.player.isPlaying():
                 self.player.stop()
             if not self.playlist or not self.playlist.hasNext():
