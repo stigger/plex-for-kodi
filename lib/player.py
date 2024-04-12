@@ -140,6 +140,13 @@ class BasePlayerHandler(object):
         if state == self.lastTimelineState and not force:
             return
 
+        obj = item.choice
+
+        # Ignore sending timelines for multi part media with no duration
+        if obj and obj.part and obj.part.duration.asInt() == 0 and obj.media.parts and len(obj.media.parts) > 1:
+            util.LOG("Timeline not supported: the current part doesn't have a valid duration")
+            return
+
         self.lastTimelineState = state
         # self.timelineTimer.reset()
 
@@ -151,8 +158,17 @@ class BasePlayerHandler(object):
         if refreshQueue and self.playQueue:
             self.playQueue.refreshOnTimeline = True
 
+        data = plexnetUtil.AttributeDict({
+            "key": str(item.key),
+            "ratingKey": str(item.ratingKey),
+            "guid": str(item.guid),
+            "url": str(item.url),
+            "duration": item.duration.asInt(),
+            "containerKey": str(item.container.address)
+        })
+
         plexapp.util.APP.nowplayingmanager.updatePlaybackState(
-            self.timelineType, self.player.playerObject, state, _time, self.playQueue, duration=self.currentDuration(),
+            self.timelineType, data, state, _time, self.playQueue, duration=self.currentDuration(),
             force=overrideChecks
         )
 

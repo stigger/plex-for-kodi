@@ -11,7 +11,6 @@ from lib import metadata
 from lib import player
 
 from plexnet import plexapp, playlist, plexplayer
-from plexnet.util import INTERFACE
 
 from . import busy
 from . import videoplayer
@@ -22,7 +21,6 @@ from . import search
 from . import playersettings
 from . import info
 from . import optionsdialog
-from . import preplayutils
 from . import pagination
 from . import playbacksettings
 

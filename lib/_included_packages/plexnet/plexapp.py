@@ -41,6 +41,10 @@ class App(signalsmixin.SignalsMixin):
     def addTimer(self, timer):
         self.timers.append(timer)
 
+    @property
+    def serverManager(self):
+        return SERVERMANAGER
+
     def startRequest(self, request, context, body=None, contentType=None):
         context.request = request
 
