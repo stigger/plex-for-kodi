@@ -49,6 +49,7 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
         self.album = kwargs.get('album')
         self.selectedOffset = 0
         self.exitCommand = None
+        self.ignoreStopCommands = False
 
         if self.track:
             self.duration = self.track.duration.asInt()
@@ -63,6 +64,7 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
 
         player.PLAYER.on('starting.audio', self.onAudioStarting)
         player.PLAYER.on('started.audio', self.onAudioStarted)
+        player.PLAYER.on('changed.audio', self.onAudioChanged)
 
         self.updateProperties()
         self.play()
@@ -75,15 +77,26 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
 
         player.PLAYER.off('starting.audio', self.onAudioStarting)
         player.PLAYER.off('started.audio', self.onAudioStarted)
+        player.PLAYER.off('changed.audio', self.onAudioChanged)
         kodigui.ControlledWindow.doClose(self)
 
     def onAudioStarting(self, *args, **kwargs):
         util.setGlobalProperty('ignore_spinner', '1')
+        self.ignoreStopCommands = True
 
     def onAudioStarted(self, *args, **kwargs):
         util.setGlobalProperty('ignore_spinner', '')
+        self.ignoreStopCommands = False
+
+    def onAudioChanged(self, *args, **kwargs):
+        util.setGlobalProperty('ignore_spinner', '')
+        self.ignoreStopCommands = False
 
     def onAction(self, action):
+        if self.ignoreStopCommands and action in (xbmcgui.ACTION_PREVIOUS_MENU,
+                                                  xbmcgui.ACTION_NAV_BACK,
+                                                  xbmcgui.ACTION_STOP):
+            return
         try:
             if action == xbmcgui.ACTION_STOP:
                 self.stopButtonClicked()
@@ -165,6 +178,8 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
 
         if util.trackIsPlaying(self.track):
             return
+
+        self.onAudioStarting()
 
         fanart = None
         if self.playlist:
