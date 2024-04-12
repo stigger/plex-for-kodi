@@ -860,6 +860,9 @@ if not xbmcvfs.exists(os.path.join(ADDON.getAddonInfo('path'), "resources", "ski
                                    "script-plex-seek_dialog.xml")):
     applyTheme(theme)
 
+PM_MCMT_RE = re.compile(r'/\*.+\*/\s?', re.IGNORECASE | re.MULTILINE | re.DOTALL)
+PM_CMT_RE = re.compile(r'[\t ]+//.+\n?')
+PM_COMMA_RE = re.compile(r',\s*}\s*}')
 
 # path mapping
 mapfile = os.path.join(translatePath(ADDON.getAddonInfo("profile")), "path_mapping.json")
@@ -867,7 +870,16 @@ PATH_MAP = None
 if xbmcvfs.exists(mapfile):
     try:
         f = xbmcvfs.File(mapfile)
-        PATH_MAP = json.loads(f.read())
+        # sanitize json
+
+        # remove multiline comments
+        data = PM_MCMT_RE.sub("", f.read())
+        # remove comments
+        data = PM_CMT_RE.sub("", data)
+        # remove invalid trailing comma
+
+        data = PM_COMMA_RE.sub("}}", data)
+        PATH_MAP = json.loads(data)
         f.close()
     except:
         ERROR("Couldn't read path_mapping.json")
