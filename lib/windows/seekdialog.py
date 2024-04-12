@@ -554,7 +554,7 @@ class SeekDialog(kodigui.BaseDialog):
                         if markerDef["marker"]:
                             marker = markerDef["marker"]
                             final = getattr(marker, "final", False)
-                            markerOff = -1500 if final else MARKER_END_JUMP_OFF
+                            markerOff = -FINAL_MARKER_NEGOFF if final else MARKER_END_JUMP_OFF
 
                             util.DEBUG_LOG('MarkerSkip: Skipping marker'
                                            ' {} (final: {}, to: {}, offset: {})'.format(markerDef["marker"],
@@ -2039,13 +2039,22 @@ class SeekDialog(kodigui.BaseDialog):
                 # reset countdown on new marker
                 if not self._currentMarker or self._currentMarker != markerDef or markerDef["countdown"] is None:
                     # fixme: round might not be right here, but who cares
-                    markerDef["countdown"] = int(max(round((sTOffWThres - self.trueOffset()) / 1000.0) + 1, 1))
+                    to = self.trueOffset()
+                    # set the countdown to either the auto skip offset, or, if we're already "inside" the marker time
+                    # area through seeking, at max the difference between the current offset and the end of the
+                    # video
+                    markerDef["countdown"] = int(
+                        max(
+                            round((sTOffWThres - to) / 1000.0) + 1,
+                            min(util.addonSettings.autoSkipOffset, int((self.duration - to) / 1000.0))
+                        )
+                    )
                     isNew = True
 
             if self.player.playState == self.player.STATE_PLAYING and not self.osdVisible():
                 markerDef["countdown"] -= 1
-                if isNew:
-                    markerDef["countdown_initial"] = markerDef["countdown"]
+            if isNew:
+                markerDef["countdown_initial"] = markerDef["countdown"]
 
             self.setProperty('marker.countdown', '1')
 

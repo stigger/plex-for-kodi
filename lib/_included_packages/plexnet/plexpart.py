@@ -165,20 +165,25 @@ class PlexPart(plexobjects.PlexObject):
         if PATH_MAP and util.INTERFACE.getPreference("path_mapping", True):
             match = ("", "")
 
-            for key, value in PATH_MAP.get(self.getServer().name, {}).items():
+            for map_path, pms_path in PATH_MAP.get(self.getServer().name, {}).items():
                 # the longest matching path wins
-                if self.file.startswith(value) and len(value) > len(match[1]):
-                    match = (key, value)
+                if self.file.startswith(pms_path) and len(pms_path) > len(match[1]):
+                    match = (map_path, pms_path)
 
             if all(match):
-                key, value = match
+                map_path, pms_path = match
                 if return_only_folder:
-                    return key
-                url = self.file.replace(value, key, 1)
+                    return map_path
+
+                sep = "\\" in map_path and "\\" or "/"
+
+                # replace match and normalize path separator to separator style of map_path
+                url = self.file.replace(pms_path, map_path, 1).replace(sep == "/" and "\\" or "/", sep)
+
                 if (verify and xbmcvfs.exists(url)) or not verify:
-                    util.DEBUG_LOG("File {} found in path map, mapping to {}".format(self.file, value))
+                    util.DEBUG_LOG("File {} found in path map, mapping to {}".format(self.file, pms_path))
                     return url
-                util.DEBUG_LOG("Mapped file {} doesn't exist".format(url))
+                util.LOG("Mapped file {} doesn't exist".format(url))
         return ""
 
     @property

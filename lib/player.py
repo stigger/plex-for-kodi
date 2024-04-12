@@ -625,7 +625,7 @@ class SeekPlayerHandler(BasePlayerHandler):
                     except:
                         util.ERROR()
 
-                xbmc.sleep(100)
+                util.MONITOR.waitForAbort(0.1)
                 util.DEBUG_LOG('Switching audio track - index: {0}'.format(track.typeIndex))
                 self.player.setAudioStream(track.typeIndex)
 
@@ -678,10 +678,10 @@ class SeekPlayerHandler(BasePlayerHandler):
             # send events as we might not have seen onPlayBackEnded and/or onPlayBackStopped in certain cases,
             # especially when postplay isn't wanted and we're at the end of a show
             #self.updateNowPlaying()
-            if self._progressHld:
-                self.triggerProgressEvent()
+            #if self._progressHld:
+            #    self.triggerProgressEvent()
             if self.player.isPlaying():
-                self.player.stop()
+                self.player.stopAndWait()
             if not self.playlist or not self.playlist.hasNext():
                 if not self.shouldShowPostPlay():
                     self.sessionEnded()
