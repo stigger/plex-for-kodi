@@ -160,7 +160,7 @@ class PlexPart(plexobjects.PlexObject):
     def hasStreams(self):
         return bool(self.streams)
 
-    def getPathMappedUrl(self):
+    def getPathMappedUrl(self, return_only_folder=False):
         verify = addonSettings.verifyMappedFiles
         if PATH_MAP and util.INTERFACE.getPreference("path_mapping", True):
             match = ("", "")
@@ -172,6 +172,8 @@ class PlexPart(plexobjects.PlexObject):
 
             if all(match):
                 key, value = match
+                if return_only_folder:
+                    return key
                 url = self.file.replace(value, key, 1)
                 if (verify and xbmcvfs.exists(url)) or not verify:
                     util.DEBUG_LOG("File {} found in path map, mapping to {}".format(self.file, value))

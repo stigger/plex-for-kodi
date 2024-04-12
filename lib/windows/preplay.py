@@ -222,7 +222,6 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin, RatingsMixi
             playerObject.build()
         playersettings.showDialog(video=self.video, non_playback=True)
         self.setAudioAndSubtitleInfo()
-        self.setProperty('path.mapped', self.video.mediaChoice.part.getPathMappedProto())
 
     def infoButtonClicked(self):
         opener.handleOpen(
@@ -570,7 +569,6 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin, RatingsMixi
         self.populateRatings(self.video, self)
 
         self.setAudioAndSubtitleInfo()
-        self.setProperty('path.mapped', self.video.mediaChoice.part.getPathMappedProto())
 
         self.setProperty('unavailable', all(not v.isAccessible() for v in self.video.media()) and '1' or '')
 

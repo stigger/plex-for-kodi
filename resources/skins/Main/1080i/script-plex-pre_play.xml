@@ -463,21 +463,6 @@
                         <textcolor>FFFFFFFF</textcolor>
                         <label>$INFO[Window.Property(subtitles)]</label>
                     </control>
-                    <control type="button">
-                        <visible>!String.IsEmpty(Window.Property(path.mapped))</visible>
-                        <left>34</left>
-                        <width>auto</width>
-                        <height>34</height>
-                        <font>font12</font>
-                        <align>center</align>
-                        <aligny>center</aligny>
-                        <focusedcolor>FFFFFFFF</focusedcolor>
-                        <textcolor>FFFFFFFF</textcolor>
-                        <textoffsetx>15</textoffsetx>
-                        <texturefocus colordiffuse="40000000" border="12">script.plex/white-square-rounded-top-padded.png</texturefocus>
-                        <texturenofocus colordiffuse="40000000" border="12">script.plex/white-square-rounded-top-padded.png</texturenofocus>
-                        <label>[UPPERCASE]$INFO[Window.Property(path.mapped)][/UPPERCASE]</label>
-                    </control>
                 </control>
                 <control type="textbox">
                     <posx>466</posx>

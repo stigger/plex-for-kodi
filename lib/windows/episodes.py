@@ -766,7 +766,6 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             playerObject.build()
         playersettings.showDialog(video=episode, non_playback=True)
         self.setItemAudioAndSubtitleInfo(episode, mli)
-        mli.setProperty('path.mapped', episode.mediaChoice.part.getPathMappedProto())
 
     def infoButtonClicked(self):
         mli = self.episodeListControl.getSelectedItem()
@@ -1081,7 +1080,6 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
     def setPostReloadItemInfo(self, video, mli):
         self.setItemAudioAndSubtitleInfo(video, mli)
-        mli.setProperty('path.mapped', video.mediaChoice.part.getPathMappedProto())
         mli.setProperty('unwatched', not video.isWatched and '1' or '')
         mli.setProperty('video.res', video.resolutionString())
         mli.setProperty('audio.codec', video.audioCodecString())
