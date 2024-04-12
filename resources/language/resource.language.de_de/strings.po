@@ -1594,8 +1594,8 @@ msgid "Kodi Buffer Size (MB)"
 msgstr "Kodi Puffergröße (MB)"
 
 msgctxt "#33614"
-msgid "Set the Kodi Cache/Buffer size. Free: {} MB, Recommended: ~100 MB, Recommended max: {} MB, Default: 20 MB."
-msgstr "Setzt die Kodi Cache/Puffer Größe. Frei: {} MB, empfohlen: ~100 MB, empfohlenes Max.: {} MB, Default: 20 MB."
+msgid "Set the Kodi Cache/Buffer size. Free: {} MB, Recommended: ~50 MB, Recommended max: {} MB, Default: 20 MB."
+msgstr "Setzt die Kodi Cache/Puffer Größe. Frei: {} MB, empfohlen: ~50 MB, empfohlenes Max.: {} MB, Default: 20 MB."
 
 msgctxt "#33615"
 msgid "{time} left"
