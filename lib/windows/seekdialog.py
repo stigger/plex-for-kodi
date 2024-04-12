@@ -422,14 +422,11 @@ class SeekDialog(kodigui.BaseDialog):
         self.chapters = chapters or []
         self.isDirectPlay = not meta.isTranscoded
         self.isTranscoded = not self.isDirectPlay
-        self.showChapters = util.getUserSetting('show_chapters', True) and (
-                bool(chapters) or (util.getUserSetting('virtual_chapters', True) and bool(self.markers)))
         self.setProperty('video.title', title)
         self.setProperty('is.show', (self.player.video.type == 'episode') and '1' or '')
         self.setProperty('ep.year', (self.player.video.type == 'episode') and self.player.video.year or '')
         self.setProperty('has.playlist', self.handler.playlist and '1' or '')
         self.setProperty('shuffled', (self.handler.playlist and self.handler.playlist.isShuffled) and '1' or '')
-        self.setProperty('has.chapters', self.showChapters and '1' or '')
         self.setProperty('show.buffer', (util.addonSettings.playerShowBuffer and self.isDirectPlay) and '1' or '')
         self.setProperty('theme', 'modern')
         self.setProperty('theme.stop', 'script.plex/buttons/player/modern/stop.png')
@@ -474,6 +471,11 @@ class SeekDialog(kodigui.BaseDialog):
         except IndexError:
             self.doClose(delete=True)
             raise util.NoDataException
+
+        self.showChapters = util.getUserSetting('show_chapters', True) and (
+                bool(chapters) or (util.getUserSetting('virtual_chapters', True) and bool(self.markers)))
+        self.setProperty('has.chapters', self.showChapters and '1' or '')
+
         self.baseOffset = offset
         self.offset = 0
         self.idleTime = None
