@@ -380,6 +380,8 @@ class Settings(object):
                 ).description(
                     T(32984, 'stub')
                 ),
+                BoolSetting('no_spoilers', T(33004, ''), False).description(
+                    T(33005, '')),
                 BoolSetting('subtitle_downloads', T(32932, 'Show subtitle quick-actions button'), False).description(
                     T(32939, 'Only applies to video player UI')),
                 BoolSetting('video_show_ffwdrwd', T(32933, 'Show FFWD/RWD buttons'), False).description(

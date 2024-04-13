@@ -2120,3 +2120,11 @@ msgstr "Gemappte Dateien verifizieren"
 msgctxt "#33003"
 msgid "When path mapping is enabled and we've successfully mapped a file, verify its existence."
 msgstr "Wenn path mapping aktiviert ist und wir erfolgreich eine Datei gemappt haben, auch ihre Existenz verifizieren."
+
+msgctxt "#33004"
+msgid "No spoilers without OSD"
+msgstr "Keine Spoiler ohne OSD"
+
+msgctxt "#33005"
+msgid "When seeking without the OSD open, hide all time-related information from the user."
+msgstr "Wenn ohne OSD gesprungen wird, alle zeitrelevanten Informationen verstecken."

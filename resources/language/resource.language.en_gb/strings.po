@@ -1821,3 +1821,11 @@ msgstr ""
 msgctxt "#33003"
 msgid "When path mapping is enabled and we've successfully mapped a file, verify its existence."
 msgstr ""
+
+msgctxt "#33004"
+msgid "No spoilers without OSD"
+msgstr ""
+
+msgctxt "#33005"
+msgid "When seeking without the OSD open, hide all time-related information from the user."
+msgstr ""

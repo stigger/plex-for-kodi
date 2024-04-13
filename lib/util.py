@@ -790,7 +790,7 @@ def getTimeFormat():
 timeFormat, timeFormatKN, padHour = getTimeFormat()
 
 DEF_THEME = "modern-colored"
-THEME_VERSION = 1
+THEME_VERSION = 2
 
 
 def applyTheme(theme=None):

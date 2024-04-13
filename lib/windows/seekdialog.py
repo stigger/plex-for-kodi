@@ -1367,6 +1367,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('is.show', (self.player.video.type == 'episode') and '1' or '')
         self.setProperty('media.show_ends', self.showItemEndsInfo and '1' or '')
         self.setProperty('time.ends_label', self.showItemEndsLabel and (util.T(32543, 'Ends at')) or '')
+        self.setBoolProperty('no.osd.hide_info', util.getSetting('no_spoilers', False))
 
         if self.isDirectPlay:
             self.setProperty('time.fmt', self.timeFmtKodi)
