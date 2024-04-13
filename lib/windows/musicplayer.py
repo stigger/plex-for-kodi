@@ -144,6 +144,7 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
             if not self.playlist.refresh(force=True, wait=True):
                 return
 
+        self.onAudioStarting()
         xbmc.executebuiltin('PlayerControl(Previous)')
 
     def skipNextButtonClicked(self):
@@ -152,6 +153,7 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
             if not self.playlist.refresh(force=True, wait=True):
                 return
 
+        self.onAudioStarting()
         xbmc.executebuiltin('PlayerControl(Next)')
 
     def showPlaylist(self):
