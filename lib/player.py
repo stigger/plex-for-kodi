@@ -303,14 +303,17 @@ class SeekPlayerHandler(BasePlayerHandler):
         return self.getDialog().displayMarkers(onlyReturnIntroMD=True, offset=offset, setSkipped=setSkipped)
 
     def next(self, on_end=False):
-        if self.playlist and next(self.playlist):
-            self.seeking = self.SEEK_PLAYLIST
+        hasNext = False
+        if self.playlist:
+            hasNext = bool(next(self.playlist))
+            if hasNext:
+                self.seeking = self.SEEK_PLAYLIST
 
         if on_end:
             if self.showPostPlay():
                 return True
 
-        if not self.playlist or self.stoppedManually or (self.playlist and not self.playlist.hasNext()):
+        if not self.playlist or self.stoppedManually or (self.playlist and not hasNext):
             return False
 
         self.triggerProgressEvent()
