@@ -43,7 +43,7 @@
 - Core/Mainloop: Make sure we were able to open the Home/UserSelect window after our BACKGROUND successfully opened, even if another modal dialog opened in the meantime
 - Core: Firstrun: Refresh resources after signin and/or home user switch, otherwise the first time the addon's run the user sees no servers
 - Core: UI: Fall back to black background image when we have backgrounds set but they didn't load
-- Core: Finally fix and handle plex.direct mappings via advancedsettings.xml
+- Core: Finally fix and handle plex.direct mappings via advancedsettings.xml (might not work for Kodi 18, you'll need to exempt plex.direct from your router's DNS rebind protection list)
 - Core: Fix issues resulting in new devices being registered with plex.tv on every plugin start
 - Core: Only use mapped file path if mapped file exists or verification is off
 - Core: Backgrounds: More concise fallback handling
