@@ -1,6 +1,9 @@
 # coding=utf-8
 import re
-from urllib.parse import urlparse
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from requests.compat import urlparse
 
 import plexnet.http
 
