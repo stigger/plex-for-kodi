@@ -1372,7 +1372,10 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                             mli.setProperty('art', obj.artCompositeURL(*colArtDim))
                             mli.setThumbnailImage(obj.artCompositeURL(*thumbDim))
                         else:
-                            mli.setThumbnailImage(obj.defaultThumb.asTranscodedImageURL(*thumbDim))
+                            if obj.TYPE == 'photodirectory' and obj.composite:
+                                mli.setThumbnailImage(obj.composite.asTranscodedImageURL(*thumbDim))
+                            else:
+                                mli.setThumbnailImage(obj.defaultThumb.asTranscodedImageURL(*thumbDim))
                         mli.dataSource = obj
                         mli.setProperty('summary', obj.get('summary'))
 
