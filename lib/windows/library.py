@@ -566,7 +566,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             args['unwatched'] = '1'
 
         pq = playqueue.createPlayQueueForItem(self.section, options={'shuffle': shuffle}, args=args)
-        opener.open(pq)
+        opener.open(pq, auto_play=True)
 
     def shuffleButtonClicked(self):
         self.playButtonClicked(shuffle=True)
