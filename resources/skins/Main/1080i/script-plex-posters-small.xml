@@ -235,7 +235,7 @@
                                     <font>font10</font>
                                     <align>center</align>
                                     <textcolor>FFFFFFFF</textcolor>
-                                    <label>$INFO[ListItem.Label]</label>
+                                    <label>$INFO[ListItem.Label] ($INFO[ListItem.Property(year)])</label>
                                 </control>
                                 <control type="label">
                                     <visible>!String.IsEmpty(ListItem.Property(subtitle))</visible>
@@ -360,7 +360,7 @@
                                         <font>font10</font>
                                         <align>center</align>
                                         <textcolor>FFFFFFFF</textcolor>
-                                        <label>$INFO[ListItem.Label]</label>
+                                        <label>$INFO[ListItem.Label] ($INFO[ListItem.Property(year)])</label>
                                     </control>
                                     <control type="label">
                                         <visible>!String.IsEmpty(ListItem.Property(subtitle))</visible>
