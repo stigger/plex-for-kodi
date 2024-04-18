@@ -236,6 +236,17 @@
                                     <textcolor>FFFFFFFF</textcolor>
                                     <label>$INFO[ListItem.Label]</label>
                                 </control>
+                                <control type="label">
+                                    <scroll>false</scroll>
+                                    <posx>0</posx>
+                                    <posy>396</posy>
+                                    <width>244</width>
+                                    <height>72</height>
+                                    <font>font10</font>
+                                    <align>center</align>
+                                    <textcolor>FFFFFFFF</textcolor>
+                                    <label>$INFO[ListItem.Property(year)]</label>
+                                </control>
                             </control>
                         </control>
                     </itemlayout>
@@ -347,6 +358,17 @@
                                         <align>center</align>
                                         <textcolor>FFFFFFFF</textcolor>
                                         <label>$INFO[ListItem.Label]</label>
+                                    </control>
+                                    <control type="label">
+                                        <scroll>false</scroll>
+                                        <posx>0</posx>
+                                        <posy>396</posy>
+                                        <width>244</width>
+                                        <height>72</height>
+                                        <font>font10</font>
+                                        <align>center</align>
+                                        <textcolor>FFFFFFFF</textcolor>
+                                        <label>$INFO[ListItem.Property(year)]</label>
                                     </control>
                                 </control>
                                 <control type="image">
