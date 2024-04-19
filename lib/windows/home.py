@@ -537,6 +537,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.util.APP.on('account:response', self.displayServerAndUser)
         plexapp.util.APP.on('sli:reachability:received', self.displayServerAndUser)
         plexapp.util.APP.on('change:hubs_bifurcation_lines', self.updateProperties)
+        plexapp.util.APP.on('change:no_episode_spoilers2', self.fullyRefreshHome)
+        plexapp.util.APP.on('change:no_unwatched_episode_titles', self.fullyRefreshHome)
         plexapp.util.APP.on('change:hubs_use_new_continue_watching', self.fullyRefreshHome)
         plexapp.util.APP.on('change:theme', self.setTheme)
 
@@ -554,6 +556,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.util.APP.off('account:response', self.displayServerAndUser)
         plexapp.util.APP.off('sli:reachability:received', self.displayServerAndUser)
         plexapp.util.APP.off('change:hubs_bifurcation_lines', self.updateProperties)
+        plexapp.util.APP.off('change:no_episode_spoilers2', self.fullyRefreshHome)
+        plexapp.util.APP.off('change:no_unwatched_episode_titles', self.fullyRefreshHome)
         plexapp.util.APP.off('change:hubs_use_new_continue_watching', self.fullyRefreshHome)
         plexapp.util.APP.off('change:theme', self.setTheme)
 
@@ -1344,11 +1348,20 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         items = []
 
+        no_spoilers = util.getSetting('no_episode_spoilers2', "off")
+        no_ep_titles = util.getSetting('no_unwatched_episode_titles', True)
+
         for obj in hubitems or hub.items:
             if not self.backgroundSet:
                 if self.updateBackgroundFrom(obj):
                     self.backgroundSet = True
-            mli = self.createListItem(obj, wide=with_art)
+
+            wide = with_art
+            if obj.type == 'episode' and util.addonSettings.continueUseThumb and wide:
+                # with_art sets the wide parameter which includes the episode title
+                wide = no_spoilers in ("funwatched", "unwatched") and not no_ep_titles
+
+            mli = self.createListItem(obj, wide=wide)
             if mli:
                 items.append(mli)
 
@@ -1357,12 +1370,20 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 mli.setProperty('progress', util.getProgressImage(mli.dataSource))
         if with_art:
             for mli in items:
-                thumb = (util.addonSettings.continueUseThumb
-                         and mli.dataSource.type == 'episode'
-                         and mli.dataSource.thumb
-                         ) \
-                        or mli.dataSource.art
-                mli.setThumbnailImage(thumb.asTranscodedImageURL(*self.THUMB_AR16X9_DIM))
+                extra_opts = {}
+                thumb = mli.dataSource.art
+                # use episode thumbnail for in progress episodes
+                if mli.dataSource.type == 'episode' and util.addonSettings.continueUseThumb:
+                    hideSpoilers = no_spoilers != "off" and (
+                            (no_spoilers == 'funwatched' and not mli.dataSource.isFullyWatched) or
+                            (no_spoilers == 'unwatched' and not mli.dataSource.isWatched))
+
+                    # blur them if we don't want any spoilers and the episode hasn't been fully watched
+                    if hideSpoilers:
+                        extra_opts = {"blur": util.addonSettings.episodeNoSpoilerBlur}
+                    thumb = mli.dataSource.thumb
+
+                mli.setThumbnailImage(thumb.asTranscodedImageURL(*self.THUMB_AR16X9_DIM, **extra_opts))
                 mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/movie16x9.png')
         if ar16x9:
             for mli in items:

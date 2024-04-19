@@ -265,6 +265,20 @@ class Settings(object):
                         "only those likely affected. Use this if you find a hub that doesn't update properly."
                     )
                 ),
+                OptionsSetting(
+                    'no_episode_spoilers2', T(33006, ''),
+                    'off',
+                    (
+                        ('off', T(32481, '')),
+                        ('unwatched', T(33010, '')),
+                        ('funwatched', T(33011, '')),
+                    )
+                ).description(T(33007, "")),
+                BoolSetting(
+                    'no_unwatched_episode_titles', T(33012, ''), True
+                ).description(
+                    T(33013, "")
+                ),
                 BoolSetting(
                     'hubs_use_new_continue_watching', T(32998, ''), False
                 ).description(

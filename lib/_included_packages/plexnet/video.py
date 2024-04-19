@@ -709,6 +709,10 @@ class Episode(PlayableVideo, SectionOnDeckMixin):
         return self.get('viewCount').asInt() > 0 and not self.get('viewOffset').asInt()
 
     @property
+    def inProgress(self):
+        return bool(self.get('viewOffset').asInt())
+
+    @property
     def playbackSettings(self):
         return self.show().playbackSettings
 

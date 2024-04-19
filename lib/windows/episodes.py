@@ -225,6 +225,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.lastNonOptionsFocusID = None
         self.episodesPaginator = None
         self.relatedPaginator = None
+        self.noSpoilers = util.getSetting('no_episode_spoilers2', "off")
         self.cameFrom = kwargs.get('came_from')
         self.tasks = backgroundthread.Tasks()
         self.initialized = False
@@ -378,6 +379,15 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             hasPrev = True
         hasPrev = self.fillRelated(hasPrev)
         self.fillRoles(hasPrev)
+
+    def hideSpoilers(self, ep):
+        return ((self.noSpoilers == 'funwatched' and not ep.isFullyWatched) or
+                (self.noSpoilers == 'unwatched' and not ep.isWatched))
+
+    def getThumbnailOpts(self, ep):
+        if self.noSpoilers == "off":
+            return {}
+        return self.hideSpoilers(ep) and {"blur": util.addonSettings.episodeNoSpoilerBlur} or {}
 
     def selectEpisode(self, progress_data=None):
         if not self.episodesPaginator:
@@ -777,13 +787,16 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         else:
             subtitle = episode.originallyAvailableAt.asDatetime('%B %d, %Y')
 
+        hideSpoilers = self.hideSpoilers(episode)
+
         opener.handleOpen(
             info.InfoWindow,
-            title=episode.title,
+            title=hideSpoilers and util.getSetting('no_unwatched_episode_titles', False)
+            and T(33008, '') or episode.title,
             sub_title=subtitle,
             thumb=episode.thumb,
             thumb_fallback='script.plex/thumb_fallbacks/show.png',
-            info=episode.summary,
+            info=hideSpoilers and T(33008, '') or episode.summary,
             background=self.getProperty('background'),
             is_16x9=True,
             video=episode
@@ -1053,11 +1066,13 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
     def setItemInfo(self, video, mli):
         # video.reload(checkFiles=1)
+        hideSpoilers = self.hideSpoilers(video)
         mli.setProperty('background', util.backgroundFromArt(video.art, width=self.width, height=self.height))
-        mli.setProperty('title', video.title)
+        mli.setProperty('title', hideSpoilers and util.getSetting('no_unwatched_episode_titles', False)
+                        and T(33008, '') or video.title)
         mli.setProperty('show.title', video.grandparentTitle or (self.show_.title if self.show_ else ''))
         mli.setProperty('duration', util.durationToText(video.duration.asInt()))
-        mli.setProperty('summary', video.summary.strip().replace('\t', ' '))
+        mli.setProperty('summary', hideSpoilers and T(33008, '') or video.summary.strip().replace('\t', ' '))
         mli.setProperty('video.rendering', video.videoCodecRendering)
 
         if video.index:
@@ -1146,9 +1161,10 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             subtitle = episode.originallyAvailableAt.asDatetime('%m/%d/%y')
 
         mli = kodigui.ManagedListItem(
-            episode.title,
+            self.hideSpoilers(episode) and util.getSetting('no_unwatched_episode_titles', False) and T(33008, '')
+            or episode.title,
             subtitle,
-            thumbnailImage=episode.thumb.asTranscodedImageURL(*self.THUMB_AR16X9_DIM),
+            thumbnailImage=episode.thumb.asTranscodedImageURL(*self.THUMB_AR16X9_DIM, **self.getThumbnailOpts(episode)),
             data_source=episode
         )
         mli.setProperty('episode.number', str(episode.index) or '')

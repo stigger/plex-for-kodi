@@ -2128,3 +2128,35 @@ msgstr "Keine Spoiler ohne OSD"
 msgctxt "#33005"
 msgid "When seeking without the OSD open, hide all time-related information from the user."
 msgstr "Wenn ohne OSD gesprungen wird, alle zeitrelevanten Informationen verstecken."
+
+msgctxt "#33006"
+msgid "No episode spoilers"
+msgstr "Keine Episodenspoiler"
+
+msgctxt "#33007"
+msgid "When visiting an episode/season view, blur unwatched/unwatched+in-progress episode thumbnails, previews and redact summaries. When the Addon Setting \"Use episode thumbnails in continue hub\" is enabled, blur them as well."
+msgstr "In der Episoden-/Staffelansicht Vorschaubilder nicht geschauter oder angefangener Episoden verschleiern und Zusammenfassungen zensieren. Wenn die Addon Einstellung \"Vorschaubild für Episoden im Fortsetzen-Hub verwenden\" aktiviert ist, diese ebenfalls verschleiern."
+
+msgctxt "#33008"
+msgid "[Spoilers removed]"
+msgstr "[Spoiler entfernt]"
+
+msgctxt "#33009"
+msgid "Blur amount for unwatched/in-progress episodes"
+msgstr "Stärke der Verschleierung nicht geschauter Episoden"
+
+msgctxt "#33010"
+msgid "Unwatched"
+msgstr "Nicht geschaut"
+
+msgctxt "#33011"
+msgid "Unwatched/in progress"
+msgstr "Nicht geschaut/angefangen"
+
+msgctxt "#33012"
+msgid "No unwatched episode titles"
+msgstr "Keine ungeschauten Episodentitel"
+
+msgctxt "#33013"
+msgid "When the above is anything but \"off\", hide episode titles as well."
+msgstr "Wenn die vorherige Einstellung nicht \"aus\" ist, Episodentitel ebenfalls verstecken."

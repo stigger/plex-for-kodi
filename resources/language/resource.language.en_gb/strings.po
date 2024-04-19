@@ -1829,3 +1829,35 @@ msgstr ""
 msgctxt "#33005"
 msgid "When seeking without the OSD open, hide all time-related information from the user."
 msgstr ""
+
+msgctxt "#33006"
+msgid "No episode spoilers"
+msgstr ""
+
+msgctxt "#33007"
+msgid "When visiting an episode/season view, blur unwatched/unwatched+in-progress episode thumbnails, previews and redact summaries. When the Addon Setting \"Use episode thumbnails in continue hub\" is enabled, blur them as well."
+msgstr ""
+
+msgctxt "#33008"
+msgid "[Spoilers removed]"
+msgstr ""
+
+msgctxt "#33009"
+msgid "Blur amount for unwatched/in-progress episodes"
+msgstr ""
+
+msgctxt "#33010"
+msgid "Unwatched"
+msgstr ""
+
+msgctxt "#33011"
+msgid "Unwatched/in progress"
+msgstr ""
+
+msgctxt "#33012"
+msgid "No unwatched episode titles"
+msgstr ""
+
+msgctxt "#33013"
+msgid "When the above is anything but \"off\", hide episode titles as well."
+msgstr ""
