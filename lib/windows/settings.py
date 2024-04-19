@@ -267,7 +267,7 @@ class Settings(object):
                 ),
                 OptionsSetting(
                     'no_episode_spoilers2', T(33006, ''),
-                    'off',
+                    'unwatched',
                     (
                         ('off', T(32481, '')),
                         ('unwatched', T(33010, '')),
@@ -278,6 +278,11 @@ class Settings(object):
                     'no_unwatched_episode_titles', T(33012, ''), True
                 ).description(
                     T(33013, "")
+                ),
+                BoolSetting(
+                    'spoilers_allowed_genres', T(33016, ''), True
+                ).description(
+                    T(33017, "").format(", ".join('"{}"'.format(t) for t in util.SPOILER_ALLOWED_GENRES))
                 ),
                 BoolSetting(
                     'hubs_use_new_continue_watching', T(32998, ''), False

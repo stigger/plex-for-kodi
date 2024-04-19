@@ -225,7 +225,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.lastNonOptionsFocusID = None
         self.episodesPaginator = None
         self.relatedPaginator = None
-        self.noSpoilers = util.getSetting('no_episode_spoilers2', "off")
+        self._noSpoilers = None
         self.noTitles = util.getSetting('no_unwatched_episode_titles', False)
         self.cameFrom = kwargs.get('came_from')
         self.tasks = backgroundthread.Tasks()
@@ -380,6 +380,21 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             hasPrev = True
         hasPrev = self.fillRelated(hasPrev)
         self.fillRoles(hasPrev)
+
+    @property
+    def noSpoilers(self):
+        if self._noSpoilers is not None:
+            return self._noSpoilers
+
+        nope = util.getSetting('no_episode_spoilers2', "unwatched")
+        if nope != "off" and util.getSetting('spoilers_allowed_genres', True):
+            for g in self.show_.genres:
+                if g.tag in util.SPOILER_ALLOWED_GENRES:
+                    nope = "off"
+                    break
+
+        self._noSpoilers = nope
+        return self._noSpoilers
 
     def hideSpoilers(self, ep, fully_watched=None, watched=None):
         watched = watched if watched is not None else ep.isWatched

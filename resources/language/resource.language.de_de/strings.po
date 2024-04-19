@@ -2130,8 +2130,8 @@ msgid "When seeking without the OSD open, hide all time-related information from
 msgstr "Wenn ohne OSD gesprungen wird, alle zeitrelevanten Informationen verstecken."
 
 msgctxt "#33006"
-msgid "No episode spoilers"
-msgstr "Keine Episodenspoiler"
+msgid "No TV spoilers"
+msgstr "Keine TV-Spoiler"
 
 msgctxt "#33007"
 msgid "When visiting an episode/season view, blur unwatched/unwatched+in-progress episode thumbnails, previews and redact summaries. When the Addon Setting \"Use episode thumbnails in continue hub\" is enabled, blur them as well."
@@ -2168,3 +2168,11 @@ msgstr "plex.direct docker hosts ignorieren"
 msgctxt "#33015"
 msgid "When checking for plex.direct host mapping, ignore local Docker IPv4 addresses (172.16.0.0/12)."
 msgstr "Wenn das plex.direct host mapping überprüft wird, lokale Docker IPv4 Adressen ignorieren (172.16.0.0/12)."
+
+msgctxt "#33016"
+msgid "Allow TV spoilers for specific genres"
+msgstr "Erlaube TV-Spoiler für bestimmte Genres"
+
+msgctxt "#33017"
+msgid "Overrides the above for: {}"
+msgstr "Überschreibt die vorherigen Einstellungen für: {}"

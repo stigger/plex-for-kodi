@@ -1356,7 +1356,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         items = []
 
-        no_spoilers = util.getSetting('no_episode_spoilers2', "off")
+        no_spoilers = util.getSetting('no_episode_spoilers2', "unwatched")
         no_ep_titles = util.getSetting('no_unwatched_episode_titles', True)
 
         for obj in hubitems or hub.items:

@@ -515,6 +515,9 @@ def scaleResolution(w, h, by=None):
     return w, h
 
 
+SPOILER_ALLOWED_GENRES = ("Reality", "Game Show", "Documentary", "Sport")
+
+
 class TextBox:
     # constants
     WINDOW = 10147

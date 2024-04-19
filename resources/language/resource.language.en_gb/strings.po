@@ -1831,7 +1831,7 @@ msgid "When seeking without the OSD open, hide all time-related information from
 msgstr ""
 
 msgctxt "#33006"
-msgid "No episode spoilers"
+msgid "No TV spoilers"
 msgstr ""
 
 msgctxt "#33007"
@@ -1868,4 +1868,12 @@ msgstr ""
 
 msgctxt "#33015"
 msgid "When checking for plex.direct host mapping, ignore local Docker IPv4 addresses (172.16.0.0/12)."
+msgstr ""
+
+msgctxt "#33016"
+msgid "Allow TV spoilers for specific genres"
+msgstr ""
+
+msgctxt "#33017"
+msgid "Overrides the above for: {}"
 msgstr ""

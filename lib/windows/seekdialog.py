@@ -1372,7 +1372,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('time.ends_label', self.showItemEndsLabel and (util.T(32543, 'Ends at')) or '')
         self.setBoolProperty('no.osd.hide_info', util.getSetting('no_spoilers', False))
 
-        no_spoilers = util.getSetting('no_episode_spoilers2', "off")
+        no_spoilers = util.getSetting('no_episode_spoilers2', "unwatched")
         hide_title = False
         if is_show and no_spoilers != "off" and util.getSetting('no_unwatched_episode_titles', False):
             hide_title = ((no_spoilers == 'funwatched' and not v.isFullyWatched) or
