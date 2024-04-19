@@ -1361,13 +1361,24 @@ class SeekDialog(kodigui.BaseDialog):
             self.setFocusId(self.MAIN_BUTTON_ID)
             self.fromSeek = 0
 
+        v = self.player.video
+        is_show = v.type == 'episode'
+
         self.setProperty('has.bif', self.bifURL and '1' or '')
         self.setProperty('video.title', self.title)
         self.setProperty('video.title2', self.title2)
-        self.setProperty('is.show', (self.player.video.type == 'episode') and '1' or '')
+        self.setProperty('is.show', is_show and '1' or '')
         self.setProperty('media.show_ends', self.showItemEndsInfo and '1' or '')
         self.setProperty('time.ends_label', self.showItemEndsLabel and (util.T(32543, 'Ends at')) or '')
         self.setBoolProperty('no.osd.hide_info', util.getSetting('no_spoilers', False))
+
+        no_spoilers = util.getSetting('no_episode_spoilers2', "off")
+        hide_title = False
+        if is_show and no_spoilers != "off" and util.getSetting('no_unwatched_episode_titles', False):
+            hide_title = ((no_spoilers == 'funwatched' and not v.isFullyWatched) or
+                          (no_spoilers == 'unwatched' and not v.isWatched))
+
+        self.setBoolProperty('hide.title', hide_title)
 
         if self.isDirectPlay:
             self.setProperty('time.fmt', self.timeFmtKodi)
