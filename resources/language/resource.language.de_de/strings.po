@@ -1534,7 +1534,7 @@ msgid "Early intro skip threshold (default: < 60s/1m)"
 msgstr "Frühes Intro-Überspringen Grenzwert (default: < 60s/1m)"
 
 msgctxt "#33510"
-msgid "When showing the intro skip button early, only do so if the intro starts within the first X seconds."
+msgid "When showing the intro skip button early, only do so if the intro occurs within the first X seconds."
 msgstr "Wenn der Into-Überspringen-Knopf früher angezeigt werden soll, nur anzeigen, wenn das Intro innerhalb der ersten X Sekunden startet."
 
 msgctxt "#33600"
@@ -1622,15 +1622,15 @@ msgid "Plex requests timeout (seconds)"
 msgstr "Plex HTTP Zeitlimit (Sekunden)"
 
 msgctxt "#33621"
-msgid "Set the (async and connection) timeout value of the Python requests library in seconds. Default: 5 seconds"
-msgstr "Setzt das Zeitlimit für die Python Requests Bibliothek bei asynchronen Verbindungen und Verbindungsanfragen. Default: 5 Sekunden"
+msgid "Set the (async and connection) timeout value of the Python requests library in seconds. Default: 5"
+msgstr "Setzt das Zeitlimit für die Python Requests Bibliothek bei asynchronen Verbindungen und Verbindungsanfragen. Default: 5"
 
 msgctxt "#33622"
 msgid "LAN reachability timeout (ms)"
 msgstr "LAN-Erreichbarkeits-Zeitlimit (ms)"
 
 msgctxt "#33623"
-msgid "When checking for Server-in-LAN reachability, use this timeout. Default: 10ms"
+msgid "When checking for LAN reachability, use this timeout. Default: 10ms"
 msgstr "Wenn die lokale Serververbindung im LAN überprüft wird, benutze dieses Zeitlimit. Default: 10ms"
 
 msgctxt "#33624"
@@ -1790,7 +1790,7 @@ msgid "Insufficient buffer wait (seconds)"
 msgstr "Ungenügender Puffer Wartezeit (Sekunden)"
 
 msgctxt "#32921"
-msgid "When slow connection is enabled in the addon and the configured cache/buffer isn't big enough for us to determine its fill state, wait this long when starting playback. Default: 10 s"
+msgid "When slow connection is enabled in the addon and the configured buffer isn't big enough for us to determine its fill state, wait this long when starting playback. Default: 10 s"
 msgstr "Wenn \"Langsame Verbindung\" im Addon aktiviert ist und der konfigurierte Puffer/Cache nicht groß genug ist, um seinen Füllstand zu ermitteln, wird so lange gewartet, bevor die Wiedergabe gestartet wird. Voreinstellung: 10 Sek."
 
 msgctxt "#32922"
@@ -1913,10 +1913,6 @@ msgctxt "#32951"
 msgid "When displaying subtitles use the extendedDisplayTitle Plex exposes."
 msgstr "Verwende erweiterte Namen wenn Untertitelnamen angezeigt werden."
 
-msgctxt "#32952"
-msgid "Dialog-Flackern beheben"
-msgstr ""
-
 msgctxt "#32953"
 msgid "Reviews"
 msgstr "Kritik"
@@ -1934,7 +1930,7 @@ msgid "Poster resolution scaling %"
 msgstr "Poster Auflösungsskalierung %"
 
 msgctxt "#32957"
-msgid "In percent. Scales the resolution of all posters/thumbnails for better image quality. May impact PMS/PM4K performance, will increase the cache usage accordingly. Recommended: 200-300 % for big screens if your hardware can handle it. Needs addon restart."
+msgid "In percent. Scales the resolution of all posters/thumbnails for better image quality. May impact PMS/PM4K performance, will increase the cache usage accordingly. Recommended: 200-300 % for for big screens if your hardware can handle it. Needs addon restart."
 msgstr "In Prozent. Skaliert die Auflösung aller Poster/Vorschaubilder für bessere Bildqualität. Kann die PMS/PM4K Performance beeinflussen, wird die Cache-Nutzung dementsprechend erhöhen. Empfohlen: 200-300 % für große Bildschirme, wenn die Hardware damit umgehen kann. Benötigt Addon-Neustart."
 
 msgctxt "#32958"
@@ -1970,8 +1966,8 @@ msgid "Quit Kodi on exit by default"
 msgstr "Kodi beenden anstatt PM4K"
 
 msgctxt "#32966"
-msgid "When showing the addon exit confirmation, use \"Quit Kodi\" as default option. Can be dynamically switched using CONTEXT_MENU (often longpress SELECT)"
-msgstr "Wenn die Addon-Beendigungsbestätigung angezeigt wird, \"Kodi beenden\" als Standardoption verwenden. Kann dynamisch mit CONTEXT_MENU (oft lange gedrücktes SELECT) getauscht werden."
+msgid "When exiting the addon, use \"Quit Kodi\" as default option. Can be dynamically switched using CONTEXT_MENU (often longpress SELECT)"
+msgstr "Wenn das Addon beendet wird, \"Kodi beenden\" als Standardoption verwenden. Kann dynamisch mit CONTEXT_MENU (oft lange gedrücktes SELECT) getauscht werden."
 
 msgctxt "#32967"
 msgid "Kodi Colour Management"
@@ -2078,7 +2074,7 @@ msgid "When using servers with a plex.direct connection (most of them), should w
 msgstr "Wenn Server mit einer plex.direct Verbindung verwendet werden (die meisten), sollen wir automatisch die advancedsettings.xml anpassen? Wenn nicht, solltest Du plex.direct in die DNS Rebind Ausschlussliste Deines Routers eintragen."
 
 msgctxt "#32993"
-msgid "{} unhandled plex.direct connections found: {}"
+msgid "{} unhandled plex.direct connections found"
 msgstr "{} unbehandelte plex.direct Verbindungen gefunden"
 
 msgctxt "#32994"
@@ -2090,8 +2086,8 @@ msgid "Advancedsettings.xml modified (plex.direct mappings)"
 msgstr "Advancedsettings.xml modifiziert (plex.direct mappings)"
 
 msgctxt "#32996"
-msgid "The advancedsettings.xml file has been modified. Please restart Kodi for them to take effect."
-msgstr "Die advancedsettings.xml-Datei wurde modifiziert. Bitte starte Kodi neu, damit die Änderungen in Effekt treten."
+msgid "The advancedsettings.xml file has been modified. Please restart Kodi for the changes to apply."
+msgstr "Die advancedsettings.xml-Datei wurde modifiziert. Bitte starte Kodi neu, damit die Änderungen angewandt werden."
 
 msgctxt "#32997"
 msgid "OK"
