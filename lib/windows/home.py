@@ -363,6 +363,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.changingServer = False
         self._shuttingDown = False
         self._skipNextAction = False
+        self._reloadOnReinit = False
         windowutils.HOME = self
 
         self.lock = threading.Lock()
@@ -427,6 +428,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.checkPlexDirectHosts(plexapp.SERVERMANAGER.allConnections, source="stored")
 
     def onReInit(self):
+        if self._reloadOnReinit:
+            self.serverRefresh()
+            self._reloadOnReinit = False
+
         if self.lastFocusID:
             # try focusing the last focused ID. if that's a hub and it's empty (=not focusable), try focusing the
             # next best hub
@@ -537,9 +542,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.util.APP.on('account:response', self.displayServerAndUser)
         plexapp.util.APP.on('sli:reachability:received', self.displayServerAndUser)
         plexapp.util.APP.on('change:hubs_bifurcation_lines', self.updateProperties)
-        plexapp.util.APP.on('change:no_episode_spoilers2', self.fullyRefreshHome)
-        plexapp.util.APP.on('change:no_unwatched_episode_titles', self.fullyRefreshHome)
-        plexapp.util.APP.on('change:hubs_use_new_continue_watching', self.fullyRefreshHome)
+        plexapp.util.APP.on('change:no_episode_spoilers2', self.setDirty)
+        plexapp.util.APP.on('change:no_unwatched_episode_titles', self.setDirty)
+        plexapp.util.APP.on('change:hubs_use_new_continue_watching', self.setDirty)
         plexapp.util.APP.on('change:theme', self.setTheme)
 
         player.PLAYER.on('session.ended', self.updateOnDeckHubs)
@@ -556,9 +561,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         plexapp.util.APP.off('account:response', self.displayServerAndUser)
         plexapp.util.APP.off('sli:reachability:received', self.displayServerAndUser)
         plexapp.util.APP.off('change:hubs_bifurcation_lines', self.updateProperties)
-        plexapp.util.APP.off('change:no_episode_spoilers2', self.fullyRefreshHome)
-        plexapp.util.APP.off('change:no_unwatched_episode_titles', self.fullyRefreshHome)
-        plexapp.util.APP.off('change:hubs_use_new_continue_watching', self.fullyRefreshHome)
+        plexapp.util.APP.off('change:no_episode_spoilers2', self.setDirty)
+        plexapp.util.APP.off('change:no_unwatched_episode_titles', self.setDirty)
+        plexapp.util.APP.off('change:hubs_use_new_continue_watching', self.setDirty)
         plexapp.util.APP.off('change:theme', self.setTheme)
 
         player.PLAYER.off('session.ended', self.updateOnDeckHubs)
@@ -816,6 +821,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
     def showBusy(self, on=True):
         self.setProperty('busy', on and '1' or '')
+
+    def setDirty(self, *args, **kwargs):
+        self._reloadOnReinit = True
 
     def fullyRefreshHome(self, *args, **kwargs):
         self.showSections()
