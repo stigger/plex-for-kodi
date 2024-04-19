@@ -47,6 +47,7 @@ MOVE_SET = frozenset(
 class HubsList(list):
     def init(self):
         self.lastUpdated = time.time()
+        self.invalid = False
         return self
 
 
@@ -71,7 +72,9 @@ class SectionHubsTask(backgroundthread.Task):
             self.callback(self.section, hubs)
         except plexnet.exceptions.BadRequest:
             util.DEBUG_LOG('404 on section: {0}'.format(repr(self.section.title)))
-            self.callback(self.section, False)
+            hubs = HubsList().init()
+            hubs.invalid = True
+            self.callback(self.section, hubs)
         except TypeError:
             util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
             self.cancel()
@@ -1124,12 +1127,17 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
         self.showBusy(True)
 
         hubs = self.sectionHubs.get(section.key)
-        if hubs is False:
+        section_stale = False
+        if hubs is not None:
+            section_stale = time.time() - hubs.lastUpdated > HUBS_REFRESH_INTERVAL
+
+        # hubs.invalid is True when the last hub update errored. if the hub is stale, refresh it, though
+        if hubs is not None and hubs.invalid and not section_stale:
             self.showBusy(False)
             self.setBoolProperty('no.content', True)
             return
 
-        if not hubs:
+        if not hubs and not section_stale:
             for task in self.tasks:
                 if task.section == section:
                     backgroundthread.BGThreader.moveToFront(task)
@@ -1140,8 +1148,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 self.setBoolProperty('no.content', True)
             return
 
-        if time.time() - hubs.lastUpdated > HUBS_REFRESH_INTERVAL:
-            util.DEBUG_LOG('Section is stale: REFRESHING - update: {0}'.format(update))
+        if section_stale:
+            util.DEBUG_LOG('Section is stale: {0} REFRESHING - update: {1}'.format(
+                "Home" if section.key is None else section.key, update))
             hubs.lastUpdated = time.time()
             self.cleanTasks()
             if not update:
