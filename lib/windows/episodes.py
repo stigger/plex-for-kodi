@@ -226,6 +226,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.episodesPaginator = None
         self.relatedPaginator = None
         self.noSpoilers = util.getSetting('no_episode_spoilers2', "off")
+        self.noTitles = util.getSetting('no_unwatched_episode_titles', False)
         self.cameFrom = kwargs.get('came_from')
         self.tasks = backgroundthread.Tasks()
         self.initialized = False
@@ -380,14 +381,18 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         hasPrev = self.fillRelated(hasPrev)
         self.fillRoles(hasPrev)
 
-    def hideSpoilers(self, ep):
-        return ((self.noSpoilers == 'funwatched' and not ep.isFullyWatched) or
-                (self.noSpoilers == 'unwatched' and not ep.isWatched))
+    def hideSpoilers(self, ep, fully_watched=None, watched=None):
+        watched = watched if watched is not None else ep.isWatched
+        fullyWatched = fully_watched if fully_watched is not None else ep.isFullyWatched
+        return ((self.noSpoilers == 'funwatched' and not fullyWatched) or
+                (self.noSpoilers == 'unwatched' and not watched))
 
-    def getThumbnailOpts(self, ep):
+    def getThumbnailOpts(self, ep, fully_watched=None, watched=None, hide_spoilers=None):
         if self.noSpoilers == "off":
             return {}
-        return self.hideSpoilers(ep) and {"blur": util.addonSettings.episodeNoSpoilerBlur} or {}
+        return (hide_spoilers if hide_spoilers is not None else
+                self.hideSpoilers(ep, fully_watched=fully_watched, watched=watched)) \
+            and {"blur": util.addonSettings.episodeNoSpoilerBlur} or {}
 
     def selectEpisode(self, progress_data=None):
         if not self.episodesPaginator:
@@ -411,12 +416,16 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 # progress can be False (no entry), a number (progress), or True (fully watched just now)
                 # select it if it's not watched or in progress
                 if progress is True:
+                    # ep was just watched
                     just_fully_watched = True
                     mli.setProperty('unwatched', '')
                     mli.setProperty('progress', '')
+                    self.setUserItemInfo(mli, fully_watched=True)
 
                 elif progress and progress > 60000:
+                    # ep has progress
                     mli.setProperty('progress', util.getProgressImage(mli.dataSource, view_offset=progress))
+                    self.setUserItemInfo(mli, watched=True)
                     set_main_progress_to = progress
 
                 # after immediately updating the watched state, if we still have data left, continue
@@ -787,16 +796,16 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         else:
             subtitle = episode.originallyAvailableAt.asDatetime('%B %d, %Y')
 
-        hideSpoilers = self.hideSpoilers(episode)
+        hide_spoilers = self.hideSpoilers(episode)
 
         opener.handleOpen(
             info.InfoWindow,
-            title=hideSpoilers and util.getSetting('no_unwatched_episode_titles', False)
-            and T(33008, '') or episode.title,
+            title=hide_spoilers and self.noTitles and T(33008, '') or episode.title,
             sub_title=subtitle,
             thumb=episode.thumb,
+            thumb_opts=self.getThumbnailOpts(episode, hide_spoilers=hide_spoilers),
             thumb_fallback='script.plex/thumb_fallbacks/show.png',
-            info=hideSpoilers and T(33008, '') or episode.summary,
+            info=hide_spoilers and T(33008, '') or episode.summary,
             background=self.getProperty('background'),
             is_16x9=True,
             video=episode
@@ -1058,22 +1067,65 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             self.setProgress(item)
             item.setProperty('progress', util.getProgressImage(item.dataSource))
             (self.season or self.show_).reload()
+
+            self.setUserItemInfo(item)
         else:
             self.fillEpisodes(update=True)
 
         if self.episode:
             self.episode.reload()
 
+    def setUserItemInfo(self, mli, video=None, types=("title", "thumbnail", "summary"), watched=None,
+                        fully_watched=None, hide_spoilers=None):
+        video = video or mli.dataSource
+
+        properties = {}
+        methods = []
+        if self.noSpoilers == "off" and not hide_spoilers:
+            # no special handling
+            if "title" in types:
+                properties["title"] = video.title
+                methods.append(("setLabel", video.title))
+            if "summary" in types:
+                properties["summary"] = video.summary.strip().replace('\t', ' ')
+
+            if "thumbnail" in types:
+                methods.append(("setThumbnailImage", video.thumb.asTranscodedImageURL(*self.THUMB_AR16X9_DIM)))
+
+        else:
+            hide_spoilers = hide_spoilers if hide_spoilers is not None else \
+                self.hideSpoilers(video, fully_watched=fully_watched, watched=watched)
+            hide_title = hide_spoilers and self.noTitles
+            if "title" in types:
+                tit = hide_title and T(33008, '') or video.title
+                properties["title"] = tit
+                methods.append(("setLabel", tit))
+
+            if "summary" in types:
+                properties["summary"] = hide_spoilers and T(33008, '') or video.summary.strip().replace('\t', ' ')
+
+            if "thumbnail" in types:
+                methods.append(("setThumbnailImage",
+                                video.thumb.asTranscodedImageURL(
+                                    *self.THUMB_AR16X9_DIM,
+                                    **self.getThumbnailOpts(video, fully_watched=fully_watched, watched=watched,
+                                                            hide_spoilers=hide_spoilers)
+                                )
+                                ))
+
+        for property, value in properties.items():
+            mli.setProperty(property, value)
+
+        for method, value in methods:
+            getattr(mli, method)(value)
+
     def setItemInfo(self, video, mli):
         # video.reload(checkFiles=1)
-        hideSpoilers = self.hideSpoilers(video)
         mli.setProperty('background', util.backgroundFromArt(video.art, width=self.width, height=self.height))
-        mli.setProperty('title', hideSpoilers and util.getSetting('no_unwatched_episode_titles', False)
-                        and T(33008, '') or video.title)
         mli.setProperty('show.title', video.grandparentTitle or (self.show_.title if self.show_ else ''))
         mli.setProperty('duration', util.durationToText(video.duration.asInt()))
-        mli.setProperty('summary', hideSpoilers and T(33008, '') or video.summary.strip().replace('\t', ' '))
         mli.setProperty('video.rendering', video.videoCodecRendering)
+        self.setUserItemInfo(mli, video, types=("title", "summary"))
 
         if video.index:
             mli.setProperty('season', u'{0} {1}'.format(T(32303, 'Season'), video.parentIndex))
@@ -1161,12 +1213,11 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             subtitle = episode.originallyAvailableAt.asDatetime('%m/%d/%y')
 
         mli = kodigui.ManagedListItem(
-            self.hideSpoilers(episode) and util.getSetting('no_unwatched_episode_titles', False) and T(33008, '')
-            or episode.title,
+            '',
             subtitle,
-            thumbnailImage=episode.thumb.asTranscodedImageURL(*self.THUMB_AR16X9_DIM, **self.getThumbnailOpts(episode)),
             data_source=episode
         )
+        self.setUserItemInfo(mli, types=("title", "thumbnail"))
         mli.setProperty('episode.number', str(episode.index) or '')
         mli.setProperty('episode.duration', util.durationToText(episode.duration.asInt()))
         mli.setProperty('unwatched', not episode.isWatched and '1' or '')
