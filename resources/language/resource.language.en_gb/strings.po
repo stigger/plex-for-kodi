@@ -1861,3 +1861,11 @@ msgstr ""
 msgctxt "#33013"
 msgid "When the above is anything but \"off\", hide episode titles as well."
 msgstr ""
+
+msgctxt "#33014"
+msgid "Ignore plex.direct docker hosts"
+msgstr ""
+
+msgctxt "#33015"
+msgid "When checking for plex.direct host mapping, ignore local Docker IPv4 addresses (172.16.0.0/12)."
+msgstr ""

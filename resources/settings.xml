@@ -341,6 +341,11 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
+                <setting id="ignore_docker_v4" type="boolean" label="33014" help="33015">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
                 <setting id="requests_timeout" type="number" label="33620" help="33621">
                     <level>0</level>
                     <default>10</default>

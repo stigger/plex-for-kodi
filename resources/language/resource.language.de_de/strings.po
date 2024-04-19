@@ -2160,3 +2160,11 @@ msgstr "Keine ungeschauten Episodentitel"
 msgctxt "#33013"
 msgid "When the above is anything but \"off\", hide episode titles as well."
 msgstr "Wenn die vorherige Einstellung nicht \"aus\" ist, Episodentitel ebenfalls verstecken."
+
+msgctxt "#33014"
+msgid "Ignore plex.direct docker hosts"
+msgstr "plex.direct docker hosts ignorieren"
+
+msgctxt "#33015"
+msgid "When checking for plex.direct host mapping, ignore local Docker IPv4 addresses (172.16.0.0/12)."
+msgstr "Wenn das plex.direct host mapping überprüft wird, lokale Docker IPv4 Adressen ignorieren (172.16.0.0/12)."

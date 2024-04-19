@@ -189,7 +189,8 @@ class AddonSettings(object):
         ("retrieve_all_media_up_front", False),
         ("library_chunk_size", 240),
         ("verify_mapped_files", True),
-        ("episode_no_spoiler_blur", 16)
+        ("episode_no_spoiler_blur", 16),
+        ("ignore_docker_v4", True)
     )
 
     def __init__(self):

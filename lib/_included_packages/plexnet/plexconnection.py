@@ -6,6 +6,8 @@ from . import http
 from . import callback
 from . import util
 
+from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network
+
 HAS_ICMPLIB = False
 try:
     from icmplib import ping, resolve, ICMPLibError
@@ -14,16 +16,16 @@ except:
 else:
     HAS_ICMPLIB = True
     from urllib.parse import urlparse
-    from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network
 
-    # local networks
-    LOCAL_NETWORKS = {
-        4: [IPv4Network('10.0.0.0/8'), IPv4Network('192.168.0.0/16'), IPv4Network('172.16.0.0/12'),
-            IPv4Network('127.0.0.0/8')],
-        6: [IPv6Network('fd00::/8')]
-    }
+# local networks
+DOCKER_NETWORK = IPv4Network('172.16.0.0/12')
+LOCAL_NETWORKS = {
+    4: [IPv4Network('10.0.0.0/8'), IPv4Network('192.168.0.0/16'), DOCKER_NETWORK,
+        IPv4Network('127.0.0.0/8')],
+    6: [IPv6Network('fd00::/8')]
+}
 
-    LOCALS_SEEN = {}
+LOCALS_SEEN = {}
 
 
 class ConnectionSource(int):
