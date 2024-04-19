@@ -13,6 +13,7 @@ from . import busy
 from . import search
 from . import dropdown
 from . import pagination
+from .mixins import SpoilersMixin
 
 from lib import util
 from lib import player
@@ -54,7 +55,9 @@ class OnDeckPaginator(pagination.MCLPaginator):
     def createListItem(self, ondeck):
         title = ondeck.grandparentTitle or ondeck.title
         if ondeck.type == 'episode':
-            thumb = ondeck.thumb.asTranscodedImageURL(*self.parentWindow.ONDECK_DIM)
+            hide_spoilers = self.parentWindow.hideSpoilers(ondeck, use_cache=False)
+            thumb_opts = self.parentWindow.getThumbnailOpts(ondeck, hide_spoilers=hide_spoilers)
+            thumb = ondeck.thumb.asTranscodedImageURL(*self.parentWindow.ONDECK_DIM, **thumb_opts)
         else:
             thumb = ondeck.defaultArt.asTranscodedImageURL(*self.parentWindow.ONDECK_DIM)
 
@@ -66,7 +69,7 @@ class OnDeckPaginator(pagination.MCLPaginator):
         return (self.parentWindow.prev or self.parentWindow.next).sectionOnDeck(offset=offset, limit=amount)
 
 
-class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
+class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SpoilersMixin):
     xmlFile = 'script-plex-video_player.xml'
     path = util.ADDON.getAddonInfo('path')
     theme = 'Main'
@@ -97,6 +100,7 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     def __init__(self, *args, **kwargs):
         kodigui.ControlledWindow.__init__(self, *args, **kwargs)
         windowutils.UtilMixin.__init__(self)
+        SpoilersMixin.__init__(self, *args, **kwargs)
         self.playQueue = kwargs.get('play_queue')
         self.video = kwargs.get('video')
         self.resume = bool(kwargs.get('resume'))
@@ -490,9 +494,17 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                 'post.play.background',
                 util.backgroundFromArt(self.next.art, width=self.width, height=self.height)
             )
-            self.setProperty('info.title', self.next.title)
+            if self.next.type == "episode" and self.hideSpoilers(self.next, use_cache=False):
+                if self.noTitles:
+                    self.setProperty('info.title',
+                                     u'{0}{1} \u2022 {2}{3}'.format(T(32310, 'S'),
+                                                                    self.next.parentIndex, T(32311, 'E'),
+                                                                    self.next.index))
+                self.setProperty('info.summary', T(33008, ''))
+            else:
+                self.setProperty('info.title', self.next.title)
+                self.setProperty('info.summary', self.next.summary)
             self.setProperty('info.duration', util.durationToText(self.next.duration.asInt()))
-            self.setProperty('info.summary', self.next.summary)
 
         if self.prev:
             self.setProperty(

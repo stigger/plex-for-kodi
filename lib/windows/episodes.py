@@ -25,7 +25,7 @@ from . import pagination
 from . import playbacksettings
 
 from lib.util import T
-from .mixins import SeasonsMixin, RatingsMixin
+from .mixins import SeasonsMixin, RatingsMixin, SpoilersMixin
 
 VIDEO_RELOAD_KW = dict(includeExtras=1, includeExtrasCount=10, includeChapters=1)
 
@@ -172,7 +172,7 @@ class RelatedPaginator(pagination.BaseRelatedPaginator):
         return self.parentWindow.show_.getRelated(offset=offset, limit=amount)
 
 
-class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, RatingsMixin,
+class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, RatingsMixin, SpoilersMixin,
                      playbacksettings.PlaybackSettingsMixin):
     xmlFile = 'script-plex-episodes.xml'
     path = util.ADDON.getAddonInfo('path')
@@ -216,6 +216,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def __init__(self, *args, **kwargs):
         kodigui.ControlledWindow.__init__(self, *args, **kwargs)
         windowutils.UtilMixin.__init__(self)
+        SpoilersMixin.__init__(self, *args, **kwargs)
         self.episode = None
         self.reset(kwargs.get('episode'), kwargs.get('season'), kwargs.get('show'))
         self.initialEpisode = kwargs.get('episode')
@@ -225,8 +226,6 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.lastNonOptionsFocusID = None
         self.episodesPaginator = None
         self.relatedPaginator = None
-        self._noSpoilers = None
-        self.noTitles = util.getSetting('no_unwatched_episode_titles', False)
         self.cameFrom = kwargs.get('came_from')
         self.tasks = backgroundthread.Tasks()
         self.initialized = False
@@ -380,34 +379,6 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             hasPrev = True
         hasPrev = self.fillRelated(hasPrev)
         self.fillRoles(hasPrev)
-
-    @property
-    def noSpoilers(self):
-        if self._noSpoilers is not None:
-            return self._noSpoilers
-
-        nope = util.getSetting('no_episode_spoilers2', "unwatched")
-        if nope != "off" and util.getSetting('spoilers_allowed_genres', True):
-            for g in self.show_.genres:
-                if g.tag in util.SPOILER_ALLOWED_GENRES:
-                    nope = "off"
-                    break
-
-        self._noSpoilers = nope
-        return self._noSpoilers
-
-    def hideSpoilers(self, ep, fully_watched=None, watched=None):
-        watched = watched if watched is not None else ep.isWatched
-        fullyWatched = fully_watched if fully_watched is not None else ep.isFullyWatched
-        return ((self.noSpoilers == 'funwatched' and not fullyWatched) or
-                (self.noSpoilers == 'unwatched' and not watched))
-
-    def getThumbnailOpts(self, ep, fully_watched=None, watched=None, hide_spoilers=None):
-        if self.noSpoilers == "off":
-            return {}
-        return (hide_spoilers if hide_spoilers is not None else
-                self.hideSpoilers(ep, fully_watched=fully_watched, watched=watched)) \
-            and {"blur": util.addonSettings.episodeNoSpoilerBlur} or {}
 
     def selectEpisode(self, progress_data=None):
         if not self.episodesPaginator:
