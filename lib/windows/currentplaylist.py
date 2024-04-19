@@ -65,7 +65,18 @@ class CurrentPlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         player.PLAYER.off('playlist.changed', self.playQueueCallback)
         if player.PLAYER.handler.playQueue and player.PLAYER.handler.playQueue.isRemote:
             player.PLAYER.handler.playQueue.off('change', self.updateProperties)
+        self.commonDeinit()
         kodigui.ControlledWindow.doClose(self)
+
+    def commonInit(self):
+        player.PLAYER.on('starting.audio', self.onAudioStarting)
+        player.PLAYER.on('started.audio', self.onAudioStarted)
+        player.PLAYER.on('changed.audio', self.onAudioChanged)
+
+    def commonDeinit(self):
+        player.PLAYER.off('starting.audio', self.onAudioStarting)
+        player.PLAYER.off('started.audio', self.onAudioStarted)
+        player.PLAYER.off('changed.audio', self.onAudioChanged)
 
     def onFirstInit(self):
         self.playlistListControl = kodigui.ManagedControlList(self, self.PLAYLIST_LIST_ID, 9)
@@ -74,7 +85,7 @@ class CurrentPlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         self.fillPlaylist()
         self.selectPlayingItem()
         self.setFocusId(self.PLAYLIST_LIST_ID)
-
+        self.commonInit()
         self.updateProperties()
         if player.PLAYER.handler.playQueue and player.PLAYER.handler.playQueue.isRemote:
             player.PLAYER.handler.playQueue.on('change', self.updateProperties)
@@ -124,6 +135,18 @@ class CurrentPlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
     def onPlayBackStarted(self, **kwargs):
         self.setDuration()
+
+    def onAudioStarting(self, *args, **kwargs):
+        util.setGlobalProperty('ignore_spinner', '1')
+        self.ignoreStopCommands = True
+
+    def onAudioStarted(self, *args, **kwargs):
+        util.setGlobalProperty('ignore_spinner', '')
+        self.ignoreStopCommands = False
+
+    def onAudioChanged(self, *args, **kwargs):
+        util.setGlobalProperty('ignore_spinner', '')
+        self.ignoreStopCommands = False
 
     def repeatButtonClicked(self):
         if player.PLAYER.handler.playQueue and player.PLAYER.handler.playQueue.isRemote:
@@ -217,6 +240,7 @@ class CurrentPlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         mli = self.playlistListControl.getSelectedItem()
         if not mli:
             return
+        self.onAudioStarting()
         player.PLAYER.playselected(mli.pos())
 
     def createListItem(self, pi, idx):

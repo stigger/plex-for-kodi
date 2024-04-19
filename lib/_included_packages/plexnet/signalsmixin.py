@@ -14,6 +14,12 @@ class SignalsMixin(object):
 
         signal.connect(callback)
 
+    def has_signal(self, signalName, callback):
+        if not self._signals:
+            return
+
+        return signalName in self._signals and self._signals[signalName].is_connected(callback)
+
     def off(self, signalName, callback):
         if not self._signals:
             return

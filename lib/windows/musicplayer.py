@@ -62,10 +62,7 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
         self.setupSeekbar()
         self.selectionBoxMax = self.SEEK_IMAGE_WIDTH - (self.selectionBoxHalf - 3)
 
-        player.PLAYER.on('starting.audio', self.onAudioStarting)
-        player.PLAYER.on('started.audio', self.onAudioStarted)
-        player.PLAYER.on('changed.audio', self.onAudioChanged)
-
+        self.commonInit()
         self.updateProperties()
         self.play()
         self.setFocusId(406)
@@ -75,22 +72,8 @@ class MusicPlayerWindow(currentplaylist.CurrentPlaylistWindow):
         if self.playlist and self.playlist.isRemote:
             self.playlist.off('change', self.updateProperties)
 
-        player.PLAYER.off('starting.audio', self.onAudioStarting)
-        player.PLAYER.off('started.audio', self.onAudioStarted)
-        player.PLAYER.off('changed.audio', self.onAudioChanged)
+        self.commonDeinit()
         kodigui.ControlledWindow.doClose(self)
-
-    def onAudioStarting(self, *args, **kwargs):
-        util.setGlobalProperty('ignore_spinner', '1')
-        self.ignoreStopCommands = True
-
-    def onAudioStarted(self, *args, **kwargs):
-        util.setGlobalProperty('ignore_spinner', '')
-        self.ignoreStopCommands = False
-
-    def onAudioChanged(self, *args, **kwargs):
-        util.setGlobalProperty('ignore_spinner', '')
-        self.ignoreStopCommands = False
 
     def onAction(self, action):
         if self.ignoreStopCommands and action in (xbmcgui.ACTION_PREVIOUS_MENU,

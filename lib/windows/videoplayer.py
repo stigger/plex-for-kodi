@@ -129,6 +129,9 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
     def onFirstInit(self):
         player.PLAYER.on('session.ended', self.sessionEnded)
         player.PLAYER.on('av.started', self.playerPlaybackStarted)
+        player.PLAYER.on('starting.video', self.onVideoStarting)
+        player.PLAYER.on('started.video', self.onVideoStarted)
+        player.PLAYER.on('changed.video', self.onVideoChanged)
         player.PLAYER.on('post.play', self.postPlay)
         player.PLAYER.on('change.background', self.changeBackground)
 
@@ -139,6 +142,16 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         util.DEBUG_LOG('VideoPlayerWindow: Starting session (ID: {0})'.format(id(self)))
         self.resetPassoutProtection()
         self.play(resume=self.resume)
+
+    def onVideoStarting(self, *args, **kwargs):
+        util.setGlobalProperty('ignore_spinner', '1')
+
+    def onVideoStarted(self, *args, **kwargs):
+        util.setGlobalProperty('ignore_spinner', '')
+
+    def onVideoChanged(self, *args, **kwargs):
+        #util.setGlobalProperty('ignore_spinner', '')
+        pass
 
     def onReInit(self):
         self.setBackground()
@@ -610,6 +623,9 @@ def play(video=None, play_queue=None, resume=False):
         player.PLAYER.off('session.ended', w.sessionEnded)
         player.PLAYER.off('post.play', w.postPlay)
         player.PLAYER.off('av.started', w.playerPlaybackStarted)
+        player.PLAYER.off('starting.video', w.onVideoStarting)
+        player.PLAYER.off('started.video', w.onVideoStarted)
+        player.PLAYER.off('changed.video', w.onVideoChanged)
         player.PLAYER.off('change.background', w.changeBackground)
         player.PLAYER.reset()
         command = w.exitCommand

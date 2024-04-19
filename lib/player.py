@@ -419,11 +419,13 @@ class SeekPlayerHandler(BasePlayerHandler):
 
     def onAVChange(self):
         util.DEBUG_LOG('SeekHandler: onAVChange')
+        self.player.trigger('changed.video')
         if self.dialog:
             self.dialog.onAVChange()
 
     def onAVStarted(self):
         util.DEBUG_LOG('SeekHandler: onAVStarted')
+        self.player.trigger('started.video')
 
         if self.isDirectPlay:
             self.seekAbsolute()
@@ -1242,6 +1244,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
             'thumb': self.video.defaultThumb.asTranscodedImageURL(256, 256),
         })
 
+        self.trigger('starting.video')
         self.play(url, li)
 
     def playVideoPlaylist(self, playlist, resume=False, handler=None, session_id=None):
