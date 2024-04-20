@@ -299,17 +299,31 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
         elif sender == "xbmc" and method == "System.OnSleep" and getSetting('action_on_sleep', "none") != "none":
             getattr(self, "action{}".format(getSetting('action_on_sleep', "none").capitalize()))()
 
+        elif sender == "xbmc" and method == "System.OnWake":
+            self.trigger('system.wakeup')
+
     def stopPlayback(self):
         LOG('Monitor: Stopping media playback')
         xbmc.Player().stop()
 
     def onScreensaverActivated(self):
         DEBUG_LOG("Monitor: OnScreensaverActivated")
+        self.trigger('screensaver.activated')
         if getSetting('player_stop_on_screensaver', True) and xbmc.Player().isPlayingVideo():
             self.stopPlayback()
 
+    def onScreensaverDeactivated(self):
+        DEBUG_LOG("Monitor: OnScreensaverDeactivated")
+        self.trigger('screensaver.deactivated')
+
     def onDPMSActivated(self):
         DEBUG_LOG("Monitor: OnDPMSActivated")
+        self.trigger('dpms.activated')
+        #self.stopPlayback()
+
+    def onDPMSDeactivated(self):
+        DEBUG_LOG("Monitor: OnDPMSDeactivated")
+        self.trigger('dpms.deactivated')
         #self.stopPlayback()
 
     def onSettingsChanged(self):
