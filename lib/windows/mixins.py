@@ -142,6 +142,12 @@ class RatingsMixin:
 class SpoilersMixin(object):
     def __init__(self, *args, **kwargs):
         self._noSpoilers = None
+        self.spoilerSetting = "unwatched"
+        self.noTitles = False
+        self.spoilersAllowedFor = True
+        self.storeSpoilerSettings()
+
+    def storeSpoilerSettings(self):
         self.spoilerSetting = util.getSetting('no_episode_spoilers2', "unwatched")
         self.noTitles = util.getSetting('no_unwatched_episode_titles', False)
         self.spoilersAllowedFor = util.getSetting('spoilers_allowed_genres', True)
