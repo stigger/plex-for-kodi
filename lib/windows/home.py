@@ -76,9 +76,12 @@ class SectionHubsTask(backgroundthread.Task):
             hubs = HubsList().init()
             hubs.invalid = True
             self.callback(self.section, hubs)
-        except TypeError:
+        except:
             util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
-            self.cancel()
+            util.DEBUG_LOG('404 on section: {0}'.format(repr(self.section.title)))
+            hubs = HubsList().init()
+            hubs.invalid = True
+            self.callback(self.section, hubs)
 
 
 class UpdateHubTask(backgroundthread.Task):
