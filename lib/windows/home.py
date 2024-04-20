@@ -78,7 +78,7 @@ class SectionHubsTask(backgroundthread.Task):
             self.callback(self.section, hubs)
         except:
             util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
-            util.DEBUG_LOG('404 on section: {0}'.format(repr(self.section.title)))
+            util.DEBUG_LOG('Generic exception when fetching section: {0}'.format(repr(self.section.title)))
             hubs = HubsList().init()
             hubs.invalid = True
             self.callback(self.section, hubs)
