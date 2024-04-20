@@ -49,11 +49,13 @@ class Video(media.MediaItem, AudioCodecMixin):
     manually_selected_sub_stream = False
     current_subtitle_is_embedded = False
     _current_subtitle_idx = None
+    _noSpoilers = False
 
     def __init__(self, *args, **kwargs):
         self._settings = None
         media.MediaItem.__init__(self, *args, **kwargs)
         AudioCodecMixin.__init__(self)
+        self._noSpoilers = False
 
     def __eq__(self, other):
         return other and self.ratingKey == other.ratingKey
@@ -412,6 +414,8 @@ class PlayableVideo(Video, media.RelatedMixin):
 
         fromMediaChoice = kwargs.get("fromMediaChoice", False)
 
+        kwargs["includeMarkers"] = 1
+
         # capture current IDs
         mediaID = None
         partID = None
@@ -557,7 +561,7 @@ class Show(Video, media.RelatedMixin, SectionOnDeckMixin):
     def _setData(self, data):
         Video._setData(self, data)
         if self.isFullObject():
-            self.genres = plexobjects.PlexItemList(data, media.Genre, media.Genre.TYPE, server=self.server)
+            self._genres = plexobjects.PlexItemList(data, media.Genre, media.Genre.TYPE, server=self.server)
             self.roles = plexobjects.PlexItemList(data, media.Role, media.Role.TYPE, server=self.server, container=self.container)
             #self.related = plexobjects.PlexItemList(data.find('Related'), plexlibrary.Hub, plexlibrary.Hub.TYPE, server=self.server, container=self)
             self.extras = PlexVideoItemList(data.find('Extras'), initpath=self.initpath, server=self.server, container=self)
@@ -603,6 +607,12 @@ class Show(Video, media.RelatedMixin, SectionOnDeckMixin):
 
     def refresh(self):
         self.server.query('/library/metadata/%s/refresh' % self.ratingKey)
+
+    @property
+    def genres(self):
+        if not self.isFullObject():
+            self.reload()
+        return self._genres
 
 
 @plexobjects.registerLibType

@@ -19,6 +19,7 @@ from . import busy
 from . import opener
 from . import search
 from . import optionsdialog
+from .mixins import SpoilersMixin
 
 from lib.util import T
 from lib.plex_hosts import pdm
@@ -232,7 +233,7 @@ class ServerListItem(kodigui.ManagedListItem):
         self.unHookSignals()
 
 
-class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
+class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
     xmlFile = 'script-plex-home.xml'
     path = util.ADDON.getAddonInfo('path')
     theme = 'Main'
@@ -351,6 +352,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
     def __init__(self, *args, **kwargs):
         kodigui.BaseWindow.__init__(self, *args, **kwargs)
+        SpoilersMixin.__init__(self, *args, **kwargs)
         self.lastSection = HomeSection
         self.tasks = []
         self.closeOption = None
@@ -1365,18 +1367,21 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
 
         items = []
 
-        no_spoilers = util.getSetting('no_episode_spoilers2', "unwatched")
-        no_ep_titles = util.getSetting('no_unwatched_episode_titles', True)
-
+        check_spoilers = False
         for obj in hubitems or hub.items:
             if not self.backgroundSet:
                 if self.updateBackgroundFrom(obj):
                     self.backgroundSet = True
 
             wide = with_art
+            no_spoilers = False
+            if obj.type == 'episode' and hub.hubIdentifier == "home.continue" and self.spoilerSetting != "off":
+                check_spoilers = True
+                obj._noSpoilers = no_spoilers = self.hideSpoilers(obj, use_cache=False)
+
             if obj.type == 'episode' and util.addonSettings.continueUseThumb and wide:
                 # with_art sets the wide parameter which includes the episode title
-                wide = no_spoilers in ("funwatched", "unwatched") and not no_ep_titles
+                wide = no_spoilers in ("funwatched", "unwatched") and not self.noTitles
 
             mli = self.createListItem(obj, wide=wide)
             if mli:
@@ -1390,13 +1395,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver):
                 extra_opts = {}
                 thumb = mli.dataSource.art
                 # use episode thumbnail for in progress episodes
-                if mli.dataSource.type == 'episode' and util.addonSettings.continueUseThumb:
-                    hideSpoilers = no_spoilers != "off" and (
-                            (no_spoilers == 'funwatched' and not mli.dataSource.isFullyWatched) or
-                            (no_spoilers == 'unwatched' and not mli.dataSource.isWatched))
-
+                if mli.dataSource.type == 'episode' and util.addonSettings.continueUseThumb and check_spoilers:
                     # blur them if we don't want any spoilers and the episode hasn't been fully watched
-                    if hideSpoilers:
+                    if mli.dataSource._noSpoilers:
                         extra_opts = {"blur": util.addonSettings.episodeNoSpoilerBlur}
                     thumb = mli.dataSource.thumb
 
