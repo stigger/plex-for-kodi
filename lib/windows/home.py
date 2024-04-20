@@ -1050,7 +1050,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                 for idx, ihub in enumerate(hubs):
                     if ihub == hub:
                         if self.lastSection == section:
-                            util.DEBUG_LOG('Hub {0} updated - refreshing section: {1}'.format(hub.hubIdentifier, repr(section.title)))
+                            util.DEBUG_LOG('Hub {0} updated - refreshing section: {1}'.format(hub.hubIdentifier,
+                                                                                              repr(section.title)))
                             hubs[idx] = hub
                             self.showHub(hub, items=items)
                             return
@@ -1135,6 +1136,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
         # hubs.invalid is True when the last hub update errored. if the hub is stale, refresh it, though
         if hubs is not None and hubs.invalid and not section_stale:
+            util.DEBUG_LOG("Section fetch has failed: {}".format(section.key))
             self.showBusy(False)
             self.setBoolProperty('no.content', True)
             return
@@ -1151,8 +1153,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             return
 
         if section_stale:
-            util.DEBUG_LOG('Section is stale: {0} REFRESHING - update: {1}'.format(
-                "Home" if section.key is None else section.key, update))
+            util.DEBUG_LOG('Section is stale: {0} REFRESHING - update: {1}, failed before: {2}'.format(
+                "Home" if section.key is None else section.key, update, "Unknown" if not hubs else hubs.invalid))
             hubs.lastUpdated = time.time()
             self.cleanTasks()
             if not update:
