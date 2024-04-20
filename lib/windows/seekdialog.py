@@ -2242,7 +2242,7 @@ class PlaylistDialog(kodigui.BaseDialog):
     def createEpisodeListItem(self, episode):
         label2 = u'{0} \u2022 {1}'.format(
             episode.grandparentTitle,
-            u'{0}{1} \u2022 {2}{3}'.format(T(32310, 'S'), episode.parentIndex, T(32311, 'E'), episode.index)
+            u'{0} \u2022 {1}'.format(T(32310, 'S').format(episode.parentIndex), T(32311, 'E').format(episode.index))
         )
         mli = kodigui.ManagedListItem(episode.title, label2,
                                       thumbnailImage=episode.thumb.asTranscodedImageURL(*self.LI_AR16X9_THUMB_DIM),

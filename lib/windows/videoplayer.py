@@ -48,7 +48,7 @@ class OnDeckPaginator(pagination.MCLPaginator):
 
         if data.type in 'episode':
             mli.setLabel2(
-                u'{0}{1} \u2022 {2}{3}'.format(T(32310, 'S'), data.parentIndex, T(32311, 'E'), data.index))
+                u'{0} \u2022 {1}'.format(T(32310, 'S').format(data.parentIndex), T(32311, 'E').format(data.index)))
         else:
             mli.setLabel2(data.year)
 
@@ -500,9 +500,8 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin, Spoiler
             if self.next.type == "episode" and hide_spoilers:
                 if self.noTitles:
                     self.setProperty('info.title',
-                                     u'{0}{1} \u2022 {2}{3}'.format(T(32310, 'S'),
-                                                                    self.next.parentIndex, T(32311, 'E'),
-                                                                    self.next.index))
+                                     u'{0} \u2022 {1}'.format(T(32310, 'S').format(self.next.parentIndex),
+                                                              T(32311, 'E').format(self.next.index)))
                 self.setProperty('info.summary', T(33008, ''))
             else:
                 self.setProperty('info.title', self.next.title)
@@ -531,14 +530,15 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin, Spoiler
                 self.setProperty('next.title', self.next.grandparentTitle)
                 self.setProperty(
                     'next.subtitle',
-                    u'{0} {1} \u2022 {2} {3}'.format(T(32303, 'Season'), self.next.parentIndex,
-                                                     T(32304, 'Episode'), self.next.index)
+                    u'{0} \u2022 {1}'.format(T(32303, 'Season').format(self.next.parentIndex),
+                                             T(32304, 'Episode').format(self.next.index))
                 )
             if self.prev:
                 self.setProperty('prev.thumb', self.prev.thumb.asTranscodedImageURL(*self.PREV_DIM))
                 self.setProperty('prev.title', self.prev.grandparentTitle)
                 self.setProperty(
-                    'prev.subtitle', u'{0} {1} \u2022 {2} {3}'.format(T(32303, 'Season'), self.prev.parentIndex, T(32304, 'Episode'), self.prev.index)
+                    'prev.subtitle', u'{0} \u2022 {1}'.format(T(32303, 'Season').format(self.prev.parentIndex),
+                                                              T(32304, 'Episode').format(self.prev.index))
                 )
                 self.setProperty('prev.info.date', util.cleanLeadingZeros(self.prev.originallyAvailableAt.asDatetime('%B %d, %Y')))
         elif self.prev.type == 'movie':

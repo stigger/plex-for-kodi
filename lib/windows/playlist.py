@@ -272,7 +272,8 @@ class PlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
 
     def createEpisodeListItem(self, mli, episode):
         label2 = u'{0} \u2022 {1}'.format(
-            episode.grandparentTitle, u'{0}{1} \u2022 {2}{3}'.format(T(32310, 'S'), episode.parentIndex, T(32311, 'E'), episode.index)
+            episode.grandparentTitle, u'{0} \u2022 {1}'.format(T(32310, 'S').format(episode.parentIndex),
+                                                               T(32311, 'E').format(episode.index))
         )
         mli.setLabel2(label2)
         mli.setThumbnailImage(episode.thumb.asTranscodedImageURL(*self.LI_AR16X9_THUMB_DIM))

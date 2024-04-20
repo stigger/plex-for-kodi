@@ -1261,7 +1261,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
     def createEpisodeListItem(self, obj, wide=False):
         mli = self.createGrandparentedListItem(obj, *self.THUMB_POSTER_DIM)
         if obj.index:
-            subtitle = u'{0}{1} \u2022 {2}{3}'.format(T(32310, 'S'), obj.parentIndex, T(32311, 'E'), obj.index)
+            subtitle = u'{0} \u2022 {1}'.format(T(32310, 'S').format(obj.parentIndex), T(32311, 'E').format(obj.index))
         else:
             subtitle = obj.originallyAvailableAt.asDatetime('%m/%d/%y')
 

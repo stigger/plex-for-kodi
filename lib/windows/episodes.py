@@ -778,7 +778,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         episode = mli.dataSource
 
         if episode.index:
-            subtitle = u'{0} {1} {2} {3}'.format(T(32303, 'Season'), episode.parentIndex, T(32304, 'Episode'), episode.index)
+            subtitle = u'{0} {1}'.format(T(32303, 'Season').format(episode.parentIndex),
+                                         T(32304, 'Episode').format(episode.index))
         else:
             subtitle = episode.originallyAvailableAt.asDatetime('%B %d, %Y')
 
@@ -1114,8 +1115,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.setUserItemInfo(mli, video, types=("title", "summary"))
 
         if video.index:
-            mli.setProperty('season', u'{0} {1}'.format(T(32303, 'Season'), video.parentIndex))
-            mli.setProperty('episode', u'{0} {1}'.format(T(32304, 'Episode'), video.index))
+            mli.setProperty('season', T(32303, 'Season').format(video.parentIndex))
+            mli.setProperty('episode', T(32304, 'Episode').format(video.index))
         else:
             mli.setProperty('season', '')
             mli.setProperty('episode', '')
@@ -1194,7 +1195,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
     def createListItem(self, episode):
         if episode.index:
-            subtitle = u'{0}{1} \u2022 {2}{3}'.format(T(32310, 'S'), episode.parentIndex, T(32311, 'E'), episode.index)
+            subtitle = u'{0} \u2022 {1}'.format(T(32310, 'S').format(episode.parentIndex),
+                                                T(32311, 'E').format(episode.index))
         else:
             subtitle = episode.originallyAvailableAt.asDatetime('%m/%d/%y')
 

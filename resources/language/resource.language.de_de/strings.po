@@ -389,13 +389,13 @@ msgstr "Gehe zu {0}"
 
 #: 
 msgctxt "#32303"
-msgid "Season"
-msgstr "Staffel"
+msgid "Season {}"
+msgstr "Staffel {}"
 
 #: 
 msgctxt "#32304"
-msgid "Episode"
-msgstr "Folge"
+msgid "Episode {}"
+msgstr "Folge {}"
 
 #: 
 msgctxt "#32305"
@@ -424,13 +424,13 @@ msgstr "Ohne"
 
 #: 
 msgctxt "#32310"
-msgid "S"
-msgstr "S"
+msgid "S{}"
+msgstr "S{}"
 
 #: 
 msgctxt "#32311"
-msgid "E"
-msgstr "E"
+msgid "E{}"
+msgstr "E{}"
 
 #: 
 msgctxt "#32312"

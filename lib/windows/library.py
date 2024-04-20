@@ -1309,7 +1309,8 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                         mli.dataSource = obj
                         mli.setProperty('index', str(pos))
                         if obj.index:
-                            subtitle = u'{0}{1} \u2022 {2}{3}'.format(T(32310, 'S'), obj.parentIndex, T(32311, 'E'), obj.index)
+                            subtitle = u'{0} \u2022 {1}'.format(T(32310, 'S').format(obj.parentIndex),
+                                                                T(32311, 'E').format(obj.index))
                             mli.setProperty('subtitle', subtitle)
                             subtitle = "\n" + subtitle
                         else:

@@ -542,7 +542,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin, RatingsMixi
             self.setProperty('content.rating', '')
             self.setProperty('thumb', self.video.defaultThumb.asTranscodedImageURL(*self.THUMB_POSTER_DIM))
             self.setProperty('preview', self.video.thumb.asTranscodedImageURL(*self.PREVIEW_DIM))
-            self.setProperty('info', u'{0} {1} {2} {3}'.format(T(32303, 'Season'), self.video.parentIndex, T(32304, 'Episode'), self.video.index))
+            self.setProperty('info', u'{0} {1}'.format(T(32303, 'Season').format(self.video.parentIndex), T(32304, 'Episode').format(self.video.index)))
             self.setProperty('date', util.cleanLeadingZeros(self.video.originallyAvailableAt.asDatetime('%B %d, %Y')))
             self.setProperty('related.header', T(32306, 'Related Shows'))
         elif self.video.type == 'movie':

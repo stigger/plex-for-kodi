@@ -55,7 +55,9 @@ class UtilMixin():
                         pos=(660, 441),
                         close_direction='none',
                         set_dropdown_prop=False,
-                        header=u'{0} - {1}{2} \u2022 {3}{4}'.format(title, T(32310, 'S'), i.parentIndex, T(32311, 'E'), i.index)
+                        header=u'{0} - {1} \u2022 {2}'.format(title,
+                                                              T(32310, 'S').format(i.parentIndex),
+                                                              T(32311, 'E').format(i.index))
                     )
 
                     if not choice:

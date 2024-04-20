@@ -346,11 +346,11 @@ msgid "Go to {0}"
 msgstr ""
 
 msgctxt "#32303"
-msgid "Season"
+msgid "Season {}"
 msgstr ""
 
 msgctxt "#32304"
-msgid "Episode"
+msgid "Episode {}"
 msgstr ""
 
 msgctxt "#32305"
@@ -374,11 +374,11 @@ msgid "None"
 msgstr ""
 
 msgctxt "#32310"
-msgid "S"
+msgid "S{}"
 msgstr ""
 
 msgctxt "#32311"
-msgid "E"
+msgid "E{}"
 msgstr ""
 
 msgctxt "#32312"
