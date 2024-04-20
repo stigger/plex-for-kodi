@@ -584,7 +584,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             return
 
         hubs = self.sectionHubs.get(self.lastSection.key)
-        if not hubs:
+        if hubs is None:
             return
 
         if time.time() - hubs.lastUpdated > HUBS_REFRESH_INTERVAL and not xbmc.Player().isPlayingVideo():
