@@ -489,12 +489,15 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin, Spoiler
             self.setProperty('has.next', '1')
 
     def setInfo(self):
+        hide_spoilers = False
+        if self.next and self.next.type == "episode":
+            hide_spoilers = self.hideSpoilers(self.next, use_cache=False)
         if self.next:
             self.setProperty(
                 'post.play.background',
                 util.backgroundFromArt(self.next.art, width=self.width, height=self.height)
             )
-            if self.next.type == "episode" and self.hideSpoilers(self.next, use_cache=False):
+            if self.next.type == "episode" and hide_spoilers:
                 if self.noTitles:
                     self.setProperty('info.title',
                                      u'{0}{1} \u2022 {2}{3}'.format(T(32310, 'S'),
@@ -518,12 +521,18 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin, Spoiler
         if self.prev.type == 'episode':
             self.setProperty('related.header', T(32306, 'Related Shows'))
             if self.next:
-                self.setProperty('next.thumb', self.next.thumb.asTranscodedImageURL(*self.NEXT_DIM))
-                self.setProperty('info.date', util.cleanLeadingZeros(self.next.originallyAvailableAt.asDatetime('%B %d, %Y')))
+                thumb_opts = {}
+                if hide_spoilers:
+                    thumb_opts = self.getThumbnailOpts(self.next, hide_spoilers=hide_spoilers)
+                self.setProperty('next.thumb', self.next.thumb.asTranscodedImageURL(*self.NEXT_DIM, **thumb_opts))
+                self.setProperty('info.date',
+                                 util.cleanLeadingZeros(self.next.originallyAvailableAt.asDatetime('%B %d, %Y')))
 
                 self.setProperty('next.title', self.next.grandparentTitle)
                 self.setProperty(
-                    'next.subtitle', u'{0} {1} \u2022 {2} {3}'.format(T(32303, 'Season'), self.next.parentIndex, T(32304, 'Episode'), self.next.index)
+                    'next.subtitle',
+                    u'{0} {1} \u2022 {2} {3}'.format(T(32303, 'Season'), self.next.parentIndex,
+                                                     T(32304, 'Episode'), self.next.index)
                 )
             if self.prev:
                 self.setProperty('prev.thumb', self.prev.thumb.asTranscodedImageURL(*self.PREV_DIM))
