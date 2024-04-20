@@ -738,14 +738,14 @@ class SeekDialog(kodigui.BaseDialog):
                                 self.hideOSD()
                             return
 
-                        if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK):
-                            if self._osdHideAnimationTimeout:
+                        if action in (xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_STOP):
+                            if action != xbmcgui.ACTION_STOP and self._osdHideAnimationTimeout:
                                 if self._osdHideAnimationTimeout >= time.time():
                                     return
                                 else:
                                     self._osdHideAnimationTimeout = None
 
-                            if self.osdVisible():
+                            if action != xbmcgui.ACTION_STOP and self.osdVisible():
                                 self.hideOSD()
                             else:
                                 self.sendTimeline(state=self.player.STATE_STOPPED)
