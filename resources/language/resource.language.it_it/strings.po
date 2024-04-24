@@ -388,16 +388,6 @@ msgid "Go to {0}"
 msgstr "Vai a {0}"
 
 #: 
-msgctxt "#32303"
-msgid "Season"
-msgstr "Stagione"
-
-#: 
-msgctxt "#32304"
-msgid "Episode"
-msgstr "Episodio"
-
-#: 
 msgctxt "#32305"
 msgid "Extras"
 msgstr "Extras"
@@ -421,16 +411,6 @@ msgstr "Disponibile"
 msgctxt "#32309"
 msgid "None"
 msgstr "Nessuno"
-
-#: 
-msgctxt "#32310"
-msgid "S"
-msgstr "S"
-
-#: 
-msgctxt "#32311"
-msgid "E"
-msgstr "E"
 
 #: 
 msgctxt "#32312"
