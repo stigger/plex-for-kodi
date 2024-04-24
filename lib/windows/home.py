@@ -372,6 +372,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         self._shuttingDown = False
         self._skipNextAction = False
         self._reloadOnReinit = False
+        self._ignoreTick = False
         windowutils.HOME = self
 
         self.lock = threading.Lock()
@@ -560,6 +561,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         util.MONITOR.on('changed.watchstatus', self.updateOnDeckHubs)
         util.MONITOR.on('screensaver.deactivated', self.refreshLastSection)
         util.MONITOR.on('dpms.deactivated', self.refreshLastSection)
+        util.MONITOR.on('system.sleep', self.disableUpdates)
         util.MONITOR.on('system.wakeup', self.refreshLastSection)
 
     def unhookSignals(self):
@@ -583,10 +585,11 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         util.MONITOR.off('changed.watchstatus', self.updateOnDeckHubs)
         util.MONITOR.off('screensaver.deactivated', self.refreshLastSection)
         util.MONITOR.off('dpms.deactivated', self.refreshLastSection)
+        util.MONITOR.off('system.sleep', self.disableUpdates)
         util.MONITOR.off('system.wakeup', self.refreshLastSection)
 
     def tick(self):
-        if not self.lastSection:
+        if not self.lastSection or self._ignoreTick:
             return
 
         hubs = self.sectionHubs.get(self.lastSection.key)
@@ -847,9 +850,19 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         self.backgroundSet = False
         self.showHubs(HomeSection)
 
+    def disableUpdates(self, *args, **kwargs):
+        util.LOG("Sleep event, stopping updates")
+        self._ignoreTick = True
+
+    def enableUpdates(self, *args, **kwargs):
+        util.LOG("Wake event, resuming updates")
+        self._ignoreTick = False
+
     def refreshLastSection(self, *args, **kwargs):
         if not xbmc.Player().isPlayingVideo():
-            self.showHubs(self.lastSection)
+            util.LOG("Refreshing last section after wake events")
+            self.showHubs(self.lastSection, force=True)
+            self.enableUpdates()
 
     @busy.dialog()
     def serverRefresh(self):
@@ -1123,16 +1136,16 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         else:
             self.setFocusId(self.SERVER_BUTTON_ID)
 
-    def showHubs(self, section=None, update=False):
+    def showHubs(self, section=None, update=False, force=False):
         self.setBoolProperty('no.content', False)
         if not update:
             self.setProperty('drawing', '1')
         try:
-            self._showHubs(section=section, update=update)
+            self._showHubs(section=section, update=update, force=force)
         finally:
             self.setProperty('drawing', '')
 
-    def _showHubs(self, section=None, update=False):
+    def _showHubs(self, section=None, update=False, force=False):
         if not update:
             self.clearHubs()
 
@@ -1147,28 +1160,30 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
         hubs = self.sectionHubs.get(section.key)
         section_stale = False
-        if hubs is not None:
-            section_stale = time.time() - hubs.lastUpdated > HUBS_REFRESH_INTERVAL
 
-        # hubs.invalid is True when the last hub update errored. if the hub is stale, refresh it, though
-        if hubs is not None and hubs.invalid and not section_stale:
-            util.DEBUG_LOG("Section fetch has failed: {}".format(section.key))
-            self.showBusy(False)
-            self.setBoolProperty('no.content', True)
-            return
+        if not force:
+            if hubs is not None:
+                section_stale = time.time() - hubs.lastUpdated > HUBS_REFRESH_INTERVAL
 
-        if not hubs and not section_stale:
-            for task in self.tasks:
-                if task.section == section:
-                    backgroundthread.BGThreader.moveToFront(task)
-                    break
-
-            if section.type != "home":
+            # hubs.invalid is True when the last hub update errored. if the hub is stale, refresh it, though
+            if hubs is not None and hubs.invalid and not section_stale:
+                util.DEBUG_LOG("Section fetch has failed: {}".format(section.key))
                 self.showBusy(False)
                 self.setBoolProperty('no.content', True)
-            return
+                return
 
-        if section_stale:
+            if not hubs and not section_stale:
+                for task in self.tasks:
+                    if task.section == section:
+                        backgroundthread.BGThreader.moveToFront(task)
+                        break
+
+                if section.type != "home":
+                    self.showBusy(False)
+                    self.setBoolProperty('no.content', True)
+                return
+
+        if section_stale or force:
             util.DEBUG_LOG('Section is stale: {0} REFRESHING - update: {1}, failed before: {2}'.format(
                 "Home" if section.key is None else section.key, update, "Unknown" if not hubs else hubs.invalid))
             hubs.lastUpdated = time.time()

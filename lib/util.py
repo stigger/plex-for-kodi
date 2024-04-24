@@ -296,8 +296,10 @@ class UtilityMonitor(xbmc.Monitor, signalsmixin.SignalsMixin):
                 setGlobalProperty('stop_running', '1')
                 return
 
-        elif sender == "xbmc" and method == "System.OnSleep" and getSetting('action_on_sleep', "none") != "none":
-            getattr(self, "action{}".format(getSetting('action_on_sleep', "none").capitalize()))()
+        elif sender == "xbmc" and method == "System.OnSleep":
+            if getSetting('action_on_sleep', "none") != "none":
+                getattr(self, "action{}".format(getSetting('action_on_sleep', "none").capitalize()))()
+            self.trigger('system.sleep')
 
         elif sender == "xbmc" and method == "System.OnWake":
             self.trigger('system.wakeup')
