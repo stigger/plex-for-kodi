@@ -1381,6 +1381,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                         mli.setProperty('summary', obj.get('summary'))
 
                         if showUnwatched and obj.TYPE != 'collection':
+                            mli.setProperty('year', obj.year)
                             if not obj.isDirectory():
                                 mli.setLabel2(util.durationToText(obj.fixedDuration()))
                             mli.setProperty('art', obj.defaultArt.asTranscodedImageURL(*artDim))
