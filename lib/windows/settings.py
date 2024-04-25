@@ -412,14 +412,14 @@ class Settings(object):
                 OptionsSetting(
                     'video_show_playlist', T(32936, 'Show playlist button'), 'eponly',
                     (
-                        ('always', T(32035, 'Always')), ('eponly', T(32938, 'Only for Episodes')),
+                        ('always', T(32035, 'Always')), ('eponly', T(32938, 'Only for Episodes/Playlists')),
                         ('never', T(32033, 'Never'))
                     )
                 ).description(T(32939, 'Only applies to video player UI')),
                 OptionsSetting(
                     'video_show_prevnext', T(32937, 'Show prev/next button'), 'eponly',
                     (
-                        ('always', T(32035, 'Always')), ('eponly', T(32938, 'Only for Episodes')),
+                        ('always', T(32035, 'Always')), ('eponly', T(32938, 'Only for Episodes/Playlists')),
                         ('never', T(32033, 'Never'))
                     )
                 ).description(T(32939, 'Only applies to video player UI')),

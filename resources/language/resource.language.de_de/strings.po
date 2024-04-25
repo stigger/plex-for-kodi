@@ -1957,8 +1957,8 @@ msgstr "Zeige Vorheriger/Nächster-Knopf"
 
 #: 
 msgctxt "#32938"
-msgid "Only for Episodes"
-msgstr "Nur bei Episoden"
+msgid "Only for Episodes/Playlists"
+msgstr "Nur bei Episoden/Wiedergabelisten"
 
 #: 
 msgctxt "#32939"

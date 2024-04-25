@@ -387,6 +387,18 @@ class SeekDialog(kodigui.BaseDialog):
         self.setBoolProperty('nav.repeat', showRepeat)
         self.setBoolProperty('nav.ffwdrwd', showFfwdRwd)
         self.setBoolProperty('nav.shuffle', showShuffle)
+        navPlaylist = util.getSetting('video_show_playlist', 'eponly')
+        self.setBoolProperty('nav.playlist', (navPlaylist == "eponly" and
+                                              (self.player.video.type == 'episode' or self.handler.playlist)) or
+                             navPlaylist == "always")
+
+        if not self.getProperty('nav.playlist'):
+            self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE
+
+        navPrevNext = util.getSetting('video_show_prevnext', 'eponly')
+        self.setBoolProperty('nav.prevnext', (navPrevNext == "eponly" and
+                                              (self.player.video.type == 'episode' or self.handler.playlist)) or
+                             navPrevNext == "always")
 
         if showQuickSubs:
             self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE * len(
@@ -432,16 +444,8 @@ class SeekDialog(kodigui.BaseDialog):
 
         self.killTimeKeeper()
 
-        navPlaylist = util.getSetting('video_show_playlist', 'eponly')
-        self.setBoolProperty('nav.playlist', (navPlaylist == "eponly" and self.player.video.type == 'episode') or
-                             navPlaylist == "always")
-
         if not self.getProperty('nav.playlist'):
             self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE
-
-        navPrevNext = util.getSetting('video_show_prevnext', 'eponly')
-        self.setBoolProperty('nav.prevnext', (navPrevNext == "eponly" and self.player.video.type == 'episode') or
-                             navPrevNext == "always")
 
         if not self.getProperty('nav.prevnext'):
             self.subtitleButtonLeft += self.NAVBAR_BTN_SIZE

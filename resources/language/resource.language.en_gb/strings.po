@@ -1559,7 +1559,7 @@ msgid "Show prev/next button"
 msgstr ""
 
 msgctxt "#32938"
-msgid "Only for Episodes"
+msgid "Only for Episodes/Playlists"
 msgstr ""
 
 msgctxt "#32939"
