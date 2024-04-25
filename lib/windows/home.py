@@ -1582,6 +1582,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
     def showUserMenu(self, mouse=False):
         items = []
         if plexapp.ACCOUNT.isSignedIn:
+            if not len(plexapp.ACCOUNT.homeUsers) and not util.addonSettings.cacheHomeUsers:
+                plexapp.ACCOUNT.updateHomeUsers(refreshSubscription=True)
+
             if len(plexapp.ACCOUNT.homeUsers) > 1:
                 items.append(kodigui.ManagedListItem(T(32342, 'Switch User'), data_source='switch'))
             else:
