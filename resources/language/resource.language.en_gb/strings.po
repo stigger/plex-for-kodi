@@ -1877,3 +1877,15 @@ msgstr ""
 msgctxt "#33018"
 msgid "Cache Plex Home users"
 msgstr ""
+
+msgctxt "#33019"
+msgid "Visit media item"
+msgstr ""
+
+msgctxt "#33020"
+msgid "Play"
+msgstr ""
+
+msgctxt "#33021"
+msgid "Choose action"
+msgstr ""

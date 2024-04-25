@@ -17,7 +17,7 @@ def open(obj, **kwargs):
                 return handleOpen(photos.PhotoWindow, play_queue=obj, **kwargs)
             else:
                 from . import videoplayer
-                videoplayer.play(play_queue=obj)
+                videoplayer.play(play_queue=obj, **kwargs)
                 return ''
     elif isinstance(obj, six.string_types):
         key = obj

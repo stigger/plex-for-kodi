@@ -2361,3 +2361,15 @@ msgstr "Überschreibt die vorherigen Einstellungen für: {}"
 msgctxt "#33018"
 msgid "Cache Plex Home users"
 msgstr "Plex Heimbenutzer zwischenspeichern"
+
+msgctxt "#33019"
+msgid "Visit media item"
+msgstr "Mediendetails anschauen"
+
+msgctxt "#33020"
+msgid "Play"
+msgstr "Abspielen"
+
+msgctxt "#33021"
+msgid "Choose action"
+msgstr "Aktion wählen"

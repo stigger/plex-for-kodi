@@ -2158,10 +2158,14 @@ class SeekDialog(kodigui.BaseDialog):
         self.setProperty('playlist.visible', '1' if value else '')
 
     def showPlaylistDialog(self):
+        created = False
         if not self.playlistDialog:
             self.playlistDialog = PlaylistDialog.create(show=False, handler=self.handler)
+            created = True
 
         self.playlistDialogVisible = True
+        if not created:
+            self.playlistDialog.updatePlayingItem()
         self.playlistDialog.doModal()
         self.resetTimeout()
         self.playlistDialogVisible = False
