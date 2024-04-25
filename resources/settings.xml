@@ -13,11 +13,6 @@
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="oldprofile" type="boolean" label="33400" help="33401">
-                    <level>0</level>
-                    <default>false</default>
-                    <control type="toggle"/>
-                </setting>
                 <setting id="subtitle_use_extended_title" type="boolean" label="32950" help="32951">
                     <level>0</level>
                     <default>true</default>
