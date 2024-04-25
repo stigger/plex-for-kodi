@@ -54,6 +54,11 @@
                     </dependencies>
                     <control type="list" format="string"/>
                 </setting>
+                <setting id="cache_home_users" type="boolean" label="33018">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
             </group>
         </category>
         <!-- Player -->
