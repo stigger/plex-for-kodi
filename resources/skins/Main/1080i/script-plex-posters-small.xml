@@ -142,7 +142,7 @@
                     <preloaditems>2</preloaditems>
                     <pagecontrol>152</pagecontrol>
                     <!-- ITEM LAYOUT ########################################## -->
-                    <itemlayout width="170" height="262">
+                    <itemlayout width="176" height="270">
                         <control type="group">
                             <posx>55</posx>
                             <posy>137</posy>
@@ -226,7 +226,7 @@
                                     </control>
                                 </control>
                                 <control type="label">
-                                    <visible>String.IsEmpty(ListItem.Property(subtitle))</visible>
+                                    <visible>String.IsEmpty(ListItem.Property(subtitle)) + !String.IsEmpty(ListItem.Property(year))</visible>
                                     <scroll>false</scroll>
                                     <posx>0</posx>
                                     <posy>218</posy>
@@ -236,6 +236,18 @@
                                     <align>center</align>
                                     <textcolor>FFFFFFFF</textcolor>
                                     <label>$INFO[ListItem.Label] ($INFO[ListItem.Property(year)])</label>
+                                </control>
+                                <control type="label">
+                                    <visible>String.IsEmpty(ListItem.Property(subtitle)) + String.IsEmpty(ListItem.Property(year))</visible>
+                                    <scroll>false</scroll>
+                                    <posx>0</posx>
+                                    <posy>218</posy>
+                                    <width>144</width>
+                                    <height>72</height>
+                                    <font>font10</font>
+                                    <align>center</align>
+                                    <textcolor>FFFFFFFF</textcolor>
+                                    <label>$INFO[ListItem.Label]</label>
                                 </control>
                                 <control type="label">
                                     <visible>!String.IsEmpty(ListItem.Property(subtitle))</visible>
@@ -254,7 +266,7 @@
                     </itemlayout>
 
                     <!-- FOCUSED LAYOUT ####################################### -->
-                    <focusedlayout width="170" height="262">
+                    <focusedlayout width="176" height="270">
                         <control type="group">
                             <posx>55</posx>
                             <posy>137</posy>
@@ -351,7 +363,7 @@
                                         </control>
                                     </control>
                                     <control type="label">
-                                        <visible>String.IsEmpty(ListItem.Property(subtitle))</visible>
+                                        <visible>String.IsEmpty(ListItem.Property(subtitle)) + !String.IsEmpty(ListItem.Property(year))</visible>
                                         <scroll>true</scroll>
                                         <posx>0</posx>
                                         <posy>218</posy>
@@ -361,6 +373,18 @@
                                         <align>center</align>
                                         <textcolor>FFFFFFFF</textcolor>
                                         <label>$INFO[ListItem.Label] ($INFO[ListItem.Property(year)])</label>
+                                    </control>
+                                    <control type="label">
+                                        <visible>String.IsEmpty(ListItem.Property(subtitle)) + String.IsEmpty(ListItem.Property(year))</visible>
+                                        <scroll>true</scroll>
+                                        <posx>0</posx>
+                                        <posy>218</posy>
+                                        <width>144</width>
+                                        <height>72</height>
+                                        <font>font10</font>
+                                        <align>center</align>
+                                        <textcolor>FFFFFFFF</textcolor>
+                                        <label>$INFO[ListItem.Label]</label>
                                     </control>
                                     <control type="label">
                                         <visible>!String.IsEmpty(ListItem.Property(subtitle))</visible>

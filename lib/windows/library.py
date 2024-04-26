@@ -1295,10 +1295,6 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
             thumbDim = TYPE_KEYS.get(self.section.type, TYPE_KEYS['movie'])['thumb_dim']
             artDim = TYPE_KEYS.get(self.section.type, TYPE_KEYS['movie']).get('art_dim', (256, 256))
 
-            showUnwatched = False
-            if (self.section.TYPE in ('movie', 'show') and items[0].TYPE != 'collection') or (self.section.TYPE == 'collection' and items[0].TYPE in ('movie', 'show', 'episode')): # NOTE: A collection with Seasons doesn't have the leafCount/viewedLeafCount until you actually go into the season so we can't update the unwatched count here
-                showUnwatched = True
-
             if ITEM_TYPE == 'episode':
                 for offset, obj in enumerate(items):
                     if not self.showPanelControl:
@@ -1379,10 +1375,10 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                                 mli.setThumbnailImage(obj.defaultThumb.asTranscodedImageURL(*thumbDim))
                         mli.dataSource = obj
                         mli.setProperty('summary', obj.get('summary'))
+                        mli.setProperty('year', obj.get('year'))
 
-                        if showUnwatched and obj.TYPE != 'collection':
-                            mli.setProperty('year', obj.year)
-                            if not obj.isDirectory():
+                        if obj.TYPE != 'collection':
+                            if not obj.isDirectory() and obj.get('duration').asInt():
                                 mli.setLabel2(util.durationToText(obj.fixedDuration()))
                             mli.setProperty('art', obj.defaultArt.asTranscodedImageURL(*artDim))
                             if not obj.isWatched and obj.TYPE != "Directory":

@@ -237,6 +237,7 @@
                                     <label>$INFO[ListItem.Label]</label>
                                 </control>
                                 <control type="label">
+                                    <visible>!String.IsEmpty(ListItem.Property(year))</visible>
                                     <scroll>false</scroll>
                                     <posx>0</posx>
                                     <posy>396</posy>
@@ -360,6 +361,7 @@
                                         <label>$INFO[ListItem.Label]</label>
                                     </control>
                                     <control type="label">
+                                        <visible>!String.IsEmpty(ListItem.Property(year))</visible>
                                         <scroll>false</scroll>
                                         <posx>0</posx>
                                         <posy>396</posy>
