@@ -645,6 +645,7 @@
                     <!-- FOCUSED LAYOUT CHAPTERS ####################################### -->
                     <focusedlayout width="218" condition="!String.IsEmpty(Window.Property(has.chapters))">
                         <control type="group">
+                            <animation effect="slide" time="100" start="0,0" end="0,-10" reversible="true">Focus</animation>
                             <control type="image">
                                 <posx>40</posx>
                                 <posy>0</posy>
@@ -662,7 +663,7 @@
                                 <height>100</height>
                                 <texture>$INFO[ListItem.Thumb]</texture>
                                 <aspectratio>scale</aspectratio>
-                                <colordiffuse>FFAAAAAA</colordiffuse>
+                                <colordiffuse>FF666666</colordiffuse>
                                 <visible>!Control.HasFocus(501)</visible>
                             </control>
                             <control type="image">
@@ -693,7 +694,7 @@
                                 <font>font10</font>
                                 <align>center</align>
                                 <aligny>center</aligny>
-                                <textcolor>FFAAAAAA</textcolor>
+                                <textcolor>FFDDDDDD</textcolor>
                                 <label>$INFO[ListItem.Label]</label>
                                 <visible>!Control.HasFocus(501)</visible>
                             </control>
