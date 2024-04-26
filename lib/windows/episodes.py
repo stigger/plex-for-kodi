@@ -1036,8 +1036,10 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.setProperty('season.title', (self.season or self.show_).title)
 
         if self.season:
-            self.setProperty('episodes.header', u'{0} \u2022 {1} {2}'.format(showTitle, T(32303, 'Season'), self.season.index))
-            self.setProperty('extras.header', u'{0} \u2022 {1} {2}'.format(T(32305, 'Extras'), T(32303, 'Season'), self.season.index))
+            self.setProperty('episodes.header', u'{0} \u2022 {1}'.format(showTitle,
+                                                                         T(32303, 'Season').format(self.season.index)))
+            self.setProperty('extras.header', u'{0} \u2022 {1}'.format(T(32305, 'Extras'),
+                                                                       T(32303, 'Season').format(self.season.index)))
         else:
             self.setProperty('episodes.header', u'Episodes')
             self.setProperty('extras.header', u'Extras')
