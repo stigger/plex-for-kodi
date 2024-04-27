@@ -418,7 +418,7 @@
         <control type="group" id="150">
             <visible>String.IsEqual(Window(10000).Property(script.plex.sort),titleSort) + Integer.IsGreater(Container(101).NumItems,0) + String.IsEmpty(Window.Property(drawing))</visible>
             <defaultcontrol>151</defaultcontrol>
-            <posx>1780</posx>
+            <posx>1810</posx>
             <posy>150</posy>
             <width>20</width>
             <height>920</height>
