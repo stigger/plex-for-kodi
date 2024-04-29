@@ -611,7 +611,7 @@ class Show(Video, media.RelatedMixin, SectionOnDeckMixin):
     @property
     def genres(self):
         if not self.isFullObject():
-            self.reload()
+            self.reload(soft=True)
         return self._genres
 
 
