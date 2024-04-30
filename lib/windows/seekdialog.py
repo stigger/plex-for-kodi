@@ -1236,7 +1236,32 @@ class SeekDialog(kodigui.BaseDialog):
             else:
                 util.setGlobalProperty("current_oshash", '', base='videoinfo.{0}')
             self.lastSubtitleNavAction = "download"
+
+            # remove the Year info from the current video info tag for better OSS search results
+            t = self.player.getVideoInfoTag()
+            changed_info_tag = False
+            item = xbmcgui.ListItem()
+            item.setPath(self.player.getPlayingFile())
+            if t:
+                util.DEBUG_LOG("GOGOBO: %s" % t.getSeason())
+                year = t.getYear()
+                if year:
+                    item.setInfo("video", {"year": 0})
+                    self.player.updateInfoTag(item)
+                    changed_info_tag = year
+
             builtin.ActivateWindow('SubtitleSearch')
+            # wait for the window to activate
+            while not xbmc.getCondVisibility('Window.IsActive(SubtitleSearch)'):
+                util.MONITOR.waitForAbort(0.1)
+            # wait for the window to close
+            while xbmc.getCondVisibility('Window.IsActive(SubtitleSearch)'):
+                util.MONITOR.waitForAbort(0.1)
+
+            if changed_info_tag:
+                item.setInfo("video", {"year": changed_info_tag})
+                self.player.updateInfoTag(item)
+
         elif choice['key'] == 'delay':
             self.hideOSD()
             self.lastSubtitleNavAction = "delay"

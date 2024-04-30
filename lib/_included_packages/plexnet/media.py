@@ -255,6 +255,11 @@ class Writer(MediaTag):
     FILTER = 'writer'
 
 
+class Guid(MediaTag):
+    TYPE = 'Guid'
+    FILTER = 'guid'
+
+
 class Chapter(MediaTag):
     TYPE = 'Chapter'
     

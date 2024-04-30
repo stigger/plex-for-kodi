@@ -837,7 +837,12 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
         pl = playlist.LocalPlaylist(self.show_.all(), self.show_.getServer())
         try:
-            if len(pl):  # Don't use playlist if it's only this video
+            # inject our show in case we need to access show metadata from the player
+            episode._show = self.show_
+            if len(pl) > 1:  # Don't use playlist if it's only this video
+                for ep in pl:
+                    ep._show = self.show_
+
                 pl.setCurrent(episode)
                 self.processCommand(videoplayer.play(play_queue=pl, resume=resume))
                 return True

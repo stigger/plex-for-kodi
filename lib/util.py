@@ -10,6 +10,8 @@ import math
 import time
 import datetime
 import contextlib
+import unicodedata
+
 import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
 import six
 import os
@@ -926,6 +928,38 @@ def getPlatform():
     ]:
         if xbmc.getCondVisibility(key):
             return key.rsplit('.', 1)[-1]
+
+
+def getRunningAddons():
+    try:
+        return xbmcvfs.listdir('addons://running/')[1]
+    except:
+        return []
+
+
+def getUserAddons():
+    try:
+        return xbmcvfs.listdir('addons://user/all')[1]
+    except:
+        return []
+
+
+USER_ADDONS = getUserAddons()
+
+
+SLUGIFY_RE1 = re.compile(r'[^\w\s-]')
+SLUGIFY_RE2 = re.compile(r'[-\s]+')
+
+
+def slugify(value):
+    """
+    Converts to lowercase, removes non-word characters (alphanumerics and
+    underscores) and converts spaces to hyphens. Also strips leading and
+    trailing whitespace.
+    """
+    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
+    value = SLUGIFY_RE1.sub('', value).strip().lower()
+    return SLUGIFY_RE2.sub('-', value)
 
 
 def getProgressImage(obj, perc=None, view_offset=None):

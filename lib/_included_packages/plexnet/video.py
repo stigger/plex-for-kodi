@@ -384,6 +384,7 @@ class PlayableVideo(Video, media.RelatedMixin):
         Video._setData(self, data)
         if self.isFullObject():
             self.extras = PlexVideoItemList(data.find('Extras'), initpath=self.initpath, server=self.server, container=self)
+            self.guids = plexobjects.PlexItemList(data, media.Guid, media.Guid.TYPE, server=self.server)
 
             # the PMS Extras API can return protocol=mp4 when it doesn't make sense, mark this as an extra so the MDE
             # knows what to do
@@ -563,6 +564,7 @@ class Show(Video, media.RelatedMixin, SectionOnDeckMixin):
         if self.isFullObject():
             self._genres = plexobjects.PlexItemList(data, media.Genre, media.Genre.TYPE, server=self.server)
             self.roles = plexobjects.PlexItemList(data, media.Role, media.Role.TYPE, server=self.server, container=self.container)
+            self.guids = plexobjects.PlexItemList(data, media.Guid, media.Guid.TYPE, server=self.server)
             #self.related = plexobjects.PlexItemList(data.find('Related'), plexlibrary.Hub, plexlibrary.Hub.TYPE, server=self.server, container=self)
             self.extras = PlexVideoItemList(data.find('Extras'), initpath=self.initpath, server=self.server, container=self)
             self.onDeck = PlexVideoItemList(data.find('OnDeck'), initpath=self.initpath, server=self.server,
