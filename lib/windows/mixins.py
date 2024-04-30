@@ -8,6 +8,8 @@ from . import kodigui
 from . import optionsdialog
 from . import busy
 from lib.util import T
+from lib.data_cache import dcm
+from plexnet import util as pnUtil
 
 
 class SeasonsMixin:
@@ -156,6 +158,11 @@ class SpoilersMixin(object):
     def noSpoilers(self):
         return self.getNoSpoilers()
 
+    def getCachedGenres(self, rating_key):
+        genres = dcm.getCacheData("show_genres", rating_key)
+        if genres:
+            return [pnUtil.AttributeDict(tag=g) for g in genres]
+
     def getNoSpoilers(self, item=None, show=None):
         """
         when called without item or show, retains a global noSpoilers value, otherwise return dynamically based on item
@@ -168,14 +175,24 @@ class SpoilersMixin(object):
         if item and item.type != "episode":
             return "off"
 
-        show = getattr(self, "show_", show or (item and item.show()) or None)
-        if not show:
-            return "off"
-
         nope = self.spoilerSetting
 
         if nope != "off" and self.spoilersAllowedFor:
-            for g in show.genres:
+            # instead of making possibly multiple separate API calls to find genres for episode's shows, try to get
+            # a cached value instead
+            genres = []
+            if item or show:
+                genres = self.getCachedGenres(item and item.grandparentRatingKey or show.ratingKey)
+
+            if not genres:
+                show = getattr(self, "show_", show or (item and item.show()) or None)
+                if not show:
+                    return "off"
+
+            if not genres and show:
+                genres = show.genres()
+
+            for g in genres:
                 if g.tag in util.SPOILER_ALLOWED_GENRES:
                     nope = "off"
                     break

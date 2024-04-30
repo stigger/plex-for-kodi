@@ -176,10 +176,11 @@ class TranscodeSession(plexobjects.PlexObject):
 class MediaTag(plexobjects.PlexObject):
     TYPE = None
     ID = 'None'
+    virtual = False
 
     def __repr__(self):
         tag = self.tag.replace(' ', '.')[0:20]
-        return '<%s:%s:%s>' % (self.__class__.__name__, self.id, tag)
+        return '<%s:%s:%s:%s>' % (self.__class__.__name__, self.id, tag, self.virtual)
 
     def __eq__(self, other):
         if other.__class__ != self.__class__:

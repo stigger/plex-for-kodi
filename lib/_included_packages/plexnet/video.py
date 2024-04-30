@@ -12,6 +12,8 @@ from . import util
 from . import mediachoice
 from .mixins import AudioCodecMixin
 
+from lib.data_cache import dcm
+
 
 class PlexVideoItemList(plexobjects.PlexItemList):
     def __init__(self, data, initpath=None, server=None, container=None):
@@ -610,10 +612,15 @@ class Show(Video, media.RelatedMixin, SectionOnDeckMixin):
     def refresh(self):
         self.server.query('/library/metadata/%s/refresh' % self.ratingKey)
 
-    @property
     def genres(self):
+        genres = dcm.getCacheData("show_genres", self.ratingKey)
+        if genres:
+            return [media.Genre(util.AttributeDict(tag="genre", attrib={"tag": g}, virtual=True)) for g in genres]
+
         if not self.isFullObject():
             self.reload(soft=True)
+
+        dcm.setCacheData("show_genres", self.ratingKey, [g.tag for g in self._genres])
         return self._genres
 
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+
 import gc
 import sys
 import re
@@ -882,6 +883,7 @@ if curThemeVer < THEME_VERSION:
 if not xbmcvfs.exists(os.path.join(ADDON.getAddonInfo('path'), "resources", "skins", "Main", "1080i",
                                    "script-plex-seek_dialog.xml")):
     applyTheme(theme)
+
 
 PM_MCMT_RE = re.compile(r'/\*.+\*/\s?', re.IGNORECASE | re.MULTILINE | re.DOTALL)
 PM_CMT_RE = re.compile(r'[\t ]+//.+\n?')

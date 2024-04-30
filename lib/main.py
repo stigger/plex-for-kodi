@@ -19,6 +19,7 @@ from .windows import background, userselect, home, windowutils
 from . import player
 from . import backgroundthread
 from . import util
+from .data_cache import dcm
 
 BACKGROUND = None
 quitKodi = False
@@ -170,6 +171,7 @@ def _main():
         util.ERROR()
     finally:
         util.DEBUG_LOG('Main: SHUTTING DOWN...')
+        dcm.storeDataCache()
         background.setShutdown()
         player.shutdown()
         plexapp.util.APP.preShutdown()
