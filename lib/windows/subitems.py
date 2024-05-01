@@ -404,7 +404,7 @@ class ShowWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMixin, 
         pl = playlist.LocalPlaylist(items, self.mediaItem.getServer())
         resume = False
         if not shuffle and self.mediaItem.type == 'show':
-            resume = self.getPlaylistResume(pl, items, self.mediaItem.title)
+            resume = self.getNextShowEp(pl, items, self.mediaItem.title)
             if resume is None:
                 return
 
