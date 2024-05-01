@@ -4,6 +4,7 @@ import os
 import json
 import time
 import copy
+import zlib
 
 from kodi_six import xbmcvfs
 
@@ -18,15 +19,20 @@ class DataCacheManager(object):
     }
     DC_LAST_UPDATE = None
     DC_PATH = os.path.join(translatePath(ADDON.getAddonInfo("profile")), "data_cache.json")
+    DC_LRU_TIMEOUT = 30
+    DC_LRUP_TIMEOUT = 90
+    USE_GZ = False
 
     def __init__(self):
+        if self.USE_GZ:
+            self.DC_PATH += "z"
         if xbmcvfs.exists(self.DC_PATH):
             try:
                 f = xbmcvfs.File(self.DC_PATH)
-                d = f.read()
+                d = f.readBytes() if self.USE_GZ else f.read()
                 f.close()
 
-                tdc = json.loads(d)
+                tdc = json.loads(zlib.decompress(d).decode("utf-8") if self.USE_GZ else d)
                 if tdc["general"].get("version", 0) < self.DATA_CACHES_VERSION:
                     tdc["general"]["version"] = self.DATA_CACHES_VERSION
                     # this is where we migrate
@@ -42,8 +48,8 @@ class DataCacheManager(object):
     def getCacheData(self, context, identifier):
         ret = self.DATA_CACHES.get(context, {}).get(identifier, {})
         if "data" in ret and ret["data"]:
-            # purge old data (> 90 days last updated)
-            if ret["updated"] < time.time() - 7776000:
+            # purge old data (> X days last updated)
+            if ret["updated"] < time.time() - self.DC_LRUP_TIMEOUT * 3600 * 24:
                 del self.DATA_CACHES[context][identifier]
                 return None
 
@@ -69,8 +75,8 @@ class DataCacheManager(object):
         for context, identifiers in d.items():
             if context != "general":
                 for identifier, iddata in identifiers.items():
-                    # clean up anything not accessed during the last 30 days
-                    if iddata["last_access"] < t - 2592000:
+                    # clean up anything not accessed during the last X days
+                    if iddata["last_access"] < t - self.DC_LRU_TIMEOUT * 3600 * 24:
                         DEBUG_LOG("Clearing cached data for: {}: {}".format(context, identifier))
                         del self.DATA_CACHES[context][identifier]
 
@@ -79,7 +85,10 @@ class DataCacheManager(object):
             try:
                 dcf = xbmcvfs.File(self.DC_PATH, "w")
                 self.dataCacheCleanup()
-                dcf.write(json.dumps(self.DATA_CACHES))
+                d = json.dumps(self.DATA_CACHES)
+                if self.USE_GZ:
+                    d = zlib.compress(d.encode("utf-8"))
+                dcf.write(d)
                 dcf.close()
                 LOG("Data cache written to: addon_data/script.plexmod/data_cache.json")
             except:
