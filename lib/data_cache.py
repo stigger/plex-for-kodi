@@ -32,6 +32,7 @@ class DataCacheManager(object):
                     # this is where we migrate
 
                 self.DATA_CACHES.update(tdc)
+                self.dataCacheCleanup()
                 self.DC_LAST_UPDATE = self.DATA_CACHES["general"]["updated"]
             except:
                 ERROR("Couldn't read data_cache.json")
@@ -41,6 +42,11 @@ class DataCacheManager(object):
     def getCacheData(self, context, identifier):
         ret = self.DATA_CACHES.get(context, {}).get(identifier, {})
         if "data" in ret and ret["data"]:
+            # purge old data (> 90 days last updated)
+            if ret["updated"] < time.time() - 7776000:
+                del self.DATA_CACHES[context][identifier]
+                return None
+
             self.DATA_CACHES[context][identifier]["last_access"] = time.time()
             return ret["data"]
 
@@ -49,10 +55,13 @@ class DataCacheManager(object):
             self.DATA_CACHES[context] = {}
         if identifier not in self.DATA_CACHES[context]:
             self.DATA_CACHES[context][identifier] = {}
-        self.DATA_CACHES[context][identifier]["data"] = value
         t = time.time()
         self.DATA_CACHES["general"]["updated"] = t
-        self.DATA_CACHES[context][identifier]["last_access"] = t
+        self.DATA_CACHES[context][identifier] = {
+            "updated": t,
+            "last_access": t,
+            "data": value
+        }
 
     def dataCacheCleanup(self):
         d = copy.deepcopy(self.DATA_CACHES)
