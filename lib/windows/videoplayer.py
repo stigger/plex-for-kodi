@@ -66,7 +66,10 @@ class OnDeckPaginator(pagination.MCLPaginator):
             return mli
 
     def getData(self, offset, amount):
-        return (self.parentWindow.prev or self.parentWindow.next).sectionOnDeck(offset=offset, limit=amount)
+        data = (self.parentWindow.prev or self.parentWindow.next).sectionOnDeck(offset=offset, limit=amount)
+        if self.parentWindow.next:
+            return list(filter(lambda x: x.ratingKey != self.parentWindow.next.ratingKey, data))
+        return data
 
 
 class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SpoilersMixin):
