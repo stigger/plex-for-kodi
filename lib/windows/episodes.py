@@ -416,11 +416,13 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                     mli.setProperty('unwatched', '')
                     mli.setProperty('progress', '')
                     mli.setProperty('unwatched.count', '')
+                    mli.dataSource.set('viewCount', 1)
                     self.setUserItemInfo(mli, fully_watched=True)
 
                 elif progress and progress > 60000:
                     # ep has progress
                     mli.setProperty('progress', util.getProgressImage(mli.dataSource, view_offset=progress))
+                    mli.dataSource.set('viewOffset', progress)
                     self.setUserItemInfo(mli, watched=True)
                     set_main_progress_to = progress
 
