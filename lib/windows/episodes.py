@@ -219,23 +219,13 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         SpoilersMixin.__init__(self, *args, **kwargs)
         self.episode = None
         self.reset(kwargs.get('episode'), kwargs.get('season'), kwargs.get('show'))
-        self.initialEpisode = kwargs.get('episode')
         self.parentList = kwargs.get('parentList')
-        self.lastItem = None
-        self.lastFocusID = None
-        self.lastNonOptionsFocusID = None
-        self.episodesPaginator = None
-        self.relatedPaginator = None
         self.cameFrom = kwargs.get('came_from')
         self.tasks = backgroundthread.Tasks()
-        self.initialized = False
-        self.currentItemLoaded = False
-        self.closing = False
-        self.manuallySelected = False
-        self._videoProgress = None
 
     def reset(self, episode, season=None, show=None):
         self.episode = episode
+        self.initialEpisode = episode
         self.season = season if season is not None else self.episode.season()
         try:
             self.show_ = show or (self.episode or self.season).show().reload(includeExtras=1, includeExtrasCount=10,
@@ -243,11 +233,18 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         except IndexError:
             raise util.NoDataException
 
+        self.initialized = False
+        self.closing = False
         self.parentList = None
+        self.episodesPaginator = None
+        self.relatedPaginator = None
         self.seasons = None
         self.manuallySelected = False
+        self.currentItemLoaded = False
+        self.lastItem = None
+        self.lastFocusID = None
+        self.lastNonOptionsFocusID = None
         self._videoProgress = None
-        #self.initialized = False
 
     def doClose(self):
         self.closing = True
@@ -273,6 +270,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.extraListControl = kodigui.ManagedControlList(self, self.EXTRA_LIST_ID, 5)
         self.relatedListControl = kodigui.ManagedControlList(self, self.RELATED_LIST_ID, 5)
 
+        self._setup_hooks()
         self._setup()
         self.postSetup()
 
@@ -305,9 +303,18 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         util.DEBUG_LOG("Episodes: {}: Got progress info: {}".format(
             self.episode and self.episode.ratingKey or None, self._videoProgress))
         try:
-            self.selectEpisode(progress_data=self._videoProgress)
+            redirect = self.selectEpisode(progress_data=self._videoProgress)
         except AttributeError:
             raise util.NoDataException
+
+        if redirect:
+            util.DEBUG_LOG("Got episode progress for a different season, redirecting")
+            self.episodeListControl.reset()
+            self.relatedListControl.reset()
+            self.reset(episode=redirect)
+            self._setup()
+            self.postSetup()
+            return
 
         mli = self.episodeListControl.getSelectedItem()
         if not mli or not self.episodesPaginator:
@@ -354,9 +361,11 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def setup(self):
         self._setup()
 
-    def _setup(self):
+    def _setup_hooks(self):
         player.PLAYER.on('new.video', self.onNewVideo)
         player.PLAYER.on('video.progress', self.onVideoProgress)
+
+    def _setup(self):
         (self.season or self.show_).reload(checkFiles=1, **VIDEO_RELOAD_KW)
 
         if not self.episodesPaginator:
@@ -442,6 +451,13 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             # no matching episode found
             mli = self.episodeListControl.getSelectedItem()
             self.setProgress(mli, view_offset=0)
+
+        if progress_data_left:
+            # we've probably watched something in the next season
+            key = '/library/metadata/{0}'.format(list(progress_data_left.keys())[-1])
+            ep = plexapp.SERVERMANAGER.selectedServer.getObject(key)
+            if ep.parentIndex != self.show_.parentIndex:
+                return ep
 
         self.episode = None
 
