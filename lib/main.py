@@ -172,6 +172,8 @@ def _main():
     finally:
         util.DEBUG_LOG('Main: SHUTTING DOWN...')
         dcm.storeDataCache()
+        dcm.deinit()
+        plexapp.util.INTERFACE.playbackManager.deinit()
         background.setShutdown()
         player.shutdown()
         plexapp.util.APP.preShutdown()
