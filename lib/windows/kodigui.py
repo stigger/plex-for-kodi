@@ -111,6 +111,8 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
         carryProps = kwargs.get("window_props", None)
         if carryProps:
             self.setProperties(list(carryProps.keys()), list(carryProps.values()))
+        self.setBoolProperty('use_alt_watched', util.getSetting('use_alt_watched', False))
+        self.setBoolProperty('hide_aw_bg', util.getSetting('hide_aw_bg', False))
 
     def onInit(self):
         global LAST_BG_URL
@@ -131,8 +133,6 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
             self.setProperty('background_colour_opaque', "0xff111111")
 
         self.setBoolProperty('use_bg_fallback', util.addonSettings.useBgFallback)
-        self.setBoolProperty('use_alt_watched', util.getSetting('use_alt_watched', False))
-        self.setBoolProperty('hide_aw_bg', util.getSetting('hide_aw_bg', False))
 
         try:
             if self.started:
@@ -240,12 +240,12 @@ class BaseDialog(xbmcgui.WindowXMLDialog, BaseFunctions):
         carryProps = kwargs.get("dialog_props", None)
         if carryProps:
             self.setProperties(list(carryProps.keys()), list(carryProps.values()))
+        self.setBoolProperty('use_alt_watched', util.getSetting('use_alt_watched', False))
+        self.setBoolProperty('hide_aw_bg', util.getSetting('hide_aw_bg', False))
 
     def onInit(self):
         self._winID = xbmcgui.getCurrentWindowDialogId()
         BaseFunctions.lastDialogID = self._winID
-        self.setBoolProperty('use_alt_watched', util.getSetting('use_alt_watched', False))
-        self.setBoolProperty('hide_aw_bg', util.getSetting('hide_aw_bg', False))
         if self.started:
             self.onReInit()
         else:

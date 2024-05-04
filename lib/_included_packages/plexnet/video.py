@@ -581,6 +581,10 @@ class Show(Video, media.RelatedMixin, SectionOnDeckMixin):
         return self.viewedLeafCount == self.leafCount
 
     @property
+    def isFullyWatched(self):
+        return self.isWatched
+
+    @property
     def playbackSettings(self):
         return util.INTERFACE.playbackManager(self)
 
@@ -644,6 +648,10 @@ class Season(Video):
     @property
     def isWatched(self):
         return self.viewedLeafCount == self.leafCount
+
+    @property
+    def isFullyWatched(self):
+        return self.isWatched
 
     def episodes(self, watched=None, offset=None, limit=None):
         path = self.key

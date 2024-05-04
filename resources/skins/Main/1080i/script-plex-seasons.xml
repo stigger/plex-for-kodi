@@ -149,27 +149,6 @@
                     <texture background="true">$INFO[Window.Property(thumb)]</texture>
                     <aspectratio>scale</aspectratio>
                 </control>
-                <control type="group">
-                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(Container(400).ListItem.Property(unwatched)) + String.IsEmpty(Container(400).ListItem.Property(unwatched.count)) + String.IsEmpty(Container(400).ListItem.Property(progress))</visible>
-                    <posx>357</posx>
-                    <posy>0</posy>
-                    <control type="image">
-                        <posx>0</posx>
-                        <posy>0</posy>
-                        <width>50</width>
-                        <height>40</height>
-                        <visible>String.IsEmpty(Window.Property(hide_aw_bg))</visible>
-                        <texture>script.plex/white-square-bl-rounded_w.png</texture>
-                        <colordiffuse>CC000000</colordiffuse>
-                    </control>
-                    <control type="image">
-                        <posx>17</posx>
-                        <posy>12</posy>
-                        <width>16</width>
-                        <height>16</height>
-                        <texture>script.plex/indicators/watched.png</texture>
-                    </control>
-                </control>
 
                 <control type="label">
                     <posx>466</posx>
@@ -460,7 +439,7 @@
                                         </control>
                                     </control>
                                     <control type="group">
-                                        <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                        <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                         <posx>128</posx>
                                         <posy>0</posy>
                                         <control type="image">
@@ -583,7 +562,7 @@
                                             </control>
                                         </control>
                                         <control type="group">
-                                            <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                            <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                             <posx>128</posx>
                                             <posy>0</posy>
                                             <control type="image">
@@ -1045,7 +1024,7 @@
                                         </control>
                                     </control>
                                     <control type="image">
-	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>196</posx>
 	                                    <posy>0</posy>
 	                                    <width>48</width>
@@ -1053,7 +1032,7 @@
 	                                    <texture>script.plex/indicators/unwatched.png</texture>
 	                                </control>
 	                                <control type="group">
-	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>204</posx>
 	                                    <posy>0</posy>
 	                                    <control type="image">
@@ -1210,7 +1189,7 @@
                                             </control>
                                         </control>
                                         <control type="image">
-                                            <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                            <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                             <posx>196</posx>
                                             <posy>0</posy>
                                             <width>48</width>
@@ -1218,7 +1197,7 @@
                                             <texture>script.plex/indicators/unwatched.png</texture>
                                         </control>
                                         <control type="group">
-                                            <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                            <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                             <posx>204</posx>
                                             <posy>0</posy>
                                             <control type="image">

@@ -414,6 +414,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                     # ep was just watched
                     just_fully_watched = True
                     mli.setProperty('unwatched', '')
+                    mli.setProperty('watched', '1')
                     mli.setProperty('progress', '')
                     mli.setProperty('unwatched.count', '')
                     mli.dataSource.set('viewCount', 1)
@@ -421,6 +422,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
                 elif progress and progress > 60000:
                     # ep has progress
+                    mli.setProperty('watched', '')
                     mli.setProperty('progress', util.getProgressImage(mli.dataSource, view_offset=progress))
                     mli.dataSource.set('viewOffset', progress)
                     self.setUserItemInfo(mli, watched=True)
@@ -1077,6 +1079,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def updateItems(self, item=None):
         if item:
             item.setProperty('unwatched', not item.dataSource.isWatched and '1' or '')
+            item.setProperty('watched', item.dataSource.isFullyWatched and '1' or '')
             self.setProgress(item)
             item.setProperty('progress', util.getProgressImage(item.dataSource))
             (self.season or self.show_).reload()
@@ -1159,6 +1162,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def setPostReloadItemInfo(self, video, mli):
         self.setItemAudioAndSubtitleInfo(video, mli)
         mli.setProperty('unwatched', not video.isWatched and '1' or '')
+        mli.setProperty('watched', video.isFullyWatched and '1' or '')
         mli.setProperty('video.res', video.resolutionString())
         mli.setProperty('audio.codec', video.audioCodecString())
         mli.setProperty('video.codec', video.videoCodecString())
@@ -1235,6 +1239,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         mli.setProperty('episode.number', str(episode.index) or '')
         mli.setProperty('episode.duration', util.durationToText(episode.duration.asInt()))
         mli.setProperty('unwatched', not episode.isWatched and '1' or '')
+        mli.setProperty('watched', episode.isFullyWatched and '1' or '')
         # mli.setProperty('progress', util.getProgressImage(obj))
         return mli
 

@@ -983,6 +983,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         mli.dataSource.reload()
         if mli.dataSource.isWatched:
             mli.setProperty('unwatched', '')
+            mli.setBoolProperty('watched', mli.dataSource.isFullyWatched)
             mli.setProperty('unwatched.count', '')
         else:
             if self.section.TYPE == 'show' or mli.dataSource.TYPE == 'show' or mli.dataSource.TYPE == 'season':
@@ -1321,6 +1322,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                         mli.setProperty('art', obj.defaultArt.asTranscodedImageURL(*artDim))
                         if not obj.isWatched:
                             mli.setProperty('unwatched', '1')
+                        mli.setBoolProperty('watched', obj.isFullyWatched)
                         mli.setProperty('initialized', '1')
                     else:
                         mli.clear()
@@ -1387,9 +1389,11 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                                     mli.setProperty('unwatched.count', str(obj.unViewedLeafCount))
                                 else:
                                     mli.setProperty('unwatched', '1')
+                            elif obj.isFullyWatched and obj.TYPE != "Directory":
+                                mli.setBoolProperty('watched', '1')
+                            mli.setProperty('initialized', '1')
 
                         mli.setProperty('progress', util.getProgressImage(obj))
-                        mli.setProperty('initialized', '1')
                     else:
                         mli.clear()
                         if obj is False:

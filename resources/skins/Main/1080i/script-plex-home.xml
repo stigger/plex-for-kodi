@@ -819,7 +819,7 @@
                                     <label>$INFO[ListItem.Label2]</label>
                                 </control>
                                 "<control type="image">
-                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>196</posx>
                                     <posy>0</posy>
                                     <width>48</width>
@@ -827,7 +827,7 @@
                                     <texture>script.plex/indicators/unwatched.png</texture>
                                 </control>
                                 <control type="group">
-                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>204</posx>
                                     <posy>0</posy>
                                     <control type="image">
@@ -988,7 +988,7 @@
                                         <label>$INFO[ListItem.Label2]</label>
                                     </control>
                                     <control type="image">
-	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>196</posx>
 	                                    <posy>0</posy>
 	                                    <width>48</width>
@@ -996,7 +996,7 @@
 	                                    <texture>script.plex/indicators/unwatched.png</texture>
 	                                </control>
 	                                <control type="group">
-	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>204</posx>
 	                                    <posy>0</posy>
 	                                    <control type="image">
@@ -1196,7 +1196,7 @@
                                     <label>$INFO[ListItem.Label2]</label>
                                 </control>
                                 <control type="image">
-                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>196</posx>
                                     <posy>0</posy>
                                     <width>48</width>
@@ -1204,7 +1204,7 @@
                                     <texture>script.plex/indicators/unwatched.png</texture>
                                 </control>
                                 <control type="group">
-                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>204</posx>
                                     <posy>0</posy>
                                     <control type="image">
@@ -1365,7 +1365,7 @@
                                         <label>$INFO[ListItem.Label2]</label>
                                     </control>
                                     <control type="image">
-	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>196</posx>
 	                                    <posy>0</posy>
 	                                    <width>48</width>
@@ -1373,7 +1373,7 @@
 	                                    <texture>script.plex/indicators/unwatched.png</texture>
 	                                </control>
 	                                <control type="group">
-	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>204</posx>
 	                                    <posy>0</posy>
 	                                    <control type="image">
@@ -1573,7 +1573,7 @@
                                     <label>$INFO[ListItem.Label2]</label>
                                 </control>
                                 "<control type="image">
-                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>196</posx>
                                     <posy>0</posy>
                                     <width>48</width>
@@ -1581,7 +1581,7 @@
                                     <texture>script.plex/indicators/unwatched.png</texture>
                                 </control>
                                 <control type="group">
-                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>204</posx>
                                     <posy>0</posy>
                                     <control type="image">
@@ -1742,7 +1742,7 @@
                                         <label>$INFO[ListItem.Label2]</label>
                                     </control>
                                     <control type="image">
-	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>196</posx>
 	                                    <posy>0</posy>
 	                                    <width>48</width>
@@ -1750,7 +1750,7 @@
 	                                    <texture>script.plex/indicators/unwatched.png</texture>
 	                                </control>
 	                                <control type="group">
-	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>204</posx>
 	                                    <posy>0</posy>
 	                                    <control type="image">
@@ -1950,7 +1950,7 @@
                                     <label>$INFO[ListItem.Label2]</label>
                                 </control>
                                 "<control type="image">
-                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>196</posx>
                                     <posy>0</posy>
                                     <width>48</width>
@@ -1958,7 +1958,7 @@
                                     <texture>script.plex/indicators/unwatched.png</texture>
                                 </control>
                                 <control type="group">
-                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>204</posx>
                                     <posy>0</posy>
                                     <control type="image">
@@ -2119,7 +2119,7 @@
                                         <label>$INFO[ListItem.Label2]</label>
                                     </control>
                                     <control type="image">
-	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>196</posx>
 	                                    <posy>0</posy>
 	                                    <width>48</width>
@@ -2127,7 +2127,7 @@
 	                                    <texture>script.plex/indicators/unwatched.png</texture>
 	                                </control>
 	                                <control type="group">
-	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>204</posx>
 	                                    <posy>0</posy>
 	                                    <control type="image">
@@ -2928,7 +2928,7 @@
                                     <label>$INFO[ListItem.Label2]</label>
                                 </control>
                                 "<control type="image">
-                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>196</posx>
                                     <posy>0</posy>
                                     <width>48</width>
@@ -2936,7 +2936,7 @@
                                     <texture>script.plex/indicators/unwatched.png</texture>
                                 </control>
                                 <control type="group">
-                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>204</posx>
                                     <posy>0</posy>
                                     <control type="image">
@@ -3097,7 +3097,7 @@
                                         <label>$INFO[ListItem.Label2]</label>
                                     </control>
                                     <control type="image">
-	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>196</posx>
 	                                    <posy>0</posy>
 	                                    <width>48</width>
@@ -3105,7 +3105,7 @@
 	                                    <texture>script.plex/indicators/unwatched.png</texture>
 	                                </control>
 	                                <control type="group">
-	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>204</posx>
 	                                    <posy>0</posy>
 	                                    <control type="image">
@@ -3305,7 +3305,7 @@
                                     <label>$INFO[ListItem.Label2]</label>
                                 </control>
                                 "<control type="image">
-                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>196</posx>
                                     <posy>0</posy>
                                     <width>48</width>
@@ -3313,7 +3313,7 @@
                                     <texture>script.plex/indicators/unwatched.png</texture>
                                 </control>
                                 <control type="group">
-                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>204</posx>
                                     <posy>0</posy>
                                     <control type="image">
@@ -3474,7 +3474,7 @@
                                         <label>$INFO[ListItem.Label2]</label>
                                     </control>
                                     <control type="image">
-	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>196</posx>
 	                                    <posy>0</posy>
 	                                    <width>48</width>
@@ -3482,7 +3482,7 @@
 	                                    <texture>script.plex/indicators/unwatched.png</texture>
 	                                </control>
 	                                <control type="group">
-	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>204</posx>
 	                                    <posy>0</posy>
 	                                    <control type="image">
@@ -5495,7 +5495,7 @@
                                     <label>$INFO[ListItem.Label2]</label>
                                 </control>
                                 "<control type="image">
-                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>196</posx>
                                     <posy>0</posy>
                                     <width>48</width>
@@ -5503,7 +5503,7 @@
                                     <texture>script.plex/indicators/unwatched.png</texture>
                                 </control>
                                 <control type="group">
-                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>204</posx>
                                     <posy>0</posy>
                                     <control type="image">
@@ -5664,7 +5664,7 @@
                                         <label>$INFO[ListItem.Label2]</label>
                                     </control>
                                     <control type="image">
-	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>196</posx>
 	                                    <posy>0</posy>
 	                                    <width>48</width>
@@ -5672,7 +5672,7 @@
 	                                    <texture>script.plex/indicators/unwatched.png</texture>
 	                                </control>
 	                                <control type="group">
-	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>204</posx>
 	                                    <posy>0</posy>
 	                                    <control type="image">
@@ -5872,7 +5872,7 @@
                                     <label>$INFO[ListItem.Label2]</label>
                                 </control>
                                 "<control type="image">
-                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>196</posx>
                                     <posy>0</posy>
                                     <width>48</width>
@@ -5880,7 +5880,7 @@
                                     <texture>script.plex/indicators/unwatched.png</texture>
                                 </control>
                                 <control type="group">
-                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>204</posx>
                                     <posy>0</posy>
                                     <control type="image">
@@ -6041,7 +6041,7 @@
                                         <label>$INFO[ListItem.Label2]</label>
                                     </control>
                                     <control type="image">
-	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>196</posx>
 	                                    <posy>0</posy>
 	                                    <width>48</width>
@@ -6049,7 +6049,7 @@
 	                                    <texture>script.plex/indicators/unwatched.png</texture>
 	                                </control>
 	                                <control type="group">
-	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>204</posx>
 	                                    <posy>0</posy>
 	                                    <control type="image">
@@ -6249,7 +6249,7 @@
                                     <label>$INFO[ListItem.Label2]</label>
                                 </control>
                                 "<control type="image">
-                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>196</posx>
                                     <posy>0</posy>
                                     <width>48</width>
@@ -6257,7 +6257,7 @@
                                     <texture>script.plex/indicators/unwatched.png</texture>
                                 </control>
                                 <control type="group">
-                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>204</posx>
                                     <posy>0</posy>
                                     <control type="image">
@@ -6418,7 +6418,7 @@
                                         <label>$INFO[ListItem.Label2]</label>
                                     </control>
                                     <control type="image">
-	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>196</posx>
 	                                    <posy>0</posy>
 	                                    <width>48</width>
@@ -6426,7 +6426,7 @@
 	                                    <texture>script.plex/indicators/unwatched.png</texture>
 	                                </control>
 	                                <control type="group">
-	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>204</posx>
 	                                    <posy>0</posy>
 	                                    <control type="image">
@@ -6626,7 +6626,7 @@
                                     <label>$INFO[ListItem.Label2]</label>
                                 </control>
                                 "<control type="image">
-                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>196</posx>
                                     <posy>0</posy>
                                     <width>48</width>
@@ -6634,7 +6634,7 @@
                                     <texture>script.plex/indicators/unwatched.png</texture>
                                 </control>
                                 <control type="group">
-                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>204</posx>
                                     <posy>0</posy>
                                     <control type="image">
@@ -6795,7 +6795,7 @@
                                         <label>$INFO[ListItem.Label2]</label>
                                     </control>
                                     <control type="image">
-	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
+	                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>196</posx>
 	                                    <posy>0</posy>
 	                                    <width>48</width>
@@ -6803,7 +6803,7 @@
 	                                    <texture>script.plex/indicators/unwatched.png</texture>
 	                                </control>
 	                                <control type="group">
-	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+	                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
 	                                    <posx>204</posx>
 	                                    <posy>0</posy>
 	                                    <control type="image">

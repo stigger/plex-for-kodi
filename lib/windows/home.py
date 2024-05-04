@@ -1292,6 +1292,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/show.png')
         if not obj.isWatched:
             mli.setProperty('unwatched', '1')
+        mli.setBoolProperty('watched', obj.isFullyWatched)
         return mli
 
     def createSeasonListItem(self, obj, wide=False):
@@ -1300,6 +1301,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/show.png')
         if not obj.isWatched:
             mli.setProperty('unwatched.count', str(obj.unViewedLeafCount))
+        mli.setBoolProperty('watched', obj.isFullyWatched)
         return mli
 
     def createMovieListItem(self, obj, wide=False):
@@ -1307,6 +1309,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/movie.png')
         if not obj.isWatched:
             mli.setProperty('unwatched', '1')
+        mli.setBoolProperty('watched', obj.isFullyWatched)
         return mli
 
     def createShowListItem(self, obj, wide=False):
@@ -1314,6 +1317,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/show.png')
         if not obj.isWatched:
             mli.setProperty('unwatched.count', str(obj.unViewedLeafCount))
+        mli.setBoolProperty('watched', obj.isFullyWatched)
         return mli
 
     def createAlbumListItem(self, obj, wide=False):
@@ -1464,7 +1468,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         obj = mli.dataSource
         if obj.type in ('episode', 'movie'):
             mli.setProperty('unwatched', not obj.isWatched and '1' or '')
+            mli.setProperty('watched', obj.isFullyWatched and '1' or '')
         elif obj.type in ('season', 'show', 'album'):
+            mli.setProperty('watched', obj.isFullyWatched and '1' or '')
             if obj.isWatched:
                 mli.setProperty('unwatched.count', '')
             else:
