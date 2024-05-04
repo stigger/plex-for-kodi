@@ -261,6 +261,11 @@ class Settings(object):
                 ).description(
                     T(33023, "")
                 ),
+                BoolSetting(
+                    'hide_aw_bg', T(33024, ''), False
+                ).description(
+                    T(33025, "")
+                ),
                 OptionsSetting(
                     'no_episode_spoilers2', T(33006, ''),
                     'unwatched',

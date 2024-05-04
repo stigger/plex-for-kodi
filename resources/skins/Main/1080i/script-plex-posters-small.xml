@@ -203,6 +203,7 @@
                                             <posy>0</posy>
                                             <width>30</width>
                                             <height>30</height>
+                                            <visible>String.IsEmpty(Window.Property(hide_aw_bg))</visible>
                                             <texture>script.plex/white-square-bl-rounded_w.png</texture>
                                             <colordiffuse>CC000000</colordiffuse>
                                         </control>
@@ -360,6 +361,7 @@
                                                 <posy>0</posy>
                                                 <width>30</width>
                                                 <height>30</height>
+                                                <visible>String.IsEmpty(Window.Property(hide_aw_bg))</visible>
                                                 <texture>script.plex/white-square-bl-rounded_w.png</texture>
                                                 <colordiffuse>CC000000</colordiffuse>
                                             </control>

@@ -1897,3 +1897,11 @@ msgstr ""
 msgctxt "#33023"
 msgid "Instead of marking unwatched items, mark watched items with a checkmark (modern clients; default: off)"
 msgstr ""
+
+msgctxt "#33024"
+msgid "Hide black backdrop in inverted watched states"
+msgstr ""
+
+msgctxt "#33025"
+msgid "When the above is enabled, hide the black backdrop of the watched state."
+msgstr ""

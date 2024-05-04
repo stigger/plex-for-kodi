@@ -132,6 +132,7 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
 
         self.setBoolProperty('use_bg_fallback', util.addonSettings.useBgFallback)
         self.setBoolProperty('use_alt_watched', util.getSetting('use_alt_watched', False))
+        self.setBoolProperty('hide_aw_bg', util.getSetting('hide_aw_bg', False))
 
         try:
             if self.started:

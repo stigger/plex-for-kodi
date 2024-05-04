@@ -214,6 +214,7 @@
                             <posy>0</posy>
                             <width>40</width>
                             <height>40</height>
+                            <visible>String.IsEmpty(Window.Property(hide_aw_bg))</visible>
                             <texture>script.plex/white-square-bl-rounded_w.png</texture>
                             <colordiffuse>CC000000</colordiffuse>
                         </control>
@@ -1068,7 +1069,8 @@
 	                                        <posy>0</posy>
 	                                        <width>40</width>
 	                                        <height>40</height>
-	                                        <texture>script.plex/white-square-bl-rounded_w.png</texture>
+	                                        <visible>String.IsEmpty(Window.Property(hide_aw_bg))</visible>
+                                            <texture>script.plex/white-square-bl-rounded_w.png</texture>
 	                                        <colordiffuse>CC000000</colordiffuse>
 	                                    </control>
 	                                    <control type="image">
@@ -1232,6 +1234,7 @@
                                                 <posy>0</posy>
                                                 <width>40</width>
                                                 <height>40</height>
+                                                <visible>String.IsEmpty(Window.Property(hide_aw_bg))</visible>
                                                 <texture>script.plex/white-square-bl-rounded_w.png</texture>
                                                 <colordiffuse>CC000000</colordiffuse>
                                             </control>

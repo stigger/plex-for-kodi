@@ -2381,3 +2381,11 @@ msgstr "Moderne, invertierte Geschaut-Status benutzen"
 msgctxt "#33023"
 msgid "Instead of marking unwatched items, mark watched items with a checkmark (modern clients; default: off)"
 msgstr "Anstatt nicht geschaute Elemente zu markieren, geschaute Elemente mit einem Haken markieren (moderne Clients; standard: aus)"
+
+msgctxt "#33024"
+msgid "Hide black backdrop in inverted watched states"
+msgstr "Kein Hintergrund beim invertierten Geschaut-Status"
+
+msgctxt "#33025"
+msgid "When the above is enabled, hide the black backdrop of the watched state."
+msgstr "Wenn die vorherige Option aktiviert ist, den schwarzen Hintergrund nicht darstellen."
