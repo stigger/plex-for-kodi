@@ -470,7 +470,7 @@
                                             </control>
                                         </control>
                                         <control type="image">
-                                            <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
+                                            <visible>String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                             <posx>264</posx>
                                             <posy>0</posy>
                                             <width>35</width>
@@ -478,7 +478,7 @@
                                             <texture>script.plex/indicators/unwatched.png</texture>
                                         </control>
                                         <control type="group">
-                                            <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
+                                            <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                             <posx>259</posx>
                                             <posy>0</posy>
                                             <control type="image">
@@ -486,7 +486,7 @@
                                                 <posy>0</posy>
                                                 <width>40</width>
                                                 <height>32</height>
-                                                <visible>String.IsEmpty(Window.Property(hide_aw_bg))</visible>
+                                                <visible>String.IsEmpty(ListItem.Property(hide_aw_bg))</visible>
                                                 <texture>script.plex/white-square-bl-rounded_w.png</texture>
                                                 <colordiffuse>CC000000</colordiffuse>
                                             </control>
@@ -617,7 +617,7 @@
                                                 </control>
                                             </control>
                                             <control type="image">
-                                                <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
+                                                <visible>String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                                 <posx>264</posx>
                                                 <posy>0</posy>
                                                 <width>35</width>
@@ -625,7 +625,7 @@
                                                 <texture>script.plex/indicators/unwatched.png</texture>
                                             </control>
                                             <control type="group">
-                                                <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
+                                                <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                                 <posx>267</posx>
                                                 <posy>0</posy>
                                                 <control type="image">
@@ -633,7 +633,7 @@
                                                     <posy>0</posy>
                                                     <width>32</width>
                                                     <height>32</height>
-                                                    <visible>String.IsEmpty(Window.Property(hide_aw_bg))</visible>
+                                                    <visible>String.IsEmpty(ListItem.Property(hide_aw_bg))</visible>
                                                     <texture>script.plex/white-square-bl-rounded_w.png</texture>
                                                     <colordiffuse>CC000000</colordiffuse>
                                                 </control>
@@ -832,7 +832,7 @@
                                             </control>
                                         </control>
                                         <control type="image">
-                                            <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
+                                            <visible>String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                             <posx>196</posx>
                                             <posy>0</posy>
                                             <width>48</width>
@@ -840,7 +840,7 @@
                                             <texture>script.plex/indicators/unwatched.png</texture>
                                         </control>
                                         <control type="group">
-                                            <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
+                                            <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                             <posx>204</posx>
                                             <posy>0</posy>
                                             <control type="image">
@@ -848,7 +848,7 @@
                                                 <posy>0</posy>
                                                 <width>40</width>
                                                 <height>40</height>
-                                                <visible>String.IsEmpty(Window.Property(hide_aw_bg))</visible>
+                                                <visible>String.IsEmpty(ListItem.Property(hide_aw_bg))</visible>
                                                 <texture>script.plex/white-square-bl-rounded_w.png</texture>
                                                 <colordiffuse>CC000000</colordiffuse>
                                             </control>
@@ -1005,7 +1005,7 @@
                                                 <texture>script.plex/indicators/unwatched.png</texture>
                                             </control>
                                             <control type="group">
-                                                <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
+                                                <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                                 <posx>204</posx>
                                                 <posy>0</posy>
                                                 <control type="image">
@@ -1013,7 +1013,7 @@
                                                     <posy>0</posy>
                                                     <width>40</width>
                                                     <height>40</height>
-                                                    <visible>String.IsEmpty(Window.Property(hide_aw_bg))</visible>
+                                                    <visible>String.IsEmpty(ListItem.Property(hide_aw_bg))</visible>
                                                     <texture>script.plex/white-square-bl-rounded_w.png</texture>
                                                     <colordiffuse>CC000000</colordiffuse>
                                                 </control>

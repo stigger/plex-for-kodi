@@ -222,7 +222,7 @@
                             <posy>24</posy>
                             <control type="group">
                                 <control type="image">
-                                    <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
+                                    <visible>String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>880</posx>
                                     <posy>-3</posy>
                                     <width>35</width>
@@ -311,7 +311,7 @@
                                 <posy>24</posy>
                                 <control type="group">
                                     <control type="image">
-                                        <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
+                                        <visible>String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                         <posx>880</posx>
                                         <posy>-2</posy>
                                         <width>35</width>
@@ -412,7 +412,7 @@
 
                                 <control type="group">
                                     <control type="image">
-                                        <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
+                                        <visible>String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(watched))</visible>
                                         <posx>957</posx>
                                         <posy>0</posy>
                                         <width>48</width>
@@ -420,7 +420,7 @@
                                         <texture>script.plex/indicators/unwatched-rounded.png</texture>
                                     </control>
                                     <control type="group">
-                                        <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
+                                        <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                         <posx>951</posx>
                                         <posy>8</posy>
                                         <control type="image">

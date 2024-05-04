@@ -352,6 +352,14 @@ class ManagedListItem(object):
         self._listItem.setArt({"thumb": thumbnailImage, "icon": iconImage})
         self.dataSource = data_source
         self.properties = {}
+        add_props = {
+            'use_alt_watched': util.getSetting('use_alt_watched', False) and '1' or '',
+            'hide_aw_bg': util.getSetting('hide_aw_bg', False) and '1' or ''
+        }
+        if properties is not None:
+            properties.update(add_props)
+        else:
+            properties = add_props
         self.label = label
         self.label2 = label2
         self.iconImage = iconImage
