@@ -271,4 +271,5 @@ class BaseRelatedPaginator(MCLPaginator):
                 mli.setProperty('unwatched.count', str(mli.dataSource.unViewedLeafCount))
         else:
             mli.setProperty('unwatched', not mli.dataSource.isWatched and '1' or '')
+            mli.setBoolProperty('watched', mli.dataSource.isFullyWatched)
             mli.setProperty('progress', util.getProgressImage(mli.dataSource))
