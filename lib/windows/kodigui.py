@@ -244,6 +244,8 @@ class BaseDialog(xbmcgui.WindowXMLDialog, BaseFunctions):
     def onInit(self):
         self._winID = xbmcgui.getCurrentWindowDialogId()
         BaseFunctions.lastDialogID = self._winID
+        self.setBoolProperty('use_alt_watched', util.getSetting('use_alt_watched', False))
+        self.setBoolProperty('hide_aw_bg', util.getSetting('hide_aw_bg', False))
         if self.started:
             self.onReInit()
         else:

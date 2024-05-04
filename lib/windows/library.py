@@ -1321,6 +1321,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                         mli.setProperty('art', obj.defaultArt.asTranscodedImageURL(*artDim))
                         if not obj.isWatched:
                             mli.setProperty('unwatched', '1')
+                        mli.setProperty('initialized', '1')
                     else:
                         mli.clear()
                         if obj is False:
@@ -1388,6 +1389,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                                     mli.setProperty('unwatched', '1')
 
                         mli.setProperty('progress', util.getProgressImage(obj))
+                        mli.setProperty('initialized', '1')
                     else:
                         mli.clear()
                         if obj is False:
