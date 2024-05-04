@@ -73,8 +73,10 @@ class EpisodesPaginator(pagination.MCLPaginator):
         return mli
 
     def prepareListItem(self, data, mli):
+        mli.setBoolProperty('watched', mli.dataSource.isFullyWatched)
         if not mli.dataSource.isWatched:
             mli.setProperty('unwatched.count', str(mli.dataSource.unViewedLeafCount))
+            mli.setProperty('unwatched', '1')
         mli.setProperty('progress', util.getProgressImage(mli.dataSource))
 
     def setEpisode(self, ep):
