@@ -103,7 +103,8 @@ class DataCacheManager(object):
                         del self.DATA_CACHES["cache"][k][context][identifier]
 
     def storeDataCache(self):
-        if self.DATA_CACHES and self.DC_LAST_UPDATE != self.DATA_CACHES["general"]["updated"]:
+        lu = self.DATA_CACHES["general"].get("updated")
+        if self.DATA_CACHES and lu and self.DC_LAST_UPDATE != lu:
             try:
                 dcf = xbmcvfs.File(self.DC_PATH, "w")
                 self.dataCacheCleanup()
