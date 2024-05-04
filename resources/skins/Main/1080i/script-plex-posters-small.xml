@@ -187,12 +187,32 @@
                                 </control>
                                 <control type="group">
                                     <control type="image">
-                                        <visible>!String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                        <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
                                         <posx>115</posx>
                                         <posy>0</posy>
                                         <width>29</width>
                                         <height>29</height>
                                         <texture>script.plex/indicators/unwatched.png</texture>
+                                    </control>
+                                    <control type="group">
+                                        <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                        <posx>114</posx>
+                                        <posy>0</posy>
+                                        <control type="image">
+                                            <posx>0</posx>
+                                            <posy>0</posy>
+                                            <width>30</width>
+                                            <height>30</height>
+                                            <texture>script.plex/white-square-bl-rounded_w.png</texture>
+                                            <colordiffuse>CC000000</colordiffuse>
+                                        </control>
+                                        <control type="image">
+                                            <posx>9</posx>
+                                            <posy>9</posy>
+                                            <width>12</width>
+                                            <height>12</height>
+                                            <texture>script.plex/indicators/watched.png</texture>
+                                        </control>
                                     </control>
                                     <control type="group">
                                         <visible>!String.IsEmpty(ListItem.Property(unwatched.count))</visible>
@@ -324,12 +344,32 @@
                                     </control>
                                     <control type="group">
                                         <control type="image">
-                                            <visible>!String.IsEmpty(ListItem.Property(unwatched))</visible>
+                                            <visible>String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(unwatched))</visible>
                                             <posx>115</posx>
                                             <posy>0</posy>
                                             <width>29</width>
                                             <height>29</height>
                                             <texture>script.plex/indicators/unwatched.png</texture>
+                                        </control>
+                                        <control type="group">
+                                            <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
+                                            <posx>114</posx>
+                                            <posy>0</posy>
+                                            <control type="image">
+                                                <posx>0</posx>
+                                                <posy>0</posy>
+                                                <width>30</width>
+                                                <height>30</height>
+                                                <texture>script.plex/white-square-bl-rounded_w.png</texture>
+                                                <colordiffuse>CC000000</colordiffuse>
+                                            </control>
+                                            <control type="image">
+                                                <posx>9</posx>
+                                                <posy>9</posy>
+                                                <width>12</width>
+                                                <height>12</height>
+                                                <texture>script.plex/indicators/watched.png</texture>
+                                            </control>
                                         </control>
                                         <control type="group">
                                             <visible>!String.IsEmpty(ListItem.Property(unwatched.count))</visible>

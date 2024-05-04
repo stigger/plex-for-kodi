@@ -257,13 +257,9 @@ class Settings(object):
                     T(32100, 'Skip user selection and pin entry on startup.')
                 ),
                 BoolSetting(
-                    'speedy_home_hubs2', T(33503, 'Use alternative hubs refresh'), False
+                    'use_alt_watched', T(33022, ''), False
                 ).description(
-                    T(
-                        33504,
-                        "Refreshes all hubs for all libraries after an item's watch-state has changed, instead of "
-                        "only those likely affected. Use this if you find a hub that doesn't update properly."
-                    )
+                    T(33023, "")
                 ),
                 OptionsSetting(
                     'no_episode_spoilers2', T(33006, ''),

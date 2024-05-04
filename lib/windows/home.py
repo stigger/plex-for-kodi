@@ -555,6 +555,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         plexapp.util.APP.on('change:no_unwatched_episode_titles', self.setDirty)
         plexapp.util.APP.on('change:spoilers_allowed_genres', self.setDirty)
         plexapp.util.APP.on('change:hubs_use_new_continue_watching', self.setDirty)
+        plexapp.util.APP.on('change:use_alt_watched', self.setDirty)
         plexapp.util.APP.on('change:theme', self.setTheme)
 
         player.PLAYER.on('session.ended', self.updateOnDeckHubs)
@@ -579,6 +580,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         plexapp.util.APP.off('change:no_unwatched_episode_titles', self.setDirty)
         plexapp.util.APP.off('change:spoilers_allowed_genres', self.setDirty)
         plexapp.util.APP.off('change:hubs_use_new_continue_watching', self.setDirty)
+        plexapp.util.APP.off('change:use_alt_watched', self.setDirty)
         plexapp.util.APP.off('change:theme', self.setTheme)
 
         player.PLAYER.off('session.ended', self.updateOnDeckHubs)

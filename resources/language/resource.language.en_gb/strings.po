@@ -1889,3 +1889,11 @@ msgstr ""
 msgctxt "#33021"
 msgid "Choose action"
 msgstr ""
+
+msgctxt "#33022"
+msgid "Use modern inverted watched states"
+msgstr ""
+
+msgctxt "#33023"
+msgid "Instead of marking unwatched items, mark watched items with a checkmark (modern clients; default: off)"
+msgstr ""
