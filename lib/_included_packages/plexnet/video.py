@@ -47,6 +47,8 @@ def forceMediaChoice(method):
 
 
 class Video(media.MediaItem, AudioCodecMixin):
+    __slots__ = ("_settings",)
+
     TYPE = None
     manually_selected_sub_stream = False
     current_subtitle_is_embedded = False
@@ -376,6 +378,7 @@ class SectionOnDeckMixin(object):
 
 
 class PlayableVideo(Video, media.RelatedMixin):
+    __slots__ = ("extras", "guids", "chapters")
     TYPE = None
     _videoStreams = None
     _audioStreams = None
@@ -476,6 +479,8 @@ class PlayableVideo(Video, media.RelatedMixin):
 
 @plexobjects.registerLibType
 class Movie(PlayableVideo):
+    __slots__ = ("collections", "countries", "directors", "genres", "media", "producers", "roles", "reviews",
+                 "writers", "markers", "sessionKey", "user", "player", "session", "transcodeSession")
     TYPE = 'movie'
 
     def _setData(self, data):
@@ -559,6 +564,7 @@ class Movie(PlayableVideo):
 
 @plexobjects.registerLibType
 class Show(Video, media.RelatedMixin, SectionOnDeckMixin):
+    __slots__ = ("_genres", "guids", "onDeck")
     TYPE = 'show'
 
     def _setData(self, data):
@@ -676,6 +682,7 @@ class Season(Video):
 
 @plexobjects.registerLibType
 class Episode(PlayableVideo, SectionOnDeckMixin):
+    __slots__ = ("_show", "_season")
     TYPE = 'episode'
 
     def init(self, data):
