@@ -7,6 +7,7 @@ import threading
 import traceback
 from six.moves import range
 from six.moves import zip
+from plexnet import util as pnUtil
 from .. import util
 
 MONITOR = None
@@ -347,19 +348,17 @@ DUMMY_DATA_SOURCE = DummyDataSource()
 
 
 class ManagedListItem(object):
-    def __init__(self, label='', label2='', iconImage='', thumbnailImage='', path='', data_source=None, properties=None):
+    PROPS = {
+        'use_alt_watched': util.getSetting('use_alt_watched', False) and '1' or '',
+        'hide_aw_bg': util.getSetting('hide_aw_bg', False) and '1' or ''
+    }
+
+    def __init__(self, label='', label2='', iconImage='', thumbnailImage='', path='', data_source=None,
+                 properties=None):
         self._listItem = xbmcgui.ListItem(label, label2, path=path)
         self._listItem.setArt({"thumb": thumbnailImage, "icon": iconImage})
         self.dataSource = data_source
         self.properties = {}
-        add_props = {
-            'use_alt_watched': util.getSetting('use_alt_watched', False) and '1' or '',
-            'hide_aw_bg': util.getSetting('hide_aw_bg', False) and '1' or ''
-        }
-        if properties is not None:
-            properties.update(add_props)
-        else:
-            properties = add_props
         self.label = label
         self.label2 = label2
         self.iconImage = iconImage
@@ -368,6 +367,9 @@ class ManagedListItem(object):
         self._ID = None
         self._manager = None
         self._valid = True
+        for k, v in self.PROPS.items():
+            self.setProperty(k, v)
+
         if properties:
             for k, v in properties.items():
                 self.setProperty(k, v)
@@ -509,6 +511,15 @@ class ManagedListItem(object):
 
     def onDestroy(self):
         pass
+
+
+def watchMarkerSettingsChanged(*args, **kwargs):
+    ManagedListItem.PROPS['use_alt_watched'] = util.getSetting('use_alt_watched', False) and '1' or ''
+    ManagedListItem.PROPS['hide_aw_bg'] = util.getSetting('hide_aw_bg', False) and '1' or ''
+
+
+pnUtil.APP.on('change:use_alt_watched', watchMarkerSettingsChanged)
+pnUtil.APP.on('change:hide_aw_bg', watchMarkerSettingsChanged)
 
 
 class ManagedControlList(object):
