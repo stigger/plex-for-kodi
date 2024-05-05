@@ -118,7 +118,7 @@
                                     <texture>script.plex/indicators/unwatched.png</texture>
                                 </control>
                                 <control type="group">
-                                    <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
+                                    <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                     <posx>895</posx>
                                     <posy>0</posy>
                                     <control type="image">
@@ -263,7 +263,7 @@
                                         <texture>script.plex/indicators/unwatched.png</texture>
                                     </control>
                                     <control type="group">
-                                        <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
+                                        <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                         <posx>895</posx>
                                         <posy>0</posy>
                                         <control type="image">
@@ -437,7 +437,7 @@
                                         <texture>script.plex/indicators/unwatched.png</texture>
                                     </control>
                                     <control type="group">
-                                        <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
+                                        <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
                                         <posx>951</posx>
                                         <posy>0</posy>
                                         <control type="image">
