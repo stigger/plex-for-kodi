@@ -456,7 +456,7 @@
                                             <posy>9</posy>
                                             <width>12</width>
                                             <height>12</height>
-                                            <texture>script.plex/indicators/watched.png</texture>
+                                            <texture fallback="script.plex/indicators/watched.png">special://profile/addon_data/script.plexmod/media/watched.png</texture>
                                         </control>
                                     </control>
                                     <control type="group">
@@ -579,7 +579,7 @@
                                                 <posy>9</posy>
                                                 <width>12</width>
                                                 <height>12</height>
-                                                <texture>script.plex/indicators/watched.png</texture>
+                                                <texture fallback="script.plex/indicators/watched.png">special://profile/addon_data/script.plexmod/media/watched.png</texture>
                                             </control>
                                         </control>
                                         <control type="group">
@@ -1049,7 +1049,7 @@
 	                                        <posy>12</posy>
 	                                        <width>16</width>
 	                                        <height>16</height>
-	                                        <texture>script.plex/indicators/watched.png</texture>
+	                                        <texture fallback="script.plex/indicators/watched.png">special://profile/addon_data/script.plexmod/media/watched.png</texture>
 	                                    </control>
 	                                </control>
                                     <control type="group">
@@ -1214,7 +1214,7 @@
                                                 <posy>12</posy>
                                                 <width>16</width>
                                                 <height>16</height>
-                                                <texture>script.plex/indicators/watched.png</texture>
+                                                <texture fallback="script.plex/indicators/watched.png">special://profile/addon_data/script.plexmod/media/watched.png</texture>
                                             </control>
                                         </control>
                                         <control type="group">
