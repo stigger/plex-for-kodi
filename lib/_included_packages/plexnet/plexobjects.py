@@ -548,7 +548,7 @@ def buildItem(server, elem, initpath, bytag=False, container=None, tag_fallback=
 
 
 class ItemContainer(list):
-    __slots__ = ("container",)
+    __slots__ = ("container", "totalSize")
 
     def __getattr__(self, attr):
         return getattr(self.container, attr)
