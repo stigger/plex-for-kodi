@@ -475,7 +475,7 @@
                                             <posy>0</posy>
                                             <width>35</width>
                                             <height>35</height>
-                                            <texture>script.plex/indicators/unwatched.png</texture>
+                                            <texture fallback="script.plex/indicators/unwatched.png">special://profile/addon_data/script.plexmod/media/unwatched.png</texture>
                                         </control>
                                         <control type="group">
                                             <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
@@ -622,7 +622,7 @@
                                                 <posy>0</posy>
                                                 <width>35</width>
                                                 <height>35</height>
-                                                <texture>script.plex/indicators/unwatched.png</texture>
+                                                <texture fallback="script.plex/indicators/unwatched.png">special://profile/addon_data/script.plexmod/media/unwatched.png</texture>
                                             </control>
                                             <control type="group">
                                                 <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
@@ -837,7 +837,7 @@
                                             <posy>0</posy>
                                             <width>48</width>
                                             <height>48</height>
-                                            <texture>script.plex/indicators/unwatched.png</texture>
+                                            <texture fallback="script.plex/indicators/unwatched.png">special://profile/addon_data/script.plexmod/media/unwatched.png</texture>
                                         </control>
                                         <control type="group">
                                             <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
@@ -1002,7 +1002,7 @@
                                                 <posy>0</posy>
                                                 <width>48</width>
                                                 <height>48</height>
-                                                <texture>script.plex/indicators/unwatched.png</texture>
+                                                <texture fallback="script.plex/indicators/unwatched.png">special://profile/addon_data/script.plexmod/media/unwatched.png</texture>
                                             </control>
                                             <control type="group">
                                                 <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
