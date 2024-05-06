@@ -192,7 +192,7 @@
                                         <posy>0</posy>
                                         <width>29</width>
                                         <height>29</height>
-                                        <texture>script.plex/indicators/unwatched.png</texture>
+                                        <texture fallback="script.plex/indicators/unwatched.png">special://profile/addon_data/script.plexmod/media/unwatched.png</texture>
                                     </control>
                                     <control type="group">
                                         <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(initialized)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>
@@ -350,7 +350,7 @@
                                             <posy>0</posy>
                                             <width>29</width>
                                             <height>29</height>
-                                            <texture>script.plex/indicators/unwatched.png</texture>
+                                            <texture fallback="script.plex/indicators/unwatched.png">special://profile/addon_data/script.plexmod/media/unwatched.png</texture>
                                         </control>
                                         <control type="group">
                                             <visible>!String.IsEmpty(Window.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(initialized)) + String.IsEmpty(ListItem.Property(unwatched)) + String.IsEmpty(ListItem.Property(unwatched.count)) + String.IsEmpty(ListItem.Property(progress))</visible>

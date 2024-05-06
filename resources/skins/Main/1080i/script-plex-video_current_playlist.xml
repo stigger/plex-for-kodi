@@ -115,7 +115,7 @@
                                     <posy>-1</posy>
                                     <width>35</width>
                                     <height>35</height>
-                                    <texture>script.plex/indicators/unwatched.png</texture>
+                                    <texture fallback="script.plex/indicators/unwatched.png">special://profile/addon_data/script.plexmod/media/unwatched.png</texture>
                                 </control>
                                 <control type="group">
                                     <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
@@ -260,7 +260,7 @@
                                         <posy>-1</posy>
                                         <width>35</width>
                                         <height>35</height>
-                                        <texture>script.plex/indicators/unwatched.png</texture>
+                                        <texture fallback="script.plex/indicators/unwatched.png">special://profile/addon_data/script.plexmod/media/unwatched.png</texture>
                                     </control>
                                     <control type="group">
                                         <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
@@ -434,7 +434,7 @@
                                         <posy>-1</posy>
                                         <width>35</width>
                                         <height>35</height>
-                                        <texture>script.plex/indicators/unwatched.png</texture>
+                                        <texture fallback="script.plex/indicators/unwatched.png">special://profile/addon_data/script.plexmod/media/unwatched.png</texture>
                                     </control>
                                     <control type="group">
                                         <visible>!String.IsEmpty(ListItem.Property(use_alt_watched)) + !String.IsEmpty(ListItem.Property(watched))</visible>
