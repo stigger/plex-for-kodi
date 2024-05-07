@@ -104,7 +104,11 @@ class UpdateHubTask(backgroundthread.Task):
                 return
             self.callback(self.hub)
         except plexnet.exceptions.BadRequest:
-            util.DEBUG_LOG('404 on section: {0}'.format(repr(self.section.title)))
+            util.DEBUG_LOG('404 on hub: {0}'.format(repr(self.hub.hubIdentifier)))
+        except util.NoDataException:
+            util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
+        except:
+            util.DEBUG_LOG('Something went wrong when updating hub: {0}'.format(repr(self.hub.hubIdentifier)))
 
 
 class ExtendHubTask(backgroundthread.Task):
@@ -136,6 +140,10 @@ class ExtendHubTask(backgroundthread.Task):
             util.DEBUG_LOG('404 on hub: {0}'.format(repr(self.hub.hubIdentifier)))
             if self.canceledCallback:
                 self.canceledCallback(self.hub)
+        except util.NoDataException:
+            util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
+        except:
+            util.DEBUG_LOG('Something went wrong when extending hub: {0}'.format(repr(self.hub.hubIdentifier)))
 
 
 class HomeSection(object):
@@ -964,8 +972,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         if item.getProperty('is.home'):
             self.storeLastBG()
 
-        if item.dataSource != self.lastSection:
-            self.sectionChanged()
+        if item.dataSource != self.lastSection or force:
+            self.sectionChanged(force=force)
 
     def checkHubItem(self, controlID, actionID=None):
         control = self.hubControls[controlID - 400]
@@ -1021,7 +1029,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
     def cleanTasks(self):
         self.tasks = [t for t in self.tasks if t]
 
-    def sectionChanged(self):
+    def sectionChanged(self, force=False):
         self.sectionChangeTimeout = time.time() + 0.5
 
         # wait 2s at max if we're currently awaiting any hubs to reload
@@ -1033,16 +1041,22 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             waited += 1
         self.showBusy(False)
 
+        if force:
+            self.sectionChangeTimeout = None
+            self._sectionChanged(immediate=True)
+            return
+
         if not self.sectionChangeThread or (self.sectionChangeThread and not self.sectionChangeThread.is_alive()):
             self.sectionChangeThread = threading.Thread(target=self._sectionChanged, name="sectionchanged")
             self.sectionChangeThread.start()
 
-    def _sectionChanged(self):
-        if not self.sectionChangeTimeout:
-            return
-        while not util.MONITOR.waitForAbort(0.1):
-            if time.time() >= self.sectionChangeTimeout:
-                break
+    def _sectionChanged(self, immediate=False):
+        if not immediate:
+            if not self.sectionChangeTimeout:
+                return
+            while not util.MONITOR.waitForAbort(0.1):
+                if time.time() >= self.sectionChangeTimeout:
+                    break
 
         ds = self.sectionList.getSelectedItem().dataSource
         if self.lastSection == ds:
@@ -1059,7 +1073,15 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             util.DEBUG_LOG('Section changed ({0}): {1}'.format(section.key, repr(section.title)))
             self.showHubs(section)
             self.lastSection = section
-            #self.checkSectionItem(force=True)
+
+        # timing issue
+        cur_sel_ds = self.sectionList.getSelectedItem().dataSource
+        if self.lastSection != cur_sel_ds:
+            util.DEBUG_LOG("Section changed in the "
+                           "meantime from {} to {}, re-running the section change".format(
+                            section.key,
+                            cur_sel_ds.key))
+            self.checkSectionItem(force=True)
 
     def sectionHubsCallback(self, section, hubs):
         with self.lock:

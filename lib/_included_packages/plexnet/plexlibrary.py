@@ -10,6 +10,7 @@ from . import media
 from . import exceptions
 from . import util
 from . import signalsmixin
+from lib.exceptions import NoDataException
 from six.moves import map
 
 
@@ -568,7 +569,10 @@ class Hub(BaseHub):
             return
 
         self.initpath = self.key
-        self._setData(data)
+        try:
+            self._setData(data)
+        except:
+            raise NoDataException
         self.init(data)
 
     def extend(self, start=None, size=None):
