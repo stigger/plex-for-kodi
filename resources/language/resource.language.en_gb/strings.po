@@ -1905,3 +1905,35 @@ msgstr ""
 msgctxt "#33025"
 msgid "When the above is enabled, hide the black backdrop of the watched state."
 msgstr ""
+
+msgctxt "#33026"
+msgid "Map path: {}"
+msgstr ""
+
+msgctxt "#33027"
+msgid "Remove mapping: {}"
+msgstr ""
+
+msgctxt "#33028"
+msgid "Hide library"
+msgstr ""
+
+msgctxt "#33029"
+msgid "Show library"
+msgstr ""
+
+msgctxt "#33030"
+msgid "Choose action for: {}"
+msgstr ""
+
+msgctxt "#33031"
+msgid "Select Kodi source for {}"
+msgstr ""
+
+msgctxt "#33032"
+msgid "Show path mapping indicators"
+msgstr ""
+
+msgctxt "#33033"
+msgid "When path mapping is active for a library, display an indicator."
+msgstr ""

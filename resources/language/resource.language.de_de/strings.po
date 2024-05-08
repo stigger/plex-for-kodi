@@ -2389,3 +2389,35 @@ msgstr "Kein Hintergrund beim invertierten Geschaut-Status"
 msgctxt "#33025"
 msgid "When the above is enabled, hide the black backdrop of the watched state."
 msgstr "Wenn die vorherige Option aktiviert ist, den schwarzen Hintergrund nicht darstellen."
+
+msgctxt "#33026"
+msgid "Map path: {}"
+msgstr "Pfad zuordnen: {}"
+
+msgctxt "#33027"
+msgid "Remove mapping: {}"
+msgstr "Zuordnung entfernen: {}"
+
+msgctxt "#33028"
+msgid "Hide library"
+msgstr "Bibliothek verstecken"
+
+msgctxt "#33029"
+msgid "Show library"
+msgstr "Bibliothek anzeigen"
+
+msgctxt "#33030"
+msgid "Choose action for: {}"
+msgstr "Aktion wählen für: {}"
+
+msgctxt "#33031"
+msgid "Select Kodi source for {}"
+msgstr "Kodi Quelle auswählen für {}"
+
+msgctxt "#33032"
+msgid "Show path mapping indicators"
+msgstr "Pfadzuordnungs-Indikator anzeigen"
+
+msgctxt "#33033"
+msgid "When path mapping is active for a library, display an indicator."
+msgstr "Wenn eine Pfadzuordnung für eine Bibliothek aktiv ist, einen Indikator anzeigen."

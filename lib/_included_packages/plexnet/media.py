@@ -197,6 +197,11 @@ class Collection(MediaTag):
     FILTER = 'collection'
 
 
+class Location(MediaTag):
+    TYPE = 'Location'
+    FILTER = 'location'
+
+
 class Country(MediaTag):
     TYPE = 'Country'
     FILTER = 'country'

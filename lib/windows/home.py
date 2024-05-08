@@ -19,8 +19,10 @@ from . import busy
 from . import opener
 from . import search
 from . import optionsdialog
+from . import dropdown
 from .mixins import SpoilersMixin
 
+from lib.path_mapping import pmm
 from lib.util import T
 from lib.plex_hosts import pdm
 from six.moves import range
@@ -663,6 +665,12 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                     self.setFocusId(self.lastFocusID)
 
             if controlID == self.SECTION_LIST_ID:
+                if action == xbmcgui.ACTION_CONTEXT_MENU:
+                    if not self.sectionMenu():
+                        return
+                    else:
+                        self.serverRefresh()
+                        return
                 self.checkSectionItem(action=action)
 
             if controlID == self.SERVER_BUTTON_ID:
@@ -903,13 +911,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             return
 
         carryProps = None
-        if auto_play and self.hubControls:
-            # carry over some props to the new window as we might end up showing a resume dialog not rendering the
-            # underlying window. the new window class will invalidate the old one temporarily, though, as it seems
-            # and the properties vanish, resulting in all text2lines enabled hubs to lose their title2 labels
-            carryProps = dict(
-                ('hub.text2lines.4{0:02d}'.format(i), '1') for i, hubCtrl in enumerate(self.hubControls) if
-                hubCtrl.dataSource and self.HUBMAP[hubCtrl.dataSource.getCleanHubIdentifier()].get("text2lines"))
+        if auto_play:
+            carryProps = self.dialogProps
 
         try:
             command = opener.open(mli.dataSource, auto_play=auto_play, dialog_props=carryProps)
@@ -955,6 +958,72 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                     self.sectionList.selectItem(mli.pos())
                     self.lastSection = mli.dataSource
                     self.sectionChanged()
+
+    @property
+    def dialogProps(self):
+        # carry over some props to the new window as we might end up showing a dialog not rendering the
+        # underlying window. the new window class will invalidate the old one temporarily, though, as it seems
+        # and the properties vanish, resulting in all text2lines enabled hubs to lose their title2 labels
+        if self.hubControls:
+            return dict(
+                ('hub.text2lines.4{0:02d}'.format(i), '1') for i, hubCtrl in enumerate(self.hubControls) if
+                hubCtrl.dataSource and self.HUBMAP[hubCtrl.dataSource.getCleanHubIdentifier()].get("text2lines"))
+
+    def sectionMenu(self):
+        item = self.sectionList.getSelectedItem()
+        if not item or not item.getProperty('item'):
+            return
+
+        section = item.dataSource
+        if not section.key:
+            return
+
+        options = []
+
+        for loc in section.locations:
+            source, target = section.getMappedPath(loc)
+            loc_is_mapped = source and target
+            options.append(
+                {'key': 'map', 'mapped': loc_is_mapped, 'path': loc, 'display': T(33026, "Map path: {}").format(loc)
+                    if not loc_is_mapped else T(33027, "Remove mapping: {}").format(target)
+                 }
+            )
+
+        if not section.isHidden:
+            options.append({'key': 'toggle', 'display': T(33028, "Hide library")})
+
+        choice = dropdown.showDropdown(
+            options,
+            pos=(660, 441),
+            close_direction='none',
+            set_dropdown_prop=False,
+            header=T(33030, 'Choose action for: {}').format(section.title),
+            select_index=0,
+            align_items="left",
+            dialog_props=self.dialogProps
+        )
+
+        if not choice:
+            return
+
+        if choice["key"] == "map":
+            is_mapped = choice.get("mapped")
+            if is_mapped:
+                # show deletion
+                source, target = section.getMappedPath(choice["path"])
+                section.deleteMapping(target)
+                return True
+
+            else:
+                # show fb
+                # select loc to map
+                d = xbmcgui.Dialog().browse(0, T(33031, "Select Kodi source for {}").format(choice["path"]), "files")
+                if not d:
+                    return
+                pmm.addPathMapping(d, choice["path"])
+                return True
+        elif choice["key"] == "toggle":
+            pass
 
     def checkSectionItem(self, force=False, action=None):
         item = self.sectionList.getSelectedItem()
@@ -1142,9 +1211,14 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             self.tasks = [SectionHubsTask().setup(s, self.sectionHubsCallback) for s in [HomeSection, PlaylistsSection] + sections]
             backgroundthread.BGThreader.addTasks(self.tasks)
 
+        show_pm_indicator = util.getSetting('path_mapping_indicators', True)
         for section in sections:
-            mli = kodigui.ManagedListItem(section.title, thumbnailImage='script.plex/home/type/{0}.png'.format(section.type), data_source=section)
+            mli = kodigui.ManagedListItem(section.title,
+                                          thumbnailImage='script.plex/home/type/{0}.png'.format(section.type),
+                                          data_source=section)
             mli.setProperty('item', '1')
+            if pmm.mapping and show_pm_indicator:
+                mli.setBoolProperty('is.mapped', section.isMapped)
             items.append(mli)
 
         self.bottomItem = len(items) - 1
