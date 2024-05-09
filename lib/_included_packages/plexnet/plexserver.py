@@ -118,7 +118,7 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         data = self.query(key)
         return plexobjects.buildItem(self, data[0], key, container=self)
 
-    def hubs(self, section=None, count=None, search_query=None):
+    def hubs(self, section=None, count=None, search_query=None, section_ids=None):
         hubs = []
 
         params = {"includeMarkers": 1}
@@ -143,6 +143,10 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
                     return hubs
                 else:
                     q = '/hubs/sections/%s' % section
+            else:
+                # home hub
+                if section_ids:
+                    params['pinnedContentDirectoryID'] = ",".join(section_ids)
 
             if count is not None:
                 params['count'] = count

@@ -296,6 +296,11 @@ class Settings(object):
                     T(32962, "Visually separate hubs horizontally using a thin line.")
                 ),
                 BoolSetting(
+                    'path_mapping_indicators', T(33032, 'Show path mapping indicators'), True
+                ).description(
+                    T(33033, "When path mapping is active for a library, display an indicator.")
+                ),
+                BoolSetting(
                     'search_use_kodi_kbd', T(32955, 'Use Kodi keyboard for searching'), False
                 ),
                 ThemeMusicSetting('theme_music', T(32480, 'Theme music'), 5),

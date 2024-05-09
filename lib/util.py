@@ -885,31 +885,25 @@ if not xbmcvfs.exists(os.path.join(ADDON.getAddonInfo('path'), "resources", "ski
     applyTheme(theme)
 
 
-PM_MCMT_RE = re.compile(r'/\*.+\*/\s?', re.IGNORECASE | re.MULTILINE | re.DOTALL)
-PM_CMT_RE = re.compile(r'[\t ]+//.+\n?')
-PM_COMMA_RE = re.compile(r',\s*}\s*}')
+# get mounts
+KODI_SOURCES = []
 
-# path mapping
-mapfile = os.path.join(translatePath(ADDON.getAddonInfo("profile")), "path_mapping.json")
-PATH_MAP = None
-if xbmcvfs.exists(mapfile):
+
+def getKodiSources():
     try:
-        f = xbmcvfs.File(mapfile)
-        # sanitize json
-
-        # remove multiline comments
-        data = PM_MCMT_RE.sub("", f.read())
-        # remove comments
-        data = PM_CMT_RE.sub("", data)
-        # remove invalid trailing comma
-
-        data = PM_COMMA_RE.sub("}}", data)
-        PATH_MAP = json.loads(data)
-        f.close()
+        data = rpc.Files.GetSources(media="files")["sources"]
     except:
-        ERROR("Couldn't read path_mapping.json")
+        LOG("Couldn't parse Kodi sources")
     else:
-        LOG("Path mapping: {}".format(repr(PATH_MAP)))
+        for d in data:
+            f = d["file"]
+            if f.startswith("smb://") or f.startswith("nfs://") or f.startswith("/") or ':\\\\' in f:
+                KODI_SOURCES.append(d)
+        LOG("Parsed {} Kodi sources: {}".format(len(KODI_SOURCES), KODI_SOURCES))
+
+
+if getSetting('path_mapping', True):
+    getKodiSources()
 
 
 def populateTimeFormat():

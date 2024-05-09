@@ -10,6 +10,7 @@ from . import media
 from . import exceptions
 from . import util
 from . import signalsmixin
+from lib.path_mapping import pmm, norm_sep
 from lib.exceptions import NoDataException
 from six.moves import map
 
@@ -91,9 +92,20 @@ class LibrarySection(plexobjects.PlexObject):
 
     isLibraryPQ = True
 
+    def __init__(self, data, initpath=None, server=None, container=None):
+        self.locations = []
+        self._isMapped = None
+        super(LibrarySection, self).__init__(data, initpath=initpath, server=server, container=container)
+
     def __repr__(self):
         title = self.title.replace(' ', '.')[0:20]
         return '<%s:%s>' % (self.__class__.__name__, title.encode('utf8'))
+
+    def _setData(self, data):
+        super(LibrarySection, self)._setData(data)
+        for loc in plexobjects.PlexItemList(data, media.Location, media.Location.TYPE, server=self.server):
+            sep = norm_sep(loc.path)
+            self.locations.append(loc.path if loc.path.endswith(sep) else loc.path + sep)
 
     @staticmethod
     def fromFilter(filter_):
@@ -127,6 +139,34 @@ class LibrarySection(plexobjects.PlexObject):
 
     def isLibraryItem(self):
         return True
+
+    def getMappedPath(self, loc=None):
+        if not self.locations:
+            return None, None
+
+        return pmm.getMappedPathFor(loc or self.locations[0], self.server)
+
+    def deleteMapping(self, target):
+        pmm.deletePathMapping(target, server=self.getServer())
+        self._isMapped = None
+
+    @property
+    def isMapped(self):
+        if self._isMapped is not None:
+            return self._isMapped
+        elif self._isMapped is False:
+            return False
+
+        for loc in self.locations:
+            if all(self.getMappedPath(loc)):
+                self._isMapped = True
+                return True
+        self._isMapped = False
+        return self._isMapped
+
+    @property
+    def isHidden(self):
+        return False
 
     def getAbsolutePath(self, key):
         if key == 'key':
@@ -575,7 +615,7 @@ class Hub(BaseHub):
             raise NoDataException
         self.init(data)
 
-    def extend(self, start=None, size=None):
+    def extend(self, start=None, size=None, **kwargs):
         path = self.key
 
         args = {}
@@ -583,6 +623,9 @@ class Hub(BaseHub):
         if size is not None:
             args['X-Plex-Container-Start'] = start
             args['X-Plex-Container-Size'] = size
+
+        if kwargs:
+            args.update(kwargs)
 
         if args:
             path += util.joinArgs(args) if '?' not in path else '&' + util.joinArgs(args).lstrip('?')
