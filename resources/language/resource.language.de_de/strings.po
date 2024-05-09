@@ -2403,8 +2403,8 @@ msgid "Hide library"
 msgstr "Bibliothek verstecken"
 
 msgctxt "#33029"
-msgid "Show library"
-msgstr "Bibliothek anzeigen"
+msgid "Show library: {}"
+msgstr "Bibliothek anzeigen: {}"
 
 msgctxt "#33030"
 msgid "Choose action for: {}"
@@ -2421,3 +2421,7 @@ msgstr "Pfadzuordnungs-Indikator anzeigen"
 msgctxt "#33033"
 msgid "When path mapping is active for a library, display an indicator."
 msgstr "Wenn eine Pfadzuordnung für eine Bibliothek aktiv ist, einen Indikator anzeigen."
+
+msgctxt "#33034"
+msgid "Show hidden libraries"
+msgstr "Versteckte Bibliotheken anzeigen"

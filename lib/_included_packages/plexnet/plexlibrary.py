@@ -615,7 +615,7 @@ class Hub(BaseHub):
             raise NoDataException
         self.init(data)
 
-    def extend(self, start=None, size=None):
+    def extend(self, start=None, size=None, **kwargs):
         path = self.key
 
         args = {}
@@ -623,6 +623,9 @@ class Hub(BaseHub):
         if size is not None:
             args['X-Plex-Container-Start'] = start
             args['X-Plex-Container-Size'] = size
+
+        if kwargs:
+            args.update(kwargs)
 
         if args:
             path += util.joinArgs(args) if '?' not in path else '&' + util.joinArgs(args).lstrip('?')

@@ -1919,7 +1919,7 @@ msgid "Hide library"
 msgstr ""
 
 msgctxt "#33029"
-msgid "Show library"
+msgid "Show library: {}"
 msgstr ""
 
 msgctxt "#33030"
@@ -1936,4 +1936,8 @@ msgstr ""
 
 msgctxt "#33033"
 msgid "When path mapping is active for a library, display an indicator."
+msgstr ""
+
+msgctxt "#33034"
+msgid "Show hidden libraries"
 msgstr ""
