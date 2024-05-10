@@ -172,14 +172,14 @@ class PlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
         if choice['key'] == 'visit':
             self.openItem(mli.dataSource)
         elif choice['key'] == 'play':
-            self.playlistListClicked(resume=False)
+            self.playlistListClicked(resume=False, play=True)
         elif choice['key'] == 'resume':
-            self.playlistListClicked(resume=True)
+            self.playlistListClicked(resume=True, play=True)
 
     def searchButtonClicked(self):
         self.processCommand(search.dialog(self))
 
-    def playlistListClicked(self, no_item=False, shuffle=False, resume=None):
+    def playlistListClicked(self, no_item=False, shuffle=False, resume=None, play=False):
         if no_item:
             mli = None
         else:
@@ -203,7 +203,7 @@ class PlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):
                     pq = plexnet.playqueue.createPlayQueueForItem(self.playlist, options=args)
                     opener.open(pq)
             elif self.playlist.playlistType == 'video':
-                if not util.addonSettings.playlistVisitMedia:
+                if not util.addonSettings.playlistVisitMedia or play:
                     if resume is None and bool(mli.dataSource.viewOffset.asInt()):
                         return self.plItemPlaybackMenu(select_choice='resume')
 
