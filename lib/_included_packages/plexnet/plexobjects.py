@@ -202,7 +202,7 @@ class PlexObject(Checks):
         return True
 
     def get(self, attr, default=''):
-        ret = self.__dict__.get(attr)
+        ret = self.__dict__.get(attr, getattr(self, attr) if attr in self.__slots__ else None)
         return ret is not None and ret or PlexValue(default, self)
 
     def set(self, attr, value):

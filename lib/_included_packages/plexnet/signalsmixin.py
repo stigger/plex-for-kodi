@@ -3,7 +3,7 @@ from . import signalslot
 
 
 class SignalsMixin(object):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self._signals = {}
 
     def on(self, signalName, callback):

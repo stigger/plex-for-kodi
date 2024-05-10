@@ -481,8 +481,7 @@ class Playlist(playlist.BasePlaylist, signalsmixin.SignalsMixin):
     TYPE = 'playlist'
 
     def __init__(self, *args, **kwargs):
-        playlist.BasePlaylist.__init__(self, *args, **kwargs)
-        signalsmixin.SignalsMixin.__init__(self)
+        super(Playlist, self).__init__(*args, **kwargs)
         self._itemsLoaded = False
 
     def __repr__(self):
