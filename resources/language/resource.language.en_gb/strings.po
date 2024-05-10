@@ -1949,3 +1949,11 @@ msgstr ""
 msgctxt "#33036"
 msgid "Delete episode S{0:02d}E{1:02d} from {2}?"
 msgstr ""
+
+msgctxt "#33037"
+msgid "Maximum intro offset to consider"
+msgstr ""
+
+msgctxt "#33038"
+msgid "When encountering an intro marker with a start time offset greater than this, ignore it (default: 600s/10m)"
+msgstr ""

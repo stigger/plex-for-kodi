@@ -134,7 +134,7 @@ class SeekDialog(kodigui.BaseDialog):
     SKIP_STEPS = {"negative": [-10000], "positive": [30000]}
 
     def __init__(self, *args, **kwargs):
-        kodigui.BaseDialog.__init__(self, *args, **kwargs)
+        super(SeekDialog, self).__init__(*args, **kwargs)
 
         # fixme: heyo, there's a lot of disorder in here.
         self.handler = kwargs.get('handler')
@@ -292,11 +292,22 @@ class SeekDialog(kodigui.BaseDialog):
         if not self._enableMarkerSkip:
             return None
 
-        if not self._markers and hasattr(self.handler.player.video, "markers"):
+        if self._markers is None and hasattr(self.handler.player.video, "markers"):
             markers = []
 
             for marker in self.handler.player.video.markers:
                 if marker.type in MARKERS:
+                    # skip completely bad markers
+                    if marker.startTimeOffset.asInt() > self.duration:
+                        continue
+
+                    # skip intro markers that are too late
+                    if marker.type == "intro" and \
+                            marker.startTimeOffset.asInt() > util.addonSettings.introMarkerMaxOffset * 1000:
+                        util.DEBUG_LOG("Throwing away intro marker {}, as its start time offset is bigger than the"
+                                       " configured maximum".format(marker))
+                        continue
+
                     m = MARKERS[marker.type].copy()
                     marker.startTimeOffset = marker.startTimeOffset.asInt() \
                         if not isinstance(marker.startTimeOffset, int) else marker.startTimeOffset
@@ -339,10 +350,6 @@ class SeekDialog(kodigui.BaseDialog):
                 if marker.endTimeOffset > self.duration:
                     marker.endTimeOffset = self.duration
                     util.DEBUG_LOG("Fixing marker endTimeOffset for: {}".format(marker))
-
-                # skip completely bad markers
-                if marker.startTimeOffset > self.duration:
-                    continue
 
                 markerEndNegoff = FINAL_MARKER_NEGOFF if getattr(markerDef["marker"], "final", False) else 0
 
@@ -429,6 +436,7 @@ class SeekDialog(kodigui.BaseDialog):
         this is called by our handler and occurs earlier than onFirstInit.
         """
         util.DEBUG_LOG("SeekDialog: setup, keepMarkerDef={}".format(keepMarkerDef))
+        self._duration = duration
         self.title = title
         self.title2 = title2
         self.chapters = chapters or []
@@ -483,7 +491,6 @@ class SeekDialog(kodigui.BaseDialog):
         self.offset = 0
         self.idleTime = None
         self.lastSubtitleNavAction = "forward"
-        self._duration = duration
         self._videoBelowOneHour = duration / 3600000 < 1
         if self._videoBelowOneHour:
             self.timeFmtKodi = self.timeFmtKodi.replace("hh:", "")

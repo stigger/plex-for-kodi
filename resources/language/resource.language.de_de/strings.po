@@ -2433,3 +2433,11 @@ msgstr "{}: {} löschen?"
 msgctxt "#33036"
 msgid "Delete episode S{0:02d}E{1:02d} from {2}?"
 msgstr "Episode S{0:02d}E{1:02d} von {2} löschen?"
+
+msgctxt "#33037"
+msgid "Maximum intro offset to consider"
+msgstr "Maximales erwägtes Intro Offset"
+
+msgctxt "#33038"
+msgid "When encountering an intro marker with a start time offset greater than this, ignore it (default: 600s/10m)"
+msgstr "Wenn ein Intro Marker mit einem Startzeitpunkt größer als diese Einstellung ist, diesen ignorieren (default: 600s/10m)"

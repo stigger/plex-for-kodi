@@ -194,6 +194,7 @@ class AddonSettings(object):
         ("episode_no_spoiler_blur", 16),
         ("ignore_docker_v4", True),
         ("cache_home_users", True),
+        ("intro_marker_max_offset", 600),
     )
 
     def __init__(self):

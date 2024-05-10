@@ -101,7 +101,7 @@ BG_NA = "script.plex/home/background-fallback_black.png"
 
 
 class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
-    __slots__ = ("_closing", "_winID", "started", "finishedInit", "dialogProps")
+    __slots__ = ("_closing", "_winID", "started", "finishedInit", "dialogProps", "isOpen")
 
     def __init__(self, *args, **kwargs):
         BaseFunctions.__init__(self)
@@ -234,7 +234,7 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
 
 
 class BaseDialog(xbmcgui.WindowXMLDialog, BaseFunctions):
-    __slots__ = ("_closing", "_winID", "started")
+    __slots__ = ("_closing", "_winID", "started", "isOpen")
 
     def __init__(self, *args, **kwargs):
         BaseFunctions.__init__(self)
