@@ -12,7 +12,8 @@ class BasePlaylist(plexobjects.PlexObject, signalsmixin.SignalsMixin):
     isRemote = False
 
     def __init__(self, *args, **kwargs):
-        super(BasePlaylist, self).__init__(*args, **kwargs)
+        plexobjects.PlexObject.__init__(self, *args, **kwargs)
+        signalsmixin.SignalsMixin.__init__(self)
         self._items = []
         self._shuffle = None
         self.pos = 0
