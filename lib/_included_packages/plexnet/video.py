@@ -13,6 +13,7 @@ from . import mediachoice
 from .mixins import AudioCodecMixin
 
 from lib.data_cache import dcm
+from lib.util import T
 
 
 class PlexVideoItemList(plexobjects.PlexItemList):
@@ -645,7 +646,7 @@ class Season(Video):
 
     @property
     def defaultTitle(self):
-        return self.parentTitle or self.title
+        return T(32303, "Season {}").format(self.index)
 
     @property
     def unViewedLeafCount(self):

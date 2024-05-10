@@ -2425,3 +2425,11 @@ msgstr "Wenn eine Pfadzuordnung für eine Bibliothek aktiv ist, einen Indikator 
 msgctxt "#33034"
 msgid "Show hidden libraries"
 msgstr "Versteckte Bibliotheken anzeigen"
+
+msgctxt "#33035"
+msgid "Delete {}: {}?"
+msgstr "{}: {} löschen?"
+
+msgctxt "#33036"
+msgid "Delete episode S{0:02d}E{1:02d} from {2}?"
+msgstr "Episode S{0:02d}E{1:02d} von {2} löschen?"

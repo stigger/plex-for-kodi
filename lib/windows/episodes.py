@@ -959,7 +959,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         elif choice['key'] == 'to_section':
             self.goHome(self.show_.getLibrarySectionId())
         elif choice['key'] == 'delete':
-            self.delete()
+            self.delete(mli.dataSource)
         elif choice['key'] == 'playback_settings':
             self.playbackSettings(self.show_, pos, bottom)
 
@@ -983,10 +983,11 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         choice['key'].set('selected', 1)
         self.setPostReloadItemInfo(ds, mli)
 
-    def delete(self):
+    def delete(self, item):
         button = optionsdialog.show(
             T(32326, 'Really delete?'),
-            T(32327, 'Are you sure you really want to delete this media?'),
+            T(33036, "Delete episode S{0:02d}E{1:02d} from {2}?").format(item.parentIndex.asInt(),
+                                                                         item.index.asInt(), item.defaultTitle),
             T(32328, 'Yes'),
             T(32329, 'No')
         )

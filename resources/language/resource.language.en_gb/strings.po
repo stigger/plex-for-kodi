@@ -1941,3 +1941,11 @@ msgstr ""
 msgctxt "#33034"
 msgid "Show hidden libraries"
 msgstr ""
+
+msgctxt "#33035"
+msgid "Delete {}: {}?"
+msgstr ""
+
+msgctxt "#33036"
+msgid "Delete episode S{0:02d}E{1:02d} from {2}?"
+msgstr ""

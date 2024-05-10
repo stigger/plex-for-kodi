@@ -310,7 +310,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin, RatingsMixi
     def delete(self):
         button = optionsdialog.show(
             T(32326, 'Really delete?'),
-            T(32327, 'Are you sure you really want to delete this media?'),
+            T(33035, "Delete {}: {}?").format(type(self.video).__name__, self.video.defaultTitle),
             T(32328, 'Yes'),
             T(32329, 'No')
         )
