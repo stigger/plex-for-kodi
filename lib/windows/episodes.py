@@ -247,6 +247,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.lastFocusID = None
         self.lastNonOptionsFocusID = None
         self._videoProgress = None
+        self.openedWithAutoPlay = False
 
     def doClose(self):
         self.closing = True
@@ -279,17 +280,19 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def doAutoPlay(self):
         # First reload the video to get all the other info
         self.initialEpisode.reload(checkFiles=1, **VIDEO_RELOAD_KW)
+        self.openedWithAutoPlay = True
         return self.playButtonClicked(force_episode=self.initialEpisode, from_auto_play=True)
 
     def onFirstInit(self):
         self._onFirstInit()
 
         if self.show_ and self.show_.theme and not util.getSetting("slow_connection", False) and \
-                (not self.cameFrom or self.cameFrom != self.show_.ratingKey):
+                (not self.cameFrom or self.cameFrom != self.show_.ratingKey) and not self.openedWithAutoPlay:
             volume = self.show_.settings.getThemeMusicValue()
             if volume > 0:
                 player.PLAYER.playBackgroundMusic(self.show_.theme.asURL(True), volume,
                                                   self.show_.ratingKey)
+        self.openedWithAutoPlay = False
 
     @busy.dialog()
     def onReInit(self):
