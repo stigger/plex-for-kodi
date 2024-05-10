@@ -162,6 +162,15 @@ class PlaylistsSection(object):
     type = 'playlists'
     title = T(32333, 'Playlists')
 
+    locations = []
+
+    @property
+    def isHidden(self):
+        return False
+
+
+playlists_section = PlaylistsSection()
+
 
 class ServerListItem(kodigui.ManagedListItem):
     uuid = None
@@ -1004,40 +1013,40 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         choice = None
         if not section.key:
             # home section
-            if self.anyLibraryHidden:
-                sections = plexapp.SERVERMANAGER.selectedServer.library.sections()
-                options = []
-                for s in sections:
-                    section_settings = self.librarySettings.get(s.key)
-                    if section_settings and not section_settings.get("show", True):
-                        options.append({'key': 'show',
-                                        'section_id': s.key,
-                                        'display': T(33029, "Show library: {}").format(s.title)
-                                        }
-                                       )
-                if options:
-                    choice = dropdown.showDropdown(
-                        options,
-                        pos=(660, 441),
-                        close_direction='none',
-                        set_dropdown_prop=False,
-                        header=T(33034, "Show hidden libraries"),
-                        select_index=0,
-                        align_items="left",
-                        dialog_props=self.carriedProps
-                    )
+            sections = [playlists_section] + plexapp.SERVERMANAGER.selectedServer.library.sections()
+            options = []
+            for s in sections:
+                section_settings = self.librarySettings.get(s.key)
+                if section_settings and not section_settings.get("show", True):
+                    options.append({'key': 'show',
+                                    'section_id': s.key,
+                                    'display': T(33029, "Show library: {}").format(s.title)
+                                    }
+                                   )
+            if options:
+                choice = dropdown.showDropdown(
+                    options,
+                    pos=(660, 441),
+                    close_direction='none',
+                    set_dropdown_prop=False,
+                    header=T(33034, "Show hidden libraries"),
+                    select_index=0,
+                    align_items="left",
+                    dialog_props=self.carriedProps
+                )
 
         else:
             options = []
 
-            for loc in section.locations:
-                source, target = section.getMappedPath(loc)
-                loc_is_mapped = source and target
-                options.append(
-                    {'key': 'map', 'mapped': loc_is_mapped, 'path': loc, 'display': T(33026, "Map path: {}").format(loc)
-                        if not loc_is_mapped else T(33027, "Remove mapping: {}").format(target)
-                     }
-                )
+            if section.locations:
+                for loc in section.locations:
+                    source, target = section.getMappedPath(loc)
+                    loc_is_mapped = source and target
+                    options.append(
+                        {'key': 'map', 'mapped': loc_is_mapped, 'path': loc, 'display': T(33026, "Map path: {}").format(loc)
+                            if not loc_is_mapped else T(33027, "Remove mapping: {}").format(target)
+                         }
+                    )
 
             if not section.isHidden:
                 options.append({'key': 'hide', 'display': T(33028, "Hide library")})
@@ -1253,12 +1262,15 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         homemli.setProperty('item', '1')
         items.append(homemli)
 
-        pl = plexapp.SERVERMANAGER.selectedServer.playlists()
-        if pl:
-            plli = kodigui.ManagedListItem('Playlists', thumbnailImage='script.plex/home/type/playlists.png', data_source=PlaylistsSection)
-            plli.setProperty('is.playlists', '1')
-            plli.setProperty('item', '1')
-            items.append(plli)
+        if "playlists" not in self.librarySettings \
+                or ("playlists" in self.librarySettings and self.librarySettings["playlists"].get("show", True)):
+            pl = plexapp.SERVERMANAGER.selectedServer.playlists()
+            if pl:
+                plli = kodigui.ManagedListItem('Playlists', thumbnailImage='script.plex/home/type/playlists.png',
+                                               data_source=playlists_section)
+                plli.setProperty('is.playlists', '1')
+                plli.setProperty('item', '1')
+                items.append(plli)
 
         try:
             _sections = plexapp.SERVERMANAGER.selectedServer.library.sections()
@@ -1282,7 +1294,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
         if plexapp.SERVERMANAGER.selectedServer.hasHubs():
             self.tasks = [SectionHubsTask().setup(s, self.sectionHubsCallback, self.wantedSections)
-                          for s in [HomeSection, PlaylistsSection] + sections]
+                          for s in [HomeSection, playlists_section] + sections]
             backgroundthread.BGThreader.addTasks(self.tasks)
 
         show_pm_indicator = util.getSetting('path_mapping_indicators', True)
