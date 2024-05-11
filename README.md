@@ -18,7 +18,7 @@ Master branch is based off of the official plex-for-kodi master branch.
 
 ### Via repository (recommended)
 * Add `https://pannal.github.io/dontpanickodi/` to your Kodi installation as a file source
-* Go to Settings->Addons, click on the little opened box icon, choose "Install from zip file", choose the file source you added and install the repository
+* Go to Settings->Addons, choose "Install from zip file", choose the file source you added and install the repository
 * Install Plex via Settings->Addons->Install from repository->Don't Panic->Video add-ons->Plex
 * Optional, recommended: Install Plextuary via Settings->Addons->Install from repository->Don't Panic->Look and Feel->Skin->Plextuary
 
