@@ -124,7 +124,6 @@ class PlexPart(plexobjects.PlexObject):
 
         if _async:
             context = request.createRequestContext("ignored")
-            from . import plexapp
             util.APP.startRequest(request, context, "")
         else:
             request.postToStringWithTimeout()

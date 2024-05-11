@@ -85,7 +85,6 @@ class SeasonsMixin:
 class DeleteMediaMixin:
     def delete(self, item=None):
         item = item or self.mediaItem
-        util.DEBUG_LOG("GNARR: %s" % item)
         button = optionsdialog.show(
             T(32326, 'Really delete?'),
             T(33035, "Delete {}: {}?").format(type(item).__name__, item.defaultTitle),
@@ -102,10 +101,10 @@ class DeleteMediaMixin:
         return True
 
     @busy.dialog()
-    def _delete(self, item):
+    def _delete(self, item, do_close=False):
         success = item.delete()
         util.LOG('Media DELETE: {0} - {1}'.format(item, success and 'SUCCESS' or 'FAILED'))
-        if success:
+        if success and do_close:
             self.doClose()
         return success
 
