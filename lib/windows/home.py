@@ -1142,7 +1142,15 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         elif action in (xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_MOVE_RIGHT):
             direction = "left" if action == xbmcgui.ACTION_MOVE_LEFT else "right"
             index = self.sectionList.getManagedItemPosition(item)
-            next_index = min(max(0, index - 1 if direction == "left" else index + 1), len(self.sectionList) - 1)
+            last_index = len(self.sectionList) - 1
+            next_index = min(max(0, index - 1 if direction == "left" else index + 1), last_index)
+            if index == 0 and direction == "left":
+                next_index = last_index
+                self.sectionList.selectItem(last_index)
+            elif index == last_index and direction == "right":
+                next_index = 0
+                self.sectionList.selectItem(0)
+
             self.sectionList.moveItem(item, next_index)
 
         elif action == xbmcgui.ACTION_SELECT_ITEM:
