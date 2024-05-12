@@ -401,7 +401,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         self.librarySettings = None
         self.anyLibraryHidden = False
         self.wantedSections = None
-        self.isMoving = False
+        self.movingSection = False
         windowutils.HOME = self
 
         self.lock = threading.Lock()
@@ -701,8 +701,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                     self.setFocusId(self.lastFocusID)
 
             if controlID == self.SECTION_LIST_ID:
-                if self.isMoving:
-                    self.sectionMover(self.isMoving, action)
+                if self.movingSection:
+                    self.sectionMover(self.movingSection, action)
                     return
 
                 if action == xbmcgui.ACTION_CONTEXT_MENU:
@@ -814,7 +814,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
     def onClick(self, controlID):
         if controlID == self.SECTION_LIST_ID:
-            if not self.isMoving:
+            if not self.movingSection:
                 self.sectionClicked()
         # elif controlID == self.SERVER_BUTTON_ID:
         #     self.showServers()
@@ -1115,9 +1115,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                 return True
 
     def sectionMover(self, item, action):
-        def stopMoving():
-            # set everything to non moving and re-insert home item
-            self.isMoving = False
+        def stop_moving():
+            # set everything to non-moving and re-insert home item
+            self.movingSection = False
             self.setBoolProperty("moving", False)
             item.setBoolProperty("moving", False)
             homemli = kodigui.ManagedListItem(T(32332, 'Home'), data_source=home_section)
@@ -1128,7 +1128,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             self.sectionChanged()
 
         if action == "init":
-            self.isMoving = item
+            self.movingSection = item
             self.setBoolProperty("moving", True)
 
             # remove home item
@@ -1138,7 +1138,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             item.setBoolProperty("moving", True)
 
         elif action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
-            stopMoving()
+            stop_moving()
 
         elif action in (xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_MOVE_RIGHT):
             direction = "left" if action == xbmcgui.ACTION_MOVE_LEFT else "right"
@@ -1155,7 +1155,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             self.sectionList.moveItem(item, next_index)
 
         elif action == xbmcgui.ACTION_SELECT_ITEM:
-            stopMoving()
+            stop_moving()
             # store section order
             self.librarySettings["order"] = [i.dataSource.key for i in self.sectionList.items if i.dataSource]
             self.saveLibrarySettings()
@@ -1367,7 +1367,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
         show_pm_indicator = util.getSetting('path_mapping_indicators', True)
         for section in sections:
-            util.DEBUG_LOG("SEC: %s" % section)
             mli = kodigui.ManagedListItem(section.title,
                                           thumbnailImage='script.plex/home/type/{0}.png'.format(section.type),
                                           data_source=section)
