@@ -257,7 +257,7 @@ class Settings(object):
                     T(32100, 'Skip user selection and pin entry on startup.')
                 ),
                 BoolSetting(
-                    'use_alt_watched', T(33022, ''), False
+                    'use_alt_watched', T(33022, ''), True
                 ).description(
                     T(33023, "")
                 ),

@@ -114,7 +114,7 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
         carryProps = kwargs.get("window_props", None)
         if carryProps:
             self.setProperties(list(carryProps.keys()), list(carryProps.values()))
-        self.setBoolProperty('use_alt_watched', util.getSetting('use_alt_watched', False))
+        self.setBoolProperty('use_alt_watched', util.getSetting('use_alt_watched', True))
         self.setBoolProperty('hide_aw_bg', util.getSetting('hide_aw_bg', False))
 
     def onInit(self):
@@ -245,7 +245,7 @@ class BaseDialog(xbmcgui.WindowXMLDialog, BaseFunctions):
         carryProps = kwargs.get("dialog_props", None)
         if carryProps:
             self.setProperties(list(carryProps.keys()), list(carryProps.values()))
-        self.setBoolProperty('use_alt_watched', util.getSetting('use_alt_watched', False))
+        self.setBoolProperty('use_alt_watched', util.getSetting('use_alt_watched', True))
         self.setBoolProperty('hide_aw_bg', util.getSetting('hide_aw_bg', False))
 
     def onInit(self):
@@ -356,7 +356,7 @@ class ManagedListItem(object):
                  "_ID", "_manager", "_valid")
 
     PROPS = {
-        'use_alt_watched': util.getSetting('use_alt_watched', False) and '1' or '',
+        'use_alt_watched': util.getSetting('use_alt_watched', True) and '1' or '',
         'hide_aw_bg': util.getSetting('hide_aw_bg', False) and '1' or ''
     }
 
@@ -521,7 +521,7 @@ class ManagedListItem(object):
 
 
 def watchMarkerSettingsChanged(*args, **kwargs):
-    ManagedListItem.PROPS['use_alt_watched'] = util.getSetting('use_alt_watched', False) and '1' or ''
+    ManagedListItem.PROPS['use_alt_watched'] = util.getSetting('use_alt_watched', True) and '1' or ''
     ManagedListItem.PROPS['hide_aw_bg'] = util.getSetting('hide_aw_bg', False) and '1' or ''
 
 
