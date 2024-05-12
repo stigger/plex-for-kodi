@@ -1353,7 +1353,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
         # sort libraries
         if "order" in self.librarySettings:
-            sections = sorted(sections, key=lambda s: self.librarySettings["order"].index(s.key))
+            sections = sorted(sections, key=lambda s: self.librarySettings["order"].index(s.key)
+                              if s.key in self.librarySettings["order"] else -1)
 
         # speedup if we don't have any hidden libraries
         if not self.anyLibraryHidden:
