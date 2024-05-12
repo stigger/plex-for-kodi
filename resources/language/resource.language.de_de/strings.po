@@ -2441,3 +2441,11 @@ msgstr "Maximales erwägtes Intro Offset"
 msgctxt "#33038"
 msgid "When encountering an intro marker with a start time offset greater than this, ignore it (default: 600s/10m)"
 msgstr "Wenn ein Intro Marker mit einem Startzeitpunkt größer als diese Einstellung ist, diesen ignorieren (default: 600s/10m)"
+
+msgctxt "#33039"
+msgid "Move"
+msgstr "Verschieben"
+
+msgctxt "#33040"
+msgid "Reset library order"
+msgstr "Ordnung der Bibliotheken zurücksetzen"

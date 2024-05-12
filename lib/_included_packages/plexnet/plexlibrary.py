@@ -164,10 +164,6 @@ class LibrarySection(plexobjects.PlexObject):
         self._isMapped = False
         return self._isMapped
 
-    @property
-    def isHidden(self):
-        return False
-
     def getAbsolutePath(self, key):
         if key == 'key':
             return '/library/sections/{0}/all'.format(self.key)

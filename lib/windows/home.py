@@ -156,6 +156,12 @@ class HomeSection(object):
     type = 'home'
     title = T(32332, 'Home')
 
+    locations = []
+    isMapped = False
+
+
+home_section = HomeSection()
+
 
 class PlaylistsSection(object):
     key = 'playlists'
@@ -163,10 +169,7 @@ class PlaylistsSection(object):
     title = T(32333, 'Playlists')
 
     locations = []
-
-    @property
-    def isHidden(self):
-        return False
+    isMapped = False
 
 
 playlists_section = PlaylistsSection()
@@ -378,7 +381,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
     def __init__(self, *args, **kwargs):
         kodigui.BaseWindow.__init__(self, *args, **kwargs)
         SpoilersMixin.__init__(self, *args, **kwargs)
-        self.lastSection = HomeSection
+        self.lastSection = home_section
         self.tasks = []
         self.closeOption = None
         self.hubControls = None
@@ -398,6 +401,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         self.librarySettings = None
         self.anyLibraryHidden = False
         self.wantedSections = None
+        self.isMoving = False
         windowutils.HOME = self
 
         self.lock = threading.Lock()
@@ -697,6 +701,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                     self.setFocusId(self.lastFocusID)
 
             if controlID == self.SECTION_LIST_ID:
+                if self.isMoving:
+                    self.sectionMover(self.isMoving, action)
+                    return
+
                 if action == xbmcgui.ACTION_CONTEXT_MENU:
                     if not self.sectionMenu():
                         return
@@ -762,7 +770,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
                     if controlID == self.SECTION_LIST_ID and self.sectionList.control.getSelectedPosition() > 0:
                         self.sectionList.setSelectedItemByPos(0)
-                        self.showHubs(HomeSection)
+                        self.showHubs(home_section)
                         return
 
                     if util.addonSettings.fastBack and not optionsFocused and offSections \
@@ -806,7 +814,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
     def onClick(self, controlID):
         if controlID == self.SECTION_LIST_ID:
-            self.sectionClicked()
+            if not self.isMoving:
+                self.sectionClicked()
         # elif controlID == self.SERVER_BUTTON_ID:
         #     self.showServers()
         elif controlID == self.SERVER_LIST_ID:
@@ -902,7 +911,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
     def fullyRefreshHome(self, *args, **kwargs):
         self.showSections()
         self.backgroundSet = False
-        self.showHubs(HomeSection)
+        self.showHubs(home_section)
 
     def disableUpdates(self, *args, **kwargs):
         util.LOG("Sleep event, stopping updates")
@@ -1015,6 +1024,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             # home section
             sections = [playlists_section] + plexapp.SERVERMANAGER.selectedServer.library.sections()
             options = []
+
+            if "order" in self.librarySettings and self.librarySettings["order"]:
+                options.append({'key': 'reset_order', 'display': T(33040, "Reset library order")})
+
             for s in sections:
                 section_settings = self.librarySettings.get(s.key)
                 if section_settings and not section_settings.get("show", True):
@@ -1048,8 +1061,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                          }
                     )
 
-            if not section.isHidden:
-                options.append({'key': 'hide', 'display': T(33028, "Hide library")})
+            options.append({'key': 'hide', 'display': T(33028, "Hide library")})
+            options.append({'key': 'move', 'display': T(33039, "Move")})
 
             choice = dropdown.showDropdown(
                 options,
@@ -1082,17 +1095,61 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                 pmm.addPathMapping(d, choice["path"])
                 return True
         elif choice["key"] == "hide":
-            if not section.isHidden:
-                if section.key not in self.librarySettings:
-                    self.librarySettings[section.key] = {}
-                self.librarySettings[section.key]['show'] = False
-                self.saveLibrarySettings()
-                return True
+            if section.key not in self.librarySettings:
+                self.librarySettings[section.key] = {}
+            self.librarySettings[section.key]['show'] = False
+            self.saveLibrarySettings()
+            return True
         elif choice["key"] == "show":
             if choice["section_id"] in self.librarySettings:
                 self.librarySettings[choice["section_id"]]['show'] = True
                 self.saveLibrarySettings()
                 return True
+        elif choice["key"] == "move":
+            self.sectionMover(item, "init")
+        elif choice["key"] == "reset_order":
+            if "order" in self.librarySettings:
+                del self.librarySettings["order"]
+                self.saveLibrarySettings()
+                return True
+
+    def sectionMover(self, item, action):
+        def stopMoving():
+            # set everything to non moving and re-insert home item
+            self.isMoving = False
+            self.setBoolProperty("moving", False)
+            item.setBoolProperty("moving", False)
+            homemli = kodigui.ManagedListItem(T(32332, 'Home'), data_source=home_section)
+            homemli.setProperty('is.home', '1')
+            homemli.setProperty('item', '1')
+            self.sectionList.insertItem(0, homemli)
+            self.sectionList.selectItem(0)
+            self.sectionChanged()
+
+        if action == "init":
+            self.isMoving = item
+            self.setBoolProperty("moving", True)
+
+            # remove home item
+            self.sectionList.removeItem(0)
+            self.sectionList.setSelectedItem(item)
+
+            item.setBoolProperty("moving", True)
+
+        elif action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
+            stopMoving()
+
+        elif action in (xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_MOVE_RIGHT):
+            direction = "left" if action == xbmcgui.ACTION_MOVE_LEFT else "right"
+            index = self.sectionList.getManagedItemPosition(item)
+            next_index = min(max(0, index - 1 if direction == "left" else index + 1), len(self.sectionList) - 1)
+            self.sectionList.moveItem(item, next_index)
+
+        elif action == xbmcgui.ACTION_SELECT_ITEM:
+            stopMoving()
+            # store section order
+            self.librarySettings["order"] = [i.dataSource.key for i in self.sectionList.items if i.dataSource]
+            self.saveLibrarySettings()
 
     def checkSectionItem(self, force=False, action=None):
         item = self.sectionList.getSelectedItem()
@@ -1257,20 +1314,18 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         self.sectionHubs = {}
         items = []
 
-        homemli = kodigui.ManagedListItem(T(32332, 'Home'), data_source=HomeSection)
+        homemli = kodigui.ManagedListItem(T(32332, 'Home'), data_source=home_section)
         homemli.setProperty('is.home', '1')
         homemli.setProperty('item', '1')
         items.append(homemli)
+
+        sections = []
 
         if "playlists" not in self.librarySettings \
                 or ("playlists" in self.librarySettings and self.librarySettings["playlists"].get("show", True)):
             pl = plexapp.SERVERMANAGER.selectedServer.playlists()
             if pl:
-                plli = kodigui.ManagedListItem('Playlists', thumbnailImage='script.plex/home/type/playlists.png',
-                                               data_source=playlists_section)
-                plli.setProperty('is.playlists', '1')
-                plli.setProperty('item', '1')
-                items.append(plli)
+                sections.append(playlists_section)
 
         try:
             _sections = plexapp.SERVERMANAGER.selectedServer.library.sections()
@@ -1279,7 +1334,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             util.messageDialog("Error", "Bad request")
             return
 
-        sections = []
         self.wantedSections = []
         for section in _sections:
             if section.key in self.librarySettings and not self.librarySettings[section.key].get("show", True):
@@ -1288,21 +1342,29 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             sections.append(section)
             self.wantedSections.append(section.key)
 
+        # sort libraries
+        if "order" in self.librarySettings:
+            sections = sorted(sections, key=lambda s: self.librarySettings["order"].index(s.key))
+
         # speedup if we don't have any hidden libraries
         if not self.anyLibraryHidden:
             self.wantedSections = None
 
         if plexapp.SERVERMANAGER.selectedServer.hasHubs():
             self.tasks = [SectionHubsTask().setup(s, self.sectionHubsCallback, self.wantedSections)
-                          for s in [HomeSection, playlists_section] + sections]
+                          for s in [home_section] + sections]
             backgroundthread.BGThreader.addTasks(self.tasks)
 
         show_pm_indicator = util.getSetting('path_mapping_indicators', True)
         for section in sections:
+            util.DEBUG_LOG("SEC: %s" % section)
             mli = kodigui.ManagedListItem(section.title,
                                           thumbnailImage='script.plex/home/type/{0}.png'.format(section.type),
                                           data_source=section)
             mli.setProperty('item', '1')
+            if section == playlists_section:
+                mli.setProperty('is.playlists', '1')
+                mli.setThumbnailImage('script.plex/home/type/playlists.png')
             if pmm.mapping and show_pm_indicator:
                 mli.setBoolProperty('is.mapped', section.isMapped)
             items.append(mli)
@@ -1313,7 +1375,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             mli = kodigui.ManagedListItem()
             items.append(mli)
 
-        self.lastSection = HomeSection
+        self.lastSection = home_section
         self.sectionList.reset()
         self.sectionList.addItems(items)
 

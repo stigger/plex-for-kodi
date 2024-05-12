@@ -177,12 +177,11 @@
                 <height>200</height>
                 <control type="fixedlist" id="101">
                     <animation effect="slide" end="-110,0" time="200" tween="sine" easing="inout" condition="Integer.IsGreater(Container(101).Position,3)">Conditional</animation>
-                    <animation effect="slide" end="-110,0" time="200" tween="sine" easing="inout" condition="Integer.IsGreater(Container(101).Position,4)">Conditional</animation>
+                    <animation effect="slide" end="-110,0" time="200" tween="sine" easing="inout" condition="Integer.IsGreater(Container(101).Position,4)">Conditional</animation>-->
                     <posx>-300</posx>
                     <posy>0</posy>
                     <width>2430</width>
                     <height>240</height>
-                    <onleft>101</onleft>
                     <onup condition="!Player.HasAudio">203</onup>
                     <onup condition="Player.HasAudio">204</onup>
                     <ondown>400</ondown>
@@ -280,6 +279,7 @@
                                             <texture border="42">script.plex/drop-shadow.png</texture>
                                         </control>
                                         <control type="image">
+                                            <visible>String.IsEmpty(ListItem.Property(moving))</visible>
                                             <animation effect="fade" end="100" reversible="false">UnFocus</animation>
                                             <posx>0</posx>
                                             <posy>0</posy>
@@ -289,6 +289,7 @@
                                             <colordiffuse>FF1F1F1F</colordiffuse>
                                         </control>
                                         <control type="image">
+                                            <visible>String.IsEmpty(ListItem.Property(moving))</visible>
                                             <animation effect="fade" end="0" reversible="false">UnFocus</animation>
                                             <posx>0</posx>
                                             <posy>0</posy>
@@ -296,6 +297,26 @@
                                             <height>117</height>
                                             <texture border="10">script.plex/white-square-rounded.png</texture>
                                             <colordiffuse>FFE5A00D</colordiffuse>
+                                        </control>
+                                        <control type="image">
+                                            <visible>!String.IsEmpty(ListItem.Property(moving))</visible>
+                                            <animation effect="fade" end="100" reversible="false">UnFocus</animation>
+                                            <posx>0</posx>
+                                            <posy>0</posy>
+                                            <width>238</width>
+                                            <height>117</height>
+                                            <texture border="10">script.plex/white-square-rounded.png</texture>
+                                            <colordiffuse>66777777</colordiffuse>
+                                        </control>
+                                        <control type="image">
+                                            <visible>!String.IsEmpty(ListItem.Property(moving))</visible>
+                                            <animation effect="fade" end="0" reversible="false">UnFocus</animation>
+                                            <posx>0</posx>
+                                            <posy>0</posy>
+                                            <width>238</width>
+                                            <height>117</height>
+                                            <texture border="10">script.plex/white-square-rounded.png</texture>
+                                            <colordiffuse>66777777</colordiffuse>
                                         </control>
                                     </control>
                                     <control type="image">

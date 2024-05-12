@@ -668,7 +668,21 @@ class ManagedControlList(object):
             return None
         return self.getListItem(pos)
 
+    def getSelectedPos(self):
+        pos = self.control.getSelectedPosition()
+        if not self.positionIsValid(pos):
+            pos = self.size() - 1
+
+        if pos < 0:
+            return None
+        return pos
+
     def setSelectedItemByPos(self, pos):
+        if self.positionIsValid(pos):
+            self.control.selectItem(pos)
+
+    def setSelectedItem(self, item):
+        pos = self.getManagedItemPosition(item)
         if self.positionIsValid(pos):
             self.control.selectItem(pos)
 
