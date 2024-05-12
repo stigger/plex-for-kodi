@@ -1042,7 +1042,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                     pos=(660, 441),
                     close_direction='none',
                     set_dropdown_prop=False,
-                    header=T(33034, "Show hidden libraries"),
+                    header=T(33034, "Library settings"),
                     select_index=0,
                     align_items="left",
                     dialog_props=self.carriedProps
@@ -1056,7 +1056,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                     source, target = section.getMappedPath(loc)
                     loc_is_mapped = source and target
                     options.append(
-                        {'key': 'map', 'mapped': loc_is_mapped, 'path': loc, 'display': T(33026, "Map path: {}").format(loc)
+                        {'key': 'map', 'mapped': loc_is_mapped, 'path': loc, 'display': T(33026,
+                                                                                          "Map path: {}").format(loc)
                             if not loc_is_mapped else T(33027, "Remove mapping: {}").format(target)
                          }
                     )

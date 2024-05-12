@@ -2423,8 +2423,8 @@ msgid "When path mapping is active for a library, display an indicator."
 msgstr "Wenn eine Pfadzuordnung für eine Bibliothek aktiv ist, einen Indikator anzeigen."
 
 msgctxt "#33034"
-msgid "Show hidden libraries"
-msgstr "Versteckte Bibliotheken anzeigen"
+msgid "Library settings"
+msgstr "Bibliothek-Einstellungen"
 
 msgctxt "#33035"
 msgid "Delete {}: {}?"

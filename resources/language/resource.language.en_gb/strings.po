@@ -1939,7 +1939,7 @@ msgid "When path mapping is active for a library, display an indicator."
 msgstr ""
 
 msgctxt "#33034"
-msgid "Show hidden libraries"
+msgid "Library settings"
 msgstr ""
 
 msgctxt "#33035"
