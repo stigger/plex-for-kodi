@@ -5,9 +5,11 @@ import copy
 import re
 import json
 
+import plexnet.util
+
 from kodi_six import xbmcvfs
 
-from .util import translatePath, ADDON, ERROR, LOG, getSetting, plexapp
+from .util import translatePath, ADDON, ERROR, LOG, getSetting
 
 
 PM_MCMT_RE = re.compile(r'/\*.+\*/\s?', re.IGNORECASE | re.MULTILINE | re.DOTALL)
@@ -65,7 +67,7 @@ class PathMappingManager(object):
         return None, None
 
     def deletePathMapping(self, target, server=None, save=True):
-        server = server or plexapp.SERVERMANAGER.selectedServer
+        server = server or plexnet.util.SERVERMANAGER.selectedServer
         if not server:
             ERROR("Delete path mapping: Something went wrong")
             return
@@ -85,7 +87,7 @@ class PathMappingManager(object):
             LOG("Path mapping stored after deletion of {}:{}".format(deleted, target))
 
     def addPathMapping(self, source, target, server=None, save=True):
-        server = server or plexapp.SERVERMANAGER.selectedServer
+        server = server or plexnet.util.SERVERMANAGER.selectedServer
         if not server:
             ERROR("Add path mapping: Something went wrong")
             return

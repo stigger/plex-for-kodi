@@ -19,6 +19,8 @@ import os
 import struct
 import requests
 
+import plexnet.util
+
 from .kodijsonrpc import rpc
 from kodi_six import xbmc
 from kodi_six import xbmcgui
@@ -28,7 +30,7 @@ from kodi_six import xbmcvfs
 from . import colors
 # noinspection PyUnresolvedReferences
 from .exceptions import NoDataException
-from plexnet import signalsmixin, plexapp
+from plexnet import signalsmixin
 
 DEBUG = True
 _SHUTDOWN = False
@@ -118,10 +120,10 @@ def getSetting(key, default=None):
 
 
 def getUserSetting(key, default=None):
-    if not plexapp.ACCOUNT:
+    if not plexnet.util.ACCOUNT:
         return default
 
-    key = '{}.{}'.format(key, plexapp.ACCOUNT.ID)
+    key = '{}.{}'.format(key, plexnet.util.ACCOUNT.ID)
     with SETTINGS_LOCK:
         setting = ADDON.getSetting(key)
         return _processSetting(setting, default)
