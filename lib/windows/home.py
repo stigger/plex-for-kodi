@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import json
 import threading
 import time
+import math
 
 import plexnet
 from kodi_six import xbmc
@@ -54,10 +55,11 @@ class HubsList(list):
 
 
 class SectionHubsTask(backgroundthread.Task):
-    def setup(self, section, callback,  section_keys=None):
+    def setup(self, section, callback, section_keys=None, reselect_pos_dict=None):
         self.section = section
         self.callback = callback
         self.section_keys = section_keys
+        self.reselect_pos_dict = reselect_pos_dict
         return self
 
     def run(self):
@@ -73,7 +75,7 @@ class SectionHubsTask(backgroundthread.Task):
                                                                       section_ids=self.section_keys)).init()
             if self.isCanceled():
                 return
-            self.callback(self.section, hubs)
+            self.callback(self.section, hubs, reselect_pos_dict=self.reselect_pos_dict)
         except plexnet.exceptions.BadRequest:
             util.DEBUG_LOG('404 on section: {0}'.format(repr(self.section.title)))
             hubs = HubsList().init()
@@ -115,10 +117,12 @@ class UpdateHubTask(backgroundthread.Task):
 
 
 class ExtendHubTask(backgroundthread.Task):
-    def setup(self, hub, callback, canceledCallback=None):
+    def setup(self, hub, callback, canceledCallback=None, size=HUB_PAGE_SIZE, reselect_pos=None):
         self.hub = hub
         self.callback = callback
         self.canceledCallback = canceledCallback
+        self.size = size
+        self.reselect_pos = reselect_pos
         return self
 
     def run(self):
@@ -133,12 +137,12 @@ class ExtendHubTask(backgroundthread.Task):
 
         try:
             start = self.hub.offset.asInt() + self.hub.size.asInt()
-            items = self.hub.extend(start=start, size=HUB_PAGE_SIZE)
+            items = self.hub.extend(start=start, size=self.size)
             if self.isCanceled():
                 if self.canceledCallback:
                     self.canceledCallback(self.hub)
                 return
-            self.callback(self.hub, items)
+            self.callback(self.hub, items, reselect_pos=self.reselect_pos)
         except plexnet.exceptions.BadRequest:
             util.DEBUG_LOG('404 on hub: {0}'.format(repr(self.hub.hubIdentifier)))
             if self.canceledCallback:
@@ -388,7 +392,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         self.sectionChangeTimeout = 0
         self.lastFocusID = None
         self.lastNonOptionsFocusID = None
-        self._lastSelectedItem = None
         self.sectionHubs = {}
         self.updateHubs = {}
         self.changingServer = False
@@ -744,10 +747,11 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             elif controlID == self.PLAYER_STATUS_BUTTON_ID and action == xbmcgui.ACTION_MOVE_RIGHT:
                 self.setFocusId(self.SERVER_BUTTON_ID)
             elif 399 < controlID < 500:
-                if action.getId() in MOVE_SET:
-                    self.checkHubItem(controlID, actionID=action.getId())
-                    return
-                elif action.getId() == xbmcgui.ACTION_PLAYER_PLAY:
+                if action.getId() in MOVE_SET or action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
+                    _continue = self.checkHubItem(controlID, action=action)
+                    if not _continue:
+                        return
+                elif action == xbmcgui.ACTION_PLAYER_PLAY:
                     self.hubItemClicked(controlID, auto_play=True)
                     return
 
@@ -1177,28 +1181,21 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         if item.dataSource != self.lastSection or force:
             self.sectionChanged(force=force)
 
-    def checkHubItem(self, controlID, actionID=None):
+    def checkHubItem(self, controlID, action=None):
         control = self.hubControls[controlID - 400]
         mli = control.getSelectedItem()
         is_valid_mli = mli and mli.getProperty('is.end') != '1'
-        is_last_item = is_valid_mli and control.isLastItem(mli)
+
+        if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
+            if control.getSelectedPos() > 0:
+                control.selectItem(0)
+                return
+            return True
 
         if util.addonSettings.dynamicBackgrounds and is_valid_mli:
             self.updateBackgroundFrom(mli.dataSource)
 
         if not mli or not mli.getProperty('is.end') or mli.getProperty('is.updating') == '1':
-            if mli:
-                mlipos = control.getManagedItemPosition(mli)
-
-                # in order to not round-robin when the next chunk is loading, implement our own cheap round-robining
-                # by storing the last selected item of the current control. if we've seen it twice, we need to wrap
-                # around
-                if not mli.getProperty('is.end') and is_last_item and actionID == xbmcgui.ACTION_MOVE_RIGHT:
-                    if (controlID, mlipos) == self._lastSelectedItem:
-                        control.selectItem(0)
-                        self._lastSelectedItem = None
-                        return
-                self._lastSelectedItem = (controlID, mlipos)
             return
 
         mli.setBoolProperty('is.updating', True)
@@ -1286,14 +1283,14 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                             cur_sel_ds.key))
             self.checkSectionItem(force=True)
 
-    def sectionHubsCallback(self, section, hubs):
+    def sectionHubsCallback(self, section, hubs, reselect_pos_dict=None):
         with self.lock:
             update = bool(self.sectionHubs.get(section.key))
             self.sectionHubs[section.key] = hubs
             if self.lastSection == section:
-                self.showHubs(section, update=update)
+                self.showHubs(section, update=update, reselect_pos_dict=reselect_pos_dict)
 
-    def updateHubCallback(self, hub, items=None):
+    def updateHubCallback(self, hub, items=None, reselect_pos=None):
         with self.lock:
             for mli in self.sectionList:
                 section = mli.dataSource
@@ -1311,12 +1308,13 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                             util.DEBUG_LOG('Hub {0} updated - refreshing section: {1}'.format(hub.hubIdentifier,
                                                                                               repr(section.title)))
                             hubs[idx] = hub
-                            self.showHub(hub, items=items)
+                            self.showHub(hub, items=items, reselect_pos=reselect_pos)
                             return
 
-    def extendHubCallback(self, hub, items):
-        util.DEBUG_LOG('ExtendHub called: {0} [{1}]'.format(hub.hubIdentifier, len(hub.items)))
-        self.updateHubCallback(hub, items)
+    def extendHubCallback(self, hub, items, reselect_pos=None):
+        util.DEBUG_LOG('ExtendHub called: {0} [{1}] (reselect: {2})'.format(hub.hubIdentifier, len(hub.items),
+                                                                            reselect_pos))
+        self.updateHubCallback(hub, items, reselect_pos=reselect_pos)
 
     def showSections(self):
         self.sectionHubs = {}
@@ -1392,16 +1390,16 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         else:
             self.setFocusId(self.SERVER_BUTTON_ID)
 
-    def showHubs(self, section=None, update=False, force=False):
+    def showHubs(self, section=None, update=False, force=False, reselect_pos_dict=None):
         self.setBoolProperty('no.content', False)
         if not update:
             self.setProperty('drawing', '1')
         try:
-            self._showHubs(section=section, update=update, force=force)
+            self._showHubs(section=section, update=update, force=force, reselect_pos_dict=reselect_pos_dict)
         finally:
             self.setProperty('drawing', '')
 
-    def _showHubs(self, section=None, update=False, force=False):
+    def _showHubs(self, section=None, update=False, force=False, reselect_pos_dict=None):
         if not update:
             self.clearHubs()
 
@@ -1444,10 +1442,18 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                 "Home" if section.key is None else section.key, update, "Unknown" if not hubs else hubs.invalid))
             hubs.lastUpdated = time.time()
             self.cleanTasks()
+            # remember selected positions in hubs
+            is_home = section.key is None
+            _rp = {}
+            for hub in self.sectionHubs.get(section.key, []):
+                identifier = hub.getCleanHubIdentifier(is_home=is_home)
+                if identifier in self.HUBMAP:
+                    _rp[identifier] = self.hubControls[self.HUBMAP[identifier]['index']].getSelectedPos()
             if not update:
                 if section.key in self.sectionHubs:
                     self.sectionHubs[section.key] = None
-            self.tasks.append(SectionHubsTask().setup(section, self.sectionHubsCallback, self.wantedSections))
+            self.tasks.append(SectionHubsTask().setup(section, self.sectionHubsCallback, self.wantedSections,
+                                                      reselect_pos_dict=_rp))
             backgroundthread.BGThreader.addTask(self.tasks[-1])
             return
 
@@ -1466,7 +1472,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
                 skip[self.HUBMAP[identifier]['index']] = 1
 
-                if self.showHub(hub, is_home=not section.key):
+                if self.showHub(hub, is_home=not section.key,
+                                reselect_pos=reselect_pos_dict.get(identifier) if reselect_pos_dict else None):
                     if hub.items:
                         hasContent = True
                     if self.HUBMAP[identifier].get('do_updates'):
@@ -1495,7 +1502,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         finally:
             self.showBusy(False)
 
-    def showHub(self, hub, items=None, is_home=False):
+    def showHub(self, hub, items=None, is_home=False, reselect_pos=None):
         identifier = hub.getCleanHubIdentifier(is_home=is_home)
 
         if identifier in self.HUBMAP:
@@ -1503,7 +1510,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                                                              identifier,
                                                              len(hub.items),
                                                              len(items) if items else None))
-            self._showHub(hub, hubitems=items, **self.HUBMAP[identifier])
+            self._showHub(hub, hubitems=items, reselect_pos=reselect_pos, identifier=identifier,
+                          **self.HUBMAP[identifier])
             return True
         else:
             util.DEBUG_LOG('UNHANDLED - Hub: {0} [{1}]({1})'.format(hub.hubIdentifier, identifier, len(hub.items)))
@@ -1643,8 +1651,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         for control in self.hubControls:
             control.reset()
 
-    def _showHub(self, hub, hubitems=None, index=None, with_progress=False, with_art=False, ar16x9=False,
-                 text2lines=False, **kwargs):
+    def _showHub(self, hub, hubitems=None, reselect_pos=None, identifier=None, index=None, with_progress=False,
+                 with_art=False, ar16x9=False, text2lines=False, **kwargs):
         control = self.hubControls[index]
         control.dataSource = hub
 
@@ -1700,7 +1708,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             for mli in items:
                 mli.setProperty('thumb.fallback', 'script.plex/thumb_fallbacks/movie16x9.png')
 
-        if hub.more.asBool():
+        more = hub.more.asBool()
+        if more:
             end = kodigui.ManagedListItem('')
             end.setBoolProperty('is.end', True)
             items.append(end)
@@ -1709,9 +1718,28 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             end = control.size() - 1
             control.replaceItem(end, items[0])
             control.addItems(items[1:])
-            control.selectItem(end)
+            if reselect_pos is None:
+                control.selectItem(end)
         else:
             control.replaceItems(items)
+
+        if reselect_pos is not None and reselect_pos > 0:
+            pos = reselect_pos
+            if pos < control.size() - (more and 1 or 0):
+                control.selectItem(pos)
+            else:
+                if more:
+                    # re-extend the hub to its original size so we can reselect the position
+                    # calculate how many pages we need to re-arrive at the last selected position
+                    # fixme: someone check for an off-by-one please
+                    size = max(math.ceil((pos + 2 - control.size()) / HUB_PAGE_SIZE), 1) * HUB_PAGE_SIZE
+                    task = ExtendHubTask().setup(control.dataSource, self.extendHubCallback,
+                                                 canceledCallback=lambda hub: mli.setBoolProperty('is.updating', False),
+                                                 size=size, reselect_pos=pos)
+                    self.tasks.append(task)
+                    backgroundthread.BGThreader.addTask(task)
+                else:
+                    control.selectItem(control.size() - 1)
 
     def updateListItem(self, mli):
         if not mli or not mli.dataSource:  # May have become invalid
