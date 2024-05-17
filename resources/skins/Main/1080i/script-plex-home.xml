@@ -418,6 +418,7 @@
                     <onup>101</onup>
                     <ondown>401</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -761,6 +762,7 @@
                     <onup>400</onup>
                     <ondown>402</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -1138,6 +1140,7 @@
                     <onup>401</onup>
                     <ondown>403</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -1515,6 +1518,7 @@
                     <onup>402</onup>
                     <ondown>404</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -1892,6 +1896,7 @@
                     <onup>403</onup>
                     <ondown>405</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -2269,6 +2274,7 @@
                     <onup>404</onup>
                     <ondown>406</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -2527,6 +2533,7 @@
                     <onup>405</onup>
                     <ondown>407</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -2870,6 +2877,7 @@
                     <onup>406</onup>
                     <ondown>408</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -3247,6 +3255,7 @@
                     <onup>407</onup>
                     <ondown>409</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -3624,6 +3633,7 @@
                     <onup>408</onup>
                     <ondown>410</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -3883,6 +3893,7 @@
                     <onup>409</onup>
                     <ondown>411</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -4142,6 +4153,7 @@
                     <onup>410</onup>
                     <ondown>412</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -4401,6 +4413,7 @@
                     <onup>411</onup>
                     <ondown>420</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -4660,6 +4673,7 @@
                     <onup>412</onup>
                     <ondown>421</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -4919,6 +4933,7 @@
                     <onup>420</onup>
                     <ondown>422</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -5178,6 +5193,7 @@
                     <onup>421</onup>
                     <ondown>413</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -5437,6 +5453,7 @@
                     <onup>422</onup>
                     <ondown>414</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -5814,6 +5831,7 @@
                     <onup>413</onup>
                     <ondown>415</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -6191,6 +6209,7 @@
                     <onup>414</onup>
                     <ondown>416</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -6568,6 +6587,7 @@
                     <onup>415</onup>
                     <ondown>417</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -6944,6 +6964,7 @@
                     <onup>416</onup>
                     <ondown>418</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -7286,6 +7307,7 @@
                     <onup>417</onup>
                     <ondown>419</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -7628,6 +7650,7 @@
                     <onup>418</onup>
                     <ondown>423</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>
@@ -7970,6 +7993,7 @@
                     <onup>419</onup>
                     <ondown>423</ondown>
                     <onright>noop</onright>
+                    <onleft>noop</onleft>
                     <scrolltime>200</scrolltime>
                     <orientation>horizontal</orientation>
                     <preloaditems>4</preloaditems>

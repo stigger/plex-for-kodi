@@ -1192,8 +1192,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             if mli:
                 mlipos = control.getManagedItemPosition(mli)
 
-                # in order to not round robin when the next chunk is loading, implement our own cheap round robining
-                # by storing the last selected item of the current control. if we've seen it twice, we need to wrap around
+                # in order to not round-robin when the next chunk is loading, implement our own cheap round-robining
+                # by storing the last selected item of the current control. if we've seen it twice, we need to wrap
+                # around
                 if not mli.getProperty('is.end') and is_last_item and actionID == xbmcgui.ACTION_MOVE_RIGHT:
                     if (controlID, mlipos) == self._lastSelectedItem:
                         control.selectItem(0)
