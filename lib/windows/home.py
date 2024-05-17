@@ -1189,6 +1189,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
             if control.getSelectedPos() > 0:
                 control.selectItem(0)
+                self.updateBackgroundFrom(control[0].dataSource)
                 return
             return True
 
