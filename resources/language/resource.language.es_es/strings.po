@@ -225,7 +225,7 @@ msgstr "Audio"
 #: 
 msgctxt "#32049"
 msgid "Advanced"
-msgstr "Avanzar"
+msgstr "Avanzado"
 
 #: 
 msgctxt "#32050"
@@ -300,17 +300,17 @@ msgstr "Si se activa, cuando acabe la reproducción y 'Siguiente Capítulo' est�
 #: 
 msgctxt "#32102"
 msgid "Enable this if your hardware can handle 4K playback. Disable it to force transcoding."
-msgstr "Activa esto si tu Hardware soporta la reproducción de contenido 4K. Desactívalo para forzar la trasncodificación."
+msgstr "Activa esto si tu Hardware soporta la reproducción de contenido 4K. Desactívalo para forzar la transcodificación."
 
 #: 
 msgctxt "#32103"
 msgid "Enable this if your hardware can handle HEVC/h265. Disable it to force transcoding."
-msgstr "Activa esto si tu Hardware soporta la reproducción HEVC/h265. Desactiva para forzar la trascodificación."
+msgstr "Activa esto si tu Hardware soporta la reproducción HEVC/h265. Desactiva para forzar la transcodificación."
 
 #: 
 msgctxt "#32104"
 msgid "When to connect to servers with no secure connections.[CR][CR]* [B]Never[/B]: Never connect to a server insecurely[CR]* [B]On Same Network[/B]: Allow if on the same network[CR]* [B]Always[/B]: Allow same network and remote connections"
-msgstr "Conectar a servidores con conexiones no seguras.[CR][CR]* [B]Nunca[/B]: Nunca conectarse a un servidor de forma no segura[CR]* [B]En la misma red[/B]: Permitir para la misma red[CR]* [B]Siempre[/B]: Permitir para todas las conexiones"
+msgstr "Conectar a servidores con conexiones no seguras.[CR][CR]* [B]Nunca[/B]: Nunca conectarse a un servidor de forma no segura[CR]* [B]En la misma red[/B]: Permitir si está en la misma red[CR]* [B]Siempre[/B]: Permitir para todas las conexiones"
 
 #: 
 msgctxt "#32201"
@@ -345,17 +345,17 @@ msgstr "Escena"
 #: 
 msgctxt "#32207"
 msgid "Live Music Video"
-msgstr "Videos musical en vivo"
+msgstr "Video musical en vivo"
 
 #: 
 msgctxt "#32208"
 msgid "Lyric Music Video"
-msgstr "Videos de letras musicales"
+msgstr "Video de letras musicales"
 
 #: 
 msgctxt "#32209"
 msgid "Concert"
-msgstr "Conciertos"
+msgstr "Concierto"
 
 #: 
 msgctxt "#32210"
@@ -388,16 +388,6 @@ msgid "Go to {0}"
 msgstr "Ir a {0}"
 
 #: 
-msgctxt "#32303"
-msgid "Season"
-msgstr "Temporada"
-
-#: 
-msgctxt "#32304"
-msgid "Episode"
-msgstr "Capítulo"
-
-#: 
 msgctxt "#32305"
 msgid "Extras"
 msgstr "Extras"
@@ -421,16 +411,6 @@ msgstr "Disponible"
 msgctxt "#32309"
 msgid "None"
 msgstr "Ninguno"
-
-#: 
-msgctxt "#32310"
-msgid "S"
-msgstr "S"
-
-#: 
-msgctxt "#32311"
-msgid "E"
-msgstr "E"
 
 #: 
 msgctxt "#32312"
@@ -575,7 +555,7 @@ msgstr "Servidor no accessible"
 #: 
 msgctxt "#32340"
 msgid "Connection tests are in progress. Please wait."
-msgstr "Tests de conexión en curso. Espere por favor."
+msgstr "Pruebas de conexión en curso. Espere por favor."
 
 #: 
 msgctxt "#32341"
@@ -630,12 +610,12 @@ msgstr "Series"
 #: 
 msgctxt "#32351"
 msgid "By Date Added"
-msgstr "Por fecha"
+msgstr "Por fecha de añadido"
 
 #: 
 msgctxt "#32352"
 msgid "Date Added"
-msgstr "Fecha"
+msgstr "Fecha de añadido"
 
 #: 
 msgctxt "#32353"
@@ -1140,7 +1120,7 @@ msgstr "No hay contenido disponible en esta bilioteca"
 #: 
 msgctxt "#32453"
 msgid "Please add content and/or check that 'Include in dashboard' is enabled."
-msgstr "Por favo, añade contenido y/o comprueba que 'Incluir en el dashboard' esté activado."
+msgstr "Por favor, añade contenido y/o comprueba que 'Incluir en el dashboard' esté activado."
 
 #: 
 msgctxt "#32454"
@@ -1305,12 +1285,12 @@ msgstr "Saltar créditos"
 #: 
 msgctxt "#32500"
 msgid "Always show post-play screen (even for short videos)"
-msgstr "Mostrar siempre la pantalla posterior a la reproducción (incluso para vídeos cortos)"
+msgstr "Mostrar siempre la pantalla posterior a la reproducción (incluso para videos cortos)"
 
 #: 
 msgctxt "#32501"
 msgid "Time-to-wait between videos on post-play"
-msgstr "Tiempo de espera entre vídeos en post-play"
+msgstr "Tiempo de espera entre videos en post-play"
 
 #: 
 msgctxt "#32505"
@@ -1825,7 +1805,7 @@ msgstr "Cuando se omita automáticamente un marcador con temporizador, permita l
 #: 
 msgctxt "#32912"
 msgid "Show buffer-state on timeline"
-msgstr "Mostrar el estado de la memoria intermedia en la línea de tiempo"
+msgstr "Mostrar el estado del Buffer en la línea de tiempo"
 
 #: 
 msgctxt "#32913"
@@ -1875,12 +1855,12 @@ msgstr "Cuando la conexión lenta está activada en el addon y el búfer configu
 #: 
 msgctxt "#32922"
 msgid "Kodi Cache Readfactor"
-msgstr "Factor de lectura de la caché de Kodi"
+msgstr "Factor de lectura (Readfactor) de la caché de Kodi"
 
 #: 
 msgctxt "#32923"
 msgid "Sets the Kodi cache readfactor value. Default: {0}, recommended: {1}. With \"Slow connection\" enabled this will be set to {2}, as otherwise the cache doesn't fill fast/aggressively enough."
-msgstr "Establece el valor del factor de lectura de la caché de Kodi. Por defecto: {0}, recomendado: {1}. Con \"Conexión lenta\" activada, este valor será {2}, ya que de lo contrario la caché no se llena lo suficientemente rápido/agresivamente."
+msgstr "Establece el valor del factor de lectura (Readfactor) de la caché de Kodi. Por defecto: {0}, recomendado: {1}. Con \"Conexión lenta\" activada, este valor será {2}, ya que de lo contrario la caché no se llena lo suficientemente rápido/agresivamente."
 
 #: 
 msgctxt "#32924"
@@ -1953,11 +1933,6 @@ msgid "Show prev/next button"
 msgstr "Mostrar botón anterior/siguiente"
 
 #: 
-msgctxt "#32938"
-msgid "Only for Episodes"
-msgstr "Sólo para episodios"
-
-#: 
 msgctxt "#32939"
 msgid "Only applies to video player UI"
 msgstr "Sólo se aplica a la interfaz de usuario del reproductor de vídeo"
@@ -1980,7 +1955,7 @@ msgstr "Otras temporadas"
 #: 
 msgctxt "#32943"
 msgid "Crossfade dynamic background art"
-msgstr "Arte de fondo dinámico con fundido cruzado"
+msgstr "Arte de fondo dinámico con Crossfade"
 
 #: 
 msgctxt "#32944"
@@ -1990,7 +1965,7 @@ msgstr "Subtítulos SSA quemados (DirectStream)"
 #: 
 msgctxt "#32945"
 msgid "When Direct Streaming instruct the Plex Server to burn in SSA/ASS subtitles (thus transcoding the video stream). If disabled it will not touch the video stream, but will convert the subtitle to unstyled text."
-msgstr "Cuando se hace Direct Streaming, ordena al Servidor Plex que grabe los subtítulos SSA/ASS (transcodificando así el flujo de vídeo). Si se desactiva no tocará el flujo de vídeo, pero convertirá los subtítulos en texto sin estilo."
+msgstr "Cuando se hace Direct Streaming, ordena al Servidor Plex que grabe los subtítulos SSA/ASS (transcodificando así la transmisión del video). Si se desactiva, no tocará la transmisión del video, pero convertirá los subtítulos en texto sin estilo."
 
 #: 
 msgctxt "#32946"
@@ -2079,17 +2054,17 @@ msgstr "Separe visualmente los cubos horizontalmente mediante una línea fina."
 #: 
 msgctxt "#32963"
 msgid "Wait between videos (s)"
-msgstr "Espera entre vídeos (s)"
+msgstr "Espera entre videos (s)"
 
 #: 
 msgctxt "#32964"
 msgid "When playing back consecutive videos (e.g. TV shows), wait this long before starting the next one in the queue. Might fix compatibility issues with certain configurations."
-msgstr "Al reproducir vídeos consecutivos (por ejemplo, programas de TV), espere este tiempo antes de iniciar el siguiente de la cola. Podría solucionar problemas de compatibilidad con determinadas configuraciones."
+msgstr "Al reproducir videos consecutivos (por ejemplo, programas de TV), espere este tiempo antes de iniciar el siguiente de la cola. Podría solucionar problemas de compatibilidad con determinadas configuraciones."
 
 #: 
 msgctxt "#32965"
 msgid "Quit Kodi on exit by default"
-msgstr "Salir de Kodi al salir por defecto"
+msgstr "Cerrar Kodi al salir por defecto"
 
 #: 
 msgctxt "#32966"
@@ -2109,7 +2084,7 @@ msgstr "Ajustes de resolución de Kodi"
 #: 
 msgctxt "#32969"
 msgid "Always request all library media items at once"
-msgstr "Solicite siempre todos los materiales de la biblioteca a la vez"
+msgstr "Solicite siempre todos los medios de la biblioteca a la vez"
 
 #: 
 msgctxt "#32970"
@@ -2136,7 +2111,7 @@ msgctxt "#32974"
 msgid "When finishing an episode, don't show Post Play but go to the next one immediately.\n"
 "Can be disabled/enabled per TV show. Doesn't override enabled binge mode. Overrides the Post Play setting."
 msgstr "Al terminar un episodio, no muestra Post Play sino que pasa al siguiente inmediatamente.\n"
-"Puede desactivarse/activarse por programa de TV. No anula el modo atracón activado. Anula la configuración de Post Play."
+"Puede desactivarse/activarse por programa de TV. No anula el modo maratón activado. Anula la configuración de Post Play."
 
 #: 
 msgctxt "#32975"
@@ -2358,4 +2333,149 @@ msgstr "Permitir Spoilers de TV para géneros específicos"
 msgctxt "#33017"
 msgid "Overrides the above for: {}"
 msgstr "Cambiar lo de arriba por: {}"
+
+#: 
+msgctxt "#32303"
+msgid "Season {}"
+msgstr "Temporada {}"
+
+#: 
+msgctxt "#32304"
+msgid "Episode {}"
+msgstr "Episodio {}"
+
+#: 
+msgctxt "#32310"
+msgid "S{}"
+msgstr "S{}"
+
+#: 
+msgctxt "#32311"
+msgid "E{}"
+msgstr "E{}"
+
+#: 
+msgctxt "#32938"
+msgid "Only for Episodes/Playlists"
+msgstr "Solo para Episodios/Listas de reproducción"
+
+#: 
+msgctxt "#33018"
+msgid "Cache Plex Home users"
+msgstr "Guardar en Caché los usuarios de Plex Home"
+
+#: 
+msgctxt "#33019"
+msgid "Visit media item"
+msgstr "Visitar un archivo de medio"
+
+#: 
+msgctxt "#33020"
+msgid "Play"
+msgstr "Reproducir"
+
+#: 
+msgctxt "#33021"
+msgid "Choose action"
+msgstr "Elegir acción"
+
+#: 
+msgctxt "#33022"
+msgid "Use modern inverted watched states"
+msgstr "Utilice estados observados invertidos modernos"
+
+#: 
+msgctxt "#33023"
+msgid "Instead of marking unwatched items, mark watched items with a checkmark (modern clients; default: off)"
+msgstr "En lugar de marcar los elementos no vistos, marcar los elementos vistos con una marca de verificación (clientes modernos; por defecto: desactivado)"
+
+#: 
+msgctxt "#33024"
+msgid "Hide black backdrop in inverted watched states"
+msgstr "Ocultar fondo negro en estados de vigilancia invertidos"
+
+#: 
+msgctxt "#33025"
+msgid "When the above is enabled, hide the black backdrop of the watched state."
+msgstr "Cuando se activa lo anterior, oculta el fondo negro del estado vigilado."
+
+#: 
+msgctxt "#33026"
+msgid "Map path: {}"
+msgstr "Asignación de rutas: {}"
+
+#: 
+msgctxt "#33027"
+msgid "Remove mapping: {}"
+msgstr "Quitar mapeo: {}"
+
+#: 
+msgctxt "#33028"
+msgid "Hide library"
+msgstr "Ocultar biblioteca"
+
+#: 
+msgctxt "#33029"
+msgid "Show library: {}"
+msgstr "Mostrar biblioteca: {}"
+
+#: 
+msgctxt "#33030"
+msgid "Choose action for: {}"
+msgstr "Elegir acción para: {}"
+
+#: 
+msgctxt "#33031"
+msgid "Select Kodi source for {}"
+msgstr "Seleccione la fuente Kodi para {}"
+
+#: 
+msgctxt "#33032"
+msgid "Show path mapping indicators"
+msgstr "Mostrar indicadores de asignación de rutas"
+
+#: 
+msgctxt "#33033"
+msgid "When path mapping is active for a library, display an indicator."
+msgstr "Cuando la asignación de rutas está activa para una biblioteca, muestra un indicador."
+
+#: 
+msgctxt "#33034"
+msgid "Show hidden libraries"
+msgstr "Mostrar bibliotecas ocultas"
+
+#: 
+msgctxt "#33035"
+msgid "Delete {}: {}?"
+msgstr "Borrar {}: {}?"
+
+#: 
+msgctxt "#33036"
+msgid "Delete episode S{0:02d}E{1:02d} from {2}?"
+msgstr "¿Borrar episodio S{0:02d}E{1:02d} de {2}?"
+
+#: 
+msgctxt "#33037"
+msgid "Maximum intro offset to consider"
+msgstr "Desplazamiento de introducción máximo a considerar"
+
+#: 
+msgctxt "#33038"
+msgid "When encountering an intro marker with a start time offset greater than this, ignore it (default: 600s/10m)"
+msgstr "Cuando encuentre un marcador de introducción con un desfase de tiempo de inicio superior a este valor, ignórelo (por defecto: 600s/10m)"
+
+#: 
+msgctxt "#33039"
+msgid "Move"
+msgstr "Mover"
+
+#: 
+msgctxt "#33040"
+msgid "Reset library order"
+msgstr "Restablecer el orden de la biblioteca"
+
+#: 
+msgctxt "#33034"
+msgid "Library settings"
+msgstr "Configuración de la biblioteca"
 
