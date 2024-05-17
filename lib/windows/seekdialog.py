@@ -1,27 +1,25 @@
 from __future__ import absolute_import
+
 import re
-import time
 import threading
+import time
+from collections import OrderedDict
 
 from kodi_six import xbmc
 from kodi_six import xbmcgui
-from collections import OrderedDict
+from plexnet import plexapp
+from plexnet.exceptions import ServerNotOwned, NotFound
+from plexnet.videosession import VideoSessionInfo, ATTRIBUTE_TYPES as SESSION_ATTRIBUTE_TYPES
+from six.moves import range
 
 import lib.cache
+from lib import util
+from lib.kodijsonrpc import builtin
+from lib.util import T
+from . import busy
+from . import dropdown
 from . import kodigui
 from . import playersettings
-from . import dropdown
-from . import busy
-from plexnet import plexapp
-
-from lib import util
-from plexnet.videosession import VideoSessionInfo, ATTRIBUTE_TYPES as SESSION_ATTRIBUTE_TYPES
-from plexnet.exceptions import ServerNotOwned, NotFound
-
-from lib.kodijsonrpc import builtin
-
-from lib.util import T
-from six.moves import range
 
 KEY_MOVE_SET = frozenset(
     (

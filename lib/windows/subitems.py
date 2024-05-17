@@ -1,30 +1,28 @@
 from __future__ import absolute_import
+
 import gc
 
 from kodi_six import xbmc
 from kodi_six import xbmcgui
-from . import kodigui
-
-from lib import util
-from lib import metadata
-from lib import player
-
 from plexnet import playlist
 
+from lib import metadata
+from lib import player
+from lib import util
+from lib.util import T
 from . import busy
-from . import episodes
-from . import tracks
-from . import opener
-from . import info
-from . import musicplayer
-from . import videoplayer
 from . import dropdown
-from . import windowutils
-from . import search
+from . import episodes
+from . import info
+from . import kodigui
+from . import musicplayer
+from . import opener
 from . import pagination
 from . import playbacksettings
-
-from lib.util import T
+from . import search
+from . import tracks
+from . import videoplayer
+from . import windowutils
 from .mixins import SeasonsMixin, DeleteMediaMixin, RatingsMixin
 
 

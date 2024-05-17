@@ -1,10 +1,9 @@
 from __future__ import absolute_import
+
 from lib import util
-from . import opener
-from . import dropdown
-
 from lib.util import T
-
+from . import dropdown
+from . import opener
 
 HOME = None
 

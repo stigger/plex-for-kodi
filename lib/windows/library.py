@@ -1,33 +1,32 @@
 from __future__ import absolute_import
+
+import json
 import os
 import random
-import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
-import json
-import time
 import threading
 
+import plexnet
+import six
+import six.moves.urllib.error
+import six.moves.urllib.parse
+import six.moves.urllib.request
 from kodi_six import xbmc
 from kodi_six import xbmcgui
-from . import kodigui
+from plexnet import playqueue
+from six.moves import range
 
-from lib import util
 from lib import backgroundthread
 from lib import player
-
+from lib import util
+from lib.util import T
 from . import busy
-from . import subitems
+from . import dropdown
+from . import kodigui
+from . import opener
 from . import preplay
 from . import search
-import plexnet
-from . import dropdown
-from . import opener
+from . import subitems
 from . import windowutils
-
-from plexnet import playqueue
-
-from lib.util import T
-import six
-from six.moves import range
 
 KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 

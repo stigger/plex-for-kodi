@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+
+import threading
+import time
+import traceback
+
 from kodi_six import xbmc
 from kodi_six import xbmcgui
-import time
-import threading
-import traceback
+from plexnet import util as pnUtil
 from six.moves import range
 from six.moves import zip
-from plexnet import util as pnUtil
+
 from .. import util
 
 MONITOR = None

@@ -1,32 +1,30 @@
 from __future__ import absolute_import
-import time
-import threading
+
 import json
-
-from kodi_six import xbmc
-from kodi_six import xbmcgui
-
-from . import kodigui
-from lib import util
-from lib import backgroundthread
-from lib import player
+import threading
+import time
 
 import plexnet
+from kodi_six import xbmc
+from kodi_six import xbmcgui
 from plexnet import plexapp
-
-from . import windowutils
-from . import playlists
-from . import busy
-from . import opener
-from . import search
-from . import optionsdialog
-from . import dropdown
-from .mixins import SpoilersMixin
-
-from lib.path_mapping import pmm
-from lib.util import T
-from lib.plex_hosts import pdm
 from six.moves import range
+
+from lib import backgroundthread
+from lib import player
+from lib import util
+from lib.path_mapping import pmm
+from lib.plex_hosts import pdm
+from lib.util import T
+from . import busy
+from . import dropdown
+from . import kodigui
+from . import opener
+from . import optionsdialog
+from . import playlists
+from . import search
+from . import windowutils
+from .mixins import SpoilersMixin
 
 HUBS_REFRESH_INTERVAL = 300  # 5 Minutes
 HUB_PAGE_SIZE = 10

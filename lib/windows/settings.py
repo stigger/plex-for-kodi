@@ -1,17 +1,16 @@
 from __future__ import absolute_import
-from kodi_six import xbmc
-from kodi_six import xbmcgui
-from kodi_six import xbmcvfs
 
-import lib.cache
-from . import kodigui
-from . import windowutils
-
-from lib import util
-from lib.util import T
+import sys
 
 import plexnet
-import sys
+from kodi_six import xbmc
+from kodi_six import xbmcgui
+
+import lib.cache
+from lib import util
+from lib.util import T
+from . import kodigui
+from . import windowutils
 
 
 class Setting(object):

@@ -1,10 +1,12 @@
 from __future__ import absolute_import
-from . import kodigui
-from . import windowutils
-from lib import util
-from plexnet.video import Episode, Movie, Clip
 
 import os
+
+from plexnet.video import Episode, Movie, Clip
+
+from lib import util
+from . import kodigui
+from . import windowutils
 
 
 def split2len(s, n):

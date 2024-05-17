@@ -1,7 +1,9 @@
 from __future__ import absolute_import
-from . import kodigui
+
 from kodi_six import xbmcgui
+
 from lib import util
+from . import kodigui
 
 
 class MCLPaginator(object):

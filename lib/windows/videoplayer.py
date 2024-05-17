@@ -1,27 +1,25 @@
 from __future__ import absolute_import
-import time
-import threading
+
 import math
+import threading
+import time
 
 from kodi_six import xbmc
 from kodi_six import xbmcgui
 
-from . import kodigui
-from . import windowutils
-from . import opener
-from . import busy
-from . import search
-from . import dropdown
-from . import pagination
-from .mixins import SpoilersMixin
-
-from lib import util
-from lib import player
 from lib import colors
 from lib import kodijsonrpc
-
+from lib import player
+from lib import util
 from lib.util import T
-
+from . import busy
+from . import dropdown
+from . import kodigui
+from . import opener
+from . import pagination
+from . import search
+from . import windowutils
+from .mixins import SpoilersMixin
 
 PASSOUT_PROTECTION_DURATION_SECONDS = 7200
 PASSOUT_LAST_VIDEO_DURATION_MILLIS = 1200000

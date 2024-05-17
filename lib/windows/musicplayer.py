@@ -1,12 +1,13 @@
 from __future__ import absolute_import
+
 from kodi_six import xbmc
 from kodi_six import xbmcgui
-from . import kodigui
-from . import currentplaylist
-from . import opener
 
 from lib import player
 from lib import util
+from . import currentplaylist
+from . import kodigui
+from . import opener
 
 
 def timeDisplay(ms):

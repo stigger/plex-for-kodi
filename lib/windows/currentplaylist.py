@@ -1,18 +1,17 @@
 from __future__ import absolute_import
+
 from kodi_six import xbmc
 from kodi_six import xbmcgui
-from . import kodigui
 
-from . import busy
-from . import windowutils
-from . import dropdown
-from . import opener
-
-from lib import util
-from lib import player
 from lib import kodijsonrpc
-
+from lib import player
+from lib import util
 from lib.util import T
+from . import busy
+from . import dropdown
+from . import kodigui
+from . import opener
+from . import windowutils
 
 
 class CurrentPlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):

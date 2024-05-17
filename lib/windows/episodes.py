@@ -3,28 +3,25 @@ from __future__ import absolute_import
 import requests.exceptions
 from kodi_six import xbmc
 from kodi_six import xbmcgui
-from . import kodigui
+from plexnet import plexapp, playlist, plexplayer
 
-from lib import util
 from lib import backgroundthread
 from lib import metadata
 from lib import player
-
-from plexnet import plexapp, playlist, plexplayer
-
+from lib import util
+from lib.util import T
 from . import busy
-from . import videoplayer
 from . import dropdown
-from . import windowutils
-from . import opener
-from . import search
-from . import playersettings
 from . import info
+from . import kodigui
+from . import opener
 from . import optionsdialog
 from . import pagination
 from . import playbacksettings
-
-from lib.util import T
+from . import playersettings
+from . import search
+from . import videoplayer
+from . import windowutils
 from .mixins import SeasonsMixin, RatingsMixin, SpoilersMixin
 
 VIDEO_RELOAD_KW = dict(includeExtras=1, includeExtrasCount=10, includeChapters=1)

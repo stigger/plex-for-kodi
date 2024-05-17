@@ -2,14 +2,14 @@
 
 import math
 
-from lib import util
+from plexnet import util as pnUtil
 
+from lib import util
+from lib.data_cache import dcm
+from lib.util import T
+from . import busy
 from . import kodigui
 from . import optionsdialog
-from . import busy
-from lib.util import T
-from lib.data_cache import dcm
-from plexnet import util as pnUtil
 
 
 class SeasonsMixin:
