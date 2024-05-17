@@ -160,6 +160,9 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         if newCW:
             # home, add continueWatching
             cq = '/hubs/continueWatching'
+            if section_ids:
+                cq += util.joinArgs(params)
+
             cdata = self.query(cq, params=params)
             ccontainer = plexobjects.PlexContainer(cdata, initpath=cq, server=self, address=cq)
             hubs.append(plexlibrary.Hub(cdata[0], server=self, container=ccontainer))
@@ -172,6 +175,13 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
                 continue
 
             hubs.append(plexlibrary.Hub(elem, server=self, container=container))
+
+        if section_ids:
+            # when we have hidden sections, apply the filter to the hubs keys for subsequent queries
+            for hub in hubs:
+                if "pinnedContentDirectoryID" not in hub.key:
+                    hub.key += util.joinArgs(params, '?' not in hub.key)
+
         return hubs
 
     def playlists(self, start=0, size=10, hub=None):
