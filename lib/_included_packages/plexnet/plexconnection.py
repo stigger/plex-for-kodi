@@ -6,7 +6,10 @@ from . import http
 from . import callback
 from . import util
 
-from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network
+try:
+    from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network
+except ImportError:
+    from _ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network
 
 HAS_ICMPLIB = False
 try:
@@ -18,11 +21,11 @@ else:
     from urllib.parse import urlparse
 
 # local networks
-DOCKER_NETWORK = IPv4Network('172.16.0.0/12')
+DOCKER_NETWORK = IPv4Network(u'172.16.0.0/12')
 LOCAL_NETWORKS = {
-    4: [IPv4Network('10.0.0.0/8'), IPv4Network('192.168.0.0/16'), DOCKER_NETWORK,
-        IPv4Network('127.0.0.0/8')],
-    6: [IPv6Network('fd00::/8')]
+    4: [IPv4Network(u'10.0.0.0/8'), IPv4Network(u'192.168.0.0/16'), DOCKER_NETWORK,
+        IPv4Network(u'127.0.0.0/8')],
+    6: [IPv6Network(u'fd00::/8')]
 }
 
 LOCALS_SEEN = {}
