@@ -7,6 +7,8 @@ except ImportError:
 
 import plexnet.http
 
+from six import text_type
+
 from lib import util
 from lib.advancedsettings import adv
 
@@ -51,7 +53,7 @@ class PlexHostsManager(object):
             parsed = urlparse(address)
             ip = parsePlexDirectHost(parsed.hostname)
             # ignore docker V4 hosts
-            if util.addonSettings.ignoreDockerV4 and ":" not in ip and IPv4Address(ip) in DOCKER_NETWORK:
+            if util.addonSettings.ignoreDockerV4 and ":" not in ip and IPv4Address(text_type(ip)) in DOCKER_NETWORK:
                 util.DEBUG_LOG("Ignoring plex.direct local Docker IPv4 address: {}".format(source, parsed.hostname))
                 continue
 
