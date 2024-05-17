@@ -273,13 +273,18 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         self.extraListControl = kodigui.ManagedControlList(self, self.EXTRA_LIST_ID, 5)
         self.relatedListControl = kodigui.ManagedControlList(self, self.RELATED_LIST_ID, 5)
 
-        self._setup_hooks()
+        if not self.openedWithAutoPlay:
+            # we may have set up the hooks before
+            self._setup_hooks()
         self._setup()
         self.postSetup()
 
     def doAutoPlay(self):
         # First reload the video to get all the other info
         self.initialEpisode.reload(checkFiles=1, **VIDEO_RELOAD_KW)
+
+        # We're not hitting onFirstInit when autoplaying from home, setup hooks here, so we can grab video progress
+        self._setup_hooks()
         self.openedWithAutoPlay = True
         return self.playButtonClicked(force_episode=self.initialEpisode, from_auto_play=True)
 
@@ -1252,7 +1257,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
     def fillEpisodes(self, update=False):
         items = self.episodesPaginator.paginate()
         if not update:
-            self.selectEpisode()
+            self.selectEpisode(progress_data=self._videoProgress)
         self.reloadItems(items, with_progress=True)
 
     def reloadItems(self, items, with_progress=False, skip_progress_for=None):
