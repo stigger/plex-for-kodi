@@ -2439,6 +2439,12 @@ msgctxt "#33033"
 msgid "When path mapping is active for a library, display an indicator."
 msgstr "Cuando la asignación de rutas está activa para una biblioteca, muestra un indicador."
 
+#:
+msgctxt "#33034"
+msgid "Library settings"
+msgstr "Configuración de la biblioteca"
+
+
 #: 
 msgctxt "#33035"
 msgid "Delete {}: {}?"
@@ -2468,9 +2474,3 @@ msgstr "Mover"
 msgctxt "#33040"
 msgid "Reset library order"
 msgstr "Restablecer el orden de la biblioteca"
-
-#: 
-msgctxt "#33034"
-msgid "Library settings"
-msgstr "Configuración de la biblioteca"
-

@@ -2438,6 +2438,11 @@ msgctxt "#33033"
 msgid "When path mapping is active for a library, display an indicator."
 msgstr "Wenn eine Pfadzuordnung für eine Bibliothek aktiv ist, einen Indikator anzeigen."
 
+#:
+msgctxt "#33034"
+msgid "Library settings"
+msgstr "Bibliothek-Einstellungen"
+
 #: 
 msgctxt "#33035"
 msgid "Delete {}: {}?"
@@ -2467,9 +2472,3 @@ msgstr "Verschieben"
 msgctxt "#33040"
 msgid "Reset library order"
 msgstr "Ordnung der Bibliotheken zurücksetzen"
-
-#: 
-msgctxt "#33034"
-msgid "Library settings"
-msgstr "Bibliothek-Einstellungen"
-
