@@ -2440,11 +2440,6 @@ msgid "When path mapping is active for a library, display an indicator."
 msgstr "Cuando la asignación de rutas está activa para una biblioteca, muestra un indicador."
 
 #: 
-msgctxt "#33034"
-msgid "Show hidden libraries"
-msgstr "Mostrar bibliotecas ocultas"
-
-#: 
 msgctxt "#33035"
 msgid "Delete {}: {}?"
 msgstr "Borrar {}: {}?"
