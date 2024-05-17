@@ -387,16 +387,6 @@ msgctxt "#32302"
 msgid "Go to {0}"
 msgstr "Gehe zu {0}"
 
-#:
-msgctxt "#32303"
-msgid "Season {}"
-msgstr "Staffel {}"
-
-#:
-msgctxt "#32304"
-msgid "Episode {}"
-msgstr "Folge {}"
-
 #: 
 msgctxt "#32305"
 msgid "Extras"
@@ -421,16 +411,6 @@ msgstr "Verfügbar"
 msgctxt "#32309"
 msgid "None"
 msgstr "Ohne"
-
-#:
-msgctxt "#32310"
-msgid "S{}"
-msgstr "S{}"
-
-#:
-msgctxt "#32311"
-msgid "E{}"
-msgstr "E{}"
 
 #: 
 msgctxt "#32312"
@@ -1956,11 +1936,6 @@ msgid "Show prev/next button"
 msgstr "Zeige Vorheriger/Nächster-Knopf"
 
 #: 
-msgctxt "#32938"
-msgid "Only for Episodes/Playlists"
-msgstr "Nur bei Episoden/Wiedergabelisten"
-
-#: 
 msgctxt "#32939"
 msgid "Only applies to video player UI"
 msgstr "Gilt nur für die Video-Abspieloberfläche"
@@ -2358,94 +2333,148 @@ msgctxt "#33017"
 msgid "Overrides the above for: {}"
 msgstr "Überschreibt die vorherigen Einstellungen für: {}"
 
+#: 
+msgctxt "#32303"
+msgid "Season {}"
+msgstr "Staffel {}"
+
+#: 
+msgctxt "#32304"
+msgid "Episode {}"
+msgstr "Folge {}"
+
+#: 
+msgctxt "#32310"
+msgid "S{}"
+msgstr "S{}"
+
+#: 
+msgctxt "#32311"
+msgid "E{}"
+msgstr "E{}"
+
+#: 
+msgctxt "#32938"
+msgid "Only for Episodes/Playlists"
+msgstr "Nur bei Episoden/Wiedergabelisten"
+
+#: 
 msgctxt "#33018"
 msgid "Cache Plex Home users"
-msgstr "Plex Heimbenutzer zwischenspeichern"
+msgstr "Plex-Heimbenutzer zwischenspeichern"
 
+#: 
 msgctxt "#33019"
 msgid "Visit media item"
 msgstr "Mediendetails anschauen"
 
+#: 
 msgctxt "#33020"
 msgid "Play"
 msgstr "Abspielen"
 
+#: 
 msgctxt "#33021"
 msgid "Choose action"
 msgstr "Aktion wählen"
 
+#: 
 msgctxt "#33022"
 msgid "Use modern inverted watched states"
-msgstr "Moderne, invertierte Geschaut-Status benutzen"
+msgstr "Modernen, invertierten Geschaut-Status benutzen"
 
+#: 
 msgctxt "#33023"
 msgid "Instead of marking unwatched items, mark watched items with a checkmark (modern clients; default: off)"
 msgstr "Anstatt nicht geschaute Elemente zu markieren, geschaute Elemente mit einem Haken markieren (moderne Clients; standard: aus)"
 
+#: 
 msgctxt "#33024"
 msgid "Hide black backdrop in inverted watched states"
 msgstr "Kein Hintergrund beim invertierten Geschaut-Status"
 
+#: 
 msgctxt "#33025"
 msgid "When the above is enabled, hide the black backdrop of the watched state."
 msgstr "Wenn die vorherige Option aktiviert ist, den schwarzen Hintergrund nicht darstellen."
 
+#: 
 msgctxt "#33026"
 msgid "Map path: {}"
 msgstr "Pfad zuordnen: {}"
 
+#: 
 msgctxt "#33027"
 msgid "Remove mapping: {}"
 msgstr "Zuordnung entfernen: {}"
 
+#: 
 msgctxt "#33028"
 msgid "Hide library"
 msgstr "Bibliothek verstecken"
 
+#: 
 msgctxt "#33029"
 msgid "Show library: {}"
 msgstr "Bibliothek anzeigen: {}"
 
+#: 
 msgctxt "#33030"
 msgid "Choose action for: {}"
 msgstr "Aktion wählen für: {}"
 
+#: 
 msgctxt "#33031"
 msgid "Select Kodi source for {}"
 msgstr "Kodi Quelle auswählen für {}"
 
+#: 
 msgctxt "#33032"
 msgid "Show path mapping indicators"
 msgstr "Pfadzuordnungs-Indikator anzeigen"
 
+#: 
 msgctxt "#33033"
 msgid "When path mapping is active for a library, display an indicator."
 msgstr "Wenn eine Pfadzuordnung für eine Bibliothek aktiv ist, einen Indikator anzeigen."
 
+#: 
 msgctxt "#33034"
-msgid "Library settings"
-msgstr "Bibliothek-Einstellungen"
+msgid "Show hidden libraries"
+msgstr "Versteckte Bibliotheken anzeigen"
 
+#: 
 msgctxt "#33035"
 msgid "Delete {}: {}?"
 msgstr "{}: {} löschen?"
 
+#: 
 msgctxt "#33036"
 msgid "Delete episode S{0:02d}E{1:02d} from {2}?"
 msgstr "Episode S{0:02d}E{1:02d} von {2} löschen?"
 
+#: 
 msgctxt "#33037"
 msgid "Maximum intro offset to consider"
-msgstr "Maximales erwägtes Intro Offset"
+msgstr "Maximales erwägtes Intro-Offset"
 
+#: 
 msgctxt "#33038"
 msgid "When encountering an intro marker with a start time offset greater than this, ignore it (default: 600s/10m)"
-msgstr "Wenn ein Intro Marker mit einem Startzeitpunkt größer als diese Einstellung ist, diesen ignorieren (default: 600s/10m)"
+msgstr "Wenn ein Intro-Marker mit einem Startzeitpunkt größer als diese Einstellung ist, diesen ignorieren (default: 600s/10m)"
 
+#: 
 msgctxt "#33039"
 msgid "Move"
 msgstr "Verschieben"
 
+#: 
 msgctxt "#33040"
 msgid "Reset library order"
 msgstr "Ordnung der Bibliotheken zurücksetzen"
+
+#: 
+msgctxt "#33034"
+msgid "Library settings"
+msgstr "Bibliothek-Einstellungen"
+
