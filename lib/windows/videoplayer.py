@@ -506,6 +506,8 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin, Spoiler
                     self.setProperty('info.title',
                                      u'{0} \u2022 {1}'.format(T(32310, 'S').format(self.next.parentIndex),
                                                               T(32311, 'E').format(self.next.index)))
+                else:
+                    self.setProperty('info.title', self.next.title)
                 self.setProperty('info.summary', T(33008, ''))
             else:
                 self.setProperty('info.title', self.next.title)
