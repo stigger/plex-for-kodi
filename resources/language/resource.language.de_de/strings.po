@@ -2473,3 +2473,7 @@ msgstr "Verschieben"
 msgctxt "#33040"
 msgid "Reset library order"
 msgstr "Ordnung der Bibliotheken zurücksetzen"
+
+msgctxt "#33041"
+msgid "Show hub: {}"
+msgstr "Hub anzeigen: {}"

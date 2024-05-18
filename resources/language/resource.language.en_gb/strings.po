@@ -1965,3 +1965,7 @@ msgstr ""
 msgctxt "#33040"
 msgid "Reset library order"
 msgstr ""
+
+msgctxt "#33041"
+msgid "Show hub: {}"
+msgstr ""

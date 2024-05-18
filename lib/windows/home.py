@@ -55,10 +55,11 @@ class HubsList(list):
 
 
 class SectionHubsTask(backgroundthread.Task):
-    def setup(self, section, callback, section_keys=None, reselect_pos_dict=None):
+    def setup(self, section, callback, section_keys=None, ignore_hubs=None, reselect_pos_dict=None):
         self.section = section
         self.callback = callback
         self.section_keys = section_keys
+        self.ignore_hubs = ignore_hubs
         self.reselect_pos_dict = reselect_pos_dict
         return self
 
@@ -72,7 +73,8 @@ class SectionHubsTask(backgroundthread.Task):
 
         try:
             hubs = HubsList(plexapp.SERVERMANAGER.selectedServer.hubs(self.section.key, count=HUB_PAGE_SIZE,
-                                                                      section_ids=self.section_keys)).init()
+                                                                      section_ids=self.section_keys,
+                                                                      ignore_hubs=self.ignore_hubs)).init()
             if self.isCanceled():
                 return
             self.callback(self.section, hubs, reselect_pos_dict=self.reselect_pos_dict)
@@ -400,6 +402,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         self._reloadOnReinit = False
         self._ignoreTick = False
         self.librarySettings = None
+        self.hubSettings = None
         self.anyLibraryHidden = False
         self.wantedSections = None
         self.movingSection = False
@@ -555,6 +558,37 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                                                        plexapp.ACCOUNT.ID)
             util.setSetting(setting_key, json.dumps(self.librarySettings))
 
+    def loadHubSettings(self):
+        setting_key = 'hub.settings.{}.{}'.format(plexapp.SERVERMANAGER.selectedServer.uuid[-8:], plexapp.ACCOUNT.ID)
+        data = util.getSetting(setting_key, '')
+        self.hubSettings = {}
+        try:
+            self.hubSettings = json.loads(data)
+        except ValueError:
+            pass
+        except:
+            util.ERROR()
+
+    def saveHubSettings(self):
+        if self.hubSettings:
+            setting_key = 'hub.settings.{}.{}'.format(plexapp.SERVERMANAGER.selectedServer.uuid[-8:],
+                                                      plexapp.ACCOUNT.ID)
+            util.setSetting(setting_key, json.dumps(self.hubSettings))
+
+    @property
+    def currentHub(self):
+        hub_focus = int(self.getProperty('hub.focus'))
+        if len(self.hubControls) > hub_focus and self.hubControls[hub_focus]:
+            hub_control = self.hubControls[hub_focus]
+            hub = hub_control.dataSource
+            if not hub or hub.hubIdentifier == "home.continue":
+                return
+            return hub
+
+    @property
+    def ignoredHubs(self):
+        return [combo for combo, data in self.hubSettings.items() if not data.get("show", True)]
+
     def updateProperties(self, *args, **kwargs):
         self.setBoolProperty('bifurcation_lines', util.getSetting('hubs_bifurcation_lines', False))
 
@@ -707,10 +741,11 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                     return
 
                 if action == xbmcgui.ACTION_CONTEXT_MENU:
-                    if not self.sectionMenu():
+                    show_section = self.sectionMenu()
+                    if not show_section:
                         return
                     else:
-                        self.serverRefresh()
+                        self.serverRefresh(section=show_section)
                         return
                 self.checkSectionItem(action=action)
 
@@ -754,6 +789,13 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                 elif action == xbmcgui.ACTION_PLAYER_PLAY:
                     self.hubItemClicked(controlID, auto_play=True)
                     return
+                elif action == xbmcgui.ACTION_CONTEXT_MENU:
+                    show_section = self.hubMenu()
+                    if not show_section:
+                        return
+                    else:
+                        self.serverRefresh(section=show_section)
+                        return
 
             if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_CONTEXT_MENU):
                 optionsFocused = xbmc.getCondVisibility('ControlGroup({0}).HasFocus(0)'.format(self.OPTIONS_GROUP_ID))
@@ -895,7 +937,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             for mli in self.sectionList:
                 if mli.dataSource is not None and mli.dataSource != self.lastSection:
                     sections.add(mli.dataSource)
-            tasks = [SectionHubsTask().setup(s, self.sectionHubsCallback, self.wantedSections)
+            tasks = [SectionHubsTask().setup(s, self.sectionHubsCallback, self.wantedSections, self.ignoredHubs)
                      for s in [self.lastSection] + list(sections)]
         else:
             tasks = [UpdateHubTask().setup(hub, self.updateHubCallback)
@@ -910,10 +952,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         self._reloadOnReinit = True
         self.storeSpoilerSettings()
 
-    def fullyRefreshHome(self, *args, **kwargs):
-        self.showSections()
+    def fullyRefreshHome(self, *args, section=None, **kwargs):
+        self.showSections(focus_section=section or home_section)
         self.backgroundSet = False
-        self.showHubs(home_section)
+        self.showHubs(section if section else home_section)
 
     def disableUpdates(self, *args, **kwargs):
         util.LOG("Sleep event, stopping updates")
@@ -930,7 +972,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             self.enableUpdates()
 
     @busy.dialog()
-    def serverRefresh(self):
+    def serverRefresh(self, section=None):
         backgroundthread.BGThreader.reset()
         if self.tasks:
             for task in self.tasks:
@@ -940,11 +982,17 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             self.setProperty('hub.focus', '')
             self.displayServerAndUser()
             self.loadLibrarySettings()
+            self.loadHubSettings()
             if not plexapp.SERVERMANAGER.selectedServer:
                 self.setFocusId(self.USER_BUTTON_ID)
                 return False
 
-            self.fullyRefreshHome()
+            self.fullyRefreshHome(section=section)
+            if section is not None:
+                for mli in self.sectionList:
+                    if mli.dataSource and mli.dataSource.key == section.key:
+                        self.sectionList.selectItem(mli.pos())
+                        self.lastSection = mli.dataSource
             return True
 
     def hubItemClicked(self, hubControlID, auto_play=False):
@@ -1038,6 +1086,21 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                                     'display': T(33029, "Show library: {}").format(s.title)
                                     }
                                    )
+            if self.hubSettings:
+                for section_hub_key in self.ignoredHubs:
+                    if not section_hub_key.startswith("None:"):
+                        continue
+
+                    hub_title = section_hub_key
+                    if plexapp.SERVERMANAGER.selectedServer.currentHubs:
+                        hub_title = plexapp.SERVERMANAGER.selectedServer.currentHubs.get(section_hub_key,
+                                                                                         section_hub_key)
+                    options.append({'key': 'show',
+                                    'hub_ident': section_hub_key,
+                                    'display': T(33041, "Show hub: {}").format(hub_title)
+                                    }
+                                   )
+
             if options:
                 choice = dropdown.showDropdown(
                     options,
@@ -1067,6 +1130,21 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             options.append({'key': 'hide', 'display': T(33028, "Hide library")})
             options.append({'key': 'move', 'display': T(33039, "Move")})
 
+            if self.hubSettings:
+                for section_hub_key in self.ignoredHubs:
+                    if not section_hub_key.startswith("{}:".format(section.key)):
+                        continue
+
+                    hub_title = section_hub_key
+                    if plexapp.SERVERMANAGER.selectedServer.currentHubs:
+                        hub_title = plexapp.SERVERMANAGER.selectedServer.currentHubs.get(section_hub_key,
+                                                                                         section_hub_key)
+                    options.append({'key': 'show',
+                                    'hub_ident': section_hub_key,
+                                    'display': T(33041, "Show hub: {}").format(hub_title)
+                                    }
+                                   )
+
             choice = dropdown.showDropdown(
                 options,
                 pos=(660, 441),
@@ -1087,7 +1165,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                 # show deletion
                 source, target = section.getMappedPath(choice["path"])
                 section.deleteMapping(target)
-                return True
+                return self.lastSection
 
             else:
                 # show fb
@@ -1096,25 +1174,67 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                 if not d:
                     return
                 pmm.addPathMapping(d, choice["path"])
-                return True
+                return self.lastSection
         elif choice["key"] == "hide":
             if section.key not in self.librarySettings:
                 self.librarySettings[section.key] = {}
             self.librarySettings[section.key]['show'] = False
             self.saveLibrarySettings()
-            return True
+            return self.lastSection
         elif choice["key"] == "show":
-            if choice["section_id"] in self.librarySettings:
-                self.librarySettings[choice["section_id"]]['show'] = True
-                self.saveLibrarySettings()
-                return True
+            if "hub_ident" in choice:
+                util.DEBUG_LOG("AGA: %s %s" % (choice["hub_ident"], self.hubSettings))
+                if choice["hub_ident"] in self.hubSettings:
+                    self.hubSettings[choice["hub_ident"]]['show'] = True
+                    self.saveHubSettings()
+                    return self.lastSection
+            elif "section_id" in choice:
+                if choice["section_id"] in self.librarySettings:
+                    self.librarySettings[choice["section_id"]]['show'] = True
+                    self.saveLibrarySettings()
+                    return self.lastSection
         elif choice["key"] == "move":
             self.sectionMover(item, "init")
         elif choice["key"] == "reset_order":
             if "order" in self.librarySettings:
                 del self.librarySettings["order"]
                 self.saveLibrarySettings()
-                return True
+                return self.lastSection
+
+    def hubMenu(self):
+        hub = self.currentHub
+        if not hub:
+            return
+
+        section_hub_key = "{}:{}".format(self.lastSection.key, hub.hubIdentifier)
+
+        hub_title = section_hub_key
+        if plexapp.SERVERMANAGER.selectedServer.currentHubs:
+            hub_title = plexapp.SERVERMANAGER.selectedServer.currentHubs.get(section_hub_key,
+                                                                             section_hub_key)
+
+        options = [{'key': 'hide', 'display': "Hide Hub: {}".format(hub_title)}]
+
+        choice = dropdown.showDropdown(
+            options,
+            pos=(660, 441),
+            close_direction='none',
+            set_dropdown_prop=False,
+            header=T(33030, 'Choose action for: {}').format(hub.title),
+            select_index=0,
+            align_items="left",
+            dialog_props=self.carriedProps
+        )
+
+        if not choice:
+            return
+
+        elif choice["key"] == "hide":
+            if section_hub_key not in self.hubSettings:
+                self.hubSettings[section_hub_key] = {}
+            self.hubSettings[section_hub_key]['show'] = False
+            self.saveHubSettings()
+            return self.lastSection
 
     def sectionMover(self, item, action):
         def stop_moving():
@@ -1187,7 +1307,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         is_valid_mli = mli and mli.getProperty('is.end') != '1'
 
         if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
-            if control.getSelectedPos() > 0:
+            pos = control.getSelectedPos()
+            if pos is not None and pos > 0:
                 control.selectItem(0)
                 self.updateBackgroundFrom(control[0].dataSource)
                 return
@@ -1317,7 +1438,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                                                                             reselect_pos))
         self.updateHubCallback(hub, items, reselect_pos=reselect_pos)
 
-    def showSections(self):
+    def showSections(self, focus_section=None):
         self.sectionHubs = {}
         items = []
 
@@ -1359,7 +1480,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             self.wantedSections = None
 
         if plexapp.SERVERMANAGER.selectedServer.hasHubs():
-            self.tasks = [SectionHubsTask().setup(s, self.sectionHubsCallback, self.wantedSections)
+            self.tasks = [SectionHubsTask().setup(s, self.sectionHubsCallback, self.wantedSections, self.ignoredHubs)
                           for s in [home_section] + sections]
             backgroundthread.BGThreader.addTasks(self.tasks)
 
@@ -1382,14 +1503,17 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             mli = kodigui.ManagedListItem()
             items.append(mli)
 
-        self.lastSection = home_section
+        self.lastSection = focus_section or home_section
         self.sectionList.reset()
         self.sectionList.addItems(items)
 
-        if items:
-            self.setFocusId(self.SECTION_LIST_ID)
+        if not focus_section:
+            if items:
+                self.setFocusId(self.SECTION_LIST_ID)
+            else:
+                self.setFocusId(self.SERVER_BUTTON_ID)
         else:
-            self.setFocusId(self.SERVER_BUTTON_ID)
+            self.setFocusId(self.SECTION_LIST_ID)
 
     def showHubs(self, section=None, update=False, force=False, reselect_pos_dict=None):
         self.setBoolProperty('no.content', False)
@@ -1454,7 +1578,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                 if section.key in self.sectionHubs:
                     self.sectionHubs[section.key] = None
             self.tasks.append(SectionHubsTask().setup(section, self.sectionHubsCallback, self.wantedSections,
-                                                      reselect_pos_dict=_rp))
+                                                      reselect_pos_dict=_rp, ignore_hubs=self.ignoredHubs))
             backgroundthread.BGThreader.addTask(self.tasks[-1])
             return
 

@@ -65,6 +65,7 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         self.versionNorm = None
         self.rawVersion = None
         self.transcodeSupport = False
+        self.currentHubs = None
 
         if data is None:
             return
@@ -118,7 +119,7 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
         data = self.query(key)
         return plexobjects.buildItem(self, data[0], key, container=self)
 
-    def hubs(self, section=None, count=None, search_query=None, section_ids=None):
+    def hubs(self, section=None, count=None, search_query=None, section_ids=None, ignore_hubs=None):
         hubs = []
 
         params = {"includeMarkers": 1}
@@ -165,13 +166,21 @@ class PlexServer(plexresource.PlexResource, signalsmixin.SignalsMixin):
 
             cdata = self.query(cq, params=params)
             ccontainer = plexobjects.PlexContainer(cdata, initpath=cq, server=self, address=cq)
+            self.currentHubs[cdata[0].attrib.get('hubIdentifier')] = cdata[0].attrib.get('title')
             hubs.append(plexlibrary.Hub(cdata[0], server=self, container=ccontainer))
+
+        self.currentHubs = {} if self.currentHubs is None else self.currentHubs
 
         for elem in data:
             hubIdent = elem.attrib.get('hubIdentifier')
+            self.currentHubs["{}:{}".format(section, hubIdent)] = elem.attrib.get('title')
+
             # if we've added continueWatching, which combines continue and ondeck, skip those two hubs
             if newCW and hubIdent and \
                     (hubIdent.startswith('home.continue') or hubIdent.startswith('home.ondeck')):
+                continue
+
+            if ignore_hubs and "{}:{}".format(section, hubIdent) in ignore_hubs:
                 continue
 
             hubs.append(plexlibrary.Hub(elem, server=self, container=container))
