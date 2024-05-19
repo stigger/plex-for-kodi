@@ -475,7 +475,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             self._reloadOnReinit = False
 
         if self.lastFocusID:
-            # try focusing the last focused ID. if that's a hub and it's empty (=not focusable), try focusing the
+            # try focusing the last focused ID. if that's a hub, and it's empty (=not focusable), try focusing the
             # next best hub
             if 399 < self.lastFocusID < 500:
                 hubControlIndex = self.lastFocusID - 400
@@ -489,7 +489,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                     self.focusFirstValidHub(hubControlIndex)
 
             else:
-                self.setFocusId(self.lastFocusID)
+                if self.getFocusId() != self.lastFocusID:
+                    self.setFocusId(self.lastFocusID)
 
     def checkPlexDirectHosts(self, hosts, source="stored", *args, **kwargs):
         handlePD = util.getSetting('handle_plexdirect', 'ask')
