@@ -406,6 +406,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         self.anyLibraryHidden = False
         self.wantedSections = None
         self.movingSection = False
+        self.lastSelectedSectionPos = None
         windowutils.HOME = self
 
         self.lock = threading.Lock()
@@ -1238,7 +1239,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             return self.lastSection
 
     def sectionMover(self, item, action):
-        def stop_moving():
+        def stop_moving(reset=False):
             # set everything to non-moving and re-insert home item
             self.movingSection = False
             self.setBoolProperty("moving", False)
@@ -1246,6 +1247,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             homemli = kodigui.ManagedListItem(T(32332, 'Home'), data_source=home_section)
             homemli.setProperty('is.home', '1')
             homemli.setProperty('item', '1')
+            if reset:
+                if self.lastSelectedSectionPos is not None:
+                    self.sectionList.moveItem(item, self.lastSelectedSectionPos)
+                self.lastSelectedSectionPos = None
             self.sectionList.insertItem(0, homemli)
             self.sectionList.selectItem(0)
             self.sectionChanged()
@@ -1253,6 +1258,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         if action == "init":
             self.movingSection = item
             self.setBoolProperty("moving", True)
+            self.lastSelectedSectionPos = self.sectionList.getSelectedPos() - 1
 
             # remove home item
             self.sectionList.removeItem(0)
@@ -1261,7 +1267,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             item.setBoolProperty("moving", True)
 
         elif action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
-            stop_moving()
+            stop_moving(reset=True)
 
         elif action in (xbmcgui.ACTION_MOVE_LEFT, xbmcgui.ACTION_MOVE_RIGHT):
             direction = "left" if action == xbmcgui.ACTION_MOVE_LEFT else "right"
