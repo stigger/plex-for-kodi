@@ -406,7 +406,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         self.anyLibraryHidden = False
         self.wantedSections = None
         self.movingSection = False
-        self.lastSelectedSectionPos = None
+        self._initialMovingSectionPos = None
         windowutils.HOME = self
 
         self.lock = threading.Lock()
@@ -1248,9 +1248,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             homemli.setProperty('is.home', '1')
             homemli.setProperty('item', '1')
             if reset:
-                if self.lastSelectedSectionPos is not None:
-                    self.sectionList.moveItem(item, self.lastSelectedSectionPos)
-                self.lastSelectedSectionPos = None
+                if self._initialMovingSectionPos is not None:
+                    self.sectionList.moveItem(item, self._initialMovingSectionPos)
+                self._initialMovingSectionPos = None
             self.sectionList.insertItem(0, homemli)
             self.sectionList.selectItem(0)
             self.sectionChanged()
@@ -1258,7 +1258,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         if action == "init":
             self.movingSection = item
             self.setBoolProperty("moving", True)
-            self.lastSelectedSectionPos = self.sectionList.getSelectedPos() - 1
+            self._initialMovingSectionPos = self.sectionList.getSelectedPos() - 1
 
             # remove home item
             self.sectionList.removeItem(0)
