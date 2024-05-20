@@ -1185,7 +1185,6 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             return self.lastSection
         elif choice["key"] == "show":
             if "hub_ident" in choice:
-                util.DEBUG_LOG("AGA: %s %s" % (choice["hub_ident"], self.hubSettings))
                 if choice["hub_ident"] in self.hubSettings:
                     self.hubSettings[choice["hub_ident"]]['show'] = True
                     self.saveHubSettings()
