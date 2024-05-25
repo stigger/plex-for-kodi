@@ -301,6 +301,9 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         if not self.tasks:
             self.tasks = backgroundthread.Tasks()
 
+        self.setProperty('hub.focus', "0")
+        self.setProperty('on.extras', '')
+
         if self.manuallySelected and not self._videoProgress:
             util.DEBUG_LOG("Episodes: ReInit: Not doing anything, as we've previously manually selected "
                            "this item and don't have progress")
@@ -349,20 +352,21 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         select_episode = reload_items and reload_items[-1] or mli
 
         self.episodesPaginator.setEpisode(select_episode.dataSource)
+        self.selectPlayButton()
         self.reloadItems(items=reload_items, with_progress=True, skip_progress_for=skip_progress_for)
-
         self.fillRelated()
 
     def postSetup(self):
         self.checkForHeaderFocus(xbmcgui.ACTION_MOVE_DOWN, initial=True)
+        self.selectPlayButton()
+        self.initialized = True
 
+    def selectPlayButton(self):
         selected = self.episodeListControl.getSelectedItem()
         if selected:
-            self.setFocusId(self.getPlayButtonID(selected, base=not self.currentItemLoaded
-                            and self.PLAY_BUTTON_DISABLED_ID or None)
-            )
-
-        self.initialized = True
+            set_focus = self.getPlayButtonID(selected, base=not self.currentItemLoaded
+                                             and self.PLAY_BUTTON_DISABLED_ID or None)
+            self.setCondFocusId(set_focus)
 
     @busy.dialog()
     def setup(self):
@@ -477,7 +481,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             controlID = self.getFocusId()
 
             if not controlID and self.lastFocusID and not action == xbmcgui.ACTION_MOUSE_MOVE:
-                self.setFocusId(self.lastFocusID)
+                self.setCondFocusId(self.lastFocusID)
 
             if action == xbmcgui.ACTION_LAST_PAGE and xbmc.getCondVisibility('ControlGroup(300).HasFocus(0)'):
                 next(self)
@@ -514,7 +518,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                     return
                 else:
                     if self.lastNonOptionsFocusID:
-                        self.setFocusId(self.lastNonOptionsFocusID)
+                        self.setCondFocusId(self.lastNonOptionsFocusID)
                         self.lastNonOptionsFocusID = None
                         return
 
@@ -523,7 +527,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                         self.OPTIONS_GROUP_ID)) or not controlID) and \
                         not util.addonSettings.fastBack:
                     if self.getProperty('on.extras'):
-                        self.setFocusId(self.OPTIONS_GROUP_ID)
+                        self.setCondFocusId(self.OPTIONS_GROUP_ID)
                         return
 
             if action in (xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU):
@@ -561,7 +565,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 return False
             pos = mli.pos() - 1
             if self.episodeListControl.positionIsValid(pos):
-                self.setFocusId(self.EPISODE_LIST_ID)
+                self.setCondFocusId(self.EPISODE_LIST_ID)
                 self.episodeListControl.selectItem(pos)
             return True
         elif action == xbmcgui.ACTION_MOVE_DOWN:
@@ -570,7 +574,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                 return False
             pos = mli.pos() + 1
             if self.episodeListControl.positionIsValid(pos):
-                self.setFocusId(self.EPISODE_LIST_ID)
+                self.setCondFocusId(self.EPISODE_LIST_ID)
                 self.episodeListControl.selectItem(pos)
             return True
 
@@ -605,7 +609,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
             if item != self.season:
                 self.openItem(self.seasonsListControl, came_from=self.season.parentRatingKey)
             else:
-                self.setFocusId(self.EPISODE_LIST_ID)
+                self.setCondFocusId(self.EPISODE_LIST_ID)
         elif controlID == self.ROLES_LIST_ID:
             self.roleClicked()
         elif controlID == self.EXTRA_LIST_ID:
@@ -620,7 +624,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         # correct play button after the hidden one has been focused
         if controlID == self.PLAY_BUTTON_ID and xbmc.getCondVisibility(
                 '!String.IsEmpty(Container(400).ListItem.Property(media.multiple))'):
-            self.setFocusId(self.PLAY_BUTTON_ID + 1000)
+            self.setCondFocusId(self.PLAY_BUTTON_ID + 1000)
             return
 
         if 399 < controlID < 500:
@@ -1316,7 +1320,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
                                 and not util.MONITOR.abortRequested() and tries < 5:
                             util.MONITOR.waitForAbort(0.1)
                             tries += 1
-                        if xbmc.getCondVisibility('Control.IsVisible({})'.format(PBID)):
+                        if xbmc.getCondVisibility('Control.IsVisible({})'.format(PBID)) and self.getFocusId() != PBID:
                             self.setFocusId(PBID)
 
                 break

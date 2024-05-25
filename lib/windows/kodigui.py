@@ -186,6 +186,10 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
         except RuntimeError:
             xbmc.log('kodigui.BaseWindow.setProperty: Missing window', xbmc.LOGDEBUG)
 
+    def setCondFocusId(self, focus):
+        if self.getFocusId() != focus:
+            self.setFocusId(focus)
+
     def updateBackgroundFrom(self, ds):
         if util.addonSettings.dynamicBackgrounds:
             return self.windowSetBackground(util.backgroundFromArt(ds.art, width=self.width,
