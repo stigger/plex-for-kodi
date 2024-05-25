@@ -1251,7 +1251,8 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                     self.sectionList.moveItem(item, self._initialMovingSectionPos)
                 self._initialMovingSectionPos = None
             self.sectionList.insertItem(0, homemli)
-            self.sectionList.selectItem(0)
+            if reset:
+                self.sectionList.selectItem(0)
             self.sectionChanged()
 
         if action == "init":
