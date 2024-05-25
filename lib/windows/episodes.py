@@ -303,6 +303,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
         self.setProperty('hub.focus', "0")
         self.setProperty('on.extras', '')
+        self.currentItemLoaded = False
+        self.lastFocusID = None
 
         if self.manuallySelected and not self._videoProgress:
             util.DEBUG_LOG("Episodes: ReInit: Not doing anything, as we've previously manually selected "
@@ -352,7 +354,8 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         select_episode = reload_items and reload_items[-1] or mli
 
         self.episodesPaginator.setEpisode(select_episode.dataSource)
-        self.selectPlayButton()
+        if not reload_items:
+            self.selectPlayButton()
         self.reloadItems(items=reload_items, with_progress=True, skip_progress_for=skip_progress_for)
         self.fillRelated()
 
