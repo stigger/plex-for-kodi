@@ -566,6 +566,12 @@ class ManagedControlList(object):
     def __len__(self):
         return self.size()
 
+    def prev(self):
+        pos = self.getSelectedPos()-1
+        if self.positionIsValid(pos):
+            return pos
+        return 0
+
     def _updateItems(self, bottom=None, top=None):
         if bottom is None:
             bottom = 0

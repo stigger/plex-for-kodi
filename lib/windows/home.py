@@ -1182,7 +1182,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                 self.librarySettings[section.key] = {}
             self.librarySettings[section.key]['show'] = False
             self.saveLibrarySettings()
-            return self.lastSection
+            return self.sectionList[self.sectionList.prev()].dataSource
         elif choice["key"] == "show":
             if "hub_ident" in choice:
                 if choice["hub_ident"] in self.hubSettings:
