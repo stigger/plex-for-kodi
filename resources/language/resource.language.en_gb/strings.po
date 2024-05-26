@@ -562,7 +562,7 @@ msgid "Date Viewed"
 msgstr ""
 
 msgctxt "#32357"
-msgid "By Name"
+msgid "By Title"
 msgstr ""
 
 msgctxt "#32358"

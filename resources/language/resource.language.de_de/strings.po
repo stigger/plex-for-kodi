@@ -639,8 +639,8 @@ msgstr "Gesehen am"
 
 #: 
 msgctxt "#32357"
-msgid "By Name"
-msgstr "Nach Name"
+msgid "By Title"
+msgstr "Nach Titel"
 
 #: 
 msgctxt "#32358"
