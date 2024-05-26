@@ -1079,7 +1079,9 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
             if "order" in self.librarySettings and self.librarySettings["order"]:
                 options.append({'key': 'reset_order', 'display': T(33040, "Reset library order")})
+                options.append(dropdown.SEPARATOR)
 
+            had_section = False
             for s in sections:
                 section_settings = self.librarySettings.get(s.key)
                 if section_settings and not section_settings.get("show", True):
@@ -1088,7 +1090,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                                     'display': T(33029, "Show library: {}").format(s.title)
                                     }
                                    )
+                    had_section = True
             if self.hubSettings:
+                had_hidden_hub = False
+                hidden_hubs_opts = []
                 for section_hub_key in self.ignoredHubs:
                     if not section_hub_key.startswith("None:"):
                         continue
@@ -1097,11 +1102,16 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                     if plexapp.SERVERMANAGER.selectedServer.currentHubs:
                         hub_title = plexapp.SERVERMANAGER.selectedServer.currentHubs.get(section_hub_key,
                                                                                          section_hub_key)
-                    options.append({'key': 'show',
+                    hidden_hubs_opts.append({'key': 'show',
                                     'hub_ident': section_hub_key,
                                     'display': T(33041, "Show hub: {}").format(hub_title)
                                     }
                                    )
+                    had_hidden_hub = True
+
+                if had_section and had_hidden_hub:
+                    options.append(dropdown.SEPARATOR)
+                options += hidden_hubs_opts
 
             if options:
                 choice = dropdown.showDropdown(
@@ -1129,8 +1139,10 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                          }
                     )
 
+            options.append(dropdown.SEPARATOR)
             options.append({'key': 'hide', 'display': T(33028, "Hide library")})
             options.append({'key': 'move', 'display': T(33039, "Move")})
+            options.append(dropdown.SEPARATOR)
 
             if self.hubSettings:
                 for section_hub_key in self.ignoredHubs:
