@@ -816,6 +816,18 @@ def getTimeFormat():
 
 timeFormat, timeFormatKN, padHour = getTimeFormat()
 
+
+def getShortDateFormat():
+    try:
+        return (rpc.Settings.GetSettingValue(setting="locale.shortdateformat")["value"]
+                .replace("DD", "%d").replace("MM", "%m").replace("YYYY", "%Y"))
+    except:
+        DEBUG_LOG("Couldn't get locale.shortdateformat setting, falling back to MM/DD/YYYY")
+        return "%d/%m/%Y"
+
+
+shortDF = getShortDateFormat()
+
 DEF_THEME = "modern-colored"
 THEME_VERSION = 3
 
