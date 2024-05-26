@@ -129,7 +129,9 @@ SORT_KEYS = {
     },
     'show': {
         'titleSort': {'title': T(32357, 'By Name'), 'display': T(32358, 'Name'), 'defSortDesc': False},
+        'year': {'title': T(32377, "Year"), 'display': T(32377, "Year"), 'defSortDesc': True},
         'show.titleSort': {'title': T(32457, 'By Show'), 'display': T(32456, 'Show'), 'defSortDesc': False},
+        'episode.addedAt': {'title': T(33042, 'Episode Date Added'), 'display': T(33042, 'Episode Date Added'), 'defSortDesc': True},
         'originallyAvailableAt': {'title': T(32365, 'By First Aired'), 'display': T(32366, 'First Aired'),
                                   'defSortDesc': False},
         'unviewedLeafCount': {'title': T(32367, 'By Unplayed'), 'display': T(32368, 'Unplayed'), 'defSortDesc': True},
@@ -666,16 +668,19 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
                 defSortByOption[stype] = option.get('defSortDesc')
                 options.append(option)
         elif self.section.TYPE == 'show':
-            searchTypes = ['titleSort', 'addedAt', 'lastViewedAt', 'originallyAvailableAt', 'rating',
-                           'audienceRating', 'userRating', 'contentRating', 'unviewedLeafCount']
+            searchTypes = ['titleSort', 'year', 'originallyAvailableAt', 'rating', 'audienceRating', 'userRating',
+                           'contentRating', 'unviewedLeafCount', 'episode.addedAt',
+                           'addedAt', 'lastViewedAt']
             if ITEM_TYPE == 'episode':
-                searchTypes = ['titleSort', 'show.titleSort', 'addedAt', 'originallyAvailableAt', 'lastViewedAt', 'rating',
-                               'audienceRating', 'userRating']
+                searchTypes = ['titleSort', 'show.titleSort', 'addedAt', 'originallyAvailableAt', 'lastViewedAt',
+                               'rating', 'audienceRating', 'userRating']
             elif ITEM_TYPE == 'collection':
                 searchTypes = ['titleSort', 'addedAt']
 
             for stype in searchTypes:
-                option = SORT_KEYS['show'].get(stype, SORT_KEYS['movie'].get(stype)).copy()
+                option = SORT_KEYS['show'].get(stype, SORT_KEYS['movie'].get(stype, {})).copy()
+                if not option:
+                    continue
                 option['type'] = stype
                 option['indicator'] = self.sort == stype and ind or ''
                 defSortByOption[stype] = option.get('defSortDesc')
@@ -785,7 +790,8 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
         self.showPanelControl.selectItem(0)
         self.setFocusId(self.POSTERS_PANEL_ID)
         self.backgroundSet = False
-        self.setBackground([item.dataSource for item in self.showPanelControl], 0, randomize=not util.addonSettings.dynamicBackgrounds)
+        self.setBackground([item.dataSource for item in self.showPanelControl], 0,
+                           randomize=not util.addonSettings.dynamicBackgrounds)
 
     def subOptionCallback(self, option):
         check = 'script.plex/home/device/check.png'

@@ -644,8 +644,8 @@ msgstr "Nach Name"
 
 #: 
 msgctxt "#32358"
-msgid "Name"
-msgstr "Name"
+msgid "Title"
+msgstr "Titel"
 
 #: 
 msgctxt "#32359"
@@ -2477,3 +2477,7 @@ msgstr "Ordnung der Bibliotheken zurücksetzen"
 msgctxt "#33041"
 msgid "Show hub: {}"
 msgstr "Hub anzeigen: {}"
+
+msgctxt "#33042"
+msgid "Episode Date Added"
+msgstr "Episode zuletzt hinz."
