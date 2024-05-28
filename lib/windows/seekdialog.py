@@ -8,6 +8,7 @@ from collections import OrderedDict
 from kodi_six import xbmc
 from kodi_six import xbmcgui
 from plexnet import plexapp
+from plexnet.util import AttributeDict
 from plexnet.exceptions import ServerNotOwned, NotFound
 from plexnet.videosession import VideoSessionInfo, ATTRIBUTE_TYPES as SESSION_ATTRIBUTE_TYPES
 from six.moves import range
@@ -293,24 +294,27 @@ class SeekDialog(kodigui.BaseDialog):
         if self._markers is None and hasattr(self.handler.player.video, "markers"):
             markers = []
 
-            for marker in self.handler.player.video.markers:
-                if marker.type in MARKERS:
+            for m in self.handler.player.video.markers:
+                if m.type in MARKERS:
+                    # normalize markers and properties as we modify them later on
+                    marker = AttributeDict({
+                        "type": m.type,
+                        "startTimeOffset": m.startTimeOffset.asInt(),
+                        "endTimeOffset": m.endTimeOffset.asInt()
+                    })
+
                     # skip completely bad markers
-                    if marker.startTimeOffset.asInt() > self.duration:
+                    if marker.startTimeOffset > self.duration:
                         continue
 
                     # skip intro markers that are too late
-                    if marker.type == "intro" and \
-                            marker.startTimeOffset.asInt() > util.addonSettings.introMarkerMaxOffset * 1000:
+                    if (marker.type == "intro"
+                            and marker.startTimeOffset > util.addonSettings.introMarkerMaxOffset * 1000):
                         util.DEBUG_LOG("Throwing away intro marker {}, as its start time offset is bigger than the"
                                        " configured maximum".format(marker))
                         continue
 
                     m = MARKERS[marker.type].copy()
-                    marker.startTimeOffset = marker.startTimeOffset.asInt() \
-                        if not isinstance(marker.startTimeOffset, int) else marker.startTimeOffset
-                    marker.endTimeOffset = marker.endTimeOffset.asInt() \
-                        if not isinstance(marker.endTimeOffset, int) else marker.endTimeOffset
                     m["marker"] = marker
                     m["marker_type"] = marker.type
                     markers.append(m)
