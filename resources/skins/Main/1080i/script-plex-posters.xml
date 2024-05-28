@@ -68,8 +68,6 @@
                 <control type="button" id="301">
                     <hitrect x="20" y="20" w="86" h="60" />
                     <visible>!String.IsEqual(Window(10000).Property(script.plex.item.type),collection) | String.IsEqual(Window.Property(media),collection)</visible>
-                    <animation effect="zoom" start="100" end="143" time="100" center="63,50" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="143" end="100" time="100" center="63,50" reversible="false">UnFocus</animation>
                     <posx>0</posx>
                     <posy>0</posy>
                     <width>126</width>
@@ -82,8 +80,6 @@
                 <control type="button" id="302">
                     <hitrect x="20" y="20" w="86" h="60" />
                     <visible>!String.IsEqual(Window(10000).Property(script.plex.item.type),collection) | String.IsEqual(Window.Property(media),collection)</visible>
-                    <animation effect="zoom" start="100" end="143" time="100" center="63,50" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="143" end="100" time="100" center="63,50" reversible="false">UnFocus</animation>
                     <posx>0</posx>
                     <posy>0</posy>
                     <width>126</width>
@@ -96,8 +92,6 @@
                 <control type="button" id="303">
                     <hitrect x="20" y="20" w="86" h="60" />
                     <visible>String.IsEmpty(Window.Property(no.options)) | Player.HasAudio</visible>
-                    <animation effect="zoom" start="100" end="143" time="100" center="63,50" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="143" end="100" time="100" center="63,50" reversible="false">UnFocus</animation>
                     <posx>0</posx>
                     <posy>0</posy>
                     <width>126</width>
@@ -109,8 +103,6 @@
                 </control>
                 <control type="button" id="304">
                     <hitrect x="20" y="20" w="86" h="60" />
-                    <animation effect="zoom" start="100" end="143" time="100" center="63,50" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="143" end="100" time="100" center="63,50" reversible="false">UnFocus</animation>
                     <posx>0</posx>
                     <posy>0</posy>
                     <width>126</width>

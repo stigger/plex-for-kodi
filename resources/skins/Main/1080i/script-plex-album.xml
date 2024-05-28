@@ -100,8 +100,6 @@
                 <scrolltime tween="quadratic" easing="out">200</scrolltime>
                 <usecontrolcoords>true</usecontrolcoords>
                 <control type="button" id="301">
-                    <animation effect="zoom" start="100" end="120" time="100" center="87,69.5" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="120" end="100" time="100" center="87,69.5" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="94" h="59" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -113,8 +111,6 @@
                     <label> </label>
                 </control>
                 <control type="button" id="302">
-                    <animation effect="zoom" start="100" end="120" time="100" center="87,69.5" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="120" end="100" time="100" center="87,69.5" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="94" h="59" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -126,8 +122,6 @@
                     <label> </label>
                 </control>
                 <control type="button" id="303">
-                    <animation effect="zoom" start="100" end="120" time="100" center="87,69.5" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="120" end="100" time="100" center="87,69.5" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="94" h="59" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -447,8 +441,6 @@
                     <width>40</width>
                     <height>40</height>
                     <control type="button" id="201">
-                        <animation effect="zoom" start="100" end="177" time="100" center="20,20" reversible="false">Focus</animation>
-                        <animation effect="zoom" start="177" end="100" time="100" center="20,20" reversible="false">UnFocus</animation>
                         <width>40</width>
                         <height>40</height>
                         <onright>202</onright>
@@ -473,8 +465,6 @@
                     <width>40</width>
                     <height>40</height>
                     <control type="button" id="202">
-                        <animation effect="zoom" start="100" end="177" time="100" center="20,20" reversible="false">Focus</animation>
-                        <animation effect="zoom" start="177" end="100" time="100" center="20,20" reversible="false">UnFocus</animation>
                         <width>40</width>
                         <height>40</height>
                         <onright>204</onright>

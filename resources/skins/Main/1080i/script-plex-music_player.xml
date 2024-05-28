@@ -213,8 +213,6 @@
             <scrolltime tween="quadratic" easing="out">200</scrolltime>
             <usecontrolcoords>true</usecontrolcoords>
             <control type="group" id="421">
-                <animation effect="zoom" start="100" end="124" time="100" center="63,50" reversible="false" condition="Control.HasFocus(401)">Conditional</animation>
-                <animation effect="zoom" start="124" end="100" time="100" center="63,50" reversible="false" condition="!Control.HasFocus(401)">Conditional</animation>
                 <width>125</width>
                 <height>101</height>
                 <control type="button" id="401">
@@ -289,8 +287,6 @@
 
             <control type="togglebutton" id="402">
                 <visible>String.IsEmpty(Window.Property(pq.isremote))</visible>
-                <animation effect="zoom" start="100" end="124" time="100" center="63,50" reversible="false">Focus</animation>
-                <animation effect="zoom" start="124" end="100" time="100" center="63,50" reversible="false">UnFocus</animation>
                 <hitrect x="28" y="28" w="69" h="45" />
                 <posx>0</posx>
                 <posy>0</posy>
@@ -309,8 +305,6 @@
 
             <control type="group" id="432">
                 <visible>!String.IsEmpty(Window.Property(pq.isremote))</visible>
-                <animation effect="zoom" start="100" end="124" time="100" center="63,50" reversible="false" condition="Control.HasFocus(422)">Conditional</animation>
-                <animation effect="zoom" start="124" end="100" time="100" center="63,50" reversible="false" condition="!Control.HasFocus(422)">Conditional</animation>
                 <width>125</width>
                 <height>101</height>
                 <control type="button" id="422">
@@ -369,8 +363,6 @@
 
             <control type="button" id="404">
                 <enable>MusicPlayer.HasPrevious | !String.IsEmpty(Window.Property(pq.hasprevious))</enable>
-                <animation effect="zoom" start="100" end="124" time="100" center="93,50" reversible="false">Focus</animation>
-                <animation effect="zoom" start="124" end="100" time="100" center="93,50" reversible="false">UnFocus</animation>
                 <hitrect x="28" y="28" w="69" h="45" />
                 <posx>30</posx>
                 <posy>0</posy>
@@ -382,8 +374,6 @@
                 <label> </label>
             </control>
             <control type="togglebutton" id="406">
-                <animation effect="zoom" start="100" end="124" time="100" center="63,50" reversible="false">Focus</animation>
-                <animation effect="zoom" start="124" end="100" time="100" center="63,50" reversible="false">UnFocus</animation>
                 <hitrect x="28" y="28" w="69" h="45" />
                 <posx>0</posx>
                 <posy>0</posy>
@@ -400,8 +390,6 @@
                 <label> </label>
             </control>
             <control type="button" id="407">
-                <animation effect="zoom" start="100" end="124" time="100" center="63,50" reversible="false">Focus</animation>
-                <animation effect="zoom" start="124" end="100" time="100" center="63,50" reversible="false">UnFocus</animation>
                 <hitrect x="28" y="28" w="69" h="45" />
                 <posx>0</posx>
                 <posy>0</posy>
@@ -415,8 +403,6 @@
             </control>
             <control type="button" id="409">
                 <enable>MusicPlayer.HasNext | !String.IsEmpty(Window.Property(pq.hasnext))</enable>
-                <animation effect="zoom" start="100" end="124" time="100" center="63,50" reversible="false">Focus</animation>
-                <animation effect="zoom" start="124" end="100" time="100" center="63,50" reversible="false">UnFocus</animation>
                 <hitrect x="28" y="28" w="69" h="45" />
                 <posx>0</posx>
                 <posy>0</posy>
@@ -430,8 +416,6 @@
 
 
             <control type="button" id="410">
-                <animation effect="zoom" start="100" end="124" time="100" center="93,50" reversible="false">Focus</animation>
-                <animation effect="zoom" start="124" end="100" time="100" center="93,50" reversible="false">UnFocus</animation>
                 <hitrect x="28" y="28" w="69" h="45" />
                 <posx>30</posx>
                 <posy>0</posy>
@@ -443,8 +427,6 @@
                 <label> </label>
             </control>
             <control type="button" id="411">
-                <animation effect="zoom" start="100" end="124" time="100" center="63,50" reversible="false">Focus</animation>
-                <animation effect="zoom" start="124" end="100" time="100" center="63,50" reversible="false">UnFocus</animation>
                 <hitrect x="28" y="28" w="69" h="45" />
                 <posx>0</posx>
                 <posy>0</posy>

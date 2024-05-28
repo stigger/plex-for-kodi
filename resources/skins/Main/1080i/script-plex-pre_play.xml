@@ -78,8 +78,6 @@
                 <scrolltime tween="quadratic" easing="out">200</scrolltime>
                 <usecontrolcoords>true</usecontrolcoords>
                 <control type="button" id="304">
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -92,8 +90,6 @@
                 </control>
                 <!-- <control type="button" id="301">
                     <visible>String.IsEmpty(Window(10000).Property(script.plex.hide.resume))</visible>
-                    <animation effect="zoom" start="100" end="143" time="100" center="63,50" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="143" end="100" time="100" center="63,50" reversible="false">UnFocus</animation>
                     <posx>0</posx>
                     <posy>0</posy>
                     <width>126</width>
@@ -105,8 +101,6 @@
                 </control> -->
                 <control type="button" id="302">
                     <visible>String.IsEmpty(Window.Property(unavailable))</visible>
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -119,8 +113,6 @@
                 </control>
                 <control type="button" id="303">
                     <visible>!String.IsEmpty(Window.Property(trailer.button))</visible>
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -133,8 +125,6 @@
                 </control>
                 <control type="button" id="307">
                     <visible>!String.IsEmpty(Window.Property(media.multiple))</visible>
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -146,8 +136,6 @@
                     <label> </label>
                 </control>
                 <control type="button" id="305">
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
                     <posx>0</posx>
                     <posy>0</posy>
@@ -159,8 +147,6 @@
                     <label> </label>
                 </control>
                 <control type="button" id="306">
-                    <animation effect="zoom" start="100" end="132" time="100" center="88,70" reversible="false">Focus</animation>
-                    <animation effect="zoom" start="132" end="100" time="100" center="88,70" reversible="false">UnFocus</animation>
                     <hitrect x="40" y="40" w="96" h="60" />
                     <posx>0</posx>
                     <posy>0</posy>
