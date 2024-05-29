@@ -11,6 +11,8 @@ import math
 import time
 import datetime
 import contextlib
+import types
+
 import unicodedata
 
 import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
@@ -210,18 +212,27 @@ class AddonSettings(object):
 addonSettings = AddonSettings()
 
 
-def LOG(msg, level=xbmc.LOGINFO):
+def LOG(msg, *args, **kwargs):
+    if args:
+        # resolve dynamic args
+        msg = msg.format([arg() if isinstance(arg, types.FunctionType) else arg for arg in args])
+
+    level = kwargs.pop("level", xbmc.LOGINFO)
+
+    if kwargs:
+        # resolve dynamic kwargs
+        msg = msg.format(dict((k, v()) if isinstance(v, types.FunctionType) else v for k, v in kwargs.items()))
     xbmc.log('script.plex: {0}'.format(msg), level)
 
 
-def DEBUG_LOG(msg):
+def DEBUG_LOG(msg, *args, **kwargs):
     if _SHUTDOWN:
         return
 
     if not addonSettings.debug and not xbmc.getCondVisibility('System.GetBool(debug.showloginfo)'):
         return
 
-    LOG(msg)
+    LOG(msg, *args, **kwargs)
 
 
 def ERROR(txt='', hide_tb=False, notify=False, time_ms=3000):

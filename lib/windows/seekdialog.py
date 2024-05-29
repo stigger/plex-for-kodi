@@ -72,6 +72,11 @@ MARKERS = OrderedDict([
     })
 ])
 
+
+class Marker(AttributeDict):
+    pass
+
+
 FINAL_MARKER_NEGOFF = 3000
 MARKER_SHOW_NEGOFF = 3000
 MARKER_OFF = 500
@@ -297,9 +302,14 @@ class SeekDialog(kodigui.BaseDialog):
             for m in self.handler.player.video.markers:
                 if m.type in MARKERS:
                     # normalize markers and properties as we modify them later on
-                    marker = AttributeDict({
-                        "type": m.type,
-                        "startTimeOffset": m.startTimeOffset.asInt(),
+                    final = m.final.asBool()
+                    sto = m.startTimeOffset.asInt()
+                    marker = Marker({
+                        "id": m.id.asInt(),
+                        "final": final,
+                        "type": str(m.type),
+                        "title": "{}@{}{}".format(m.type, m.startTimeOffset.asInt(), final and ",final" or ""),
+                        "startTimeOffset": sto,
                         "endTimeOffset": m.endTimeOffset.asInt()
                     })
 
@@ -311,7 +321,7 @@ class SeekDialog(kodigui.BaseDialog):
                     if (marker.type == "intro"
                             and marker.startTimeOffset > util.addonSettings.introMarkerMaxOffset * 1000):
                         util.DEBUG_LOG("Throwing away intro marker {}, as its start time offset is bigger than the"
-                                       " configured maximum".format(marker))
+                                       " configured maximum", marker)
                         continue
 
                     m = MARKERS[marker.type].copy()
@@ -320,6 +330,7 @@ class SeekDialog(kodigui.BaseDialog):
                     markers.append(m)
 
             self._markers = markers
+            util.DEBUG_LOG("Got markers: {}", lambda: list(_m["marker"] for _m in markers))
 
         return self._markers
 
