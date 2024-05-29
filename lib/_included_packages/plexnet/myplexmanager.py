@@ -30,7 +30,7 @@ class MyPlexManager(object):
         util.APP.startRequest(request, context, "_method=PUT")
 
     def refreshResources(self, force=False):
-        util.LOG('MyPlexManager().refreshResources() - Force: {}'.format(force))
+        util.LOG('MyPlexManager().refreshResources() - Force: {}', force)
         if force:
             plexapp.SERVERMANAGER.resetLastTest()
 
@@ -72,12 +72,12 @@ class MyPlexManager(object):
                 )
 
                 for conn in resource.connections:
-                    util.DEBUG_LOG('  {0}'.format(conn))
+                    util.DEBUG_LOG('  {0}', conn)
                     hosts.append(conn.address)
 
                 if 'server' in resource.provides:
                     server = plexserver.createPlexServerForResource(resource)
-                    util.DEBUG_LOG('  {0}'.format(server))
+                    util.DEBUG_LOG('  {0}', server)
                     servers.append(server)
 
             self.gotResources = True

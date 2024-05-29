@@ -354,7 +354,7 @@ class LibrarySection(plexobjects.PlexObject):
                 list(map(result.add, matches))
                 continue
             # nothing matched; use raw item value
-            util.LOG('Filter value not listed, using raw item value: {0}'.format(item))
+            util.LOG('Filter value not listed, using raw item value: {0}', item)
             result.add(item)
         return ','.join(result)
 
@@ -588,7 +588,7 @@ class Hub(BaseHub):
                 try:
                     self.items.append(plexobjects.buildItem(self.server, elem, '/hubs', container=container, tag_fallback=True))
                 except exceptions.UnknownType:
-                    util.DEBUG_LOG('Unkown hub item type({1}): {0}'.format(elem, elem.attrib.get('type')))
+                    util.DEBUG_LOG('Unkown hub item type({1}): {0}', elem, elem.attrib.get('type'))
 
     def __repr__(self):
         return '<{0}:{1}>'.format(self.__class__.__name__, self.hubIdentifier)
@@ -646,7 +646,7 @@ class PlaylistHub(BaseHub):
         try:
             self.items = self.extend(0, 10)
         except exceptions.BadRequest:
-            util.DEBUG_LOG('AudioPlaylistHub: Bad request: {0}'.format(self))
+            util.DEBUG_LOG('AudioPlaylistHub: Bad request: {0}', self)
             self.items = []
 
     def extend(self, start=None, size=None):

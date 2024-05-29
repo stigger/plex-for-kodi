@@ -39,7 +39,7 @@ def pgetaddrinfo(host, port, *args, **kwargs):
         else:
             base = host.split(".", 1)[0]
             ip = RESOLVED_PD_HOSTS[host] = v6 and base.replace("-", ":") or base.replace("-", ".")
-            util.DEBUG_LOG("Dynamically resolving {} to {}".format(host, ip))
+            util.DEBUG_LOG("Dynamically resolving {} to {}", host, ip)
 
         fam = v6 and socket.AF_INET6 or socket.AF_INET
         stype = kwargs.get("type", kwargs.get("socktype", socket.SOCK_STREAM))
@@ -197,7 +197,7 @@ class HttpRequest(object):
             if self._cancel:
                 return None
 
-            util.LOG("Got a {0} from {1}".format(res.status_code, util.cleanToken(self.url)))
+            util.LOG("Got a {0} from {1}", res.status_code, util.cleanToken(self.url))
             # self.event = msg
             return res
         except Exception as e:
@@ -351,7 +351,7 @@ def addRequestHeaders(transferObj, headers=None):
     if isinstance(headers, dict):
         for header in headers:
             transferObj.addHeader(header, headers[header])
-            util.DEBUG_LOG("Adding header to {0}: {1}: {2}".format(transferObj, header, headers[header]))
+            util.DEBUG_LOG("Adding header to {0}: {1}: {2}", transferObj, header, headers[header])
 
 
 def addUrlParam(url, param):

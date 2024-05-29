@@ -174,9 +174,9 @@ class PlexPart(plexobjects.PlexObject):
             url = self.file.replace(pms_path, map_path, 1).replace(sep == "/" and "\\" or "/", sep)
 
             if (verify and xbmcvfs.exists(url)) or not verify:
-                util.DEBUG_LOG("File {} found in path map, mapping to {}".format(self.file, pms_path))
+                util.DEBUG_LOG("File {} found in path map, mapping to {}", self.file, pms_path)
                 return url
-            util.LOG("Mapped file {} doesn't exist".format(url))
+            util.LOG("Mapped file {} doesn't exist", url)
         return ""
 
     @property

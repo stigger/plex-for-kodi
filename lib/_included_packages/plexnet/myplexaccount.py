@@ -125,15 +125,15 @@ class MyPlexAccount(object):
             util.APP.clearInitializer("myplex")
 
     def logState(self):
-        util.LOG("Authenticated as {0}:{1}".format(self.ID, repr(self.title)))
-        util.LOG("SignedIn: {0}".format(self.isSignedIn))
-        util.LOG("Offline: {0}".format(self.isOffline))
-        util.LOG("Authenticated: {0}".format(self.isAuthenticated))
-        util.LOG("PlexPass: {0}".format(self.isPlexPass))
-        util.LOG("Managed: {0}".format(self.isManaged))
-        util.LOG("Protected: {0}".format(self.isProtected))
-        util.LOG("Admin: {0}".format(self.isAdmin))
-        util.LOG("AdminPlexPass: {0}".format(self.adminHasPlexPass))
+        util.LOG("Authenticated as {0}:{1}", self.ID, repr(self.title))
+        util.LOG("SignedIn: {0}", self.isSignedIn)
+        util.LOG("Offline: {0}", self.isOffline)
+        util.LOG("Authenticated: {0}", self.isAuthenticated)
+        util.LOG("PlexPass: {0}", self.isPlexPass)
+        util.LOG("Managed: {0}", self.isManaged)
+        util.LOG("Protected: {0}", self.isProtected)
+        util.LOG("Admin: {0}", self.isAdmin)
+        util.LOG("AdminPlexPass: {0}", self.adminHasPlexPass)
 
     def getHomeSubscription(self):
         """
@@ -352,7 +352,7 @@ class MyPlexAccount(object):
                         break
 
             if oldHU != self.homeUsers:
-                util.LOG("home users: {0}".format(self.homeUsers))
+                util.LOG("home users: {0}", self.homeUsers)
 
         self.lastHomeUserUpdate = time.time()
         self.saveState()

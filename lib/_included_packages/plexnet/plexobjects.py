@@ -193,7 +193,7 @@ class PlexObject(Checks):
         try:
             setattr(self, attr, a)
         except AttributeError:
-            util.LOG('Failed to set attribute: {0} ({1})'.format(attr, self.__class__))
+            util.LOG('Failed to set attribute: {0} ({1})', attr, self.__class__)
 
         return a
 
@@ -256,7 +256,7 @@ class PlexObject(Checks):
         try:
             self._setData(data[0])
         except (IndexError, TypeError, AttributeError):
-            util.DEBUG_LOG('No data on reload: {0}'.format(self))
+            util.DEBUG_LOG('No data on reload: {0}', self)
             return self
 
         return self

@@ -53,9 +53,9 @@ class ChunkRequestTask(backgroundthread.Task):
 
             self.WINDOW.chunkCallback(items, self.start)
         except AttributeError:
-            util.DEBUG_LOG('Playlist window closed, ignoring chunk at index {0}'.format(self.start))
+            util.DEBUG_LOG('Playlist window closed, ignoring chunk at index {0}', self.start)
         except plexnet.exceptions.BadRequest:
-            util.DEBUG_LOG('404 on playlist: {0}'.format(repr(self.WINDOW.playlist.title)))
+            util.DEBUG_LOG('404 on playlist: {0}', repr(self.WINDOW.playlist.title))
 
 
 class PlaylistWindow(kodigui.ControlledWindow, windowutils.UtilMixin):

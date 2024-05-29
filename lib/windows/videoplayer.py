@@ -145,7 +145,7 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin, Spoiler
         self.relatedListControl = kodigui.ManagedControlList(self, self.RELATED_LIST_ID, 5)
         self.rolesListControl = kodigui.ManagedControlList(self, self.ROLES_LIST_ID, 5)
 
-        util.DEBUG_LOG('VideoPlayerWindow: Starting session (ID: {0})'.format(id(self)))
+        util.DEBUG_LOG('VideoPlayerWindow: Starting session (ID: {0})', id(self))
         self.resetPassoutProtection()
         self.play(resume=self.resume)
 
@@ -309,10 +309,10 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin, Spoiler
 
     def sessionEnded(self, session_id=None, **kwargs):
         if session_id != id(self):
-            util.DEBUG_LOG('VideoPlayerWindow: Ignoring session end (ID: {0} - SessionID: {1})'.format(id(self), session_id))
+            util.DEBUG_LOG('VideoPlayerWindow: Ignoring session end (ID: {0} - SessionID: {1})', id(self), session_id)
             return
 
-        util.DEBUG_LOG('VideoPlayerWindow: Session ended - closing (ID: {0})'.format(id(self)))
+        util.DEBUG_LOG('VideoPlayerWindow: Session ended - closing (ID: {0})', id(self))
         self.doClose()
 
     def play(self, resume=False, handler=None):
@@ -324,7 +324,7 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin, Spoiler
         if player.PLAYER.isPlayingVideo():
             activePlayers = anyOtherVPlayer()
             if activePlayers:
-                util.DEBUG_LOG("Stopping other active players: {}".format(activePlayers))
+                util.DEBUG_LOG("Stopping other active players: {}", activePlayers)
                 xbmc.executebuiltin('PlayerControl(Stop)')
                 ct = 0
                 while player.PLAYER.isPlayingVideo() or anyOtherVPlayer():
@@ -439,7 +439,7 @@ class VideoPlayerWindow(kodigui.ControlledWindow, windowutils.UtilMixin, Spoiler
             return
         else:
             millis = (self.passoutProtection - time.time()) * 1000
-            util.DEBUG_LOG('Post play auto-play: Passout protection in {0}'.format(util.durationToShortText(millis)))
+            util.DEBUG_LOG('Post play auto-play: Passout protection in {0}', util.durationToShortText(millis))
 
         self.timeout = time.time() + abs(util.addonSettings.postplayTimeout)
         util.DEBUG_LOG('Starting post-play timer until: %i' % self.timeout)

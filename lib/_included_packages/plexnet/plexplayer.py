@@ -49,7 +49,7 @@ class PlexPlayer(BasePlayer):
             self.media = self.choice.media
 
     def terminate(self, code, reason):
-        util.LOG('TERMINATE PLAYER: ({0}, {1})'.format(code, reason))
+        util.LOG('TERMINATE PLAYER: ({0}, {1})', code, reason)
         # TODO: Handle this? ---------------------------------------------------------------------------------------------------------- TODO
 
     @property
@@ -65,7 +65,7 @@ class PlexPlayer(BasePlayer):
         # item.settings = self.item.settings
         oldChoice = self.choice
         self.init(item, True)
-        util.LOG("Replacing '{0}' with '{1}' and rebuilding.".format(oldChoice, self.choice))
+        util.LOG("Replacing '{0}' with '{1}' and rebuilding.", oldChoice, self.choice)
         self.build()
         self.decision = decision
 
@@ -191,7 +191,7 @@ class PlexPlayer(BasePlayer):
 
         self.metadata = obj
 
-        util.LOG("Constructed video item for playback: {0}".format(util.cleanObjTokens(dict(obj))))
+        util.LOG("Constructed video item for playback: {0}", util.cleanObjTokens(dict(obj)))
 
         return self.metadata
 
@@ -244,13 +244,13 @@ class PlexPlayer(BasePlayer):
                 decision = serverdecision.ServerDecision(self, response, self)
 
                 if decision.isSuccess():
-                    util.LOG("MDE: Server was happy with client's original decision. {0}".format(decision))
+                    util.LOG("MDE: Server was happy with client's original decision. {0}", decision)
                     return self
                 elif decision.isDecision(True):
                     util.WARN_LOG("MDE: Server was unhappy with client's original decision. {0}".format(decision))
                     return decision.getDecision()
                 else:
-                    util.LOG("MDE: Server was unbiased about the decision. {0}".format(decision))
+                    util.LOG("MDE: Server was unbiased about the decision. {0}", decision)
 
                 # Check if the server has provided a new media item to use it. If
                 # there is no item, then we'll continue along as if there was no
@@ -397,7 +397,7 @@ class PlexPlayer(BasePlayer):
                          "eia_708_embedded,dvb_subtitle" + (",webvtt" if KODI_VERSION_MAJOR > 19 else '')
 
 
-        util.LOG('MDE-prep: enabling codecs: {}'.format(audioCodecs))
+        util.LOG('MDE-prep: enabling codecs: {}', audioCodecs)
 
         # Allow virtually anything in Kodi playback.
 
@@ -484,7 +484,7 @@ class PlexPlayer(BasePlayer):
 
             # limit OPUS bitrate
             if hasAudioChoice and self.choice.audioStream.codec != "opus":
-                util.LOG('MDE-prep: limiting OPUS bitrate to {} kbit'.format(opusBitrate))
+                util.LOG('MDE-prep: limiting OPUS bitrate to {} kbit', opusBitrate)
                 builder.extras.append(
                     "add-limitation(scope=videoAudioCodec&scopeName=opus&type=upperBound&name=audio.bitrate&"
                     "value={}&isRequired=false)".format(opusBitrate)
@@ -497,7 +497,7 @@ class PlexPlayer(BasePlayer):
                 "add-limitation(scope=videoAudioCodec&scopeName=ac3&type=upperBound&name=audio.bitrate&value=640)"
             )
 
-        util.LOG('MDE-prep: limiting audio channels to {}'.format(maxAudioChannels))
+        util.LOG('MDE-prep: limiting audio channels to {}', maxAudioChannels)
         builder.extras.append(
             "add-limitation(scope=videoAudioCodec&scopeName=*&type=upperBound&"
             "name=audio.channels&value={})".format(maxAudioChannels)
@@ -586,7 +586,7 @@ class PlexPlayer(BasePlayer):
         oldPart.nextPart = None
         self.metadata = newPart
 
-        util.LOG("Next part set for playback: {0}".format(self.metadata))
+        util.LOG("Next part set for playback: {0}", self.metadata)
 
     def getBifUrl(self, offset=0):
         server = self.item.getServer()
@@ -721,7 +721,7 @@ class PlexAudioPlayer(BasePlayer):
         else:
             obj = self.buildTranscode(item, choice, obj)
 
-        util.LOG("Constructed audio item for playback: {0}".format(util.cleanObjTokens(dict(obj))))
+        util.LOG("Constructed audio item for playback: {0}", util.cleanObjTokens(dict(obj)))
 
         return obj
 
@@ -796,7 +796,7 @@ class PlexPhotoPlayer(object):
             obj.url = server.buildUrl(path, True)
             obj.enableBlur = server.supportsPhotoTranscoding
 
-            util.DEBUG_LOG("Constructed photo item for playback: {0}".format(util.cleanObjTokens(dict(obj))))
+            util.DEBUG_LOG("Constructed photo item for playback: {0}", util.cleanObjTokens(dict(obj)))
 
             self.metadata = obj
 

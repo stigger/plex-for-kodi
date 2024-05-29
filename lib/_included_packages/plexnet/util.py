@@ -110,20 +110,20 @@ def setApp(app):
     APP = app
 
 
-def LOG(msg):
-    INTERFACE.LOG(msg)
+def LOG(msg, *args, **kwargs):
+    INTERFACE.LOG(msg, *args, **kwargs)
 
 
-def DEBUG_LOG(msg):
-    INTERFACE.DEBUG_LOG(msg)
+def DEBUG_LOG(msg, *args, **kwargs):
+    INTERFACE.DEBUG_LOG(msg, *args, **kwargs)
 
 
-def ERROR_LOG(msg):
-    INTERFACE.ERROR_LOG(msg)
+def ERROR_LOG(msg, *args, **kwargs):
+    INTERFACE.ERROR_LOG(msg, *args, **kwargs)
 
 
-def WARN_LOG(msg):
-    INTERFACE.WARN_LOG(msg)
+def WARN_LOG(msg, *args, **kwargs):
+    INTERFACE.WARN_LOG(msg, *args, **kwargs)
 
 
 def ERROR(msg=None, err=None):

@@ -376,7 +376,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         self.offset = offset
 
         if self.isDirectPlay and not settings_changed:
-            util.DEBUG_LOG('New absolute player offset: {0}'.format(self.offset))
+            util.DEBUG_LOG('New absolute player offset: {0}', self.offset)
 
             if self.player.playerObject.offsetIsValid(offset / 1000):
                 if self.seekAbsolute(offset):
@@ -389,7 +389,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.player.playState == self.player.STATE_PAUSED:
             self.player.pauseAfterPlaybackStarted = True
 
-        util.DEBUG_LOG('New player offset: {0}, state: {1}'.format(self.offset, self.player.playState))
+        util.DEBUG_LOG('New player offset: {0}, state: {1}', self.offset, self.player.playState)
         self.player._playVideo(offset, seeking=self.seeking, force_update=settings_changed)
 
     def fastforward(self):
@@ -407,14 +407,14 @@ class SeekPlayerHandler(BasePlayerHandler):
             seekSeconds = self.seekOnStart / 1000.0
             try:
                 if seekSeconds >= self.player.getTotalTime():
-                    util.DEBUG_LOG("SeekAbsolute: Bad offset: {0}".format(seekSeconds))
+                    util.DEBUG_LOG("SeekAbsolute: Bad offset: {0}", seekSeconds)
                     return False
             except RuntimeError:  # Not playing a file
                 util.DEBUG_LOG("SeekAbsolute: runtime error")
                 return False
             self.updateNowPlaying(state=self.player.STATE_PAUSED)  # To for update after seek
 
-            util.DEBUG_LOG("SeekAbsolute: Seeking to {0}".format(self.seekOnStart))
+            util.DEBUG_LOG("SeekAbsolute: Seeking to {0}", self.seekOnStart)
             self.player.seekTime(self.seekOnStart / 1000.0)
         return True
 
@@ -450,13 +450,13 @@ class SeekPlayerHandler(BasePlayerHandler):
                 util.ERROR("Exception when trying to check for embedded subtitles")
 
     def onPrePlayStarted(self):
-        util.DEBUG_LOG('SeekHandler: onPrePlayStarted, DP: {}'.format(self.isDirectPlay))
+        util.DEBUG_LOG('SeekHandler: onPrePlayStarted, DP: {}', self.isDirectPlay)
         self.prePlayWitnessed = True
         if self.isDirectPlay:
             self.setSubtitles(do_sleep=False)
 
     def onPlayBackStarted(self):
-        util.DEBUG_LOG('SeekHandler: onPlayBackStarted, DP: {}'.format(self.isDirectPlay))
+        util.DEBUG_LOG('SeekHandler: onPlayBackStarted, DP: {}', self.isDirectPlay)
         self.updateNowPlaying(force=True, refreshQueue=True)
 
         if self.dialog:
@@ -517,7 +517,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             # show post play if possible, if an item has been watched (90% by Plex standards)
             if self.seeking != self.SEEK_PLAYLIST and self.duration:
                 playedFac = self.videoPlayedFac
-                util.DEBUG_LOG("Player - played-threshold: {}/{}".format(playedFac, self.playedThreshold))
+                util.DEBUG_LOG("Player - played-threshold: {}/{}", playedFac, self.playedThreshold)
                 if playedFac >= self.playedThreshold and self.next(on_end=True):
                     return
 
@@ -526,7 +526,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             self.sessionEnded()
 
     def onPlayBackEnded(self):
-        util.DEBUG_LOG('SeekHandler: onPlayBackEnded - Seeking={0}'.format(self.seeking))
+        util.DEBUG_LOG('SeekHandler: onPlayBackEnded - Seeking={0}', self.seeking)
 
         if self.dialog:
             self.dialog.onPlayBackEnded()
@@ -566,7 +566,7 @@ class SeekPlayerHandler(BasePlayerHandler):
             self.dialog.onPlayBackPaused()
 
     def onPlayBackSeek(self, stime, offset):
-        util.DEBUG_LOG('SeekHandler: onPlayBackSeek - {0}, {1}, {2}'.format(stime, offset, self.seekOnStart))
+        util.DEBUG_LOG('SeekHandler: onPlayBackSeek - {0}, {1}, {2}', stime, offset, self.seekOnStart)
         if self.dialog:
             self.dialog.onPlayBackSeek(stime, offset)
 
@@ -576,7 +576,7 @@ class SeekPlayerHandler(BasePlayerHandler):
                 seeked = self.dialog.tick(stime)
 
             if seeked:
-                util.DEBUG_LOG("OnPlayBackSeek: Seeked on start to: {0}".format(stime))
+                util.DEBUG_LOG("OnPlayBackSeek: Seeked on start to: {0}", stime)
                 self.seekOnStart = 0
             return
 
@@ -599,14 +599,14 @@ class SeekPlayerHandler(BasePlayerHandler):
             if self.isDirectPlay:
                 self.player.showSubtitles(False)
                 if path:
-                    util.DEBUG_LOG('Setting subtitle path: {0} ({1})'.format(path, subs))
+                    util.DEBUG_LOG('Setting subtitle path: {0} ({1})', path, subs)
                     self.player.setSubtitles(path)
                     self.player.showSubtitles(True)
 
                 else:
                     # u_til.TEST(subs.__dict__)
                     # u_til.TEST(self.player.video.mediaChoice.__dict__)
-                    util.DEBUG_LOG('Enabling embedded subtitles at: {0} ({1})'.format(subs.typeIndex, subs))
+                    util.DEBUG_LOG('Enabling embedded subtitles at: {0} ({1})', subs.typeIndex, subs)
                     self.player.setSubtitleStream(subs.typeIndex)
                     self.player.showSubtitles(True)
 
@@ -626,13 +626,13 @@ class SeekPlayerHandler(BasePlayerHandler):
                         playerID = kodijsonrpc.rpc.Player.GetActivePlayers()[0]["playerid"]
                         currIdx = kodijsonrpc.rpc.Player.GetProperties(playerid=playerID, properties=['currentaudiostream'])['currentaudiostream']['index']
                         if currIdx == track.typeIndex:
-                            util.DEBUG_LOG('Audio track is correct index: {0}'.format(track.typeIndex))
+                            util.DEBUG_LOG('Audio track is correct index: {0}', track.typeIndex)
                             return
                     except:
                         util.ERROR()
 
                 util.MONITOR.waitForAbort(0.1)
-                util.DEBUG_LOG('Switching audio track - index: {0}'.format(track.typeIndex))
+                util.DEBUG_LOG('Switching audio track - index: {0}', track.typeIndex)
                 self.player.setAudioStream(track.typeIndex)
 
     def updateOffset(self):
@@ -657,7 +657,7 @@ class SeekPlayerHandler(BasePlayerHandler):
         if self.dialog:
             self.dialog.onPlayBackFailed()
 
-        util.DEBUG_LOG('SeekHandler: onPlayBackFailed - Seeking={0}'.format(self.seeking))
+        util.DEBUG_LOG('SeekHandler: onPlayBackFailed - Seeking={0}', self.seeking)
         if self.seeking not in (self.SEEK_IN_PROGRESS, self.SEEK_PLAYLIST):
             self.sessionEnded()
 
@@ -672,14 +672,14 @@ class SeekPlayerHandler(BasePlayerHandler):
     #     self.dialog.activate()
 
     def onVideoWindowOpened(self):
-        util.DEBUG_LOG('SeekHandler: onVideoWindowOpened - Seeking={0}'.format(self.seeking))
+        util.DEBUG_LOG('SeekHandler: onVideoWindowOpened - Seeking={0}', self.seeking)
         self.getDialog().show()
 
         self.initPlayback()
 
     def onVideoWindowClosed(self):
         self.hideOSD()
-        util.DEBUG_LOG('SeekHandler: onVideoWindowClosed - Seeking={0}'.format(self.seeking))
+        util.DEBUG_LOG('SeekHandler: onVideoWindowClosed - Seeking={0}', self.seeking)
         if not self.seeking:
             # send events as we might not have seen onPlayBackEnded and/or onPlayBackStopped in certain cases,
             # especially when postplay isn't wanted and we're at the end of a show
@@ -902,16 +902,16 @@ class BGMPlayerHandler(BasePlayerHandler):
         curVolume = self.getVolume()
 
         if curVolume != vlm:
-            util.DEBUG_LOG("BGM: {}setting volume to: {}".format("re-" if reset else "", vlm))
+            util.DEBUG_LOG("BGM: {}setting volume to: {}", "re-" if reset else "", vlm)
             self._setVolume(vlm)
         else:
-            util.DEBUG_LOG("BGM: Volume already at {}".format(vlm))
+            util.DEBUG_LOG("BGM: Volume already at {}", vlm)
             return
 
         waited = 0
         waitMax = 5
         while curVolume != vlm and waited < waitMax:
-            util.DEBUG_LOG("Waiting for volume to change from {} to {}".format(curVolume, vlm))
+            util.DEBUG_LOG("Waiting for volume to change from {} to {}", curVolume, vlm)
             xbmc.sleep(100)
             waited += 1
             curVolume = self.getVolume()
@@ -924,7 +924,7 @@ class BGMPlayerHandler(BasePlayerHandler):
         self.setVolume(reset=True)
 
     def onPlayBackStopped(self):
-        util.DEBUG_LOG("BGM: stopped theme for {}".format(self.currentlyPlaying))
+        util.DEBUG_LOG("BGM: stopped theme for {}", self.currentlyPlaying)
         util.setGlobalProperty('theme_playing', '')
         self.player.bgmPlaying = False
         self.resetVolume()
@@ -1157,7 +1157,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
         url = meta.streamUrls[0]
 
         bifURL = self.playerObject.getBifUrl()
-        util.DEBUG_LOG('Playing URL(+{1}ms): {0}{2}'.format(plexnetUtil.cleanToken(url), offset, bifURL and ' - indexed' or ''))
+        util.DEBUG_LOG('Playing URL(+{1}ms): {0}{2}', plexnetUtil.cleanToken(url), offset, bifURL and ' - indexed' or '')
 
         self.ignoreStopEvents = True
         self.stopAndWait()  # Stop before setting up the handler to prevent player events from causing havoc
@@ -1188,7 +1188,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
 
             if introOffset:
                 # cheat our way into an early intro skip by modifying the offset in the stream URL
-                util.DEBUG_LOG("Immediately seeking behind intro: {}".format(introOffset))
+                util.DEBUG_LOG("Immediately seeking behind intro: {}", introOffset)
                 url = self.OFFSET_RE.sub(r"\g<1>{}".format(introOffset // 1000), url)
                 self.handler.dialog.baseOffset = introOffset
 
@@ -1196,10 +1196,10 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
                 meta.playStart = introOffset // 1000
         else:
             if offset:
-                util.DEBUG_LOG("Using as SeekOnStart: {0}; offset: {1}".format(meta.playStart, offset))
+                util.DEBUG_LOG("Using as SeekOnStart: {0}; offset: {1}", meta.playStart, offset)
                 self.handler.seekOnStart = meta.playStart * 1000
             elif introOffset:
-                util.DEBUG_LOG("Seeking behind intro after playstart: {}".format(introOffset))
+                util.DEBUG_LOG("Seeking behind intro after playstart: {}", introOffset)
                 self.handler.seekOnStart = introOffset
 
             self.handler.mode = self.handler.MODE_ABSOLUTE
@@ -1272,7 +1272,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
                 year = self.video.year.asInt()
                 trakt_ids['slug'] = util.slugify("{}{}".format(self.video.title, year and " {}".format(year) or ""))
 
-            util.DEBUG_LOG("Setting Trakt IDs: {}".format(trakt_ids))
+            util.DEBUG_LOG("Setting Trakt IDs: {}", trakt_ids)
             # report IDs to trakt
             xbmcgui.Window(10000).setProperty('script.trakt.ids', json.dumps(trakt_ids))
 
@@ -1473,7 +1473,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
     def onAVStarted(self):
         if not self.sessionID:
             return
-        util.DEBUG_LOG('Player - AVStarted: {}'.format(self.handler))
+        util.DEBUG_LOG('Player - AVStarted: {}', self.handler)
         self.trigger('av.started')
         if not self.handler:
             return
@@ -1535,7 +1535,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
     def onPlayBackError(self):
         if not self.sessionID:
             return
-        util.DEBUG_LOG('Player - ERROR: {}'.format(self.handler))
+        util.DEBUG_LOG('Player - ERROR: {}', self.handler)
         if not self.handler:
             return
 
@@ -1548,7 +1548,7 @@ class PlexPlayer(xbmc.Player, signalsmixin.SignalsMixin):
     def onPlayBackFailed(self):
         if not self.sessionID:
             return
-        util.DEBUG_LOG('Player - FAILED: {}'.format(self.handler))
+        util.DEBUG_LOG('Player - FAILED: {}', self.handler)
         if not self.handler:
             return
 

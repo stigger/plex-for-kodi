@@ -547,7 +547,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         if not video.type == 'episode':
             return
 
-        util.DEBUG_LOG('Updating selected episode: {0}'.format(video))
+        util.DEBUG_LOG('Updating selected episode: {0}', video)
         self.episode = video
 
         return True
@@ -556,7 +556,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
         if not data:
             return
 
-        util.DEBUG_LOG("Storing video progress data: {}".format(data))
+        util.DEBUG_LOG("Storing video progress data: {}", data)
         if not self._videoProgress:
             self._videoProgress = {}
         self._videoProgress[data[0]] = data[1]
@@ -1018,7 +1018,7 @@ class EpisodesWindow(kodigui.ControlledWindow, windowutils.UtilMixin, SeasonsMix
 
         video = mli.dataSource
         success = video.delete()
-        util.LOG('Media DELETE: {0} - {1}'.format(video, success and 'SUCCESS' or 'FAILED'))
+        util.LOG('Media DELETE: {0} - {1}', video, success and 'SUCCESS' or 'FAILED')
         if success:
             self.episodeListControl.removeItem(mli.pos())
             if not self.episodeListControl.size():

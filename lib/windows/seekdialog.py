@@ -362,7 +362,7 @@ class SeekDialog(kodigui.BaseDialog):
                 # fix markers with a bad endTimeOffset
                 if marker.endTimeOffset > self.duration:
                     marker.endTimeOffset = self.duration
-                    util.DEBUG_LOG("Fixing marker endTimeOffset for: {}".format(marker))
+                    util.DEBUG_LOG("Fixing marker endTimeOffset for: {}", marker)
 
                 markerEndNegoff = FINAL_MARKER_NEGOFF if getattr(markerDef["marker"], "final", False) else 0
 
@@ -448,7 +448,7 @@ class SeekDialog(kodigui.BaseDialog):
         """
         this is called by our handler and occurs earlier than onFirstInit.
         """
-        util.DEBUG_LOG("SeekDialog: setup, keepMarkerDef={}".format(keepMarkerDef))
+        util.DEBUG_LOG("SeekDialog: setup, keepMarkerDef={}", keepMarkerDef)
         self._duration = duration
         self.title = title
         self.title2 = title2
@@ -474,7 +474,7 @@ class SeekDialog(kodigui.BaseDialog):
         try:
             if self.player.video.type == 'episode':
                 pbs = self.player.video.playbackSettings
-                util.DEBUG_LOG("Playback settings for {}: {}".format(self.player.video.ratingKey, pbs))
+                util.DEBUG_LOG("Playback settings for {}: {}", self.player.video.ratingKey, pbs)
 
                 self.bingeMode = pbs.binge_mode
                 self.handler.inBingeMode = self.bingeMode
@@ -1039,10 +1039,10 @@ class SeekDialog(kodigui.BaseDialog):
 
     def skipChapter(self, forward=True, without_osd=False):
         lastSelectedOffset = self.selectedOffset
-        util.DEBUG_LOG('chapter skipping from {0} with forward {1}'.format(lastSelectedOffset, forward))
+        util.DEBUG_LOG('chapter skipping from {0} with forward {1}', lastSelectedOffset, forward)
         if forward:
             nextChapters = [c for c in self.chapters if c.startTime() > lastSelectedOffset]
-            util.DEBUG_LOG('Found {0} chapters among {1}'.format(len(nextChapters), len(self.chapters)))
+            util.DEBUG_LOG('Found {0} chapters among {1}', len(nextChapters), len(self.chapters))
             if len(nextChapters) == 0:
                 return False
             chapter = nextChapters[0]
@@ -1051,16 +1051,16 @@ class SeekDialog(kodigui.BaseDialog):
             if startTimeLimit < 0:
                 startTimeLimit = 0
             lastChapters = [c for c in self.chapters if c.startTime() <= startTimeLimit]
-            util.DEBUG_LOG('Found {0} chapters among {1}'.format(len(lastChapters), len(self.chapters)))
+            util.DEBUG_LOG('Found {0} chapters among {1}', len(lastChapters), len(self.chapters))
             if len(lastChapters) == 0:
                 return False
             chapter = lastChapters[-1]
 
         if chapter.tag:
-            util.DEBUG_LOG('Skipping to chapter: {}'.format(chapter.tag))
+            util.DEBUG_LOG('Skipping to chapter: {}', chapter.tag)
             self.forceNextTimeAsChapter = chapter.tag
 
-        util.DEBUG_LOG('New start time is {0}'.format(chapter.startTime()))
+        util.DEBUG_LOG('New start time is {0}', chapter.startTime())
         self.skipByOffset(chapter.startTime() - lastSelectedOffset, without_osd=without_osd)
         return True
 
@@ -1831,7 +1831,7 @@ class SeekDialog(kodigui.BaseDialog):
 
         else:
             wait = util.addonSettings.bufferInsufficientWait
-            util.DEBUG_LOG("SeekDialog.buffer: Buffer is too small for us to see, waiting {} seconds".format(wait))
+            util.DEBUG_LOG("SeekDialog.buffer: Buffer is too small for us to see, waiting {} seconds", wait)
             self.waitingForBuffer = True
 
             wasPlaying = False
@@ -1856,7 +1856,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.ldTimer and self.syncTimeKeeper()
 
     def onAVChange(self):
-        util.DEBUG_LOG("SeekDialog: OnAVChange: DPO: {0}, offset: {1}".format(self.DPPlayerOffset, self.offset))
+        util.DEBUG_LOG("SeekDialog: OnAVChange: DPO: {0}, offset: {1}", self.DPPlayerOffset, self.offset)
 
         # wait for buffer if we're not expecting a seek
         if not self.handler.seekOnStart and util.getSetting("slow_connection", False) and not self.waitingForBuffer:
@@ -1867,7 +1867,7 @@ class SeekDialog(kodigui.BaseDialog):
             return
 
     def onAVStarted(self):
-        util.DEBUG_LOG("SeekDialog: OnAVStarted: DPO: {0}, offset: {1}".format(self.DPPlayerOffset, self.offset))
+        util.DEBUG_LOG("SeekDialog: OnAVStarted: DPO: {0}, offset: {1}", self.DPPlayerOffset, self.offset)
         if self._ignoreInput:
             self._ignoreInput = False
 
@@ -1885,7 +1885,7 @@ class SeekDialog(kodigui.BaseDialog):
         self.idleTime = time.time()
 
     def onPlayBackSeek(self, stime, offset):
-        util.DEBUG_LOG("SeekDialog: OnPlaybackSeek: {0}, {1}".format(stime, offset))
+        util.DEBUG_LOG("SeekDialog: OnPlaybackSeek: {0}, {1}", stime, offset)
         self.idleTime = None
         self.ldTimer and self.syncTimeKeeper()
 
@@ -1930,7 +1930,7 @@ class SeekDialog(kodigui.BaseDialog):
 
         if self.stopPlaybackOnIdle:
             if self.idleTime and time.time() - self.idleTime >= self.stopPlaybackOnIdle:
-                util.LOG("Player has been idle for {}s, stopping.".format(int(time.time() - self.idleTime)))
+                util.LOG("Player has been idle for {}s, stopping.", int(time.time() - self.idleTime))
                 self.handler.player.stopAndWait()
                 return
 
@@ -2067,7 +2067,7 @@ class SeekDialog(kodigui.BaseDialog):
                     self.stop()
                 return False
 
-            util.DEBUG_LOG('MarkerAutoSkip: Skipping marker {}'.format(markerDef["marker"]))
+            util.DEBUG_LOG('MarkerAutoSkip: Skipping marker {}', markerDef["marker"])
             self.doSeek(markerDef["marker"].endTimeOffset + MARKER_END_JUMP_OFF)
             return True
 

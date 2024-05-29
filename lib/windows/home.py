@@ -79,13 +79,13 @@ class SectionHubsTask(backgroundthread.Task):
                 return
             self.callback(self.section, hubs, reselect_pos_dict=self.reselect_pos_dict)
         except plexnet.exceptions.BadRequest:
-            util.DEBUG_LOG('404 on section: {0}'.format(repr(self.section.title)))
+            util.DEBUG_LOG('404 on section: {0}', repr(self.section.title))
             hubs = HubsList().init()
             hubs.invalid = True
             self.callback(self.section, hubs)
         except:
             util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
-            util.DEBUG_LOG('Generic exception when fetching section: {0}'.format(repr(self.section.title)))
+            util.DEBUG_LOG('Generic exception when fetching section: {0}', repr(self.section.title))
             hubs = HubsList().init()
             hubs.invalid = True
             self.callback(self.section, hubs)
@@ -111,11 +111,11 @@ class UpdateHubTask(backgroundthread.Task):
                 return
             self.callback(self.hub)
         except plexnet.exceptions.BadRequest:
-            util.DEBUG_LOG('404 on hub: {0}'.format(repr(self.hub.hubIdentifier)))
+            util.DEBUG_LOG('404 on hub: {0}', repr(self.hub.hubIdentifier))
         except util.NoDataException:
             util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
         except:
-            util.DEBUG_LOG('Something went wrong when updating hub: {0}'.format(repr(self.hub.hubIdentifier)))
+            util.DEBUG_LOG('Something went wrong when updating hub: {0}', repr(self.hub.hubIdentifier))
 
 
 class ExtendHubTask(backgroundthread.Task):
@@ -146,13 +146,13 @@ class ExtendHubTask(backgroundthread.Task):
                 return
             self.callback(self.hub, items, reselect_pos=self.reselect_pos)
         except plexnet.exceptions.BadRequest:
-            util.DEBUG_LOG('404 on hub: {0}'.format(repr(self.hub.hubIdentifier)))
+            util.DEBUG_LOG('404 on hub: {0}', repr(self.hub.hubIdentifier))
             if self.canceledCallback:
                 self.canceledCallback(self.hub)
         except util.NoDataException:
             util.ERROR("No data - disconnected?", notify=True, time_ms=5000)
         except:
-            util.DEBUG_LOG('Something went wrong when extending hub: {0}'.format(repr(self.hub.hubIdentifier)))
+            util.DEBUG_LOG('Something went wrong when extending hub: {0}', repr(self.hub.hubIdentifier))
 
 
 class HomeSection(object):
@@ -486,7 +486,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                     # fixme: declutter, separation of concerns
                     self.checkHubItem(self.lastFocusID)
                 else:
-                    util.DEBUG_LOG("Focus requested on {}, which can't focus. Trying next hub".format(self.lastFocusID))
+                    util.DEBUG_LOG("Focus requested on {}, which can't focus. Trying next hub", self.lastFocusID)
                     self.focusFirstValidHub(hubControlIndex)
 
             else:
@@ -501,7 +501,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         knownHosts = pdm.getHosts()
         pdHosts = [host for host in hosts if ".plex.direct:" in host]
 
-        util.DEBUG_LOG("Checking host mapping for {} {} connections".format(len(pdHosts), source))
+        util.DEBUG_LOG("Checking host mapping for {} {} connections", len(pdHosts), source)
 
         newHosts = set(pdHosts) - set(knownHosts)
         if newHosts:
@@ -1411,7 +1411,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             if util.addonSettings.dynamicBackgrounds:
                 self.backgroundSet = False
 
-            util.DEBUG_LOG('Section changed ({0}): {1}'.format(section.key, repr(section.title)))
+            util.DEBUG_LOG('Section changed ({0}): {1}', section.key, repr(section.title))
             self.showHubs(section)
             self.lastSection = section
 
@@ -1440,7 +1440,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
                 hubs = self.sectionHubs.get(section.key, ())
                 if not hubs:
-                    util.LOG("Hubs for {} not found/no data".format(section.key))
+                    util.LOG("Hubs for {} not found/no data", section.key)
                     continue
 
                 for idx, ihub in enumerate(hubs):
@@ -1565,7 +1565,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
 
             # hubs.invalid is True when the last hub update errored. if the hub is stale, refresh it, though
             if hubs is not None and hubs.invalid and not section_stale:
-                util.DEBUG_LOG("Section fetch has failed: {}".format(section.key))
+                util.DEBUG_LOG("Section fetch has failed: {}", section.key)
                 self.showBusy(False)
                 self.setBoolProperty('no.content', True)
                 return
@@ -1601,7 +1601,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
             backgroundthread.BGThreader.addTask(self.tasks[-1])
             return
 
-        util.DEBUG_LOG('Showing hubs - Section: {0} - Update: {1}'.format(section.key, update))
+        util.DEBUG_LOG('Showing hubs - Section: {0} - Update: {1}', section.key, update)
         try:
             hasContent = False
             skip = {}
@@ -1658,7 +1658,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
                           **self.HUBMAP[identifier])
             return True
         else:
-            util.DEBUG_LOG('UNHANDLED - Hub: {0} [{1}]({1})'.format(hub.hubIdentifier, identifier, len(hub.items)))
+            util.DEBUG_LOG('UNHANDLED - Hub: {0} [{1}]({1})', hub.hubIdentifier, identifier, len(hub.items))
             return
 
     def createGrandparentedListItem(self, obj, thumb_w, thumb_h, with_grandparent_title=False):
@@ -1772,7 +1772,7 @@ class HomeWindow(kodigui.BaseWindow, util.CronReceiver, SpoilersMixin):
         return mli
 
     def unhandledHub(self, self2, obj, wide=False):
-        util.DEBUG_LOG('Unhandled Hub item: {0}'.format(obj.type))
+        util.DEBUG_LOG('Unhandled Hub item: {0}', obj.type)
 
     CREATE_LI_MAP = {
         'episode': createEpisodeListItem,

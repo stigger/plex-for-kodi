@@ -103,7 +103,7 @@ class DeleteMediaMixin:
     @busy.dialog()
     def _delete(self, item, do_close=False):
         success = item.delete()
-        util.LOG('Media DELETE: {0} - {1}'.format(item, success and 'SUCCESS' or 'FAILED'))
+        util.LOG('Media DELETE: {0} - {1}', item, success and 'SUCCESS' or 'FAILED')
         if success and do_close:
             self.doClose()
         return success

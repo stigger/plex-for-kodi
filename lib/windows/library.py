@@ -204,7 +204,7 @@ class ChunkRequestTask(backgroundthread.Task):
                 return
             self.callback(items, self.start)
         except plexnet.exceptions.BadRequest:
-            util.DEBUG_LOG('404 on section: {0}'.format(repr(self.section.title)))
+            util.DEBUG_LOG('404 on section: {0}', repr(self.section.title))
 
 
 class PhotoPropertiesTask(backgroundthread.Task):
@@ -221,7 +221,7 @@ class PhotoPropertiesTask(backgroundthread.Task):
             self.photo.reload()
             self.callback(self.photo)
         except plexnet.exceptions.BadRequest:
-            util.DEBUG_LOG('404 on photo reload: {0}'.format(self.photo))
+            util.DEBUG_LOG('404 on photo reload: {0}', self.photo)
 
 
 class LibrarySettings(object):
@@ -1016,7 +1016,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
 
         for task in self.tasks:
             if task.contains(mli.pos()):
-                util.DEBUG_LOG('Moving task to front: {0}'.format(task))
+                util.DEBUG_LOG('Moving task to front: {0}', task)
                 backgroundthread.BGThreader.moveToFront(task)
                 break
 
@@ -1420,7 +1420,7 @@ class LibraryWindow(kodigui.MultiWindow, windowutils.UtilMixin):
 
         # Check if the chunk has already been requested, if not then go fetch the data
         if startChunkPosition not in self.alreadyFetchedChunkList:
-            util.DEBUG_LOG('Position {0} so requesting chunk {1}'.format(start, startChunkPosition))
+            util.DEBUG_LOG('Position {0} so requesting chunk {1}', start, startChunkPosition)
             # Keep track of the chunks we've already fetched by storing the chunk's starting position
             self.alreadyFetchedChunkList.add(startChunkPosition)
             task = ChunkRequestTask().setup(self.section, startChunkPosition, self.CHUNK_SIZE,

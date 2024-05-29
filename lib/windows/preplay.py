@@ -321,7 +321,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin, RatingsMixi
     @busy.dialog()
     def _delete(self):
         success = self.video.delete()
-        util.LOG('Media DELETE: {0} - {1}'.format(self.video, success and 'SUCCESS' or 'FAILED'))
+        util.LOG('Media DELETE: {0} - {1}', self.video, success and 'SUCCESS' or 'FAILED')
         return success
 
     def roleClicked(self):
@@ -496,7 +496,7 @@ class PrePlayWindow(kodigui.ControlledWindow, windowutils.UtilMixin, RatingsMixi
     def setup(self):
         self.focusPlayButton()
 
-        util.DEBUG_LOG('PrePlay: Showing video info: {0}'.format(self.video))
+        util.DEBUG_LOG('PrePlay: Showing video info: {0}', self.video)
         if self.video.type == 'episode':
             self.setProperty('preview.yes', '1')
         elif self.video.type == 'movie':

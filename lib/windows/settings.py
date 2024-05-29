@@ -31,7 +31,7 @@ class Setting(object):
         old = self.get()
         setRet = util.setSetting(self.ID, val)
         if old != val:
-            util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]'.format(self.ID, old, val))
+            util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]', self.ID, old, val)
             plexnet.util.APP.trigger('change:{0}'.format(self.ID), value=val)
         return setRet
 
@@ -120,7 +120,7 @@ class BoolUserSetting(BoolSetting):
     def set(self, val):
         old = self.get()
         if old != val:
-            util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]'.format(self.userAwareID, old, val))
+            util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]', self.userAwareID, old, val)
             plexnet.util.APP.trigger('change:{0}'.format(self.ID), key=self.userAwareID, value=val, skey=self.ID)
         return util.setSetting(self.userAwareID, val)
 
@@ -156,7 +156,7 @@ class BufferSetting(OptionsSetting):
     def set(self, val):
         old = self.get()
         if old != val:
-            util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]'.format(self.ID, old, val))
+            util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]', self.ID, old, val)
             plexnet.util.APP.trigger('change:{0}'.format(self.ID), value=val)
 
         lib.cache.kcm.write(memorySize=val)
@@ -169,7 +169,7 @@ class ReadFactorSetting(OptionsSetting):
     def set(self, val):
         old = self.get()
         if old != val:
-            util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]'.format(self.ID, old, val))
+            util.DEBUG_LOG('Setting: {0} - changed from [{1}] to [{2}]', self.ID, old, val)
             plexnet.util.APP.trigger('change:{0}'.format(self.ID), value=val)
 
         lib.cache.kcm.write(readFactor=val)
@@ -686,7 +686,7 @@ class SettingsWindow(kodigui.BaseWindow, windowutils.UtilMixin):
         self.lastSection = mli.dataSource
         self.showSettings(self.lastSection)
         self.setProperty('section.about', self.lastSection == 'about' and '1' or '')
-        util.DEBUG_LOG('Settings: Changed section ({0})'.format(self.lastSection))
+        util.DEBUG_LOG('Settings: Changed section ({0})', self.lastSection)
 
     def showSections(self):
         items = []

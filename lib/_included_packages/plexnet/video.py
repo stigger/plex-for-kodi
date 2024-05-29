@@ -201,7 +201,7 @@ class Video(media.MediaItem, AudioCodecMixin):
                 else:
                     stream = self.subtitleStreams[-1]
 
-        util.DEBUG_LOG("Selecting subtitle stream: {} (was: {})".format(stream, cur))
+        util.DEBUG_LOG("Selecting subtitle stream: {} (was: {})", stream, cur)
         self.selectStream(stream)
         return stream
 

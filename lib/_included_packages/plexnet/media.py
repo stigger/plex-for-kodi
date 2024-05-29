@@ -66,7 +66,7 @@ class MediaItem(plexobjects.PlexObject):
             data = self.server.query('/library/metadata/{0}'.format(self.ratingKey))
         except exceptions.BadRequest:
             # item does not exist anymore
-            util.DEBUG_LOG("Item {} doesn't exist.".format(self.ratingKey))
+            util.DEBUG_LOG("Item {} doesn't exist.", self.ratingKey)
             return False
         return data is not None and data.attrib.get('size') != '0'
 

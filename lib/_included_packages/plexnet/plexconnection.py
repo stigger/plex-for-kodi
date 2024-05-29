@@ -132,14 +132,14 @@ class PlexConnection(object):
         hostname = pUrl.hostname
 
         if hostname.endswith("plex.direct"):
-            util.DEBUG_LOG("Using shortcut for hostname IP detection due to plex.direct host: {}".format(hostname))
+            util.DEBUG_LOG("Using shortcut for hostname IP detection due to plex.direct host: {}", hostname)
             ips = [util.parsePlexDirectHost(hostname)]
 
         else:
             try:
                 ips = resolve(hostname)
             except (socket.gaierror, ICMPLibError):
-                util.DEBUG_LOG("Couldn't resolve hostname: {}".format(hostname))
+                util.DEBUG_LOG("Couldn't resolve hostname: {}", hostname)
                 return False
 
         for ip in ips:
@@ -147,9 +147,9 @@ class PlexConnection(object):
             if ip in LOCALS_SEEN:
                 local, network, host = LOCALS_SEEN[ip]
                 if local:
-                    util.DEBUG_LOG("We've already verified {} ({}) as local, skipping".format(hostname, ip))
+                    util.DEBUG_LOG("We've already verified {} ({}) as local, skipping", hostname, ip)
                 else:
-                    util.DEBUG_LOG("We've already verified {} ({}) as remote, skipping".format(hostname, ip))
+                    util.DEBUG_LOG("We've already verified {} ({}) as remote, skipping", hostname, ip)
                     continue
                 local_and_alive = True
 
@@ -162,7 +162,7 @@ class PlexConnection(object):
                 try:
                     host = ping(ip, count=1, interval=1, timeout=util.LAN_REACHABILITY_TIMEOUT, privileged=False)
                 except:
-                    util.DEBUG_LOG("IP {} didn't answer in time ({}s)".format(ip, util.LAN_REACHABILITY_TIMEOUT))
+                    util.DEBUG_LOG("IP {} didn't answer in time ({}s)", ip, util.LAN_REACHABILITY_TIMEOUT)
                     LOCALS_SEEN[ip] = (False, network, None)
                     continue
 
@@ -218,7 +218,7 @@ class PlexConnection(object):
                     )
                 )
             else:
-                util.LOG("Insecure connections not allowed. Ignore insecure connection test for {0}".format(server))
+                util.LOG("Insecure connections not allowed. Ignore insecure connection test for {0}", server)
                 self.state = self.STATE_INSECURE
                 callable = callback.Callable(server.onReachabilityResult, [self], random.randint(0, 256))
                 callable.deferCall()
@@ -239,7 +239,7 @@ class PlexConnection(object):
             context.server = server
             util.addPlexHeaders(self.request, server.getToken())
             self.hasPendingRequest = util.APP.startRequest(self.request, context)
-            util.DEBUG_LOG("Testing insecure connection for: {0}".format(server))
+            util.DEBUG_LOG("Testing insecure connection for: {0}", server)
             return True
 
         return False

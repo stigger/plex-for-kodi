@@ -163,7 +163,7 @@ class PlaybackManager(object):
                     if hasattr(self, migFunc):
                         migResult, data = getattr(self, migFunc)(data)
                         if migResult:
-                            util.DEBUG_LOG("Migrated playback_settings.json to format v{}".format(v))
+                            util.DEBUG_LOG("Migrated playback_settings.json to format v{}", v)
                             migratedAny = True
                 if migratedAny:
                     self.save(data=data)

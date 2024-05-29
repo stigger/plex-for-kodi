@@ -165,11 +165,11 @@ class BaseWindow(xbmcgui.WindowXML, BaseFunctions):
                (base_win_id and xbmcgui.getCurrentWindowId() <= base_win_id)) \
                 and not util.MONITOR.waitForAbort(1) and tries < 120:
             if tries == 0:
-                util.LOG("Couldn't open window {}, other dialog open? Retrying for 120s.".format(self))
+                util.LOG("Couldn't open window {}, other dialog open? Retrying for 120s.", self)
             self.show()
             tries += 1
 
-        util.DEBUG_LOG("Window {} opened: {}".format(self, self.isOpen))
+        util.DEBUG_LOG("Window {} opened: {}", self, self.isOpen)
 
         return self.isOpen
 

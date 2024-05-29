@@ -37,7 +37,7 @@ def waitForThreads():
         for t in threading.enumerate():
             if t != threading.currentThread():
                 if t.is_alive():
-                    util.DEBUG_LOG('Main: Waiting on: {0}...'.format(t.name))
+                    util.DEBUG_LOG('Main: Waiting on: {0}...', t.name)
                     if isinstance(t, _Timer):
                         t.cancel()
 
@@ -85,8 +85,8 @@ def main():
 
 def _main():
     global quitKodi
-    util.DEBUG_LOG('[ STARTED: {0} -------------------------------------------------------------------- ]'.format(util.ADDON.getAddonInfo('version')))
-    util.DEBUG_LOG('USER-AGENT: {0}'.format(plex.defaultUserAgent()))
+    util.DEBUG_LOG('[ STARTED: {0} -------------------------------------------------------------------- ]', util.ADDON.getAddonInfo('version'))
+    util.DEBUG_LOG('USER-AGENT: {0}', plex.defaultUserAgent())
     background.setSplash()
 
     try:
@@ -135,7 +135,7 @@ def _main():
                             finally:
                                 background.setBusy(False)
 
-                        util.DEBUG_LOG('Main: STARTING WITH SERVER: {0}'.format(selectedServer))
+                        util.DEBUG_LOG('Main: STARTING WITH SERVER: {0}', selectedServer)
 
                         windowutils.HOME = home.HomeWindow.create()
                         if windowutils.HOME.waitForOpen(base_win_id=BACKGROUND._winID):

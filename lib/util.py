@@ -215,13 +215,13 @@ addonSettings = AddonSettings()
 def LOG(msg, *args, **kwargs):
     if args:
         # resolve dynamic args
-        msg = msg.format([arg() if isinstance(arg, types.FunctionType) else arg for arg in args])
+        msg = msg.format(*[arg() if isinstance(arg, types.FunctionType) else arg for arg in args])
 
     level = kwargs.pop("level", xbmc.LOGINFO)
 
     if kwargs:
         # resolve dynamic kwargs
-        msg = msg.format(dict((k, v()) if isinstance(v, types.FunctionType) else v for k, v in kwargs.items()))
+        msg = msg.format(**dict((k, v()) if isinstance(v, types.FunctionType) else v for k, v in kwargs.items()))
     xbmc.log('script.plex: {0}'.format(msg), level)
 
 

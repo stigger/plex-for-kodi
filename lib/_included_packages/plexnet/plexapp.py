@@ -107,7 +107,7 @@ class App(signalsmixin.SignalsMixin):
         from . import http
         http.HttpRequest._cancel = True
         if self.pendingRequests:
-            util.DEBUG_LOG('Closing down {0} App() requests...'.format(len(self.pendingRequests)))
+            util.DEBUG_LOG('Closing down {0} App() requests...', len(self.pendingRequests))
             for k in list(self.pendingRequests.keys()):
                 p = self.pendingRequests.get(k)
                 if p:
@@ -123,7 +123,7 @@ class App(signalsmixin.SignalsMixin):
 
     def shutdown(self):
         if self.timers:
-            util.DEBUG_LOG('Waiting for {0} App() timers: Started'.format(len(self.timers)))
+            util.DEBUG_LOG('Waiting for {0} App() timers: Started', len(self.timers))
 
             self.cancelAllTimers()
 

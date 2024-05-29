@@ -180,17 +180,17 @@ class PlexInterface(plexapp.AppInterface):
     def getCapabilities(self):
         return ''
 
-    def LOG(self, msg):
-        util.DEBUG_LOG('API: {0}'.format(msg))
+    def LOG(self, msg, *args, **kwargs):
+        util.DEBUG_LOG('API: {0}'.format(msg), *args, **kwargs)
 
-    def DEBUG_LOG(self, msg):
-        self.LOG('DEBUG: {0}'.format(msg))
+    def DEBUG_LOG(self, msg, *args, **kwargs):
+        self.LOG('DEBUG: {0}'.format(msg), *args, **kwargs)
 
-    def WARN_LOG(self, msg):
-        self.LOG('WARNING: {0}'.format(msg))
+    def WARN_LOG(self, msg, *args, **kwargs):
+        self.LOG('WARNING: {0}'.format(msg), *args, **kwargs)
 
-    def ERROR_LOG(self, msg):
-        self.LOG('ERROR: {0}'.format(msg))
+    def ERROR_LOG(self, msg, *args, **kwargs):
+        self.LOG('ERROR: {0}'.format(msg), *args, **kwargs)
 
     def ERROR(self, msg=None, err=None):
         if err:
@@ -326,13 +326,13 @@ class CallbackEvent(plexapp.util.CompatEvent):
 
     def wait(self):
         if not plexnet_util.Event.wait(self, self.timeout):
-            util.DEBUG_LOG('{0}: TIMED-OUT'.format(self))
+            util.DEBUG_LOG('{0}: TIMED-OUT', self)
         self.close()
 
     def triggeredOrTimedOut(self, timeout=None):
         try:
             if time.time() - self.start > self.timeout:
-                util.DEBUG_LOG('{0}: TIMED-OUT'.format(self))
+                util.DEBUG_LOG('{0}: TIMED-OUT', self)
                 return True
 
             if timeout:
@@ -352,7 +352,7 @@ def init():
         util.DEBUG_LOG('Waiting for plexapp initialization...')
         plexapp.init()
 
-    util.DEBUG_LOG('Account initialized: {}'.format(plexapp.ACCOUNT.ID))
+    util.DEBUG_LOG('Account initialized: {}', plexapp.ACCOUNT.ID)
 
     retry = True
 
@@ -375,7 +375,7 @@ def init():
         #     util.DEBUG_LOG('SIGN IN: Failed to connect to any servers')
         #     return False
 
-        # util.DEBUG_LOG('SIGN IN: Connected to server: {0} - {1}'.format(PLEX.friendlyName, PLEX.baseuri))
+        # util.DEBUG_LOG('SIGN IN: Connected to server: {0} - {1}', PLEX.friendlyName, PLEX.baseuri)
         success = requirePlexPass()
         if success == 'RETRY':
             retry = True
