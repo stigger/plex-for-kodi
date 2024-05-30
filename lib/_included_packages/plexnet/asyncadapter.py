@@ -336,8 +336,8 @@ class AsyncHTTPAdapter(HTTPAdapter):
 class Session(requests.Session):
     def __init__(self, *args, **kwargs):
         requests.Session.__init__(self, *args, **kwargs)
-        self.mount('https://', AsyncHTTPAdapter())
-        self.mount('http://', AsyncHTTPAdapter())
+        self.mount('https://', AsyncHTTPAdapter(max_retries=1))
+        self.mount('http://', AsyncHTTPAdapter(max_retries=1))
 
     def cancel(self):
         for v in self.adapters.values():
